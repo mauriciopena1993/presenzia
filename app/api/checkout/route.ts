@@ -3,10 +3,14 @@ import { stripe, PLANS, PlanKey } from '@/lib/stripe';
 
 export async function POST(req: NextRequest) {
   try {
-    const { plan, email } = await req.json();
+    const { plan, email, business_name, business_type, location, website, keywords } = await req.json();
 
     if (!plan || !PLANS[plan as PlanKey]) {
       return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
+    }
+
+    if (!business_name || !business_type || !location) {
+      return NextResponse.json({ error: 'Business name, type, and location are required' }, { status: 400 });
     }
 
     const selectedPlan = PLANS[plan as PlanKey];
@@ -23,9 +27,14 @@ export async function POST(req: NextRequest) {
       ],
       customer_email: email || undefined,
       success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}&plan=${plan}`,
-      cancel_url: `${appUrl}/#pricing`,
+      cancel_url: `${appUrl}/onboarding?plan=${plan}`,
       metadata: {
         plan,
+        business_name: business_name.trim(),
+        business_type: business_type.trim(),
+        location: location.trim(),
+        website: website?.trim() || '',
+        keywords: keywords?.trim() || '',
       },
       subscription_data: {
         metadata: {

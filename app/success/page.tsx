@@ -24,7 +24,6 @@ function SuccessContent() {
       return;
     }
 
-    // Verify the session with our API
     fetch(`/api/verify-session?session_id=${sessionId}`)
       .then(res => res.json())
       .then(data => {
@@ -67,7 +66,7 @@ function SuccessContent() {
           We couldn&apos;t verify your payment. If you completed a purchase, please email{' '}
           <a href="mailto:hello@presenzia.ai" style={{ color: '#C9A84C' }}>hello@presenzia.ai</a> and we&apos;ll sort it out immediately.
         </p>
-        <Link href="/" style={{ color: '#888', textDecoration: 'none', fontSize: '0.9rem' }}>← Back to home</Link>
+        <Link href="/" style={{ color: '#888', textDecoration: 'none', fontSize: '0.9rem' }}>Back to home</Link>
       </div>
     );
   }
@@ -107,52 +106,74 @@ function SuccessContent() {
 
       <h1 style={{
         fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
-        fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+        fontSize: 'clamp(1.75rem, 4vw, 2.75rem)',
         color: '#F5F0E8',
         fontWeight: 600,
-        marginBottom: '1.5rem',
+        marginBottom: '1.25rem',
         lineHeight: 1.2,
       }}>
-        Welcome to presenzia.ai
+        Your audit is underway
       </h1>
 
       <p style={{
         color: '#AAAAAA',
-        fontSize: '1.1rem',
-        maxWidth: '500px',
+        fontSize: '1rem',
+        maxWidth: '480px',
         lineHeight: 1.7,
         marginBottom: '1rem',
       }}>
-        You&apos;re now on the <strong style={{ color: '#F5F0E8' }}>{planNames[plan] || 'Starter'}</strong> plan.
+        You&apos;re on the <strong style={{ color: '#F5F0E8' }}>{planNames[plan] || 'Starter'}</strong> plan.
+        We&apos;re now testing how AI platforms respond to queries about your business across 100+ prompts.
       </p>
 
       <p style={{
         color: '#AAAAAA',
         fontSize: '1rem',
-        maxWidth: '500px',
+        maxWidth: '480px',
         lineHeight: 1.7,
-        marginBottom: '2.5rem',
+        marginBottom: '3rem',
       }}>
-        One last step — tell us about your business so we can run your AI visibility audit.
+        Your report will be delivered by email within <strong style={{ color: '#F5F0E8' }}>48 hours</strong>.
+        Check your inbox for a confirmation shortly.
       </p>
 
-      <Link href={`/onboarding?session_id=${sessionId}&plan=${plan}`} style={{
-        padding: '1rem 2.5rem',
+      <div style={{
+        padding: '1.5rem 2.5rem',
+        background: '#0f1107',
+        border: '1px solid #3a4a0f',
+        maxWidth: '400px',
+        width: '100%',
+        marginBottom: '3rem',
+      }}>
+        <div style={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+          What happens next
+        </div>
+        <ul style={{ listStyle: 'none', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '0.6rem', padding: 0, margin: 0 }}>
+          {[
+            'Confirmation email sent to your inbox',
+            'AI platforms tested across 100+ prompts',
+            'Platform-by-platform breakdown prepared',
+            'Full PDF report delivered within 48 hours',
+          ].map((step, i) => (
+            <li key={i} style={{ display: 'flex', gap: '0.75rem', fontSize: '0.875rem', color: '#AAAAAA', alignItems: 'flex-start' }}>
+              <span style={{ color: '#C9A84C', flexShrink: 0, fontWeight: 600 }}>{i + 1}.</span>
+              {step}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <Link href="/" style={{
+        padding: '0.875rem 2rem',
         background: '#C9A84C',
         color: '#0A0A0A',
-        fontWeight: 700,
-        fontSize: '1rem',
+        fontWeight: 600,
+        fontSize: '0.9rem',
         textDecoration: 'none',
         letterSpacing: '0.02em',
-        marginBottom: '1.5rem',
-        display: 'inline-block',
       }}>
-        Tell us about your business →
+        Back to home
       </Link>
-
-      <p style={{ color: '#444', fontSize: '0.8rem', marginBottom: '3rem' }}>
-        Takes 30 seconds &mdash; needed to run your audit
-      </p>
     </div>
   );
 }

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Blog — presenzia.ai',
+  title: 'Blog | presenzia.ai',
   description: 'Insights on AI search visibility, how AI recommends businesses, and tips to improve your presence.',
 };
 

@@ -1,11 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 
 const BUSINESS_TYPES = [
-  'Restaurant / Café / Food & Drink',
+  'Restaurant / Cafe / Food & Drink',
   'Retail / Shop',
   'Professional Services (Legal, Financial, Accounting)',
   'Healthcare / Medical / Dental',
@@ -22,10 +22,13 @@ const BUSINESS_TYPES = [
   'Other',
 ];
 
+const planNames: Record<string, string> = {
+  starter: 'Starter',
+  growth: 'Growth',
+};
+
 function OnboardingForm() {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const sessionId = searchParams.get('session_id');
   const plan = searchParams.get('plan') || 'starter';
 
   const [form, setForm] = useState({
@@ -38,7 +41,7 @@ function OnboardingForm() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  if (!sessionId) {
+  if (!plan || !planNames[plan]) {
     return (
       <div style={{
         minHeight: '100vh',
@@ -52,13 +55,13 @@ function OnboardingForm() {
         fontFamily: 'var(--font-inter, Inter, sans-serif)',
       }}>
         <h1 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '2rem', color: '#F5F0E8', marginBottom: '1rem' }}>
-          Invalid link
+          Invalid plan
         </h1>
         <p style={{ color: '#AAAAAA', marginBottom: '2rem' }}>
-          This page requires a valid session. If you&apos;ve just purchased, please check your email or{' '}
-          <a href="mailto:hello@presenzia.ai" style={{ color: '#C9A84C' }}>contact us</a>.
+          Please select a plan from our{' '}
+          <Link href="/#pricing" style={{ color: '#C9A84C' }}>pricing page</Link>.
         </p>
-        <Link href="/" style={{ color: '#888', textDecoration: 'none' }}>← Back to home</Link>
+        <Link href="/" style={{ color: '#888', textDecoration: 'none' }}>Back to home</Link>
       </div>
     );
   }
@@ -69,11 +72,11 @@ function OnboardingForm() {
     setError('');
 
     try {
-      const res = await fetch('/api/onboard', {
+      const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          session_id: sessionId,
+          plan,
           business_name: form.businessName,
           business_type: form.businessType,
           location: form.location,
@@ -84,14 +87,12 @@ function OnboardingForm() {
 
       const data = await res.json();
 
-      if (!res.ok) {
-        setError(data.error || 'Something went wrong. Please try again.');
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setError(data.error || 'Something went wrong. Please try again or email hello@presenzia.ai');
         setSubmitting(false);
-        return;
       }
-
-      // Redirect to a confirmation page
-      router.push(`/onboarding/confirm?plan=${plan}`);
     } catch {
       setError('Network error. Please try again.');
       setSubmitting(false);
@@ -130,14 +131,14 @@ function OnboardingForm() {
         <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', color: '#F5F0E8', textDecoration: 'none' }}>
           presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
         </Link>
-        <div style={{ fontSize: '0.8rem', color: '#555', letterSpacing: '0.05em' }}>Step 2 of 2</div>
+        <div style={{ fontSize: '0.8rem', color: '#555', letterSpacing: '0.05em' }}>Step 1 of 2</div>
       </div>
 
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '3rem 2rem 4rem' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
-            Almost there
+            {planNames[plan]} plan
           </div>
           <h1 style={{
             fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
@@ -150,7 +151,7 @@ function OnboardingForm() {
             Tell us about your business
           </h1>
           <p style={{ color: '#AAAAAA', fontSize: '0.95rem', lineHeight: 1.7, maxWidth: '460px', margin: '0 auto' }}>
-            We need a few details to run your AI visibility audit. This takes about 30 seconds to fill in.
+            We need a few details to run your AI visibility audit. Takes about 30 seconds, then you'll proceed to payment.
           </p>
         </div>
 
@@ -261,8 +262,12 @@ function OnboardingForm() {
                 width: '100%',
               }}
             >
-              {submitting ? 'Starting your audit...' : 'Start my audit →'}
+              {submitting ? 'Redirecting to payment...' : 'Continue to payment →'}
             </button>
+
+            <p style={{ textAlign: 'center', color: '#555', fontSize: '0.8rem', margin: 0 }}>
+              You won't be charged until the next step
+            </p>
 
           </div>
         </form>

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service — presenzia.ai',
+  title: 'Terms of Service | presenzia.ai',
   description: 'Terms and conditions for using presenzia.ai services.',
 };
 
@@ -65,7 +65,7 @@ export default function TermsPage() {
           </p>
           <p style={textStyle}>
             You may cancel your subscription at any time with 30 days&apos; notice. Cancellations take effect at the end
-            of the current billing period — you will not be charged for the following month. We do not offer refunds
+            of the current billing period. You will not be charged for the following month. We do not offer refunds
             for partial months except where required by law.
           </p>
           <p style={textStyle}>

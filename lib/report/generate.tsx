@@ -240,7 +240,7 @@ function getRecommendations(score: AuditScore, config: AuditConfig): string[] {
       `Create a dedicated page on your website for "${config.businessType} in ${config.location}" with clear, descriptive content that AI systems can easily parse and cite.`
     );
     recs.push(
-      `Add a FAQ section answering "best ${config.businessType} in ${config.location}" — this is the primary prompt pattern where AI systems look for citations.`
+      `Add a FAQ section answering "best ${config.businessType} in ${config.location}". This is the primary prompt pattern where AI systems look for citations.`
     );
     recs.push(
       'Claim and fully complete your Google Business Profile, Yelp, and any relevant industry directories. AI systems use these as data sources.'
@@ -252,7 +252,7 @@ function getRecommendations(score: AuditScore, config: AuditConfig): string[] {
       `Your competitors (${score.topCompetitors.slice(0, 2).map(c => c.name).join(', ')}) are being cited more frequently. Analyse their web presence to understand why AI systems prefer them.`
     );
     recs.push(
-      'Publish regular content (blog posts, case studies, testimonials) that uses natural language around your target keywords — AI systems favour frequently cited sources.'
+      'Publish regular content (blog posts, case studies, testimonials) that uses natural language around your target keywords. AI systems favour frequently cited sources.'
     );
   }
 
@@ -380,8 +380,8 @@ function AuditReport({ config, score, reportDate }: ReportData) {
 
         {/* Footer */}
         <View style={styles.footer} fixed>
-          <Text style={styles.footerText}>© 2026 presenzia.ai — Ketzal LTD (Co. No. 14570156)</Text>
-          <Text style={styles.footerText}>Confidential — prepared for {config.businessName}</Text>
+          <Text style={styles.footerText}>© 2026 presenzia.ai | Ketzal LTD (Co. No. 14570156)</Text>
+          <Text style={styles.footerText}>Confidential | prepared for {config.businessName}</Text>
         </View>
       </Page>
     </Document>

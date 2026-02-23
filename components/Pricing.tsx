@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-
 const plans = [
   {
     key: 'starter',
@@ -14,7 +12,7 @@ const plans = [
       '5 target keywords',
       'Audit across 4 AI platforms',
       'PDF report delivered by email',
-      'Visibility score (0–100)',
+      'Visibility score (0\u2013100)',
       'Competitor mentions tracked',
     ],
     cta: 'Get started',
@@ -44,7 +42,7 @@ const plans = [
     name: 'Premium',
     price: '£599',
     period: '/month',
-    description: 'The full service — reports plus expert strategy calls.',
+    description: 'The full service: reports plus expert strategy calls.',
     features: [
       'Everything in Growth',
       'Monthly 1:1 strategy call',
@@ -60,36 +58,12 @@ const plans = [
 ];
 
 export default function Pricing() {
-  const [loading, setLoading] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleCheckout = async (planKey: string) => {
+  const handleClick = (planKey: string) => {
     if (planKey === 'premium') {
       window.location.href = 'mailto:hello@presenzia.ai?subject=Premium Plan Enquiry';
       return;
     }
-
-    setLoading(planKey);
-    setError(null);
-    try {
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: planKey }),
-      });
-
-      const data = await response.json();
-
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        setError('Something went wrong. Please try again or email hello@presenzia.ai');
-      }
-    } catch {
-      setError('Something went wrong. Please try again or email hello@presenzia.ai');
-    } finally {
-      setLoading(null);
-    }
+    window.location.href = `/onboarding?plan=${planKey}`;
   };
 
   return (
@@ -177,8 +151,7 @@ export default function Pricing() {
             </ul>
 
             <button
-              onClick={() => handleCheckout(plan.key)}
-              disabled={loading === plan.key}
+              onClick={() => handleClick(plan.key)}
               style={{
                 display: 'block',
                 width: '100%',
@@ -190,43 +163,26 @@ export default function Pricing() {
                 fontWeight: 600,
                 fontSize: '0.875rem',
                 letterSpacing: '0.02em',
-                cursor: loading === plan.key ? 'not-allowed' : 'pointer',
-                opacity: loading === plan.key ? 0.7 : 1,
+                cursor: 'pointer',
                 transition: 'all 0.2s',
                 fontFamily: 'var(--font-inter, Inter, sans-serif)',
               }}
               onMouseEnter={e => {
-                if (loading === plan.key) return;
                 const el = e.currentTarget;
                 if (plan.highlighted) el.style.background = '#E8C96A';
                 else { el.style.borderColor = '#C9A84C'; el.style.color = '#C9A84C'; }
               }}
               onMouseLeave={e => {
-                if (loading === plan.key) return;
                 const el = e.currentTarget;
                 if (plan.highlighted) el.style.background = '#C9A84C';
                 else { el.style.borderColor = '#333333'; el.style.color = '#DDDDDD'; }
               }}
             >
-              {loading === plan.key ? 'Redirecting...' : `${plan.cta} →`}
+              {`${plan.cta} →`}
             </button>
           </div>
         ))}
       </div>
-
-      {error && (
-        <div style={{
-          marginTop: '1.5rem',
-          padding: '1rem 1.5rem',
-          background: '#1a0a0a',
-          border: '1px solid #5a1a1a',
-          color: '#ff6b7a',
-          fontSize: '0.875rem',
-          textAlign: 'center',
-        }}>
-          {error}
-        </div>
-      )}
 
       <p style={{ textAlign: 'center', color: '#777777', fontSize: '0.8rem', marginTop: '2rem' }}>
         All plans include VAT. Billed monthly. Cancel anytime with 30 days notice.

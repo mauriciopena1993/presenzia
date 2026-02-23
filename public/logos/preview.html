@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>presenzia.ai — Logo Variants</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #1a1a1a; font-family: Inter, sans-serif; padding: 60px 40px; }
+    h2 { color: #888; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 20px; font-weight: 400; }
+    .section { margin-bottom: 60px; }
+    .logo-row { display: flex; gap: 40px; align-items: center; flex-wrap: wrap; }
+
+    /* ── FULL WORDMARK — DARK ── */
+    .wordmark-dark {
+      background: #0A0A0A;
+      padding: 28px 40px;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0;
+    }
+    .wordmark-dark .name {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 52px;
+      font-weight: 600;
+      color: #F5F0E8;
+      letter-spacing: -0.01em;
+      line-height: 1;
+    }
+    .wordmark-dark .tld {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 52px;
+      font-weight: 600;
+      color: #C9A84C;
+      letter-spacing: -0.01em;
+      line-height: 1;
+    }
+
+    /* ── FULL WORDMARK — LIGHT ── */
+    .wordmark-light {
+      background: #FFFFFF;
+      padding: 28px 40px;
+      display: inline-flex;
+      align-items: baseline;
+      border: 1px solid #eee;
+    }
+    .wordmark-light .name {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 52px;
+      font-weight: 600;
+      color: #0A0A0A;
+      letter-spacing: -0.01em;
+      line-height: 1;
+    }
+    .wordmark-light .tld {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 52px;
+      font-weight: 600;
+      color: #C9A84C;
+      letter-spacing: -0.01em;
+      line-height: 1;
+    }
+
+    /* ── ICON — DARK SQUARE ── */
+    .icon-dark {
+      width: 160px;
+      height: 160px;
+      background: #0A0A0A;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+    .icon-dark .p {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 80px;
+      font-weight: 600;
+      color: #F5F0E8;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .icon-dark .ai-label {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: #C9A84C;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      margin-top: -6px;
+    }
+
+    /* ── ICON — DARK CIRCLE ── */
+    .icon-circle {
+      width: 160px;
+      height: 160px;
+      background: #0A0A0A;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .icon-circle .p {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 72px;
+      font-weight: 600;
+      color: #F5F0E8;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .icon-circle .ai-label {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 26px;
+      font-weight: 600;
+      color: #C9A84C;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      margin-top: -4px;
+    }
+
+    /* ── ICON — GOLD SQUARE ── */
+    .icon-gold {
+      width: 160px;
+      height: 160px;
+      background: #C9A84C;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .icon-gold .p {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 80px;
+      font-weight: 600;
+      color: #0A0A0A;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .icon-gold .ai-label {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: #0A0A0A;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      margin-top: -6px;
+      opacity: 0.7;
+    }
+
+    /* ── COMPACT HORIZONTAL p.ai ── */
+    .compact-dark {
+      background: #0A0A0A;
+      padding: 20px 32px;
+      display: inline-flex;
+      align-items: baseline;
+    }
+    .compact-dark .p {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 48px;
+      font-weight: 600;
+      color: #F5F0E8;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .compact-dark .ai-label {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 48px;
+      font-weight: 600;
+      color: #C9A84C;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .compact-light {
+      background: #FFFFFF;
+      padding: 20px 32px;
+      display: inline-flex;
+      align-items: baseline;
+      border: 1px solid #eee;
+    }
+    .compact-light .p {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 48px;
+      font-weight: 600;
+      color: #0A0A0A;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .compact-light .ai-label {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 48px;
+      font-weight: 600;
+      color: #C9A84C;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .label { color: #555; font-size: 11px; margin-top: 12px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .variant { display: flex; flex-direction: column; align-items: flex-start; }
+  </style>
+</head>
+<body>
+
+  <div style="margin-bottom: 48px;">
+    <div style="font-family: 'Playfair Display', Georgia, serif; font-size: 28px; color: #F5F0E8; margin-bottom: 8px;">
+      presenzia<span style="color: #C9A84C;">.ai</span>
+    </div>
+    <div style="color: #555; font-size: 13px; letter-spacing: 0.05em;">Logo Kit — All Variants</div>
+  </div>
+
+  <!-- FULL WORDMARK -->
+  <div class="section">
+    <h2>Full Wordmark — presenzia.ai</h2>
+    <div class="logo-row">
+      <div class="variant">
+        <div class="wordmark-dark">
+          <span class="name">presenzia</span><span class="tld">.ai</span>
+        </div>
+        <div class="label">Dark background</div>
+      </div>
+      <div class="variant">
+        <div class="wordmark-light">
+          <span class="name">presenzia</span><span class="tld">.ai</span>
+        </div>
+        <div class="label">Light background</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPACT / SHORT MARK -->
+  <div class="section">
+    <h2>Short Mark — p.ai</h2>
+    <div class="logo-row">
+      <div class="variant">
+        <div class="compact-dark">
+          <span class="p">p</span><span class="ai-label">.ai</span>
+        </div>
+        <div class="label">Dark background</div>
+      </div>
+      <div class="variant">
+        <div class="compact-light">
+          <span class="p">p</span><span class="ai-label">.ai</span>
+        </div>
+        <div class="label">Light background</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ICON / SQUARE MARK -->
+  <div class="section">
+    <h2>Icon / App Icon — p.ai</h2>
+    <div class="logo-row">
+      <div class="variant">
+        <div class="icon-dark">
+          <div class="p">p</div>
+          <div class="ai-label">.ai</div>
+        </div>
+        <div class="label">Black square</div>
+      </div>
+      <div class="variant">
+        <div class="icon-circle">
+          <div class="p">p</div>
+          <div class="ai-label">.ai</div>
+        </div>
+        <div class="label">Black circle</div>
+      </div>
+      <div class="variant">
+        <div class="icon-gold">
+          <div class="p">p</div>
+          <div class="ai-label">.ai</div>
+        </div>
+        <div class="label">Gold square</div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

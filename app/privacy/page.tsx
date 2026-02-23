@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — presenzia.ai',
+  title: 'Privacy Policy | presenzia.ai',
   description: 'How presenzia.ai collects, uses, and protects your personal data.',
 };
 
@@ -103,11 +103,11 @@ export default function PrivacyPage() {
           <h2 style={headingStyle}>4. Third-Party Services</h2>
           <p style={textStyle}>We share data with the following trusted third parties to deliver our service:</p>
           <ul style={{ ...textStyle, paddingLeft: '1.5rem' }}>
-            <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Stripe</strong> — payment processing (see Stripe&apos;s privacy policy at stripe.com)</li>
-            <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Supabase</strong> — secure data storage (EU-based servers)</li>
-            <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Resend</strong> — email delivery</li>
-            <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>OpenAI / Anthropic</strong> — AI platforms used to run visibility audits (your business name and type are submitted as query context)</li>
-            <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Vercel</strong> — website hosting</li>
+            <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Stripe</strong>: payment processing (see Stripe&apos;s privacy policy at stripe.com)</li>
+            <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Supabase</strong>: secure data storage (EU-based servers)</li>
+            <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Resend</strong>: email delivery</li>
+            <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>OpenAI / Anthropic</strong>: AI platforms used to run visibility audits (your business name and type are submitted as query context)</li>
+            <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Vercel</strong>: website hosting</li>
           </ul>
           <p style={textStyle}>We do not sell your personal data to third parties.</p>
         </div>

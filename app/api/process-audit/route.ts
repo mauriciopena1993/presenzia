@@ -144,7 +144,7 @@ async function sendReportEmail(
     await resend.emails.send({
       from: 'presenzia.ai <reports@presenzia.ai>',
       to: email,
-      subject: `Your AI Visibility Report — ${businessName}`,
+      subject: `Your AI Visibility Report | ${businessName}`,
       html: `
         <div style="font-family: Inter, sans-serif; max-width: 600px; margin: 0 auto; background: #0A0A0A; color: #F5F0E8; padding: 40px;">
           <div style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">presenzia<span style="color: #C9A84C;">.ai</span></div>
@@ -168,7 +168,7 @@ async function sendReportEmail(
           </p>
 
           <p style="color: #666; font-size: 12px; margin-top: 32px;">
-            presenzia.ai — Ketzal LTD (Co. No. 14570156)<br />
+            presenzia.ai | Ketzal LTD (Co. No. 14570156)<br />
             Report ID: ${jobId}
           </p>
         </div>

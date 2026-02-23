@@ -86,7 +86,7 @@ export default function Hero() {
         lineHeight: 1.75,
         fontWeight: 300,
       }}>
-        When your customers ask ChatGPT, Claude or Google AI to recommend a business like yours — do you appear? Most don&apos;t. We audit your AI presence and fix it.
+        When your customers ask ChatGPT, Claude or Google AI to recommend a business like yours, do you appear? Most businesses don&apos;t. We audit your AI presence and fix it.
       </p>
 
       {/* CTA Buttons */}

@@ -17,20 +17,36 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "presenzia.ai — AI Search Visibility for UK Businesses",
-  description: "Find out if AI search engines are hiding your business. Get monthly audits across ChatGPT, Claude, Perplexity and Google AI — and fix it.",
-  keywords: "AI search visibility, ChatGPT business, AI SEO, UK business AI search, presenzia",
+  title: "presenzia.ai | AI Search Visibility Audits for UK Businesses",
+  description: "Find out if AI search engines recommend your business. Monthly audits across ChatGPT, Claude, Perplexity and Google AI with scored reports and actionable fixes.",
+  keywords: "AI search visibility, AI SEO, ChatGPT business listing, AI search audit, UK business AI, presenzia, AI recommendations, local business AI visibility",
+  metadataBase: new URL("https://presenzia.ai"),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "presenzia.ai — AI Search Visibility for UK Businesses",
-    description: "Find out if AI search engines are hiding your business.",
+    title: "presenzia.ai | AI Search Visibility Audits for UK Businesses",
+    description: "Find out if AI search engines recommend your business. Monthly audits across ChatGPT, Claude, Perplexity and Google AI.",
     url: "https://presenzia.ai",
     siteName: "presenzia.ai",
     type: "website",
+    locale: "en_GB",
   },
   twitter: {
     card: "summary_large_image",
-    title: "presenzia.ai",
-    description: "Find out if AI search engines are hiding your business.",
+    title: "presenzia.ai | AI Search Visibility for UK Businesses",
+    description: "Find out if AI search engines recommend your business.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -41,6 +57,47 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "presenzia.ai",
+              legalName: "Ketzal LTD",
+              url: "https://presenzia.ai",
+              description: "AI search visibility auditing service for UK businesses. We audit how AI platforms like ChatGPT, Claude, Perplexity and Google AI see your business.",
+              foundingDate: "2026",
+              email: "hello@presenzia.ai",
+              address: {
+                "@type": "PostalAddress",
+                addressCountry: "GB",
+                addressLocality: "London",
+              },
+              sameAs: [],
+              offers: {
+                "@type": "AggregateOffer",
+                priceCurrency: "GBP",
+                lowPrice: "149",
+                highPrice: "599",
+                offerCount: "3",
+              },
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "presenzia.ai",
+              url: "https://presenzia.ai",
+            }),
+          }}
+        />
+      </head>
       <body className="antialiased" suppressHydrationWarning style={{ fontFamily: "var(--font-inter, Inter, sans-serif)" }}>
         {children}
       </body>

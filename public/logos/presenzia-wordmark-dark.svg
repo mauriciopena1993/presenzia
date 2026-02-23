@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 100" width="520" height="100">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&amp;display=swap');
+      .brand { font-family: 'Playfair Display', Georgia, 'Times New Roman', serif; font-weight: 600; font-size: 58px; }
+    </style>
+  </defs>
+  <rect width="520" height="100" fill="#0A0A0A"/>
+  <text class="brand" x="20" y="72" fill="#F5F0E8">presenzia</text>
+  <text class="brand" x="416" y="72" fill="#C9A84C">.ai</text>
+</svg>

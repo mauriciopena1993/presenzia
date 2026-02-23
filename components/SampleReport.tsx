@@ -31,7 +31,7 @@ export default function SampleReport() {
               See exactly what your clients receive
             </h2>
             <p style={{ color: '#AAAAAA', fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '2rem' }}>
-              Every report is clear, professional, and designed to be understood by any business owner — no technical knowledge required. Your clients open it, see their score, understand the gaps, and know exactly what to do next.
+              Every report is clear, professional, and designed to be understood by any business owner. No technical knowledge required. Your clients open it, see their score, understand the gaps, and know exactly what to do next.
             </p>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2.5rem' }}>
               {[
@@ -93,7 +93,7 @@ export default function SampleReport() {
             <div style={{ padding: '1rem', background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)' }}>
               <div style={{ fontSize: '0.65rem', color: '#C9A84C', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Top recommendation</div>
               <p style={{ fontSize: '0.8rem', color: '#AAAAAA', lineHeight: 1.65 }}>
-                Add structured FAQ content to your website answering &ldquo;best solicitor in [city]&rdquo; — this is the primary prompt pattern where competitors are being cited instead of you.
+                Add structured FAQ content to your website answering &ldquo;best solicitor in [city]&rdquo;. This is the primary prompt pattern where competitors are being cited instead of you.
               </p>
             </div>
           </div>

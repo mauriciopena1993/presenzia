@@ -14,7 +14,7 @@ const testimonials = [
     initial: "S",
   },
   {
-    quote: "Our competitors were showing up everywhere on AI search and we weren't. presenzia showed us exactly why — and the monthly calls with the team are invaluable.",
+    quote: "Our competitors were showing up everywhere on AI search and we weren't. presenzia showed us exactly why, and the monthly calls with the team are invaluable.",
     name: "James T.",
     role: "Dental Practice Owner, Bristol",
     initial: "J",

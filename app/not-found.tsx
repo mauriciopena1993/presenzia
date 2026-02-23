@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: '404 — Page Not Found | presenzia.ai',
+  title: '404 | Page Not Found | presenzia.ai',
 };
 
 export default function NotFound() {
@@ -25,7 +25,7 @@ export default function NotFound() {
         textTransform: 'uppercase',
         marginBottom: '1.5rem',
       }}>
-        404 — Not found
+        404 · Not found
       </div>
 
       <h1 style={{

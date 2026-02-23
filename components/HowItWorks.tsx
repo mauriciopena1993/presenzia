@@ -10,7 +10,7 @@ export default function HowItWorks() {
     {
       number: '02',
       title: 'We run the audit',
-      description: 'Our engine tests hundreds of prompts across ChatGPT, Claude, Perplexity, and Google AI — recording exactly where you appear, where you don\'t, and who does instead.',
+      description: 'Our engine tests hundreds of prompts across ChatGPT, Claude, Perplexity, and Google AI. We record exactly where you appear, where you don\'t, and who does instead.',
     },
     {
       number: '03',
@@ -19,7 +19,7 @@ export default function HowItWorks() {
     },
     {
       number: '04',
-      title: 'We fix it — and track it',
+      title: 'We fix it and track it',
       description: 'On Growth and Premium plans, we provide monthly follow-up audits so you can see your score improve over time.',
     },
   ];

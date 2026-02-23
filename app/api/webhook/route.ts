@@ -28,7 +28,8 @@ export async function POST(req: NextRequest) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
-        const plan = session.metadata?.plan as 'starter' | 'growth' | 'premium';
+        const metadata = session.metadata || {};
+        const plan = metadata.plan as 'starter' | 'growth' | 'premium';
         const email = session.customer_email || session.customer_details?.email || '';
 
         if (!email || !plan) {
@@ -36,7 +37,17 @@ export async function POST(req: NextRequest) {
           break;
         }
 
-        // Upsert client record
+        // Extract business details from metadata (collected before payment)
+        const businessName = metadata.business_name || '';
+        const businessType = metadata.business_type || '';
+        const location = metadata.location || '';
+        const website = metadata.website || null;
+        const keywordsRaw = metadata.keywords || '';
+        const keywords = keywordsRaw
+          ? keywordsRaw.split(',').map((k: string) => k.trim()).filter(Boolean)
+          : null;
+
+        // Upsert client record with business details
         const { data: client, error: clientError } = await supabase
           .from('clients')
           .upsert({
@@ -45,6 +56,11 @@ export async function POST(req: NextRequest) {
             status: 'active',
             stripe_customer_id: session.customer as string,
             stripe_subscription_id: session.subscription as string,
+            business_name: businessName || null,
+            business_type: businessType || null,
+            location: location || null,
+            website,
+            keywords,
             updated_at: new Date().toISOString(),
           }, {
             onConflict: 'stripe_customer_id',
@@ -57,7 +73,7 @@ export async function POST(req: NextRequest) {
           break;
         }
 
-        console.log(`✅ Client created/updated: ${email} (${plan}) → ${client.id}`);
+        console.log(`Client created/updated: ${email} (${plan}) - ${businessName} in ${location} -> ${client.id}`);
 
         // Create initial audit job
         const { data: job, error: jobError } = await supabase
@@ -74,7 +90,7 @@ export async function POST(req: NextRequest) {
           break;
         }
 
-        console.log(`📋 Audit job queued: ${job.id}`);
+        console.log(`Audit job queued: ${job.id}`);
 
         // Fire-and-forget: trigger the audit processor
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
@@ -106,7 +122,7 @@ export async function POST(req: NextRequest) {
           .eq('stripe_subscription_id', subscription.id);
 
         if (error) console.error('Failed to update subscription:', error);
-        else console.log(`🔄 Subscription updated: ${subscription.id} → ${dbStatus}`);
+        else console.log(`Subscription updated: ${subscription.id} -> ${dbStatus}`);
         break;
       }
 
@@ -119,7 +135,7 @@ export async function POST(req: NextRequest) {
           .eq('stripe_subscription_id', subscription.id);
 
         if (error) console.error('Failed to cancel subscription:', error);
-        else console.log(`❌ Subscription cancelled: ${subscription.id}`);
+        else console.log(`Subscription cancelled: ${subscription.id}`);
         break;
       }
 
@@ -133,7 +149,7 @@ export async function POST(req: NextRequest) {
           .eq('stripe_customer_id', customerId);
 
         if (error) console.error('Failed to update payment status:', error);
-        else console.log(`⚠️ Payment failed for customer: ${customerId}`);
+        else console.log(`Payment failed for customer: ${customerId}`);
         break;
       }
 
@@ -167,7 +183,7 @@ export async function POST(req: NextRequest) {
                 body: JSON.stringify({ jobId: job.id }),
               }).catch(err => console.error('Failed to trigger recurring audit:', err));
 
-              console.log(`🔄 Recurring audit queued for client ${client.id}`);
+              console.log(`Recurring audit queued for client ${client.id}`);
             }
           }
         }
