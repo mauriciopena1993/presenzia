@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Privacy Policy | presenzia.ai',
   description: 'How presenzia.ai collects, uses, and protects your personal data.',
+  alternates: { canonical: '/privacy' },
 };
 
 const sectionStyle = {

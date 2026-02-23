@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Terms of Service | presenzia.ai',
   description: 'Terms and conditions for using presenzia.ai services.',
+  alternates: { canonical: '/terms' },
 };
 
 const sectionStyle = { marginBottom: '2.5rem' };
