@@ -5,6 +5,13 @@ import { BLOG_POSTS } from '@/lib/blog-posts';
 export const metadata: Metadata = {
   title: 'Blog | presenzia.ai — AI Search Visibility for UK Businesses',
   description: 'Practical guides on AI search visibility, how ChatGPT recommends local businesses, and how UK small businesses can improve their presence in AI results.',
+  alternates: { canonical: '/blog' },
+  openGraph: {
+    title: 'Blog | presenzia.ai — AI Search Visibility for UK Businesses',
+    description: 'Practical guides on AI search visibility, how ChatGPT recommends local businesses, and how UK small businesses can improve their presence in AI results.',
+    url: 'https://presenzia.ai/blog',
+    type: 'website',
+  },
 };
 
 function fmtDate(d: string) {

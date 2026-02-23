@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/onboarding', '/success', '/dashboard'],
+        disallow: ['/api/', '/onboarding', '/success', '/dashboard', '/admin'],
       },
     ],
     sitemap: 'https://presenzia.ai/sitemap.xml',

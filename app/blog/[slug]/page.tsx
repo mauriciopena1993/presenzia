@@ -79,6 +79,25 @@ function renderContent(content: string) {
           })}
         </ul>
       );
+    } else if (/^\d+\.\s/.test(line)) {
+      // Ordered list
+      const items: string[] = [line.replace(/^\d+\.\s/, '')];
+      while (i + 1 < lines.length && /^\d+\.\s/.test(lines[i + 1])) {
+        i++;
+        items.push(lines[i].replace(/^\d+\.\s/, ''));
+      }
+      elements.push(
+        <ol key={i} style={{ paddingLeft: '1.5rem', marginBottom: '1.25rem' }}>
+          {items.map((item, j) => {
+            const parts = item.split(/\*\*(.*?)\*\*/g);
+            return (
+              <li key={j} style={{ color: '#AAAAAA', fontSize: '1rem', lineHeight: 1.7, marginBottom: '0.4rem' }}>
+                {parts.map((part, k) => k % 2 === 1 ? <strong key={k} style={{ color: '#F5F0E8' }}>{part}</strong> : part)}
+              </li>
+            );
+          })}
+        </ol>
+      );
     } else if (line.trim() === '') {
       // skip blank lines
     } else {
@@ -102,8 +121,31 @@ export default async function BlogPostPage({ params }: Props) {
   const post = getBlogPost(slug);
   if (!post) notFound();
 
+  const url = `https://presenzia.ai/blog/${slug}`;
+  const blogPostingSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.description,
+    datePublished: post.date,
+    url,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    author: { '@type': 'Organization', name: 'presenzia.ai', url: 'https://presenzia.ai' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'presenzia.ai',
+      url: 'https://presenzia.ai',
+      logo: { '@type': 'ImageObject', url: 'https://presenzia.ai/og-image.png' },
+    },
+    image: `https://presenzia.ai/blog/${slug}/opengraph-image`,
+  };
+
   return (
     <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'var(--font-inter, Inter, sans-serif)' }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingSchema) }}
+      />
       <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1.25rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', color: '#F5F0E8', textDecoration: 'none' }}>
           presenzia<span style={{ color: '#C9A84C' }}>.ai</span>

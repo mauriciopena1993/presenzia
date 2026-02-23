@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -13,6 +14,7 @@ const INITIAL_MESSAGE: Message = {
 };
 
 export default function ChatWidget() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
   const [input, setInput] = useState('');
@@ -20,12 +22,17 @@ export default function ChatWidget() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Don't render on internal/protected pages
+  const isInternalPage = pathname.startsWith('/dashboard') || pathname.startsWith('/admin');
+
   useEffect(() => {
     if (open) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
       inputRef.current?.focus();
     }
   }, [open, messages]);
+
+  if (isInternalPage) return null;
 
   const send = async () => {
     const text = input.trim();
