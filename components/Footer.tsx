@@ -74,7 +74,7 @@ export default function Footer() {
             <p style={{ color: '#888888', fontSize: '0.825rem', lineHeight: 1.7, marginBottom: '1.25rem' }}>
               Ready to find out where you stand?
             </p>
-            <Link href="#pricing" style={{
+            <Link href="/#pricing" style={{
               display: 'inline-block',
               padding: '0.75rem 1.5rem',
               background: '#C9A84C',

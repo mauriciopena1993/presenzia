@@ -47,17 +47,17 @@ export default function Navbar() {
 
       {/* Desktop Nav */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }} className="desktop-nav">
-        <Link href="#how-it-works" style={{ color: '#888', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
+        <Link href="/#how-it-works" style={{ color: '#888', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
           onMouseEnter={e => (e.currentTarget.style.color = '#F5F0E8')}
           onMouseLeave={e => (e.currentTarget.style.color = '#888')}>
           How it works
         </Link>
-        <Link href="#pricing" style={{ color: '#888', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
+        <Link href="/#pricing" style={{ color: '#888', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
           onMouseEnter={e => (e.currentTarget.style.color = '#F5F0E8')}
           onMouseLeave={e => (e.currentTarget.style.color = '#888')}>
           Pricing
         </Link>
-        <Link href="#sample-report" style={{ color: '#888', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
+        <Link href="/#sample-report" style={{ color: '#888', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
           onMouseEnter={e => (e.currentTarget.style.color = '#F5F0E8')}
           onMouseLeave={e => (e.currentTarget.style.color = '#888')}>
           Sample report
@@ -72,7 +72,7 @@ export default function Navbar() {
           onMouseLeave={e => (e.currentTarget.style.color = '#888')}>
           Client login
         </Link>
-        <Link href="#pricing" style={{
+        <Link href="/#pricing" style={{
           padding: '0.5rem 1.25rem',
           background: '#C9A84C',
           color: '#0A0A0A',
@@ -114,9 +114,9 @@ export default function Navbar() {
           gap: '1.25rem',
         }}>
           {[
-            { label: 'How it works', href: '#how-it-works' },
-            { label: 'Pricing', href: '#pricing' },
-            { label: 'Sample report', href: '#sample-report' },
+            { label: 'How it works', href: '/#how-it-works' },
+            { label: 'Pricing', href: '/#pricing' },
+            { label: 'Sample report', href: '/#sample-report' },
             { label: 'Blog', href: '/blog' },
             { label: 'Client login', href: '/dashboard' },
           ].map((item) => (
@@ -126,7 +126,7 @@ export default function Navbar() {
               {item.label}
             </Link>
           ))}
-          <Link href="#pricing" onClick={() => setMenuOpen(false)} style={{
+          <Link href="/#pricing" onClick={() => setMenuOpen(false)} style={{
             padding: '0.75rem 1.5rem',
             background: '#C9A84C',
             color: '#0A0A0A',
