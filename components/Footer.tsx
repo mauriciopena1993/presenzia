@@ -33,12 +33,17 @@ export default function Footer() {
           {/* Services Links */}
           <div>
             <div style={{ fontSize: '0.65rem', color: '#777777', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>Services</div>
-            {['How it works', 'Pricing', 'Sample report', 'Blog'].map(link => (
-              <div key={link} style={{ marginBottom: '0.75rem' }}>
-                <Link href="#" style={{ color: '#888888', fontSize: '0.85rem', textDecoration: 'none', transition: 'color 0.2s' }}
+            {[
+              { label: 'How it works', href: '/#how-it-works' },
+              { label: 'Pricing', href: '/#pricing' },
+              { label: 'Sample report', href: '/#sample-report' },
+              { label: 'Blog', href: '/blog' },
+            ].map(({ label, href }) => (
+              <div key={label} style={{ marginBottom: '0.75rem' }}>
+                <Link href={href} style={{ color: '#888888', fontSize: '0.85rem', textDecoration: 'none', transition: 'color 0.2s' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#F5F0E8'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#888888'; }}>
-                  {link}
+                  {label}
                 </Link>
               </div>
             ))}
@@ -47,12 +52,17 @@ export default function Footer() {
           {/* Company Links */}
           <div>
             <div style={{ fontSize: '0.65rem', color: '#777777', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>Company</div>
-            {['About', 'Contact', 'Privacy policy', 'Terms of service'].map(link => (
-              <div key={link} style={{ marginBottom: '0.75rem' }}>
-                <Link href="#" style={{ color: '#888888', fontSize: '0.85rem', textDecoration: 'none', transition: 'color 0.2s' }}
+            {[
+              { label: 'About', href: '/about' },
+              { label: 'Contact', href: 'mailto:hello@presenzia.ai' },
+              { label: 'Privacy policy', href: '/privacy' },
+              { label: 'Terms of service', href: '/terms' },
+            ].map(({ label, href }) => (
+              <div key={label} style={{ marginBottom: '0.75rem' }}>
+                <Link href={href} style={{ color: '#888888', fontSize: '0.85rem', textDecoration: 'none', transition: 'color 0.2s' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#F5F0E8'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#888888'; }}>
-                  {link}
+                  {label}
                 </Link>
               </div>
             ))}

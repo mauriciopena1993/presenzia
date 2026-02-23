@@ -131,48 +131,28 @@ function SuccessContent() {
         fontSize: '1rem',
         maxWidth: '500px',
         lineHeight: 1.7,
-        marginBottom: '3rem',
+        marginBottom: '2.5rem',
       }}>
-        Your first AI visibility audit is being prepared. You&apos;ll receive your report by email within 48 hours. Check your inbox — we&apos;ll send you a confirmation shortly.
+        One last step — tell us about your business so we can run your AI visibility audit.
       </p>
 
-      <div style={{
-        padding: '1.5rem 2.5rem',
-        background: '#0f1107',
-        border: '1px solid #3a4a0f',
-        maxWidth: '400px',
-        width: '100%',
-        marginBottom: '3rem',
-      }}>
-        <div style={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
-          What happens next
-        </div>
-        <ul style={{ listStyle: 'none', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-          {[
-            'Confirmation email sent to you',
-            'Our team prepares your audit brief',
-            'AI platforms tested across 100+ prompts',
-            'Report delivered within 48 hours',
-          ].map((step, i) => (
-            <li key={i} style={{ display: 'flex', gap: '0.75rem', fontSize: '0.875rem', color: '#AAAAAA', alignItems: 'flex-start' }}>
-              <span style={{ color: '#C9A84C', flexShrink: 0, fontWeight: 600 }}>{i + 1}.</span>
-              {step}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <Link href="/" style={{
-        padding: '0.875rem 2rem',
+      <Link href={`/onboarding?session_id=${sessionId}&plan=${plan}`} style={{
+        padding: '1rem 2.5rem',
         background: '#C9A84C',
         color: '#0A0A0A',
-        fontWeight: 600,
-        fontSize: '0.9rem',
+        fontWeight: 700,
+        fontSize: '1rem',
         textDecoration: 'none',
         letterSpacing: '0.02em',
+        marginBottom: '1.5rem',
+        display: 'inline-block',
       }}>
-        Back to home →
+        Tell us about your business →
       </Link>
+
+      <p style={{ color: '#444', fontSize: '0.8rem', marginBottom: '3rem' }}>
+        Takes 30 seconds &mdash; needed to run your audit
+      </p>
     </div>
   );
 }
