@@ -15,14 +15,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = getBlogPost(slug);
   if (!post) return {};
+  const url = `https://presenzia.ai/blog/${slug}`;
   return {
     title: `${post.title} | presenzia.ai`,
     description: post.description,
+    alternates: { canonical: url },
     openGraph: {
       title: post.title,
       description: post.description,
       type: 'article',
       publishedTime: post.date,
+      url,
+      images: [{ url: 'https://presenzia.ai/og-image.png', width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.description,
+      images: ['https://presenzia.ai/og-image.png'],
     },
   };
 }
