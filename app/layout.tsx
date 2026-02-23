@@ -31,11 +31,20 @@ export const metadata: Metadata = {
     siteName: "presenzia.ai",
     type: "website",
     locale: "en_GB",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "presenzia.ai - AI Search Visibility Audits for UK Businesses",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "presenzia.ai | AI Search Visibility for UK Businesses",
     description: "Find out if AI search engines recommend your business.",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
