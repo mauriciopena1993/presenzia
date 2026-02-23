@@ -340,100 +340,110 @@ export default function DashboardPage() {
     );
   }
 
-  // Starter plan: no dashboard access — show upsell
+  // Starter plan: limited portal — report downloads + upsell
   if (client?.plan === 'starter') {
+    const completedReports = history.filter(r => r.status === 'completed');
     return (
       <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'var(--font-inter, Inter, sans-serif)', color: '#F5F0E8' }}>
         {/* Nav */}
-        <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.2rem', color: '#F5F0E8', textDecoration: 'none' }}>
-            presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
-          </Link>
-          <button
-            onClick={handleSignOut}
-            style={{ background: 'none', border: '1px solid #2a2a2a', color: '#666', padding: '0.4rem 1rem', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem' }}
-          >
+        <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: '#0A0A0A', zIndex: 50 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.2rem', color: '#F5F0E8', textDecoration: 'none' }}>
+              presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
+            </Link>
+            <div style={{ fontSize: '0.75rem', color: '#555', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              {client.business_name || client.email}
+              <span style={{ padding: '2px 8px', background: '#1a1a1a', border: '1px solid #222', fontSize: '0.65rem', color: '#777', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Starter</span>
+            </div>
+          </div>
+          <button onClick={handleSignOut} style={{ background: 'none', border: '1px solid #2a2a2a', color: '#666', padding: '0.4rem 1rem', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem' }}>
             Sign out
           </button>
         </div>
 
-        <div style={{ maxWidth: '760px', margin: '0 auto', padding: '4rem 2rem' }}>
-          {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
-              Starter plan
-            </div>
-            <h1 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: '#F5F0E8', fontWeight: 600, marginBottom: '1rem', lineHeight: 1.2 }}>
-              The live dashboard isn&apos;t included in your plan
-            </h1>
-            <p style={{ color: '#AAAAAA', fontSize: '0.975rem', lineHeight: 1.75, maxWidth: '520px', margin: '0 auto' }}>
-              Your Starter plan delivers a monthly PDF report by email — no dashboard access. Upgrade to Growth or Premium to unlock your live dashboard, track progress over time, and get AI-powered guidance on improving your visibility.
-            </p>
-          </div>
+        <div style={{ maxWidth: '860px', margin: '0 auto', padding: '2.5rem 2rem 4rem' }}>
 
-          {/* Plan cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
-            {/* Growth */}
-            <div style={{ background: '#0D0D0D', border: '1px solid #2a2a2a', padding: '1.75rem', position: 'relative' }}>
-              <div style={{ fontSize: '0.65rem', color: '#C9A84C', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Growth</div>
-              <div style={{ fontSize: '2rem', color: '#F5F0E8', fontWeight: 700, marginBottom: '0.25rem' }}>£199<span style={{ fontSize: '0.875rem', color: '#666', fontWeight: 400 }}>/mo</span></div>
-              <p style={{ color: '#777', fontSize: '0.8rem', marginBottom: '1.5rem' }}>Weekly audits + live dashboard</p>
-              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1.75rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                {[
-                  'Live client dashboard',
-                  'Weekly AI search audits',
-                  'Competitor deep-dive analysis',
-                  'Full report history & progress tracking',
-                  'PDF reports + live online view',
-                  'AI chat — ask questions about your results',
-                ].map(f => (
-                  <li key={f} style={{ fontSize: '0.85rem', color: '#CCCCCC', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                    <span style={{ color: '#C9A84C', flexShrink: 0 }}>✓</span> {f}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/#pricing"
-                style={{ display: 'block', textAlign: 'center', padding: '0.75rem', background: '#C9A84C', color: '#0A0A0A', fontWeight: 700, fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.03em' }}
-              >
-                Upgrade to Growth →
-              </Link>
-            </div>
-
-            {/* Premium */}
-            <div style={{ background: '#0D0D0D', border: '1px solid #C9A84C44', padding: '1.75rem', position: 'relative' }}>
-              <div style={{ position: 'absolute', top: '-1px', right: '1.5rem', background: '#C9A84C', color: '#0A0A0A', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.1em', padding: '3px 10px', textTransform: 'uppercase' }}>
-                Best value
+          {/* Report repository */}
+          <div style={{ marginBottom: '3rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '1.25rem' }}>
+              <div>
+                <div style={{ fontSize: '0.65rem', color: '#666', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>Report library</div>
+                <h2 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.5rem', color: '#F5F0E8', fontWeight: 600 }}>Your AI visibility reports</h2>
               </div>
-              <div style={{ fontSize: '0.65rem', color: '#C9A84C', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Premium</div>
-              <div style={{ fontSize: '2rem', color: '#F5F0E8', fontWeight: 700, marginBottom: '0.25rem' }}>£599<span style={{ fontSize: '0.875rem', color: '#666', fontWeight: 400 }}>/mo</span></div>
-              <p style={{ color: '#777', fontSize: '0.8rem', marginBottom: '1.5rem' }}>Everything in Growth, plus hands-on support</p>
-              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1.75rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                {[
-                  'Everything in Growth',
-                  'Daily dashboard updates',
-                  'Dedicated account manager',
-                  'Monthly 1:1 strategy call',
-                  'Custom improvement action plan',
-                  'Priority report delivery',
-                  'Industry benchmarking',
-                ].map(f => (
-                  <li key={f} style={{ fontSize: '0.85rem', color: '#CCCCCC', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                    <span style={{ color: '#C9A84C', flexShrink: 0 }}>✓</span> {f}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/#pricing"
-                style={{ display: 'block', textAlign: 'center', padding: '0.75rem', background: 'transparent', color: '#C9A84C', fontWeight: 700, fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.03em', border: '1px solid #C9A84C' }}
-              >
-                Upgrade to Premium →
-              </Link>
+              <span style={{ fontSize: '0.75rem', color: '#555' }}>{completedReports.length} report{completedReports.length !== 1 ? 's' : ''}</span>
+            </div>
+
+            <div style={{ border: '1px solid #111' }}>
+              {completedReports.length === 0 ? (
+                <div style={{ padding: '3rem', textAlign: 'center', color: '#555' }}>
+                  {pendingJob
+                    ? 'Your first report is being prepared — check back shortly.'
+                    : 'Your first report will arrive by email once your audit is complete.'}
+                </div>
+              ) : (
+                completedReports.map((report, i) => (
+                  <div key={report.id} style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    padding: '1rem 1.25rem',
+                    borderBottom: i < completedReports.length - 1 ? '1px solid #111' : 'none',
+                    background: i === 0 ? '#0D0D0D' : 'transparent',
+                  }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.2rem' }}>
+                        <span style={{ fontSize: '0.9rem', color: '#F5F0E8' }}>
+                          {report.completed_at ? fmt(report.completed_at) : fmt(report.created_at)}
+                        </span>
+                        {i === 0 && (
+                          <span style={{ fontSize: '0.6rem', padding: '2px 8px', background: '#1a1400', border: '1px solid #3a2e00', color: '#C9A84C', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Latest</span>
+                        )}
+                      </div>
+                      {report.overall_score !== null && report.grade && (
+                        <div style={{ fontSize: '0.75rem', color: '#555' }}>
+                          Score: <span style={{ color: '#C9A84C' }}>{report.overall_score}/100</span> · Grade {report.grade}
+                        </div>
+                      )}
+                    </div>
+                    {report.report_path ? (
+                      <button
+                        onClick={() => handleDownloadReport(report.id)}
+                        style={{ background: 'none', border: '1px solid #333', color: '#888', padding: '0.5rem 1rem', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#C9A84C'; (e.currentTarget as HTMLElement).style.borderColor = '#C9A84C'; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#888'; (e.currentTarget as HTMLElement).style.borderColor = '#333'; }}
+                      >
+                        ↓ Download PDF
+                      </button>
+                    ) : (
+                      <span style={{ fontSize: '0.75rem', color: '#444' }}>Processing…</span>
+                    )}
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
-          <p style={{ textAlign: 'center', color: '#444', fontSize: '0.8rem' }}>
-            Questions? <a href="mailto:hello@presenzia.ai" style={{ color: '#666', textDecoration: 'none' }}>Email us at hello@presenzia.ai</a>
+          {/* Upgrade banner */}
+          <div style={{ marginBottom: '1.25rem', padding: '1rem 1.5rem', background: '#0a0a00', border: '1px solid #2a2000', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <div style={{ fontSize: '0.8rem', color: '#C9A84C', fontWeight: 600, marginBottom: '2px' }}>Want a live dashboard?</div>
+              <div style={{ fontSize: '0.8rem', color: '#777' }}>See your scores online, track progress month by month, and get weekly updates.</div>
+            </div>
+            <Link href="/#pricing" style={{ fontSize: '0.8rem', color: '#C9A84C', textDecoration: 'none', whiteSpace: 'nowrap', border: '1px solid #C9A84C44', padding: '0.4rem 1rem' }}>
+              View Growth plan →
+            </Link>
+          </div>
+
+          <div style={{ padding: '1rem 1.5rem', background: '#0a000a', border: '1px solid #1a001a', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <div style={{ fontSize: '0.8rem', color: '#9b6bcc', fontWeight: 600, marginBottom: '2px' }}>Want AI-powered guidance?</div>
+              <div style={{ fontSize: '0.8rem', color: '#777' }}>Ask an AI expert questions about your report — what the scores mean and exactly what to do next.</div>
+            </div>
+            <Link href="/#pricing" style={{ fontSize: '0.8rem', color: '#9b6bcc', textDecoration: 'none', whiteSpace: 'nowrap', border: '1px solid #9b6bcc44', padding: '0.4rem 1rem' }}>
+              View Growth & Premium →
+            </Link>
+          </div>
+
+          <p style={{ textAlign: 'center', color: '#333', fontSize: '0.75rem', marginTop: '2.5rem' }}>
+            Questions about upgrading? <a href="mailto:hello@presenzia.ai" style={{ color: '#555', textDecoration: 'none' }}>hello@presenzia.ai</a>
           </p>
         </div>
       </div>
