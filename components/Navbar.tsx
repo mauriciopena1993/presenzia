@@ -62,6 +62,11 @@ export default function Navbar() {
           onMouseLeave={e => (e.currentTarget.style.color = '#888')}>
           Sample report
         </Link>
+        <Link href="/blog" style={{ color: '#888', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
+          onMouseEnter={e => (e.currentTarget.style.color = '#F5F0E8')}
+          onMouseLeave={e => (e.currentTarget.style.color = '#888')}>
+          Blog
+        </Link>
         <Link href="/dashboard" style={{ color: '#888', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
           onMouseEnter={e => (e.currentTarget.style.color = '#F5F0E8')}
           onMouseLeave={e => (e.currentTarget.style.color = '#888')}>
@@ -112,6 +117,7 @@ export default function Navbar() {
             { label: 'How it works', href: '#how-it-works' },
             { label: 'Pricing', href: '#pricing' },
             { label: 'Sample report', href: '#sample-report' },
+            { label: 'Blog', href: '/blog' },
             { label: 'Client login', href: '/dashboard' },
           ].map((item) => (
             <Link key={item.label} href={item.href}

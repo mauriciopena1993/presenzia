@@ -25,6 +25,7 @@ const BUSINESS_TYPES = [
 const planNames: Record<string, string> = {
   starter: 'Starter',
   growth: 'Growth',
+  premium: 'Premium',
 };
 
 function OnboardingForm() {
@@ -32,6 +33,8 @@ function OnboardingForm() {
   const plan = searchParams.get('plan') || 'starter';
 
   const [form, setForm] = useState({
+    email: '',
+    contactName: '',
     businessName: '',
     businessType: '',
     location: '',
@@ -78,9 +81,11 @@ function OnboardingForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           plan,
+          email: form.email,
+          contact_name: form.contactName || null,
           business_name: form.businessName,
           business_type: form.businessType,
-          location: form.location,
+          location: form.location || null,
           website: form.website,
           keywords: form.keywords,
         }),
@@ -91,6 +96,7 @@ function OnboardingForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           plan,
+          email: form.email,
           business_name: form.businessName,
           business_type: form.businessType,
           location: form.location,
@@ -134,6 +140,12 @@ function OnboardingForm() {
     marginBottom: '0.5rem',
   };
 
+  const hintStyle: React.CSSProperties = {
+    fontSize: '0.75rem',
+    color: '#555',
+    marginTop: '0.4rem',
+  };
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -173,6 +185,22 @@ function OnboardingForm() {
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
+            {/* Email */}
+            <div>
+              <label style={labelStyle}>
+                Your email <span style={{ color: '#C9A84C' }}>*</span>
+              </label>
+              <input
+                type="email"
+                placeholder="e.g. jane@yourbusiness.co.uk"
+                required
+                value={form.email}
+                onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                style={inputStyle}
+              />
+              <div style={hintStyle}>We'll send your audit report here</div>
+            </div>
+
             {/* Business Name */}
             <div>
               <label style={labelStyle}>
@@ -209,19 +237,30 @@ function OnboardingForm() {
             {/* Location */}
             <div>
               <label style={labelStyle}>
-                City / Location <span style={{ color: '#C9A84C' }}>*</span>
+                City / Location <span style={{ color: '#555' }}>(optional)</span>
               </label>
               <input
                 type="text"
                 placeholder="e.g. London, Manchester, Edinburgh"
-                required
                 value={form.location}
                 onChange={e => setForm(f => ({ ...f, location: e.target.value }))}
                 style={inputStyle}
               />
-              <div style={{ fontSize: '0.75rem', color: '#555', marginTop: '0.4rem' }}>
-                The city or area your business primarily serves
+              <div style={hintStyle}>
+                The city or area you primarily serve. Leave blank if you operate entirely online.
               </div>
+            </div>
+
+            {/* Contact Name */}
+            <div>
+              <label style={labelStyle}>Your name <span style={{ color: '#555' }}>(optional)</span></label>
+              <input
+                type="text"
+                placeholder="e.g. Jane Smith"
+                value={form.contactName}
+                onChange={e => setForm(f => ({ ...f, contactName: e.target.value }))}
+                style={inputStyle}
+              />
             </div>
 
             {/* Website */}
@@ -246,7 +285,7 @@ function OnboardingForm() {
                 onChange={e => setForm(f => ({ ...f, keywords: e.target.value }))}
                 style={inputStyle}
               />
-              <div style={{ fontSize: '0.75rem', color: '#555', marginTop: '0.4rem' }}>
+              <div style={hintStyle}>
                 Terms you want AI to associate with your business, comma-separated
               </div>
             </div>

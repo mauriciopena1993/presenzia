@@ -11,21 +11,21 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 export const PLANS = {
   starter: {
     name: 'Starter',
-    price: '£149',
+    price: '£99',
     priceId: process.env.STRIPE_PRICE_STARTER!,
-    description: 'Monthly AI visibility audit',
+    description: 'Monthly PDF report',
   },
   growth: {
     name: 'Growth',
-    price: '£299',
+    price: '£199',
     priceId: process.env.STRIPE_PRICE_GROWTH!,
-    description: 'Weekly AI visibility audits + dashboard',
+    description: 'Client dashboard + weekly updates',
   },
   premium: {
     name: 'Premium',
     price: '£599',
     priceId: process.env.STRIPE_PRICE_PREMIUM!,
-    description: 'Full service + monthly strategy calls',
+    description: 'Daily updates + account manager + monthly call',
   },
 } as const;
 

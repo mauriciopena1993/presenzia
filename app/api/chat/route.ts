@@ -12,9 +12,9 @@ Every customer gets a monthly PDF report with:
 - Specific, actionable recommendations to improve
 
 ## Plans and pricing
-- **Starter** — £29/month: audits 1 AI platform, monthly report
-- **Growth** — £59/month: all 4 platforms, competitor analysis, monthly report
-- **Premium** — £99/month: all 4 platforms, weekly reports, priority support
+- **Starter** — £99/month: monthly PDF report, audit across 4 AI platforms
+- **Growth** — £199/month: weekly audits, client dashboard access, competitor analysis
+- **Premium** — £599/month: daily dashboard updates, dedicated account manager, monthly strategy call
 
 All plans are monthly subscriptions. Cancel any time.
 
@@ -52,6 +52,15 @@ export async function POST(req: NextRequest) {
   // Keep last 10 messages to limit context
   const recentMessages = messages.slice(-10);
 
+  // Anthropic API requires messages to start with role: 'user'
+  // Strip any leading assistant messages (e.g. the initial greeting)
+  const firstUserIdx = recentMessages.findIndex(m => m.role === 'user');
+  const apiMessages = firstUserIdx >= 0 ? recentMessages.slice(firstUserIdx) : recentMessages;
+
+  if (apiMessages.length === 0) {
+    return NextResponse.json({ error: 'No user message found' }, { status: 400 });
+  }
+
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -63,7 +72,7 @@ export async function POST(req: NextRequest) {
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 400,
       system: SYSTEM_PROMPT,
-      messages: recentMessages,
+      messages: apiMessages,
     }),
   });
 

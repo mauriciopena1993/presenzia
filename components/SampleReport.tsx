@@ -28,10 +28,10 @@ export default function SampleReport() {
               marginBottom: '1.25rem',
               lineHeight: 1.2,
             }}>
-              See exactly what your clients receive
+              See exactly what you'll receive
             </h2>
             <p style={{ color: '#AAAAAA', fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '2rem' }}>
-              Every report is clear, professional, and designed to be understood by any business owner. No technical knowledge required. Your clients open it, see their score, understand the gaps, and know exactly what to do next.
+              Every report is clear, professional, and designed to be understood without any technical knowledge. You open it, see your score, understand the gaps, and know exactly what to do next.
             </p>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2.5rem' }}>
               {[

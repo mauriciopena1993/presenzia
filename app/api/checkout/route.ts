@@ -9,8 +9,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
     }
 
-    if (!business_name || !business_type || !location) {
-      return NextResponse.json({ error: 'Business name, type, and location are required' }, { status: 400 });
+    if (!business_name || !business_type) {
+      return NextResponse.json({ error: 'Business name and type are required' }, { status: 400 });
     }
 
     const selectedPlan = PLANS[plan as PlanKey];
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
         plan,
         business_name: business_name.trim(),
         business_type: business_type.trim(),
-        location: location.trim(),
+        location: (location || '').trim(),
         website: website?.trim() || '',
         keywords: keywords?.trim() || '',
       },
