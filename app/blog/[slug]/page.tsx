@@ -1,0 +1,145 @@
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+import { BLOG_POSTS, getBlogPost } from '@/lib/blog-posts';
+
+interface Props {
+  params: Promise<{ slug: string }>;
+}
+
+export async function generateStaticParams() {
+  return BLOG_POSTS.map(p => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const post = getBlogPost(slug);
+  if (!post) return {};
+  return {
+    title: `${post.title} | presenzia.ai`,
+    description: post.description,
+    openGraph: {
+      title: post.title,
+      description: post.description,
+      type: 'article',
+      publishedTime: post.date,
+    },
+  };
+}
+
+function fmtDate(d: string) {
+  return new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function renderContent(content: string) {
+  const lines = content.split('\n');
+  const elements: React.ReactNode[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    if (line.startsWith('## ')) {
+      elements.push(
+        <h2 key={i} style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.4rem', color: '#F5F0E8', fontWeight: 600, marginTop: '2.5rem', marginBottom: '0.75rem', lineHeight: 1.3 }}>
+          {line.slice(3)}
+        </h2>
+      );
+    } else if (line.startsWith('**') && line.endsWith('**')) {
+      elements.push(
+        <p key={i} style={{ color: '#F5F0E8', fontWeight: 600, fontSize: '1rem', lineHeight: 1.7, marginBottom: '0.5rem' }}>
+          {line.slice(2, -2)}
+        </p>
+      );
+    } else if (line.startsWith('- ')) {
+      const items: string[] = [line.slice(2)];
+      while (i + 1 < lines.length && lines[i + 1].startsWith('- ')) {
+        i++;
+        items.push(lines[i].slice(2));
+      }
+      elements.push(
+        <ul key={i} style={{ paddingLeft: '1.5rem', marginBottom: '1.25rem' }}>
+          {items.map((item, j) => {
+            const parts = item.split(/\*\*(.*?)\*\*/g);
+            return (
+              <li key={j} style={{ color: '#AAAAAA', fontSize: '1rem', lineHeight: 1.7, marginBottom: '0.4rem' }}>
+                {parts.map((part, k) => k % 2 === 1 ? <strong key={k} style={{ color: '#F5F0E8' }}>{part}</strong> : part)}
+              </li>
+            );
+          })}
+        </ul>
+      );
+    } else if (line.trim() === '') {
+      // skip blank lines
+    } else {
+      // Regular paragraph — handle **bold** inline
+      const parts = line.split(/\*\*(.*?)\*\*/g);
+      elements.push(
+        <p key={i} style={{ color: '#AAAAAA', fontSize: '1rem', lineHeight: 1.75, marginBottom: '1.25rem' }}>
+          {parts.map((part, k) => k % 2 === 1 ? <strong key={k} style={{ color: '#F5F0E8' }}>{part}</strong> : part)}
+        </p>
+      );
+    }
+
+    i++;
+  }
+
+  return elements;
+}
+
+export default async function BlogPostPage({ params }: Props) {
+  const { slug } = await params;
+  const post = getBlogPost(slug);
+  if (!post) notFound();
+
+  return (
+    <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'var(--font-inter, Inter, sans-serif)' }}>
+      <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1.25rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', color: '#F5F0E8', textDecoration: 'none' }}>
+          presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
+        </Link>
+        <Link href="/blog" style={{ color: '#666', fontSize: '0.85rem', textDecoration: 'none' }}>← All posts</Link>
+      </div>
+
+      <article style={{ maxWidth: '680px', margin: '0 auto', padding: '4rem 2rem 6rem' }}>
+        {/* Meta */}
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '0.65rem', color: '#C9A84C', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+            {post.category}
+          </span>
+          <span style={{ fontSize: '0.75rem', color: '#444' }}>{fmtDate(post.date)}</span>
+          <span style={{ fontSize: '0.75rem', color: '#444' }}>{post.readTime}</span>
+        </div>
+
+        {/* Title */}
+        <h1 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: '#F5F0E8', fontWeight: 600, marginBottom: '1.5rem', lineHeight: 1.2 }}>
+          {post.title}
+        </h1>
+
+        {/* Description */}
+        <p style={{ color: '#888', fontSize: '1.05rem', lineHeight: 1.7, marginBottom: '3rem', borderBottom: '1px solid #1A1A1A', paddingBottom: '2rem' }}>
+          {post.description}
+        </p>
+
+        {/* Content */}
+        <div>{renderContent(post.content)}</div>
+
+        {/* CTA */}
+        <div style={{ marginTop: '4rem', padding: '2rem', background: '#111', border: '1px solid #2a2a2a' }}>
+          <div style={{ fontSize: '0.7rem', letterSpacing: '0.12em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+            Find out where you stand
+          </div>
+          <p style={{ color: '#F5F0E8', fontSize: '1.05rem', fontWeight: 600, marginBottom: '0.5rem', fontFamily: "var(--font-playfair, 'Playfair Display', serif)" }}>
+            See your AI visibility score in 24 hours
+          </p>
+          <p style={{ color: '#888', fontSize: '0.875rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
+            We test your business across ChatGPT, Claude, Perplexity, and Google AI using the exact prompts real customers type.
+          </p>
+          <Link href="/#pricing" style={{ display: 'inline-block', padding: '0.75rem 1.75rem', background: '#C9A84C', color: '#0A0A0A', fontWeight: 700, fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em' }}>
+            See plans →
+          </Link>
+        </div>
+      </article>
+    </div>
+  );
+}

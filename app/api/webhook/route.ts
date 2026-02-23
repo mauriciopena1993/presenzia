@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { supabase } from '@/lib/supabase';
 import Stripe from 'stripe';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -91,6 +94,41 @@ export async function POST(req: NextRequest) {
         }
 
         console.log(`Audit job queued: ${job.id}`);
+
+        // Mark any matching lead as converted
+        await supabase
+          .from('leads')
+          .update({ converted_at: new Date().toISOString() })
+          .eq('email', email)
+          .is('converted_at', null);
+
+        // Notify owner
+        if (process.env.RESEND_API_KEY) {
+          const planLabels: Record<string, string> = { starter: 'Starter', growth: 'Growth', premium: 'Premium' };
+          resend.emails.send({
+            from: 'presenzia.ai <reports@presenzia.ai>',
+            to: 'hello@presenzia.ai',
+            subject: `New client: ${businessName} (${planLabels[plan] || plan})`,
+            html: `
+              <div style="font-family: Inter, sans-serif; max-width: 560px; margin: 0 auto; background: #0A0A0A; color: #F5F0E8; padding: 40px;">
+                <div style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">presenzia<span style="color: #C9A84C;">.ai</span></div>
+                <div style="color: #555; font-size: 12px; margin-bottom: 32px;">Admin notification</div>
+                <h2 style="font-size: 20px; color: #F5F0E8; margin-bottom: 4px;">New client signed up</h2>
+                <div style="background: #111; border: 1px solid #222; padding: 20px; margin: 20px 0;">
+                  <table style="width: 100%; border-collapse: collapse;">
+                    <tr><td style="color: #666; font-size: 12px; padding: 6px 0; width: 130px;">Business</td><td style="color: #F5F0E8; font-size: 13px;">${businessName}</td></tr>
+                    <tr><td style="color: #666; font-size: 12px; padding: 6px 0;">Type</td><td style="color: #F5F0E8; font-size: 13px;">${businessType}</td></tr>
+                    <tr><td style="color: #666; font-size: 12px; padding: 6px 0;">Location</td><td style="color: #F5F0E8; font-size: 13px;">${location}</td></tr>
+                    <tr><td style="color: #666; font-size: 12px; padding: 6px 0;">Email</td><td style="color: #F5F0E8; font-size: 13px;">${email}</td></tr>
+                    <tr><td style="color: #666; font-size: 12px; padding: 6px 0;">Plan</td><td style="color: #C9A84C; font-size: 13px; font-weight: 600;">${planLabels[plan] || plan}</td></tr>
+                    ${website ? `<tr><td style="color: #666; font-size: 12px; padding: 6px 0;">Website</td><td style="color: #F5F0E8; font-size: 13px;">${website}</td></tr>` : ''}
+                  </table>
+                </div>
+                <p style="color: #555; font-size: 11px;">Audit job ${job.id} has been queued and will run automatically.</p>
+              </div>
+            `,
+          }).catch(err => console.error('Failed to send owner notification:', err));
+        }
 
         // Fire-and-forget: trigger the audit processor
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';

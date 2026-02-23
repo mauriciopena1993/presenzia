@@ -72,6 +72,20 @@ function OnboardingForm() {
     setError('');
 
     try {
+      // Save lead for funnel tracking (fire-and-forget, never blocks checkout)
+      fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan,
+          business_name: form.businessName,
+          business_type: form.businessType,
+          location: form.location,
+          website: form.website,
+          keywords: form.keywords,
+        }),
+      }).catch(() => {});
+
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
