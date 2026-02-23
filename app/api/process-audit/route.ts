@@ -144,35 +144,46 @@ async function sendReportEmail(
     await resend.emails.send({
       from: 'presenzia.ai <reports@presenzia.ai>',
       to: email,
-      subject: `Your AI Visibility Report | ${businessName}`,
-      html: `
-        <div style="font-family: Inter, sans-serif; max-width: 600px; margin: 0 auto; background: #0A0A0A; color: #F5F0E8; padding: 40px;">
-          <div style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">presenzia<span style="color: #C9A84C;">.ai</span></div>
-          <hr style="border-color: #222; margin: 20px 0;" />
+      subject: `Your AI Visibility Report is ready — ${businessName}`,
+      text: `Your AI Visibility Report for ${businessName} is ready.\n\nAI Visibility Score: ${score}/100 — Grade ${grade}\n\nYour full report is attached as a PDF. It includes your platform-by-platform breakdown, competitor analysis, and actionable recommendations.\n\nLog in to your dashboard at https://presenzia.ai/dashboard to view your results online.\n\npresenzia.ai | Ketzal LTD (Co. No. 14570156)\nReport ID: ${jobId}`,
+      html: `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;">
+<tr><td align="center">
+<table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e0e0e0;max-width:560px;width:100%;">
+  <tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;">
+    <span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span>
+  </td></tr>
+  <tr><td style="padding:32px;">
+    <h1 style="font-size:20px;color:#111111;margin:0 0 12px;font-weight:700;">Your AI Visibility Report is ready</h1>
+    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.6;">We have completed your audit for <strong>${businessName}</strong>.</p>
 
-          <h1 style="font-size: 24px; color: #F5F0E8; margin-bottom: 8px;">Your AI Visibility Report is ready</h1>
-          <p style="color: #AAAAAA; font-size: 15px; line-height: 1.6;">
-            We've completed your audit for <strong style="color: #F5F0E8;">${businessName}</strong>.
-          </p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F9F9F9;border:1px solid #E0E0E0;margin:0 0 24px;">
+      <tr><td style="padding:24px;text-align:center;">
+        <div style="font-size:52px;font-weight:700;color:#C9A84C;line-height:1;font-family:Arial,sans-serif;">${score}</div>
+        <div style="font-size:12px;color:#888888;margin:4px 0 12px;">/ 100 AI Visibility Score</div>
+        <div style="display:inline-block;background:#C9A84C;color:#0A0A0A;font-weight:700;padding:5px 18px;font-size:13px;">Grade ${grade}</div>
+      </td></tr>
+    </table>
 
-          <div style="background: #111; border: 1px solid #222; padding: 24px; margin: 24px 0; text-align: center;">
-            <div style="font-size: 48px; color: #C9A84C; font-weight: 700; line-height: 1;">${score}</div>
-            <div style="font-size: 13px; color: #777; margin-top: 4px;">/ 100 AI Visibility Score</div>
-            <div style="display: inline-block; background: #C9A84C; color: #0A0A0A; font-weight: 700;
-                        padding: 4px 16px; margin-top: 12px; font-size: 14px;">Grade ${grade}</div>
-          </div>
+    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Your full report is attached to this email as a PDF. It includes your platform-by-platform breakdown, competitor analysis, and specific recommendations to improve your visibility.</p>
 
-          <p style="color: #AAAAAA; font-size: 14px; line-height: 1.7;">
-            Your full report is attached to this email as a PDF. It includes your platform-by-platform breakdown,
-            competitor analysis, and actionable recommendations.
-          </p>
-
-          <p style="color: #666; font-size: 12px; margin-top: 32px;">
-            presenzia.ai | Ketzal LTD (Co. No. 14570156)<br />
-            Report ID: ${jobId}
-          </p>
-        </div>
-      `,
+    <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+      <tr><td style="background:#0A0A0A;padding:12px 24px;">
+        <a href="https://presenzia.ai/dashboard" style="color:#C9A84C;text-decoration:none;font-size:13px;font-weight:700;">View your report online →</a>
+      </td></tr>
+    </table>
+  </td></tr>
+  <tr><td style="padding:16px 32px;background:#F9F9F9;border-top:1px solid #E0E0E0;">
+    <p style="font-size:11px;color:#AAAAAA;margin:0;">presenzia.ai · Ketzal LTD (Co. No. 14570156) · <a href="mailto:hello@presenzia.ai" style="color:#C9A84C;text-decoration:none;">hello@presenzia.ai</a></p>
+    <p style="font-size:10px;color:#CCCCCC;margin:4px 0 0;">Report ID: ${jobId}</p>
+  </td></tr>
+</table>
+</td></tr>
+</table>
+</body></html>`,
       attachments: [
         {
           filename: `presenzia-report-${businessName.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,

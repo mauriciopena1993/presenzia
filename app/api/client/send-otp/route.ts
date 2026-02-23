@@ -30,33 +30,42 @@ export async function POST(req: NextRequest) {
 
   // Send the code by email
   if (process.env.RESEND_API_KEY) {
-    await resend.emails.send({
+    const businessLine = client.business_name ? `\nSigning in as: ${client.business_name}` : '';
+    const result = await resend.emails.send({
       from: 'presenzia.ai <reports@presenzia.ai>',
       to: normalizedEmail,
-      subject: `Your login code: ${code}`,
-      html: `
-        <div style="font-family: Inter, sans-serif; max-width: 480px; margin: 0 auto; background: #0A0A0A; color: #F5F0E8; padding: 40px;">
-          <div style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">
-            presenzia<span style="color: #C9A84C;">.ai</span>
-          </div>
-          <div style="color: #555; font-size: 12px; margin-bottom: 32px;">Client portal</div>
-
-          <h1 style="font-size: 20px; color: #F5F0E8; margin-bottom: 8px;">Your login code</h1>
-          <p style="color: #AAAAAA; font-size: 14px; margin-bottom: 24px; line-height: 1.6;">
-            Enter this code to access your dashboard. It expires in 10 minutes.
-          </p>
-
-          <div style="background: #111; border: 1px solid #222; padding: 24px; text-align: center; margin-bottom: 24px;">
-            <span style="font-size: 36px; font-weight: 700; color: #C9A84C; letter-spacing: 0.2em;">${code}</span>
-          </div>
-
-          ${client.business_name ? `<p style="color: #666; font-size: 13px;">Signing in as: ${client.business_name}</p>` : ''}
-          <p style="color: #444; font-size: 12px; margin-top: 24px;">
-            If you didn't request this, you can safely ignore this email.
-          </p>
-        </div>
-      `,
-    }).catch(err => console.error('Failed to send OTP email:', err));
+      subject: `Your presenzia.ai login code: ${code}`,
+      text: `Your presenzia.ai login code is: ${code}\n\nThis code expires in 10 minutes.${businessLine}\n\nIf you did not request this, you can safely ignore this email.\n\npresenzia.ai`,
+      html: `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;">
+<tr><td align="center">
+<table width="480" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e0e0e0;max-width:480px;width:100%;">
+  <tr><td style="padding:32px 32px 0;border-bottom:2px solid #C9A84C;">
+    <span style="font-size:18px;font-weight:700;color:#0A0A0A;letter-spacing:-0.02em;">presenzia<span style="color:#C9A84C;">.ai</span></span>
+  </td></tr>
+  <tr><td style="padding:32px;">
+    <p style="font-size:14px;color:#555555;margin:0 0 8px;">Your login code</p>
+    <p style="font-size:13px;color:#888888;margin:0 0 24px;line-height:1.5;">Use the code below to access your dashboard. It expires in 10 minutes.</p>
+    <div style="background:#F9F9F9;border:1px solid #E0E0E0;padding:24px;text-align:center;margin:0 0 24px;letter-spacing:0.3em;">
+      <span style="font-size:36px;font-weight:700;color:#0A0A0A;font-family:Courier,monospace;">${code}</span>
+    </div>
+    ${client.business_name ? `<p style="font-size:13px;color:#888888;margin:0 0 16px;">Account: ${client.business_name}</p>` : ''}
+    <p style="font-size:12px;color:#AAAAAA;margin:0;line-height:1.6;">If you did not request this code, you can safely ignore this email.</p>
+  </td></tr>
+  <tr><td style="padding:16px 32px;background:#F9F9F9;border-top:1px solid #E0E0E0;">
+    <p style="font-size:11px;color:#AAAAAA;margin:0;">presenzia.ai · AI Visibility Audits · <a href="mailto:hello@presenzia.ai" style="color:#C9A84C;text-decoration:none;">hello@presenzia.ai</a></p>
+  </td></tr>
+</table>
+</td></tr>
+</table>
+</body></html>`,
+    });
+    if (result.error) {
+      console.error('Failed to send OTP email:', result.error);
+    }
   }
 
   const res = NextResponse.json({ ok: true });
