@@ -1,3 +1,4 @@
+import path from 'path';
 import {
   Document,
   Page,
@@ -10,13 +11,13 @@ import {
 import { AuditScore } from '../audit/scorer';
 import { AuditConfig } from '../audit/runner';
 
-// Register fonts
+// Register fonts — use local TTF files (woff2 is not supported by @react-pdf/renderer)
 Font.register({
   family: 'Inter',
   fonts: [
-    { src: 'https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2', fontWeight: 400 },
-    { src: 'https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuGKYAZ9hiA.woff2', fontWeight: 600 },
-    { src: 'https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuFuYAZ9hiA.woff2', fontWeight: 700 },
+    { src: path.join(process.cwd(), 'public', 'fonts', 'Inter-Regular.ttf'), fontWeight: 400 },
+    { src: path.join(process.cwd(), 'public', 'fonts', 'Inter-SemiBold.ttf'), fontWeight: 600 },
+    { src: path.join(process.cwd(), 'public', 'fonts', 'Inter-Bold.ttf'), fontWeight: 700 },
   ],
 });
 

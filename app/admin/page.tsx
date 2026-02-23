@@ -11,6 +11,7 @@ interface AuditJob {
   grade: string | null;
   completed_at: string | null;
   created_at: string;
+  error: string | null;
 }
 
 interface Client {
@@ -77,6 +78,7 @@ export default function AdminDashboard() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [retrying, setRetrying] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -108,6 +110,21 @@ export default function AdminDashboard() {
   const handleLogout = async () => {
     document.cookie = '__presenzia_admin=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     router.push('/admin/login');
+  };
+
+  const handleRetryAudit = async (jobId: string) => {
+    setRetrying(jobId);
+    try {
+      await fetch('/api/admin/retry-audit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jobId }),
+      });
+      // Reload data after triggering retry
+      setTimeout(() => window.location.reload(), 1500);
+    } finally {
+      setRetrying(null);
+    }
   };
 
   const activeClients = clients.filter(c => c.status === 'active').length;
@@ -231,14 +248,26 @@ export default function AdminDashboard() {
                     </td>
                     <td style={s.td}>
                       {latestJob ? (
-                        <Badge
-                          label={latestJob.status}
-                          color={
-                            latestJob.status === 'completed' ? '#3a7d44' :
-                            latestJob.status === 'running' ? '#C9A84C' :
-                            latestJob.status === 'failed' ? '#9b1a1a' : '#555'
-                          }
-                        />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          <Badge
+                            label={latestJob.status}
+                            color={
+                              latestJob.status === 'completed' ? '#3a7d44' :
+                              latestJob.status === 'running' ? '#C9A84C' :
+                              latestJob.status === 'failed' ? '#9b1a1a' : '#555'
+                            }
+                          />
+                          {latestJob.status === 'failed' && (
+                            <button
+                              onClick={() => handleRetryAudit(latestJob.id)}
+                              disabled={retrying === latestJob.id}
+                              title={latestJob.error || 'Retry audit'}
+                              style={{ fontSize: '0.65rem', padding: '2px 6px', background: 'none', border: '1px solid #555', color: '#888', cursor: 'pointer', fontFamily: 'inherit' }}
+                            >
+                              {retrying === latestJob.id ? '…' : 'Retry'}
+                            </button>
+                          )}
+                        </div>
                       ) : <span style={{ color: '#333' }}>—</span>}
                     </td>
                     <td style={s.td}>

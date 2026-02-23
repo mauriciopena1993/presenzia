@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
       location, website, keywords, stripe_customer_id,
       created_at, updated_at,
       audit_jobs (
-        id, status, overall_score, grade, completed_at, created_at
+        id, status, overall_score, grade, completed_at, created_at, error
       )
     `)
     .order('created_at', { ascending: false });
