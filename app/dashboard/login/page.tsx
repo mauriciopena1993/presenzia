@@ -149,9 +149,6 @@ export default function LoginPage() {
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
         <div style={{ width: '100%', maxWidth: '400px' }}>
           <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-            <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
-              Portal access
-            </div>
             <h1 style={{
               fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
               fontSize: 'clamp(1.75rem, 4vw, 2.25rem)',
@@ -160,7 +157,7 @@ export default function LoginPage() {
               marginBottom: '0.75rem',
               lineHeight: 1.2,
             }}>
-              {step === 'email' ? 'Sign in' : 'Enter your code'}
+              {step === 'email' ? 'Login' : 'Enter your code'}
             </h1>
             <p style={{ color: '#777', fontSize: '0.875rem', lineHeight: 1.6 }}>
               {step === 'email'
