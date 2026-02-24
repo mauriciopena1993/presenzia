@@ -88,8 +88,8 @@ function SuccessContent() {
         width: '80px',
         height: '80px',
         borderRadius: '50%',
-        background: '#0f1107',
-        border: '1px solid #3a4a0f',
+        background: 'rgba(201,168,76,0.06)',
+        border: '1px solid rgba(201,168,76,0.2)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -100,7 +100,7 @@ function SuccessContent() {
         ✓
       </div>
 
-      <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
+      <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
         Payment confirmed
       </div>
 
@@ -139,13 +139,13 @@ function SuccessContent() {
 
       <div style={{
         padding: '1.5rem 2.5rem',
-        background: '#0f1107',
-        border: '1px solid #3a4a0f',
+        background: 'rgba(201,168,76,0.06)',
+        border: '1px solid rgba(201,168,76,0.2)',
         maxWidth: '400px',
         width: '100%',
         marginBottom: '3rem',
       }}>
-        <div style={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+        <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
           What happens next
         </div>
         <ul style={{ listStyle: 'none', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '0.6rem', padding: 0, margin: 0 }}>

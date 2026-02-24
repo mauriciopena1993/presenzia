@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Fire-and-forget the audit processor
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://presenzia.ai';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://presenzia.ai';
   fetch(`${baseUrl}/api/process-audit`, {
     method: 'POST',
     headers: {

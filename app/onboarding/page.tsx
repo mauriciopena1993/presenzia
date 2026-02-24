@@ -142,7 +142,7 @@ function OnboardingForm() {
 
   const hintStyle: React.CSSProperties = {
     fontSize: '0.75rem',
-    color: '#555',
+    color: '#888',
     marginTop: '0.4rem',
   };
 
@@ -157,13 +157,13 @@ function OnboardingForm() {
         <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', color: '#F5F0E8', textDecoration: 'none' }}>
           presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
         </Link>
-        <div style={{ fontSize: '0.8rem', color: '#555', letterSpacing: '0.05em' }}>Step 1 of 2</div>
+        <div style={{ fontSize: '0.8rem', color: '#888', letterSpacing: '0.05em' }}>Step 1 of 2</div>
       </div>
 
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '3rem 2rem 4rem' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
+          <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
             {planNames[plan]} plan
           </div>
           <h1 style={{
@@ -237,7 +237,7 @@ function OnboardingForm() {
             {/* Location */}
             <div>
               <label style={labelStyle}>
-                City / Location <span style={{ color: '#555' }}>(optional)</span>
+                City / Location <span style={{ color: '#888' }}>(optional)</span>
               </label>
               <input
                 type="text"
@@ -253,7 +253,7 @@ function OnboardingForm() {
 
             {/* Contact Name */}
             <div>
-              <label style={labelStyle}>Your name <span style={{ color: '#555' }}>(optional)</span></label>
+              <label style={labelStyle}>Your name <span style={{ color: '#888' }}>(optional)</span></label>
               <input
                 type="text"
                 placeholder="e.g. Jane Smith"
@@ -265,7 +265,7 @@ function OnboardingForm() {
 
             {/* Website */}
             <div>
-              <label style={labelStyle}>Website <span style={{ color: '#555' }}>(optional)</span></label>
+              <label style={labelStyle}>Website <span style={{ color: '#888' }}>(optional)</span></label>
               <input
                 type="url"
                 placeholder="e.g. https://www.yourbusiness.co.uk"
@@ -277,7 +277,7 @@ function OnboardingForm() {
 
             {/* Keywords */}
             <div>
-              <label style={labelStyle}>Keywords <span style={{ color: '#555' }}>(optional)</span></label>
+              <label style={labelStyle}>Keywords <span style={{ color: '#888' }}>(optional)</span></label>
               <input
                 type="text"
                 placeholder="e.g. Italian restaurant, private dining, wine bar"
@@ -318,16 +318,16 @@ function OnboardingForm() {
               {submitting ? 'Redirecting to payment...' : 'Continue to payment →'}
             </button>
 
-            <p style={{ textAlign: 'center', color: '#555', fontSize: '0.8rem', margin: 0 }}>
+            <p style={{ textAlign: 'center', color: '#888', fontSize: '0.8rem', margin: 0 }}>
               You won't be charged until the next step
             </p>
 
           </div>
         </form>
 
-        <p style={{ textAlign: 'center', color: '#444', fontSize: '0.8rem', marginTop: '2rem' }}>
+        <p style={{ textAlign: 'center', color: '#888', fontSize: '0.8rem', marginTop: '2rem' }}>
           Questions? Email{' '}
-          <a href="mailto:hello@presenzia.ai" style={{ color: '#666', textDecoration: 'none' }}>hello@presenzia.ai</a>
+          <a href="mailto:hello@presenzia.ai" style={{ color: '#999', textDecoration: 'none' }}>hello@presenzia.ai</a>
         </p>
       </div>
     </div>
