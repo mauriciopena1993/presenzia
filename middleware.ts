@@ -88,11 +88,11 @@ async function verifyClientSession(token: string): Promise<boolean> {
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Protect /admin/* (except /admin/login)
+  // Protect /admin/* — redirect unauthenticated users to the unified login page
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
     const token = req.cookies.get(ADMIN_SESSION_COOKIE)?.value;
     if (!token || !(await verifyAdminSession(token))) {
-      return NextResponse.redirect(new URL('/admin/login', req.url));
+      return NextResponse.redirect(new URL('/dashboard/login', req.url));
     }
   }
 

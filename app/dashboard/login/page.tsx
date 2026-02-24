@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export default function ClientLoginPage() {
-  const router = useRouter();
+export default function LoginPage() {
   const [step, setStep] = useState<'email' | 'code'>('email');
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
+  // Stored for admin resend — null for client (server cookie handles it)
+  const [challengeToken, setChallengeToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [error, setError] = useState('');
@@ -20,20 +20,102 @@ export default function ClientLoginPage() {
     if (countdownRef.current) clearInterval(countdownRef.current);
     countdownRef.current = setInterval(() => {
       setResendCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(countdownRef.current!);
-          return 0;
-        }
+        if (prev <= 1) { clearInterval(countdownRef.current!); return 0; }
         return prev - 1;
       });
     }, 1000);
   };
 
   useEffect(() => {
-    return () => {
-      if (countdownRef.current) clearInterval(countdownRef.current);
-    };
+    return () => { if (countdownRef.current) clearInterval(countdownRef.current); };
   }, []);
+
+  // ── Send code ──────────────────────────────────────────────────────────────
+  const handleSendCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError('Something went wrong. Please try again.');
+        return;
+      }
+
+      // Admin: server returns challengeToken; client: server sets a cookie
+      if (data.challengeToken) setChallengeToken(data.challengeToken);
+      setStep('code');
+      startCountdown();
+    } catch {
+      setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Resend code ────────────────────────────────────────────────────────────
+  const handleResend = async () => {
+    setResendLoading(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          // Pass existing token for admin so server reuses the same OTP
+          ...(challengeToken ? { existingChallengeToken: challengeToken } : {}),
+        }),
+      });
+      const data = await res.json();
+      if (data.challengeToken) setChallengeToken(data.challengeToken);
+    } catch {
+      // silently ignore — user can try again
+    } finally {
+      setResendLoading(false);
+      startCountdown();
+    }
+  };
+
+  // ── Verify code ────────────────────────────────────────────────────────────
+  const handleVerifyCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          code: code.trim(),
+          ...(challengeToken ? { challengeToken } : {}),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Invalid or expired code. Please try again.');
+        return;
+      }
+
+      // Hard navigation so middleware picks up the new session cookie
+      window.location.href = data.redirect ?? '/dashboard';
+    } catch {
+      setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
@@ -49,78 +131,6 @@ export default function ClientLoginPage() {
     textAlign: step === 'code' ? 'center' : 'left',
   };
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      const res = await fetch('/api/client/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim().toLowerCase() }),
-      });
-
-      if (!res.ok) {
-        setError('Something went wrong. Please try again.');
-        return;
-      }
-
-      setStep('code');
-      startCountdown();
-    } catch {
-      setError('Network error. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleResend = async () => {
-    setResendLoading(true);
-    setError('');
-
-    try {
-      await fetch('/api/client/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim().toLowerCase() }),
-      });
-    } catch {
-      // silently ignore — user can try again
-    } finally {
-      setResendLoading(false);
-      startCountdown();
-    }
-  };
-
-  const handleCodeSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      const res = await fetch('/api/client/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: code.trim() }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || 'Invalid or expired code. Please try again.');
-        return;
-      }
-
-      // Hard navigation to ensure middleware re-validates the session cookie
-      window.location.href = '/dashboard';
-    } catch {
-      setError('Network error. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div style={{
       minHeight: '100vh',
@@ -134,14 +144,13 @@ export default function ClientLoginPage() {
         <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', color: '#F5F0E8', textDecoration: 'none' }}>
           presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
         </Link>
-        <div style={{ fontSize: '0.75rem', color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Client portal</div>
       </div>
 
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
         <div style={{ width: '100%', maxWidth: '400px' }}>
           <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
             <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
-              Client dashboard
+              Portal access
             </div>
             <h1 style={{
               fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
@@ -151,20 +160,20 @@ export default function ClientLoginPage() {
               marginBottom: '0.75rem',
               lineHeight: 1.2,
             }}>
-              {step === 'email' ? 'Sign in to your dashboard' : 'Enter your code'}
+              {step === 'email' ? 'Sign in' : 'Enter your code'}
             </h1>
             <p style={{ color: '#777', fontSize: '0.875rem', lineHeight: 1.6 }}>
               {step === 'email'
-                ? 'Enter the email address you used when signing up.'
+                ? 'Enter your email address to receive a login code.'
                 : `We sent a 6-digit code to ${email}. Check your inbox.`}
             </p>
           </div>
 
           {step === 'email' ? (
-            <form onSubmit={handleEmailSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <form onSubmit={handleSendCode} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <input
                 type="email"
-                placeholder="your@email.co.uk"
+                placeholder="your@email.com"
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
@@ -198,7 +207,7 @@ export default function ClientLoginPage() {
               </button>
             </form>
           ) : (
-            <form onSubmit={handleCodeSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <form onSubmit={handleVerifyCode} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <input
                 type="text"
                 inputMode="numeric"
@@ -234,10 +243,10 @@ export default function ClientLoginPage() {
                   letterSpacing: '0.02em',
                 }}
               >
-                {loading ? 'Verifying...' : 'Access dashboard →'}
+                {loading ? 'Verifying...' : 'Sign in →'}
               </button>
 
-              {/* Resend countdown / button */}
+              {/* Resend countdown */}
               <div style={{ textAlign: 'center' }}>
                 {resendCountdown > 0 ? (
                   <p style={{ fontSize: '0.8rem', color: '#444', margin: 0 }}>
@@ -267,7 +276,13 @@ export default function ClientLoginPage() {
 
               <button
                 type="button"
-                onClick={() => { setStep('email'); setCode(''); setError(''); if (countdownRef.current) clearInterval(countdownRef.current); }}
+                onClick={() => {
+                  setStep('email');
+                  setCode('');
+                  setError('');
+                  setChallengeToken(null);
+                  if (countdownRef.current) clearInterval(countdownRef.current);
+                }}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -284,11 +299,7 @@ export default function ClientLoginPage() {
             </form>
           )}
 
-          <p style={{ textAlign: 'center', color: '#444', fontSize: '0.8rem', marginTop: '2rem' }}>
-            Not a client yet?{' '}
-            <Link href="/#pricing" style={{ color: '#666', textDecoration: 'none' }}>View plans →</Link>
-          </p>
-          <p style={{ textAlign: 'center', color: '#333', fontSize: '0.75rem', marginTop: '0.5rem' }}>
+          <p style={{ textAlign: 'center', color: '#333', fontSize: '0.75rem', marginTop: '2rem' }}>
             Issues? <a href="mailto:hello@presenzia.ai" style={{ color: '#444', textDecoration: 'none' }}>hello@presenzia.ai</a>
           </p>
         </div>

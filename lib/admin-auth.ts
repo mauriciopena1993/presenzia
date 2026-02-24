@@ -130,3 +130,20 @@ export function verifySessionToken(token: string): SessionVerifyResult {
 }
 
 export const SESSION_COOKIE = '__presenzia_admin';
+
+// --- Password hashing (HMAC-SHA256 keyed by ADMIN_SESSION_SECRET) ---
+
+/**
+ * Returns a deterministic hash of a plaintext password using HMAC-SHA256.
+ * The hash is keyed by ADMIN_SESSION_SECRET so it cannot be reversed without the secret.
+ */
+export function hashAdminPassword(plaintext: string): string {
+  return hmac(`admin-password:${plaintext}`);
+}
+
+/**
+ * Timing-safe comparison of a submitted password against a stored hash.
+ */
+export function checkAdminPassword(plaintext: string, storedHash: string): boolean {
+  return safeEqual(hashAdminPassword(plaintext), storedHash);
+}
