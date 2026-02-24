@@ -65,10 +65,10 @@ export async function POST(req: NextRequest) {
     <div style="background:#F9F9F9;border:1px solid #E0E0E0;padding:24px;text-align:center;margin:0 0 24px;letter-spacing:0.3em;">
       <span style="font-size:36px;font-weight:700;color:#0A0A0A;font-family:Courier,monospace;">${otp}</span>
     </div>
-    <p style="font-size:12px;color:#AAAAAA;margin:0;">Do not share this code. If you did not request it, ignore this email.</p>
+    <p style="font-size:13px;color:#888888;margin:0;">Do not share this code. If you did not request it, ignore this email.</p>
   </td></tr>
   <tr><td style="padding:16px 32px;background:#F9F9F9;border-top:1px solid #E0E0E0;">
-    <p style="font-size:11px;color:#AAAAAA;margin:0;">presenzia.ai · <a href="mailto:hello@presenzia.ai" style="color:#C9A84C;text-decoration:none;">hello@presenzia.ai</a></p>
+    <p style="font-size:12px;color:#999999;margin:0;">presenzia.ai · <a href="mailto:hello@presenzia.ai" style="color:#C9A84C;text-decoration:none;">hello@presenzia.ai</a></p>
   </td></tr>
 </table>
 </td></tr>
@@ -134,10 +134,10 @@ export async function POST(req: NextRequest) {
       <span style="font-size:36px;font-weight:700;color:#0A0A0A;font-family:Courier,monospace;">${code}</span>
     </div>
     ${client.business_name ? `<p style="font-size:13px;color:#888888;margin:0 0 16px;">Account: ${client.business_name}</p>` : ''}
-    <p style="font-size:12px;color:#AAAAAA;margin:0;line-height:1.6;">If you did not request this code, you can safely ignore this email.</p>
+    <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">If you did not request this code, you can safely ignore this email.</p>
   </td></tr>
   <tr><td style="padding:16px 32px;background:#F9F9F9;border-top:1px solid #E0E0E0;">
-    <p style="font-size:11px;color:#AAAAAA;margin:0;">presenzia.ai · AI Visibility Audits · <a href="mailto:hello@presenzia.ai" style="color:#C9A84C;text-decoration:none;">hello@presenzia.ai</a></p>
+    <p style="font-size:12px;color:#999999;margin:0;">presenzia.ai · AI Visibility Audits · <a href="mailto:hello@presenzia.ai" style="color:#C9A84C;text-decoration:none;">hello@presenzia.ai</a></p>
   </td></tr>
 </table>
 </td></tr>

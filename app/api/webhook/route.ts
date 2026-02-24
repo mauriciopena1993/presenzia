@@ -26,13 +26,13 @@ async function notifyAdmin(subject: string, html: string) {
 function adminCard(rows: [string, string][], accentColor = '#C9A84C') {
   const rowsHtml = rows
     .map(([label, value]) => `<tr>
-      <td style="color:#666;font-size:12px;padding:6px 0;width:130px;">${label}</td>
+      <td style="color:#999;font-size:12px;padding:6px 0;width:130px;">${label}</td>
       <td style="color:#F5F0E8;font-size:13px;">${value}</td>
     </tr>`)
     .join('');
   return `<div style="font-family:Inter,sans-serif;max-width:560px;margin:0 auto;background:#0A0A0A;color:#F5F0E8;padding:40px;">
     <div style="font-size:18px;font-weight:600;margin-bottom:4px;border-bottom:2px solid ${accentColor};padding-bottom:12px;margin-bottom:24px;">
-      presenzia<span style="color:${accentColor};">.ai</span> <span style="color:#555;font-size:12px;font-weight:400;">Admin notification</span>
+      presenzia<span style="color:${accentColor};">.ai</span> <span style="color:#888;font-size:12px;font-weight:400;">Admin notification</span>
     </div>
     <div style="background:#111;border:1px solid #222;padding:20px;">
       <table style="width:100%;border-collapse:collapse;">${rowsHtml}</table>
