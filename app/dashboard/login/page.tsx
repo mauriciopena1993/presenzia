@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -10,7 +10,30 @@ export default function ClientLoginPage() {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
   const [error, setError] = useState('');
+  const [resendCountdown, setResendCountdown] = useState(0);
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startCountdown = () => {
+    setResendCountdown(60);
+    if (countdownRef.current) clearInterval(countdownRef.current);
+    countdownRef.current = setInterval(() => {
+      setResendCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(countdownRef.current!);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (countdownRef.current) clearInterval(countdownRef.current);
+    };
+  }, []);
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
@@ -43,12 +66,30 @@ export default function ClientLoginPage() {
         return;
       }
 
-      // Always proceed to code step (don't leak whether email exists)
       setStep('code');
+      startCountdown();
     } catch {
       setError('Network error. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    setResendLoading(true);
+    setError('');
+
+    try {
+      await fetch('/api/client/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+      });
+    } catch {
+      // silently ignore — user can try again
+    } finally {
+      setResendLoading(false);
+      startCountdown();
     }
   };
 
@@ -195,9 +236,37 @@ export default function ClientLoginPage() {
                 {loading ? 'Verifying...' : 'Access dashboard →'}
               </button>
 
+              {/* Resend countdown / button */}
+              <div style={{ textAlign: 'center' }}>
+                {resendCountdown > 0 ? (
+                  <p style={{ fontSize: '0.8rem', color: '#444', margin: 0 }}>
+                    Resend code in {resendCountdown}s
+                  </p>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    disabled={resendLoading}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: resendLoading ? '#555' : '#C9A84C',
+                      fontSize: '0.8rem',
+                      cursor: resendLoading ? 'default' : 'pointer',
+                      fontFamily: 'inherit',
+                      padding: 0,
+                      textDecoration: 'underline',
+                      textDecorationColor: resendLoading ? '#555' : '#C9A84C',
+                    }}
+                  >
+                    {resendLoading ? 'Sending...' : "Didn't receive it? Send again →"}
+                  </button>
+                )}
+              </div>
+
               <button
                 type="button"
-                onClick={() => { setStep('email'); setCode(''); setError(''); }}
+                onClick={() => { setStep('email'); setCode(''); setError(''); if (countdownRef.current) clearInterval(countdownRef.current); }}
                 style={{
                   background: 'none',
                   border: 'none',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -11,7 +11,31 @@ export default function AdminLoginPage() {
   const [otp, setOtp] = useState('');
   const [challengeToken, setChallengeToken] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
   const [error, setError] = useState('');
+  const [resendCountdown, setResendCountdown] = useState(0);
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Start countdown when entering OTP step
+  const startCountdown = () => {
+    setResendCountdown(60);
+    if (countdownRef.current) clearInterval(countdownRef.current);
+    countdownRef.current = setInterval(() => {
+      setResendCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(countdownRef.current!);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (countdownRef.current) clearInterval(countdownRef.current);
+    };
+  }, []);
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,12 +54,35 @@ export default function AdminLoginPage() {
     if (data.challengeToken) {
       setChallengeToken(data.challengeToken);
       setStep('otp');
+      startCountdown();
     } else if (data.sent) {
       // Email not recognized but we show same UI (security)
       setStep('otp');
+      startCountdown();
     } else {
       setError('Failed to send code. Try again.');
     }
+  };
+
+  const handleResendOtp = async () => {
+    setResendLoading(true);
+    setError('');
+
+    const res = await fetch('/api/admin/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+    setResendLoading(false);
+
+    if (data.challengeToken) {
+      setChallengeToken(data.challengeToken);
+    }
+
+    // Always restart the countdown whether successful or not
+    startCountdown();
   };
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
@@ -115,9 +162,38 @@ export default function AdminLoginPage() {
             <button type="submit" disabled={loading} style={{ ...s.btn, opacity: loading ? 0.6 : 1 }}>
               {loading ? 'Verifying...' : 'Sign in →'}
             </button>
+
+            {/* Resend countdown / button */}
+            <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
+              {resendCountdown > 0 ? (
+                <p style={{ fontSize: '0.8rem', color: '#444', margin: 0 }}>
+                  Resend code in {resendCountdown}s
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleResendOtp}
+                  disabled={resendLoading}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: resendLoading ? '#555' : '#C9A84C',
+                    fontSize: '0.8rem',
+                    cursor: resendLoading ? 'default' : 'pointer',
+                    fontFamily: 'inherit',
+                    padding: 0,
+                    textDecoration: 'underline',
+                    textDecorationColor: resendLoading ? '#555' : '#C9A84C',
+                  }}
+                >
+                  {resendLoading ? 'Sending...' : "Didn't receive it? Send again →"}
+                </button>
+              )}
+            </div>
+
             <button
               type="button"
-              onClick={() => { setStep('email'); setError(''); setOtp(''); }}
+              onClick={() => { setStep('email'); setError(''); setOtp(''); if (countdownRef.current) clearInterval(countdownRef.current); }}
               style={{ ...s.hint, background: 'none', border: 'none', cursor: 'pointer', color: '#555', width: '100%', marginTop: '0.75rem' }}
             >
               ← Use different email

@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       from: 'presenzia.ai <reports@presenzia.ai>',
       to: email,
       subject: `Your presenzia.ai admin code: ${otp}`,
-      text: `Your presenzia.ai admin login code is: ${otp}\n\nThis code expires in 5 minutes. Do not share it.\n\npresenzia.ai`,
+      text: `Your presenzia.ai admin login code is: ${otp}\n\nThis code expires in 15 minutes. Do not share it.\n\npresenzia.ai`,
       html: `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
   </td></tr>
   <tr><td style="padding:32px;">
     <p style="font-size:14px;color:#555555;margin:0 0 8px;">Admin login code</p>
-    <p style="font-size:13px;color:#888888;margin:0 0 24px;">This code expires in 5 minutes.</p>
+    <p style="font-size:13px;color:#888888;margin:0 0 24px;">This code expires in 15 minutes.</p>
     <div style="background:#F9F9F9;border:1px solid #E0E0E0;padding:24px;text-align:center;margin:0 0 24px;letter-spacing:0.3em;">
       <span style="font-size:36px;font-weight:700;color:#0A0A0A;font-family:Courier,monospace;">${otp}</span>
     </div>
