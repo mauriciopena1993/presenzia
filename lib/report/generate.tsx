@@ -22,14 +22,15 @@ Font.register({
 });
 
 const GOLD = '#C9A84C';
-const DARK = '#0A0A0A';
-const SURFACE = '#111111';
-const SURFACE2 = '#141414';
-const BORDER = '#222222';
-const BORDER_LIGHT = '#2a2a2a';
-const TEXT_PRIMARY = '#F5F0E8';
-const TEXT_SECONDARY = '#AAAAAA';
-const TEXT_MUTED = '#555555';
+const DARK = '#111111';
+const WHITE = '#FFFFFF';
+const SURFACE = '#F7F7F5';
+const SURFACE2 = '#F0EFE9';
+const BORDER = '#E0DDD5';
+const BORDER_LIGHT = '#D5D2C8';
+const TEXT_PRIMARY = '#111111';
+const TEXT_SECONDARY = '#555555';
+const TEXT_MUTED = '#888888';
 
 // Score band colors
 function scoreColor(score: number): string {
@@ -137,7 +138,7 @@ function getRecommendations(score: AuditScore, config: AuditConfig): Recommendat
 
 const styles = StyleSheet.create({
   page: {
-    backgroundColor: DARK,
+    backgroundColor: WHITE,
     color: TEXT_PRIMARY,
     fontFamily: 'Inter',
     fontSize: 10,
@@ -145,9 +146,9 @@ const styles = StyleSheet.create({
   },
 
   pageStripe: {
-    backgroundColor: '#0d0d0d',
-    borderBottomColor: BORDER,
-    borderBottomWidth: 1,
+    backgroundColor: DARK,
+    borderBottomColor: GOLD,
+    borderBottomWidth: 2,
     paddingHorizontal: 40,
     paddingVertical: 14,
     flexDirection: 'row',
@@ -156,13 +157,13 @@ const styles = StyleSheet.create({
   },
   brandName: {
     fontSize: 14,
-    color: TEXT_PRIMARY,
+    color: '#F5F0E8',
     fontWeight: 600,
   },
   brandDot: { color: GOLD },
   pageLabel: {
     fontSize: 7.5,
-    color: TEXT_MUTED,
+    color: '#999999',
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
   },
   gradeText: {
     fontSize: 10,
-    color: DARK,
+    color: WHITE,
     fontWeight: 700,
     letterSpacing: 0.8,
   },
@@ -334,7 +335,7 @@ const styles = StyleSheet.create({
   },
   priorityBulletText: {
     fontSize: 7.5,
-    color: DARK,
+    color: WHITE,
     fontWeight: 700,
   },
   priorityTitle: {
@@ -424,7 +425,7 @@ const styles = StyleSheet.create({
   competitorBarFill: {
     height: 3,
     borderRadius: 2,
-    backgroundColor: '#3a3a3a',
+    backgroundColor: '#BBBBBB',
   },
   competitorCount: {
     fontSize: 8,
@@ -442,8 +443,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   recCardHigh: {
-    backgroundColor: '#110f07',
-    borderColor: '#332a0f',
+    backgroundColor: '#FFFCF0',
+    borderColor: '#E8DFC0',
     borderLeftColor: GOLD,
     borderLeftWidth: 3,
   },
@@ -479,7 +480,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#080808',
+    backgroundColor: SURFACE,
     borderTopColor: BORDER,
     borderTopWidth: 1,
     paddingHorizontal: 40,
@@ -489,18 +490,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footerText: { fontSize: 7, color: TEXT_MUTED },
-  footerBrand: { fontSize: 7, color: '#2a2a2a' },
+  footerBrand: { fontSize: 7, color: '#BBBBBB' },
 });
 
 // ── Score Band Visual ────────────────────────────────────────
 function ScoreBandVisual({ score }: { score: number }) {
   // 5 equal bands: 0-20, 20-40, 40-60, 60-80, 80-100
   const bands = [
-    { low: 0,  high: 20, color: '#cc4444', dimColor: '#2a1010' },
-    { low: 20, high: 40, color: '#cc8833', dimColor: '#2a1e0a' },
-    { low: 40, high: 60, color: '#C9A84C', dimColor: '#1e1a07' },
-    { low: 60, high: 80, color: '#4a9e6a', dimColor: '#0a1e0f' },
-    { low: 80, high: 100, color: '#3a8a5a', dimColor: '#0a1e0f' },
+    { low: 0,  high: 20, color: '#cc4444', dimColor: '#F0E0E0' },
+    { low: 20, high: 40, color: '#cc8833', dimColor: '#F0E8DD' },
+    { low: 40, high: 60, color: '#C9A84C', dimColor: '#F0EBD8' },
+    { low: 60, high: 80, color: '#4a9e6a', dimColor: '#DEF0E4' },
+    { low: 80, high: 100, color: '#3a8a5a', dimColor: '#DEF0E4' },
   ];
 
   return (
@@ -585,7 +586,7 @@ function AuditReport({ config, score, reportDate }: ReportData) {
               <Text style={styles.statLabel}>Prompts tested</Text>
             </View>
             <View style={styles.statCard}>
-              <Text style={[styles.statNumber, { color: score.mentionedInCount > 0 ? GOLD : '#444' }]}>
+              <Text style={[styles.statNumber, { color: score.mentionedInCount > 0 ? GOLD : '#CCCCCC' }]}>
                 {score.mentionedInCount}
               </Text>
               <Text style={styles.statLabel}>Times you appeared</Text>
@@ -723,7 +724,7 @@ function AuditReport({ config, score, reportDate }: ReportData) {
                   paddingHorizontal: 5,
                   paddingVertical: 2,
                 }]}>
-                  <Text style={{ fontSize: 5.5, fontWeight: 700, color: rec.priority === 'HIGH' ? GOLD : '#666', letterSpacing: 0.8 }}>
+                  <Text style={{ fontSize: 5.5, fontWeight: 700, color: rec.priority === 'HIGH' ? GOLD : '#888', letterSpacing: 0.8 }}>
                     {rec.priority === 'HIGH' ? 'HIGH PRIORITY' : 'RECOMMENDED'}
                   </Text>
                 </View>
@@ -734,8 +735,8 @@ function AuditReport({ config, score, reportDate }: ReportData) {
           ))}
 
           {/* Next report */}
-          <View style={{ marginTop: 12, padding: 12, backgroundColor: SURFACE2, borderColor: BORDER, borderWidth: 1 }}>
-            <Text style={{ fontSize: 8, color: TEXT_MUTED, lineHeight: 1.5 }}>
+          <View style={{ marginTop: 12, padding: 12, backgroundColor: SURFACE, borderColor: BORDER, borderWidth: 1 }}>
+            <Text style={{ fontSize: 8, color: TEXT_SECONDARY, lineHeight: 1.5 }}>
               Questions about this report? Email hello@presenzia.ai — we typically reply within a few hours. Your next report will be generated automatically on your billing cycle.
             </Text>
           </View>
