@@ -150,17 +150,17 @@ export default async function BlogPostPage({ params }: Props) {
         <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', color: '#F5F0E8', textDecoration: 'none' }}>
           presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
         </Link>
-        <Link href="/blog" style={{ color: '#666', fontSize: '0.85rem', textDecoration: 'none' }}>← All posts</Link>
+        <Link href="/blog" style={{ color: '#999', fontSize: '0.85rem', textDecoration: 'none' }}>← All posts</Link>
       </div>
 
       <article style={{ maxWidth: '680px', margin: '0 auto', padding: '4rem 2rem 6rem' }}>
         {/* Meta */}
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '0.65rem', color: '#C9A84C', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+          <span style={{ fontSize: '0.75rem', color: '#C9A84C', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
             {post.category}
           </span>
-          <span style={{ fontSize: '0.75rem', color: '#444' }}>{fmtDate(post.date)}</span>
-          <span style={{ fontSize: '0.75rem', color: '#444' }}>{post.readTime}</span>
+          <span style={{ fontSize: '0.75rem', color: '#999' }}>{fmtDate(post.date)}</span>
+          <span style={{ fontSize: '0.75rem', color: '#999' }}>{post.readTime}</span>
         </div>
 
         {/* Title */}
@@ -182,7 +182,7 @@ export default async function BlogPostPage({ params }: Props) {
         />
 
         {/* Description */}
-        <p style={{ color: '#888', fontSize: '1.05rem', lineHeight: 1.7, marginBottom: '3rem', borderBottom: '1px solid #1A1A1A', paddingBottom: '2rem' }}>
+        <p style={{ color: '#999', fontSize: '1.05rem', lineHeight: 1.7, marginBottom: '3rem', borderBottom: '1px solid #1A1A1A', paddingBottom: '2rem' }}>
           {post.description}
         </p>
 
@@ -191,13 +191,13 @@ export default async function BlogPostPage({ params }: Props) {
 
         {/* CTA */}
         <div style={{ marginTop: '4rem', padding: '2rem', background: '#111', border: '1px solid #2a2a2a' }}>
-          <div style={{ fontSize: '0.7rem', letterSpacing: '0.12em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+          <div style={{ fontSize: '0.75rem', letterSpacing: '0.12em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
             Find out where you stand
           </div>
           <p style={{ color: '#F5F0E8', fontSize: '1.05rem', fontWeight: 600, marginBottom: '0.5rem', fontFamily: "var(--font-playfair, 'Playfair Display', serif)" }}>
             See your AI visibility score in 24 hours
           </p>
-          <p style={{ color: '#888', fontSize: '0.875rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
+          <p style={{ color: '#999', fontSize: '0.875rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
             We test your business across ChatGPT, Claude, Perplexity, and Google AI using the exact prompts real customers type.
           </p>
           <Link href="/#pricing" style={{ display: 'inline-block', padding: '0.75rem 1.75rem', background: '#C9A84C', color: '#0A0A0A', fontWeight: 700, fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em' }}>

@@ -27,12 +27,12 @@ export default function BlogPage() {
         <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', color: '#F5F0E8', textDecoration: 'none' }}>
           presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
         </Link>
-        <Link href="/" style={{ color: '#666', fontSize: '0.85rem', textDecoration: 'none' }}>← Back to home</Link>
+        <Link href="/" style={{ color: '#999', fontSize: '0.85rem', textDecoration: 'none' }}>← Back to home</Link>
       </div>
 
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '4rem 2rem' }}>
         <div style={{ marginBottom: '3rem' }}>
-          <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+          <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
             Insights
           </div>
           <h1 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: 'clamp(2rem, 4vw, 2.75rem)', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.75rem', lineHeight: 1.2 }}>
@@ -74,16 +74,16 @@ export default function BlogPage() {
                 {/* Text */}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '0.6rem', flexWrap: 'wrap' as const }}>
-                    <span style={{ fontSize: '0.65rem', color: '#C9A84C', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>
+                    <span style={{ fontSize: '0.75rem', color: '#C9A84C', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>
                       {post.category}
                     </span>
-                    <span style={{ fontSize: '0.75rem', color: '#444' }}>{fmtDate(post.date)}</span>
-                    <span style={{ fontSize: '0.75rem', color: '#444' }}>{post.readTime}</span>
+                    <span style={{ fontSize: '0.75rem', color: '#999' }}>{fmtDate(post.date)}</span>
+                    <span style={{ fontSize: '0.75rem', color: '#999' }}>{post.readTime}</span>
                   </div>
                   <h2 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.2rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem', lineHeight: 1.3 }}>
                     {post.title}
                   </h2>
-                  <p style={{ color: '#888', fontSize: '0.875rem', lineHeight: 1.65, margin: 0 }}>
+                  <p style={{ color: '#999', fontSize: '0.875rem', lineHeight: 1.65, margin: 0 }}>
                     {post.description}
                   </p>
                 </div>

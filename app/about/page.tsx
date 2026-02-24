@@ -16,11 +16,11 @@ export default function AboutPage() {
         <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', color: '#F5F0E8', textDecoration: 'none' }}>
           presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
         </Link>
-        <Link href="/" style={{ color: '#888', fontSize: '0.85rem', textDecoration: 'none' }}>Back to home</Link>
+        <Link href="/" style={{ color: '#999', fontSize: '0.85rem', textDecoration: 'none' }}>← Back to home</Link>
       </div>
 
       <div style={{ maxWidth: '720px', margin: '0 auto', padding: '4rem 2rem' }}>
-        <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
+        <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
           Our story
         </div>
         <h1 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: 'clamp(2rem, 4vw, 2.75rem)', color: '#F5F0E8', fontWeight: 600, marginBottom: '2rem', lineHeight: 1.2 }}>
@@ -51,11 +51,11 @@ export default function AboutPage() {
 
         <div style={{
           padding: '1.5rem 2rem',
-          background: '#0f1107',
-          border: '1px solid #3a4a0f',
+          background: 'rgba(201,168,76,0.06)',
+          border: '1px solid rgba(201,168,76,0.2)',
           marginBottom: '2.5rem',
         }}>
-          <div style={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+          <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
             The company
           </div>
           <p style={{ color: '#AAAAAA', fontSize: '0.95rem', lineHeight: 1.7, margin: 0 }}>

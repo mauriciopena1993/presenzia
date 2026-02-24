@@ -159,7 +159,7 @@ export default function LoginPage() {
             }}>
               {step === 'email' ? 'Login' : 'Enter your code'}
             </h1>
-            <p style={{ color: '#777', fontSize: '0.875rem', lineHeight: 1.6 }}>
+            <p style={{ color: '#999', fontSize: '0.875rem', lineHeight: 1.6 }}>
               {step === 'email'
                 ? 'Enter your email address to receive a login code.'
                 : `We sent a 6-digit code to ${email}. Check your inbox.`}
@@ -246,7 +246,7 @@ export default function LoginPage() {
               {/* Resend countdown */}
               <div style={{ textAlign: 'center' }}>
                 {resendCountdown > 0 ? (
-                  <p style={{ fontSize: '0.8rem', color: '#444', margin: 0 }}>
+                  <p style={{ fontSize: '0.8rem', color: '#999', margin: 0 }}>
                     Resend code in {resendCountdown}s
                   </p>
                 ) : (
@@ -257,13 +257,13 @@ export default function LoginPage() {
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: resendLoading ? '#555' : '#C9A84C',
+                      color: resendLoading ? '#888' : '#C9A84C',
                       fontSize: '0.8rem',
                       cursor: resendLoading ? 'default' : 'pointer',
                       fontFamily: 'inherit',
                       padding: 0,
                       textDecoration: 'underline',
-                      textDecorationColor: resendLoading ? '#555' : '#C9A84C',
+                      textDecorationColor: resendLoading ? '#888' : '#C9A84C',
                     }}
                   >
                     {resendLoading ? 'Sending...' : "Didn't receive it? Send again →"}
@@ -283,7 +283,7 @@ export default function LoginPage() {
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#555',
+                  color: '#888',
                   fontSize: '0.8rem',
                   cursor: 'pointer',
                   textAlign: 'center',
@@ -296,8 +296,8 @@ export default function LoginPage() {
             </form>
           )}
 
-          <p style={{ textAlign: 'center', color: '#333', fontSize: '0.75rem', marginTop: '2rem' }}>
-            Issues? <a href="mailto:hello@presenzia.ai" style={{ color: '#444', textDecoration: 'none' }}>hello@presenzia.ai</a>
+          <p style={{ textAlign: 'center', color: '#888', fontSize: '0.8rem', marginTop: '2rem' }}>
+            Issues? <a href="mailto:hello@presenzia.ai" style={{ color: '#999', textDecoration: 'none' }}>hello@presenzia.ai</a>
           </p>
         </div>
       </div>

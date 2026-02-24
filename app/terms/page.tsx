@@ -29,15 +29,15 @@ export default function TermsPage() {
         <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', color: '#F5F0E8', textDecoration: 'none' }}>
           presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
         </Link>
-        <Link href="/" style={{ color: '#888', fontSize: '0.85rem', textDecoration: 'none' }}>← Back to home</Link>
+        <Link href="/" style={{ color: '#999', fontSize: '0.85rem', textDecoration: 'none' }}>← Back to home</Link>
       </div>
 
       <div style={{ maxWidth: '720px', margin: '0 auto', padding: '4rem 2rem' }}>
-        <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>Legal</div>
+        <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>Legal</div>
         <h1 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: 'clamp(2rem, 4vw, 2.75rem)', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem', lineHeight: 1.2 }}>
           Terms of Service
         </h1>
-        <p style={{ color: '#666', fontSize: '0.825rem', marginBottom: '3rem' }}>
+        <p style={{ color: '#999', fontSize: '0.825rem', marginBottom: '3rem' }}>
           Last updated: February 2026 · Ketzal LTD t/a presenzia.ai
         </p>
 
@@ -153,9 +153,9 @@ export default function TermsPage() {
       </div>
 
       <div style={{ borderTop: '1px solid #1A1A1A', padding: '2rem', textAlign: 'center' }}>
-        <p style={{ color: '#555', fontSize: '0.75rem' }}>
+        <p style={{ color: '#888', fontSize: '0.8rem' }}>
           © 2026 Ketzal LTD t/a presenzia.ai. All rights reserved. ·{' '}
-          <Link href="/privacy" style={{ color: '#666', textDecoration: 'none' }}>Privacy policy</Link>
+          <Link href="/privacy" style={{ color: '#999', textDecoration: 'none' }}>Privacy policy</Link>
         </p>
       </div>
     </div>
