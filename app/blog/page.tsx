@@ -56,8 +56,23 @@ export default function BlogPage() {
                 borderBottom: i === posts.length - 1 ? '1px solid #1A1A1A' : 'none',
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '2rem' }}>
-                <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', gap: '1.75rem', alignItems: 'flex-start' }}>
+                {/* Thumbnail */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`/blog/${post.slug}/opengraph-image`}
+                  alt=""
+                  style={{
+                    width: '140px',
+                    height: '74px',
+                    objectFit: 'cover',
+                    flexShrink: 0,
+                    border: '1px solid #1A1A1A',
+                    display: 'block',
+                  }}
+                />
+                {/* Text */}
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '0.6rem', flexWrap: 'wrap' as const }}>
                     <span style={{ fontSize: '0.65rem', color: '#C9A84C', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>
                       {post.category}

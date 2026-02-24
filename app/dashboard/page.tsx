@@ -74,17 +74,25 @@ const PLAN_LABELS: Record<string, string> = {
   premium: 'Premium',
 };
 
+function scoreColor(score: number) {
+  if (score >= 70) return '#4a9e6a';
+  if (score >= 45) return '#C9A84C';
+  if (score >= 25) return '#cc8833';
+  return '#cc4444';
+}
+
 function fmt(date: string) {
   return new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 function ScoreGauge({ score, grade }: { score: number; grade: string }) {
+  const color = scoreColor(score);
   return (
     <div style={{ textAlign: 'center' }}>
       <div style={{
         fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
         fontSize: 'clamp(3rem, 8vw, 4.5rem)',
-        color: '#C9A84C',
+        color,
         lineHeight: 1,
         fontWeight: 600,
       }}>
@@ -95,9 +103,9 @@ function ScoreGauge({ score, grade }: { score: number; grade: string }) {
         display: 'inline-block',
         marginTop: '12px',
         padding: '4px 16px',
-        background: (GRADE_COLORS[grade] || '#C9A84C') + '22',
-        border: `1px solid ${(GRADE_COLORS[grade] || '#C9A84C')}55`,
-        color: GRADE_COLORS[grade] || '#C9A84C',
+        background: color + '22',
+        border: `1px solid ${color}55`,
+        color,
         fontWeight: 700,
         fontSize: '0.875rem',
         letterSpacing: '0.1em',
@@ -148,7 +156,7 @@ function PlatformBar({ platform }: { platform: PlatformScore }) {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <span style={{ fontSize: '0.75rem', color: '#555' }}>{platform.promptsMentioned}/{platform.promptsTested} prompts</span>
-          <span style={{ fontSize: '0.7rem', color: isFound ? '#C9A84C' : '#444', letterSpacing: '0.05em' }}>
+          <span style={{ fontSize: '0.7rem', color: isFound ? scoreColor(platform.score) : '#444', letterSpacing: '0.05em' }}>
             {isFound ? 'Visible' : 'Not found'}
           </span>
         </div>
@@ -157,7 +165,7 @@ function PlatformBar({ platform }: { platform: PlatformScore }) {
         <div style={{
           height: '100%',
           width: `${pct}%`,
-          background: isFound ? '#C9A84C' : '#2a2a2a',
+          background: isFound ? scoreColor(platform.score) : '#2a2a2a',
           borderRadius: '2px',
           transition: 'width 1s ease',
         }} />
@@ -659,7 +667,7 @@ export default function DashboardPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
                     {report.overall_score !== null && report.grade && (
                       <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '1.5rem', color: '#C9A84C', fontWeight: 700, lineHeight: 1 }}>{report.overall_score}</div>
+                        <div style={{ fontSize: '1.5rem', color: scoreColor(report.overall_score), fontWeight: 700, lineHeight: 1 }}>{report.overall_score}</div>
                         <div style={{ fontSize: '0.65rem', color: '#555' }}>/ 100 · Grade {report.grade}</div>
                       </div>
                     )}

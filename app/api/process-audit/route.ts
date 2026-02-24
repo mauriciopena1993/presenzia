@@ -110,7 +110,16 @@ export async function POST(req: NextRequest) {
 
     // Send report by email
     if (client.email && process.env.RESEND_API_KEY) {
-      await sendReportEmail(client.email, config.businessName, score.overall, score.grade, pdfBuffer, jobId);
+      await sendReportEmail(
+        client.email,
+        config.businessName,
+        score.overall,
+        score.grade,
+        pdfBuffer,
+        jobId,
+        score.summary,
+        score.topCompetitors[0]?.name,
+      );
     }
 
     return NextResponse.json({ status: 'completed', score: score.overall, grade: score.grade });
@@ -139,13 +148,26 @@ async function sendReportEmail(
   grade: string,
   pdfBuffer: Buffer,
   jobId: string,
+  summary?: string,
+  topComp?: string,
 ) {
+  const scoreBand = score >= 70 ? 'Strong' : score >= 45 ? 'Moderate' : score >= 25 ? 'Weak' : 'Not Visible';
+  const scoreColor = score >= 70 ? '#4a9e6a' : score >= 45 ? '#C9A84C' : score >= 25 ? '#cc8833' : '#cc4444';
+
+  const summaryHtml = summary
+    ? `<p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;border-left:3px solid #C9A84C;padding-left:14px;">${summary}</p>`
+    : '';
+
+  const topCompHtml = topComp
+    ? `<p style="font-size:13px;color:#888888;margin:0 0 24px;line-height:1.6;">We found that <strong style="color:#555555;">${topComp}</strong> is currently being recommended by AI platforms in your category. Your report includes a detailed competitor analysis with tips to close the gap.</p>`
+    : '';
+
   try {
     await resend.emails.send({
       from: 'presenzia.ai <reports@presenzia.ai>',
       to: email,
-      subject: `Your AI Visibility Report is ready — ${businessName}`,
-      text: `Your AI Visibility Report for ${businessName} is ready.\n\nAI Visibility Score: ${score}/100 — Grade ${grade}\n\nYour full report is attached as a PDF. It includes your platform-by-platform breakdown, competitor analysis, and actionable recommendations.\n\nLog in to your dashboard at https://presenzia.ai/dashboard to view your results online.\n\npresenzia.ai | Ketzal LTD (Co. No. 14570156)\nReport ID: ${jobId}`,
+      subject: `Your AI Visibility Report: ${score}/100 (${scoreBand}) — ${businessName}`,
+      text: `Your AI Visibility Report for ${businessName} is ready.\n\nAI Visibility Score: ${score}/100 — Grade ${grade} (${scoreBand})\n\n${summary ?? ''}\n\n${topComp ? `Top competitor detected: ${topComp}\n\n` : ''}Your full report is attached as a PDF. It includes your platform-by-platform breakdown, competitor analysis, and actionable recommendations.\n\nLog in to your dashboard at https://presenzia.ai/dashboard to view your results online.\n\npresenzia.ai | Ketzal LTD (Co. No. 14570156)\nReport ID: ${jobId}`,
       html: `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -157,16 +179,19 @@ async function sendReportEmail(
     <span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span>
   </td></tr>
   <tr><td style="padding:32px;">
-    <h1 style="font-size:20px;color:#111111;margin:0 0 12px;font-weight:700;">Your AI Visibility Report is ready</h1>
+    <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">Your AI Visibility Report is ready</h1>
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.6;">We have completed your audit for <strong>${businessName}</strong>.</p>
 
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#F9F9F9;border:1px solid #E0E0E0;margin:0 0 24px;">
       <tr><td style="padding:24px;text-align:center;">
-        <div style="font-size:52px;font-weight:700;color:#C9A84C;line-height:1;font-family:Arial,sans-serif;">${score}</div>
+        <div style="font-size:52px;font-weight:700;color:${scoreColor};line-height:1;font-family:Arial,sans-serif;">${score}</div>
         <div style="font-size:12px;color:#888888;margin:4px 0 12px;">/ 100 AI Visibility Score</div>
-        <div style="display:inline-block;background:#C9A84C;color:#0A0A0A;font-weight:700;padding:5px 18px;font-size:13px;">Grade ${grade}</div>
+        <div style="display:inline-block;background:${scoreColor};color:#ffffff;font-weight:700;padding:5px 18px;font-size:12px;letter-spacing:0.05em;">${scoreBand.toUpperCase()} · Grade ${grade}</div>
       </td></tr>
     </table>
+
+    ${summaryHtml}
+    ${topCompHtml}
 
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Your full report is attached to this email as a PDF. It includes your platform-by-platform breakdown, competitor analysis, and specific recommendations to improve your visibility.</p>
 

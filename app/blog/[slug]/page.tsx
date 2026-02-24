@@ -168,6 +168,19 @@ export default async function BlogPostPage({ params }: Props) {
           {post.title}
         </h1>
 
+        {/* Hero image — dynamically generated from opengraph-image.tsx */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`/blog/${slug}/opengraph-image`}
+          alt={post.title}
+          style={{
+            width: '100%',
+            display: 'block',
+            marginBottom: '2rem',
+            border: '1px solid #1A1A1A',
+          }}
+        />
+
         {/* Description */}
         <p style={{ color: '#888', fontSize: '1.05rem', lineHeight: 1.7, marginBottom: '3rem', borderBottom: '1px solid #1A1A1A', paddingBottom: '2rem' }}>
           {post.description}

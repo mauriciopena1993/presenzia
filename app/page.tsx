@@ -24,7 +24,7 @@ const faqSchema = {
       name: 'How does presenzia.ai actually test my visibility?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'We run dozens of real customer search prompts across four major AI platforms — ChatGPT, Claude, Perplexity, and Google AI. Prompts include queries like "best [business type] in [your city]", "[service] near me", and specific use-case questions relevant to your industry. We record whether your business is mentioned, where it appears, and which competitors are being recommended instead.',
+        text: 'We run hundreds of real customer search prompts across four major AI platforms: ChatGPT, Claude, Perplexity, and Google AI. Prompts include queries like "best [business type] in [your city]", "[service] near me", and specific use-case questions relevant to your industry. We record whether your business is mentioned, where it appears, and which competitors are being recommended instead.',
       },
     },
     {
@@ -40,7 +40,7 @@ const faqSchema = {
       name: 'How is this different from traditional SEO?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "Traditional SEO focuses on ranking in Google's blue-link search results. AI visibility is about appearing in AI-generated answers, which increasingly sit above those results — or replace them entirely. The factors that drive AI visibility are different: structured content, authoritative mentions, clear business descriptions, and consistent signals across directories.",
+        text: "Traditional SEO focuses on ranking in Google's blue-link search results. AI visibility is about appearing in AI-generated answers, which increasingly sit above those results or replace them entirely. The factors that drive it are different: structured content, authoritative mentions, clear business descriptions, and consistent signals across directories.",
       },
     },
     {

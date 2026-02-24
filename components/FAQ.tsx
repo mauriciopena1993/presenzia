@@ -9,7 +9,7 @@ const faqs = [
   },
   {
     q: 'How does presenzia.ai actually test my visibility?',
-    a: 'We run dozens of real customer search prompts across four major AI platforms — ChatGPT, Claude, Perplexity, and Google AI. Prompts include queries like "best [business type] in [your city]", "[service] near me", and specific use-case questions relevant to your industry. We record whether your business is mentioned, where it appears, and which competitors are being recommended instead. This gives you a clear, scored picture of your AI presence.',
+    a: 'We run hundreds of real customer search prompts across four major AI platforms: ChatGPT, Claude, Perplexity, and Google AI. Prompts include queries like "best [business type] in [your city]", "[service] near me", and specific use-case questions relevant to your industry. We record whether your business is mentioned, where it appears, and which competitors are being recommended instead. This gives you a clear, scored picture of your AI presence.',
   },
   {
     q: 'What do I actually receive?',
@@ -17,11 +17,11 @@ const faqs = [
   },
   {
     q: 'How is this different from traditional SEO?',
-    a: 'Traditional SEO focuses on ranking in Google\'s blue-link search results. AI visibility is about appearing in AI-generated answers, which increasingly sit above those results — or replace them entirely. The factors that drive AI visibility are different: structured content, authoritative mentions, clear business descriptions, and consistent signals across directories. Our reports tell you exactly what to focus on.',
+    a: 'Traditional SEO focuses on ranking in Google\'s blue-link search results. AI visibility is about appearing in AI-generated answers, which increasingly sit above those results or replace them entirely. The factors that drive it are different: structured content, authoritative mentions, clear business descriptions, and consistent signals across directories. Our reports tell you exactly what to focus on.',
   },
   {
     q: 'I\'m a small local business. Is this relevant to me?',
-    a: 'Especially so. Local searches — "best Italian in Shoreditch", "reliable plumber in Bristol", "accountant near me" — are exactly the type of queries AI assistants are used for most. And local businesses are often the least represented in AI outputs, which creates a real opportunity for those who act early. If a competitor is appearing and you\'re not, you\'re losing customers you don\'t even know about.',
+    a: 'Especially so. Local searches like "best Italian in Shoreditch", "reliable plumber in Bristol", or "accountant near me" are exactly the type of queries AI assistants handle most. Local businesses are often the least represented in AI outputs, which creates a real opportunity for those who act early. If a competitor is appearing and you\'re not, you\'re losing customers you don\'t even know about.',
   },
   {
     q: 'How quickly will I see results if I follow the recommendations?',
@@ -32,8 +32,8 @@ const faqs = [
     a: 'Yes. All plans are monthly subscriptions with no long-term contract. You can cancel with 30 days\' notice at any time. Your reports and dashboard access remain available until the end of your billing period.',
   },
   {
-    q: 'Who is behind presenzia.ai?',
-    a: 'presenzia.ai is operated by Ketzal Ltd (Company No. 14570156), a UK-registered company. If you have questions about your account, reports, or anything else, email us at hello@presenzia.ai — we typically reply within a few hours during business days.',
+    q: 'How do I get in touch?',
+    a: 'Email us at hello@presenzia.ai and we typically reply within a few hours during business days. You can also find answers to most questions right here.',
   },
 ];
 
