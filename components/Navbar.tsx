@@ -70,7 +70,7 @@ export default function Navbar() {
         <Link href="/dashboard" style={{ color: '#888', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
           onMouseEnter={e => (e.currentTarget.style.color = '#F5F0E8')}
           onMouseLeave={e => (e.currentTarget.style.color = '#888')}>
-          Client login
+          Login
         </Link>
         <Link href="/#pricing" style={{
           padding: '0.5rem 1.25rem',
@@ -118,7 +118,7 @@ export default function Navbar() {
             { label: 'Pricing', href: '/#pricing' },
             { label: 'Sample report', href: '/#sample-report' },
             { label: 'Blog', href: '/blog' },
-            { label: 'Client login', href: '/dashboard' },
+            { label: 'Login', href: '/dashboard' },
           ].map((item) => (
             <Link key={item.label} href={item.href}
               onClick={() => setMenuOpen(false)}
