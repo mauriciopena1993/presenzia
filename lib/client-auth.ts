@@ -8,7 +8,7 @@ import crypto from 'crypto';
 export const SESSION_COOKIE = '__presenzia_client';
 export const OTP_COOKIE = '__presenzia_client_otp';
 export const SESSION_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
-const OTP_DURATION_MS = 10 * 60 * 1000; // 10 minutes
+const OTP_DURATION_MS = 30 * 60 * 1000; // 30 minutes
 
 function getSecret(): string {
   const s = process.env.ADMIN_SESSION_SECRET;
@@ -29,6 +29,30 @@ export function createOTPChallenge(email: string, code: string): string {
   const payload = `${email}|${expiry}|${code}`;
   const sig = hmacHex(`client-otp:${payload}`, getSecret());
   return Buffer.from(`${payload}|${sig}`).toString('base64url');
+}
+
+/**
+ * Decode an existing OTP challenge to extract email + code (without verifying the submitted code).
+ * Used by send-otp to resend the same code instead of generating a new one.
+ */
+export function decodeOTPChallenge(
+  challenge: string,
+): { valid: boolean; email?: string; code?: string } {
+  try {
+    const decoded = Buffer.from(challenge, 'base64url').toString('utf8');
+    const parts = decoded.split('|');
+    if (parts.length !== 4) return { valid: false };
+
+    const [email, expiryStr, code, sig] = parts;
+    if (Date.now() > parseInt(expiryStr, 10)) return { valid: false }; // expired
+
+    const expectedSig = hmacHex(`client-otp:${email}|${expiryStr}|${code}`, getSecret());
+    if (sig !== expectedSig) return { valid: false }; // tampered
+
+    return { valid: true, email, code };
+  } catch {
+    return { valid: false };
+  }
 }
 
 /**

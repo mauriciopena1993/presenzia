@@ -6,7 +6,7 @@
 import { createHmac, timingSafeEqual } from 'crypto';
 
 const ADMIN_EMAIL = 'hello@presenzia.ai';
-const OTP_TTL_MS = 15 * 60 * 1000; // 15 minutes
+const OTP_TTL_MS = 30 * 60 * 1000; // 30 minutes
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 function getSecret(): string {
@@ -38,6 +38,28 @@ export function createChallengeToken(otp: string): string {
   const data = `${otp}|${timestamp}`;
   const sig = hmac(data);
   return Buffer.from(`${data}|${sig}`).toString('base64url');
+}
+
+/**
+ * Decode a challenge token to extract the OTP without verifying a submitted code.
+ * Used by send-otp resend to reuse the same OTP instead of generating a new one.
+ */
+export function decodeChallengeToken(token: string): { valid: boolean; otp?: string } {
+  try {
+    const decoded = Buffer.from(token, 'base64url').toString('utf8');
+    const parts = decoded.split('|');
+    if (parts.length !== 3) return { valid: false };
+
+    const [storedOtp, timestamp, sig] = parts;
+    const data = `${storedOtp}|${timestamp}`;
+
+    if (!safeEqual(sig, hmac(data))) return { valid: false };
+    if (Date.now() - parseInt(timestamp, 10) > OTP_TTL_MS) return { valid: false }; // expired
+
+    return { valid: true, otp: storedOtp };
+  } catch {
+    return { valid: false };
+  }
 }
 
 export interface ChallengeVerifyResult {

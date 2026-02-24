@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { createOTPChallenge, OTP_COOKIE } from '@/lib/client-auth';
+import { createOTPChallenge, decodeOTPChallenge, OTP_COOKIE } from '@/lib/client-auth';
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -25,8 +25,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  const code = String(Math.floor(100000 + Math.random() * 900000));
-  const challenge = createOTPChallenge(normalizedEmail, code);
+  // If a valid challenge already exists for this email, reuse it (resend same code).
+  // This prevents "Send again" from invalidating the code from the first email.
+  const existingRaw = req.cookies.get(OTP_COOKIE)?.value;
+  const existingDecoded = existingRaw ? decodeOTPChallenge(existingRaw) : null;
+
+  let code: string;
+  let challenge: string;
+  let isResend: boolean;
+
+  if (existingDecoded?.valid && existingDecoded.email === normalizedEmail && existingDecoded.code) {
+    code = existingDecoded.code;
+    challenge = existingRaw!; // keep existing cookie — don't overwrite
+    isResend = true;
+  } else {
+    code = String(Math.floor(100000 + Math.random() * 900000));
+    challenge = createOTPChallenge(normalizedEmail, code);
+    isResend = false;
+  }
 
   // Send the code by email
   if (process.env.RESEND_API_KEY) {
@@ -35,7 +51,7 @@ export async function POST(req: NextRequest) {
       from: 'presenzia.ai <reports@presenzia.ai>',
       to: normalizedEmail,
       subject: `Your presenzia.ai login code: ${code}`,
-      text: `Your presenzia.ai login code is: ${code}\n\nThis code expires in 10 minutes.${businessLine}\n\nIf you did not request this, you can safely ignore this email.\n\npresenzia.ai`,
+      text: `Your presenzia.ai login code is: ${code}\n\nThis code expires in 30 minutes.${businessLine}\n\nIf you did not request this, you can safely ignore this email.\n\npresenzia.ai`,
       html: `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -48,7 +64,7 @@ export async function POST(req: NextRequest) {
   </td></tr>
   <tr><td style="padding:32px;">
     <p style="font-size:14px;color:#555555;margin:0 0 8px;">Your login code</p>
-    <p style="font-size:13px;color:#888888;margin:0 0 24px;line-height:1.5;">Use the code below to access your dashboard. It expires in 10 minutes.</p>
+    <p style="font-size:13px;color:#888888;margin:0 0 24px;line-height:1.5;">Use the code below to access your dashboard. It expires in 30 minutes.</p>
     <div style="background:#F9F9F9;border:1px solid #E0E0E0;padding:24px;text-align:center;margin:0 0 24px;letter-spacing:0.3em;">
       <span style="font-size:36px;font-weight:700;color:#0A0A0A;font-family:Courier,monospace;">${code}</span>
     </div>
@@ -69,12 +85,17 @@ export async function POST(req: NextRequest) {
   }
 
   const res = NextResponse.json({ ok: true });
-  res.cookies.set(OTP_COOKIE, challenge, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: 600, // 10 minutes
-    path: '/',
-  });
+
+  // Only set a new cookie when creating a fresh challenge (not on resend)
+  if (!isResend) {
+    res.cookies.set(OTP_COOKIE, challenge, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 30 * 60, // 30 minutes
+      path: '/',
+    });
+  }
+
   return res;
 }

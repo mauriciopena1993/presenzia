@@ -71,7 +71,8 @@ export default function AdminLoginPage() {
     const res = await fetch('/api/admin/send-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
+      // Pass existing token so server can reuse the same OTP instead of generating a new one
+      body: JSON.stringify({ email, existingChallengeToken: challengeToken }),
     });
 
     const data = await res.json();
