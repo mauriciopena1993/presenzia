@@ -57,7 +57,7 @@ function fmt(date: string) {
 function Badge({ label, color }: { label: string; color: string }) {
   return (
     <span style={{
-      fontSize: '0.7rem',
+      fontSize: '0.75rem',
       padding: '2px 8px',
       background: color + '22',
       color: color,
@@ -140,21 +140,21 @@ export default function AdminDashboard() {
     statsRow: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '2.5rem' },
     stat: { background: '#111', border: '1px solid #1a1a1a', padding: '1.25rem 1.5rem' },
     statNum: { fontSize: '2rem', fontWeight: 700, color: '#C9A84C', lineHeight: 1 },
-    statLabel: { fontSize: '0.7rem', color: '#666', marginTop: '4px', textTransform: 'uppercase' as const, letterSpacing: '0.08em' },
+    statLabel: { fontSize: '0.75rem', color: '#999', marginTop: '4px', textTransform: 'uppercase' as const, letterSpacing: '0.08em' },
     tabs: { display: 'flex', gap: 0, borderBottom: '1px solid #1a1a1a', marginBottom: '1.5rem' },
     tab: (active: boolean) => ({
       padding: '0.6rem 1.5rem',
       background: 'none',
       border: 'none',
       borderBottom: active ? '2px solid #C9A84C' : '2px solid transparent',
-      color: active ? '#F5F0E8' : '#666',
+      color: active ? '#F5F0E8' : '#888',
       fontFamily: 'inherit',
       fontSize: '0.875rem',
       cursor: 'pointer',
       fontWeight: active ? 600 : 400,
     }),
     table: { width: '100%', borderCollapse: 'collapse' as const },
-    th: { textAlign: 'left' as const, padding: '0.6rem 1rem', fontSize: '0.65rem', color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase' as const, borderBottom: '1px solid #1a1a1a' },
+    th: { textAlign: 'left' as const, padding: '0.6rem 1rem', fontSize: '0.75rem', color: '#888', letterSpacing: '0.1em', textTransform: 'uppercase' as const, borderBottom: '1px solid #1a1a1a' },
     td: { padding: '0.875rem 1rem', borderBottom: '1px solid #111', fontSize: '0.85rem', color: '#CCCCCC', verticalAlign: 'top' as const },
   };
 
@@ -163,11 +163,11 @@ export default function AdminDashboard() {
       <div style={s.nav}>
         <Link href="/" style={s.brand}>
           presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
-          <span style={{ color: '#444', fontSize: '0.8rem', fontFamily: 'Inter, sans-serif', marginLeft: '12px' }}>admin</span>
+          <span style={{ color: '#888', fontSize: '0.8rem', fontFamily: 'Inter, sans-serif', marginLeft: '12px' }}>admin</span>
         </Link>
         <button
           onClick={handleLogout}
-          style={{ background: 'none', border: '1px solid #333', color: '#666', padding: '0.4rem 1rem', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem' }}
+          style={{ background: 'none', border: '1px solid #555', color: '#999', padding: '0.4rem 1rem', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem' }}
         >
           Sign out
         </button>
@@ -211,7 +211,7 @@ export default function AdminDashboard() {
         </div>
 
         {loading ? (
-          <div style={{ color: '#555', padding: '3rem', textAlign: 'center' }}>Loading...</div>
+          <div style={{ color: '#888', padding: '3rem', textAlign: 'center' }}>Loading...</div>
         ) : tab === 'clients' ? (
           <table style={s.table}>
             <thead>
@@ -227,7 +227,7 @@ export default function AdminDashboard() {
             </thead>
             <tbody>
               {clients.length === 0 ? (
-                <tr><td colSpan={7} style={{ ...s.td, textAlign: 'center', color: '#444', padding: '3rem' }}>No clients yet</td></tr>
+                <tr><td colSpan={7} style={{ ...s.td, textAlign: 'center', color: '#888', padding: '3rem' }}>No clients yet</td></tr>
               ) : clients.map(client => {
                 const latestJob = client.audit_jobs
                   ?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
@@ -236,7 +236,7 @@ export default function AdminDashboard() {
                   <tr key={client.id}>
                     <td style={s.td}>
                       <div style={{ color: '#F5F0E8', fontWeight: 500 }}>{client.business_name || '—'}</div>
-                      {client.location && <div style={{ fontSize: '0.75rem', color: '#555', marginTop: '2px' }}>{client.location}</div>}
+                      {client.location && <div style={{ fontSize: '0.75rem', color: '#888', marginTop: '2px' }}>{client.location}</div>}
                     </td>
                     <td style={s.td}>
                       <a href={`mailto:${client.email}`} style={{ color: '#888', textDecoration: 'none' }}>{client.email}</a>
@@ -263,22 +263,22 @@ export default function AdminDashboard() {
                               onClick={() => handleRetryAudit(latestJob.id)}
                               disabled={retrying === latestJob.id}
                               title={latestJob.error || 'Retry audit'}
-                              style={{ fontSize: '0.65rem', padding: '2px 6px', background: 'none', border: '1px solid #555', color: '#888', cursor: 'pointer', fontFamily: 'inherit' }}
+                              style={{ fontSize: '0.75rem', padding: '2px 6px', background: 'none', border: '1px solid #555', color: '#999', cursor: 'pointer', fontFamily: 'inherit' }}
                             >
                               {retrying === latestJob.id ? '…' : 'Retry'}
                             </button>
                           )}
                         </div>
-                      ) : <span style={{ color: '#333' }}>—</span>}
+                      ) : <span style={{ color: '#888' }}>—</span>}
                     </td>
                     <td style={s.td}>
                       {latestJob?.overall_score != null ? (
                         <span style={{ color: '#C9A84C', fontWeight: 600 }}>
-                          {latestJob.overall_score}/100 <span style={{ color: '#666' }}>({latestJob.grade})</span>
+                          {latestJob.overall_score}/100 <span style={{ color: '#999' }}>({latestJob.grade})</span>
                         </span>
-                      ) : <span style={{ color: '#333' }}>—</span>}
+                      ) : <span style={{ color: '#888' }}>—</span>}
                     </td>
-                    <td style={{ ...s.td, color: '#555', fontSize: '0.8rem' }}>
+                    <td style={{ ...s.td, color: '#888', fontSize: '0.8rem' }}>
                       {fmt(client.created_at)}
                     </td>
                   </tr>
@@ -300,30 +300,30 @@ export default function AdminDashboard() {
             </thead>
             <tbody>
               {leads.length === 0 ? (
-                <tr><td colSpan={6} style={{ ...s.td, textAlign: 'center', color: '#444', padding: '3rem' }}>No leads yet</td></tr>
+                <tr><td colSpan={6} style={{ ...s.td, textAlign: 'center', color: '#888', padding: '3rem' }}>No leads yet</td></tr>
               ) : leads.map(lead => (
                 <tr key={lead.id}>
                   <td style={s.td}>
                     <div style={{ color: '#F5F0E8', fontWeight: 500 }}>{lead.business_name}</div>
-                    <div style={{ fontSize: '0.75rem', color: '#555', marginTop: '2px' }}>{lead.business_type}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#888', marginTop: '2px' }}>{lead.business_type}</div>
                   </td>
                   <td style={s.td}>
                     {lead.email
-                      ? <a href={`mailto:${lead.email}`} style={{ color: '#888', textDecoration: 'none' }}>{lead.email}</a>
-                      : <span style={{ color: '#333' }}>Not provided</span>
+                      ? <a href={`mailto:${lead.email}`} style={{ color: '#999', textDecoration: 'none' }}>{lead.email}</a>
+                      : <span style={{ color: '#888' }}>Not provided</span>
                     }
                   </td>
                   <td style={s.td}>
                     <Badge label={lead.plan} color={PLAN_COLORS[lead.plan] || '#555'} />
                   </td>
-                  <td style={{ ...s.td, color: '#888' }}>{lead.location}</td>
+                  <td style={{ ...s.td, color: '#999' }}>{lead.location}</td>
                   <td style={s.td}>
                     <Badge
                       label={lead.converted_at ? 'Converted' : 'Dropped off'}
                       color={lead.converted_at ? '#3a7d44' : '#9b4a00'}
                     />
                   </td>
-                  <td style={{ ...s.td, color: '#555', fontSize: '0.8rem' }}>
+                  <td style={{ ...s.td, color: '#888', fontSize: '0.8rem' }}>
                     {fmt(lead.created_at)}
                   </td>
                 </tr>

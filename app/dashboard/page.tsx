@@ -98,7 +98,7 @@ function ScoreGauge({ score, grade }: { score: number; grade: string }) {
       }}>
         {score}
       </div>
-      <div style={{ fontSize: '0.75rem', color: '#777', marginTop: '4px', letterSpacing: '0.05em' }}>/ 100</div>
+      <div style={{ fontSize: '0.75rem', color: '#999', marginTop: '4px', letterSpacing: '0.05em' }}>/ 100</div>
       <div style={{
         display: 'inline-block',
         marginTop: '12px',
@@ -125,13 +125,13 @@ function PlatformBar({ platform }: { platform: PlatformScore }) {
     <div style={{ marginBottom: '1.25rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ fontSize: '0.875rem', color: isFound ? '#F5F0E8' : '#888' }}>{platform.platform}</span>
+          <span style={{ fontSize: '0.875rem', color: isFound ? '#F5F0E8' : '#999' }}>{platform.platform}</span>
           <div
             style={{ position: 'relative', cursor: 'help' }}
             onMouseEnter={() => setTooltip(true)}
             onMouseLeave={() => setTooltip(false)}
           >
-            <span style={{ fontSize: '0.7rem', color: '#555', border: '1px solid #333', borderRadius: '50%', width: '16px', height: '16px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>?</span>
+            <span style={{ fontSize: '0.75rem', color: '#888', border: '1px solid #555', borderRadius: '50%', width: '16px', height: '16px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>?</span>
             {tooltip && (
               <div style={{
                 position: 'absolute',
@@ -155,8 +155,8 @@ function PlatformBar({ platform }: { platform: PlatformScore }) {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <span style={{ fontSize: '0.75rem', color: '#555' }}>{platform.promptsMentioned}/{platform.promptsTested} prompts</span>
-          <span style={{ fontSize: '0.7rem', color: isFound ? scoreColor(platform.score) : '#444', letterSpacing: '0.05em' }}>
+          <span style={{ fontSize: '0.75rem', color: '#888' }}>{platform.promptsMentioned}/{platform.promptsTested} prompts</span>
+          <span style={{ fontSize: '0.75rem', color: isFound ? scoreColor(platform.score) : '#888', letterSpacing: '0.05em' }}>
             {isFound ? 'Visible' : 'Not found'}
           </span>
         </div>
@@ -227,7 +227,7 @@ function ChatPane({ jobId, businessName }: { jobId: string; businessName: string
     }}>
       <div style={{ padding: '0.875rem 1.25rem', borderBottom: '1px solid #1a1a1a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <div style={{ width: '6px', height: '6px', background: '#C9A84C', borderRadius: '50%' }} />
-        <span style={{ fontSize: '0.7rem', color: '#888', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+        <span style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
           AI Report Assistant
         </span>
       </div>
@@ -250,7 +250,7 @@ function ChatPane({ jobId, businessName }: { jobId: string; businessName: string
         ))}
         {chatLoading && (
           <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-            <div style={{ padding: '0.625rem 0.875rem', background: '#161616', border: '1px solid #222', color: '#555', fontSize: '0.85rem' }}>
+            <div style={{ padding: '0.625rem 0.875rem', background: '#161616', border: '1px solid #222', color: '#888', fontSize: '0.85rem' }}>
               Thinking…
             </div>
           </div>
@@ -280,7 +280,7 @@ function ChatPane({ jobId, businessName }: { jobId: string; businessName: string
           disabled={!input.trim() || chatLoading}
           style={{
             background: input.trim() && !chatLoading ? '#C9A84C' : '#2a2a2a',
-            color: input.trim() && !chatLoading ? '#0A0A0A' : '#555',
+            color: input.trim() && !chatLoading ? '#0A0A0A' : '#888',
             border: 'none',
             padding: '0.625rem 1rem',
             cursor: input.trim() && !chatLoading ? 'pointer' : 'not-allowed',
@@ -360,12 +360,12 @@ export default function DashboardPage() {
             <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.2rem', color: '#F5F0E8', textDecoration: 'none' }}>
               presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
             </Link>
-            <div style={{ fontSize: '0.75rem', color: '#555', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={{ fontSize: '0.75rem', color: '#999', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               {client.business_name || client.email}
-              <span style={{ padding: '2px 8px', background: '#1a1a1a', border: '1px solid #222', fontSize: '0.65rem', color: '#777', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Starter</span>
+              <span style={{ padding: '2px 8px', background: '#1a1a1a', border: '1px solid #333', fontSize: '0.75rem', color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Starter</span>
             </div>
           </div>
-          <button onClick={handleSignOut} style={{ background: 'none', border: '1px solid #2a2a2a', color: '#666', padding: '0.4rem 1rem', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem' }}>
+          <button onClick={handleSignOut} style={{ background: 'none', border: '1px solid #2a2a2a', color: '#999', padding: '0.4rem 1rem', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem' }}>
             Sign out
           </button>
         </div>
@@ -376,15 +376,15 @@ export default function DashboardPage() {
           <div style={{ marginBottom: '3rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '1.25rem' }}>
               <div>
-                <div style={{ fontSize: '0.65rem', color: '#666', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>Report library</div>
+                <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>Report library</div>
                 <h2 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.5rem', color: '#F5F0E8', fontWeight: 600 }}>Your AI visibility reports</h2>
               </div>
-              <span style={{ fontSize: '0.75rem', color: '#555' }}>{completedReports.length} report{completedReports.length !== 1 ? 's' : ''}</span>
+              <span style={{ fontSize: '0.75rem', color: '#888' }}>{completedReports.length} report{completedReports.length !== 1 ? 's' : ''}</span>
             </div>
 
             <div style={{ border: '1px solid #111' }}>
               {completedReports.length === 0 ? (
-                <div style={{ padding: '3rem', textAlign: 'center', color: '#555' }}>
+                <div style={{ padding: '3rem', textAlign: 'center', color: '#888' }}>
                   {pendingJob
                     ? 'Your first report is being prepared — check back shortly.'
                     : 'Your first report will arrive by email once your audit is complete.'}
@@ -403,11 +403,11 @@ export default function DashboardPage() {
                           {report.completed_at ? fmt(report.completed_at) : fmt(report.created_at)}
                         </span>
                         {i === 0 && (
-                          <span style={{ fontSize: '0.6rem', padding: '2px 8px', background: '#1a1400', border: '1px solid #3a2e00', color: '#C9A84C', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Latest</span>
+                          <span style={{ fontSize: '0.75rem', padding: '2px 8px', background: '#1a1400', border: '1px solid #3a2e00', color: '#C9A84C', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Latest</span>
                         )}
                       </div>
                       {report.overall_score !== null && report.grade && (
-                        <div style={{ fontSize: '0.75rem', color: '#555' }}>
+                        <div style={{ fontSize: '0.75rem', color: '#888' }}>
                           Score: <span style={{ color: '#C9A84C' }}>{report.overall_score}/100</span> · Grade {report.grade}
                         </div>
                       )}
@@ -415,14 +415,14 @@ export default function DashboardPage() {
                     {report.report_path ? (
                       <button
                         onClick={() => handleDownloadReport(report.id)}
-                        style={{ background: 'none', border: '1px solid #333', color: '#888', padding: '0.5rem 1rem', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                        style={{ background: 'none', border: '1px solid #555', color: '#999', padding: '0.5rem 1rem', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
                         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#C9A84C'; (e.currentTarget as HTMLElement).style.borderColor = '#C9A84C'; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#888'; (e.currentTarget as HTMLElement).style.borderColor = '#333'; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#999'; (e.currentTarget as HTMLElement).style.borderColor = '#555'; }}
                       >
                         ↓ Download PDF
                       </button>
                     ) : (
-                      <span style={{ fontSize: '0.75rem', color: '#444' }}>Processing…</span>
+                      <span style={{ fontSize: '0.75rem', color: '#888' }}>Processing…</span>
                     )}
                   </div>
                 ))
@@ -434,7 +434,7 @@ export default function DashboardPage() {
           <div style={{ marginBottom: '1.25rem', padding: '1rem 1.5rem', background: '#0a0a00', border: '1px solid #2a2000', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
               <div style={{ fontSize: '0.8rem', color: '#C9A84C', fontWeight: 600, marginBottom: '2px' }}>Want a live dashboard?</div>
-              <div style={{ fontSize: '0.8rem', color: '#777' }}>See your scores online, track progress month by month, and get weekly updates.</div>
+              <div style={{ fontSize: '0.8rem', color: '#999' }}>See your scores online, track progress month by month, and get weekly updates.</div>
             </div>
             <Link href="/#pricing" style={{ fontSize: '0.8rem', color: '#C9A84C', textDecoration: 'none', whiteSpace: 'nowrap', border: '1px solid #C9A84C44', padding: '0.4rem 1rem' }}>
               View Growth plan →
@@ -444,15 +444,15 @@ export default function DashboardPage() {
           <div style={{ padding: '1rem 1.5rem', background: '#0a000a', border: '1px solid #1a001a', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
               <div style={{ fontSize: '0.8rem', color: '#9b6bcc', fontWeight: 600, marginBottom: '2px' }}>Want AI-powered guidance?</div>
-              <div style={{ fontSize: '0.8rem', color: '#777' }}>Ask an AI expert questions about your report — what the scores mean and exactly what to do next.</div>
+              <div style={{ fontSize: '0.8rem', color: '#999' }}>Ask an AI expert questions about your report — what the scores mean and exactly what to do next.</div>
             </div>
             <Link href="/#pricing" style={{ fontSize: '0.8rem', color: '#9b6bcc', textDecoration: 'none', whiteSpace: 'nowrap', border: '1px solid #9b6bcc44', padding: '0.4rem 1rem' }}>
               View Growth & Premium →
             </Link>
           </div>
 
-          <p style={{ textAlign: 'center', color: '#333', fontSize: '0.75rem', marginTop: '2.5rem' }}>
-            Questions about upgrading? <a href="mailto:hello@presenzia.ai" style={{ color: '#555', textDecoration: 'none' }}>hello@presenzia.ai</a>
+          <p style={{ textAlign: 'center', color: '#888', fontSize: '0.8rem', marginTop: '2.5rem' }}>
+            Questions about upgrading? <a href="mailto:hello@presenzia.ai" style={{ color: '#999', textDecoration: 'none' }}>hello@presenzia.ai</a>
           </p>
         </div>
       </div>
@@ -472,9 +472,9 @@ export default function DashboardPage() {
             presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
           </Link>
           {client && (
-            <div style={{ fontSize: '0.75rem', color: '#555', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={{ fontSize: '0.75rem', color: '#999', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               {client.business_name || client.email}
-              <span style={{ padding: '2px 8px', background: '#1a1a1a', border: '1px solid #222', fontSize: '0.65rem', color: '#777', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <span style={{ padding: '2px 8px', background: '#1a1a1a', border: '1px solid #333', fontSize: '0.75rem', color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 {PLAN_LABELS[client.plan] || client.plan}
               </span>
             </div>
@@ -482,7 +482,7 @@ export default function DashboardPage() {
         </div>
         <button
           onClick={handleSignOut}
-          style={{ background: 'none', border: '1px solid #2a2a2a', color: '#666', padding: '0.4rem 1rem', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem' }}
+          style={{ background: 'none', border: '1px solid #2a2a2a', color: '#999', padding: '0.4rem 1rem', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem' }}
         >
           Sign out
         </button>
@@ -513,7 +513,7 @@ export default function DashboardPage() {
                 background: 'none',
                 border: 'none',
                 borderBottom: activeTab === tab.key ? '2px solid #C9A84C' : '2px solid transparent',
-                color: activeTab === tab.key ? '#F5F0E8' : '#555',
+                color: activeTab === tab.key ? '#F5F0E8' : '#888',
                 fontFamily: 'inherit',
                 fontSize: '0.875rem',
                 cursor: 'pointer',
@@ -533,7 +533,7 @@ export default function DashboardPage() {
               <div style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.5rem', color: '#F5F0E8', marginBottom: '1rem' }}>
                 {pendingJob ? 'Your first audit is running…' : 'Your report is on its way'}
               </div>
-              <p style={{ color: '#777', fontSize: '0.9rem', maxWidth: '400px', margin: '0 auto', lineHeight: 1.7 }}>
+              <p style={{ color: '#999', fontSize: '0.9rem', maxWidth: '400px', margin: '0 auto', lineHeight: 1.7 }}>
                 {pendingJob
                   ? 'Your AI visibility audit is processing. Results will appear here automatically.'
                   : 'Your first report will be ready shortly. Check back in a few minutes or look for an email from us.'}
@@ -548,10 +548,10 @@ export default function DashboardPage() {
                   {/* Header */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.75rem', paddingBottom: '1.5rem', borderBottom: '1px solid #1a1a1a' }}>
                     <div>
-                      <div style={{ fontSize: '0.6rem', color: '#666', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>presenzia.ai</div>
+                      <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>presenzia.ai</div>
                       <div style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1rem', color: '#F5F0E8' }}>AI Visibility Report</div>
                       {latestJob.completed_at && (
-                        <div style={{ fontSize: '0.7rem', color: '#555', marginTop: '3px' }}>
+                        <div style={{ fontSize: '0.75rem', color: '#999', marginTop: '3px' }}>
                           {client?.business_name} · {fmt(latestJob.completed_at)}
                         </div>
                       )}
@@ -564,9 +564,9 @@ export default function DashboardPage() {
                   {/* Platform breakdown */}
                   {platforms.length > 0 && (
                     <div>
-                      <div style={{ fontSize: '0.6rem', color: '#777', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>
                         Platform breakdown
-                        <span style={{ color: '#444', marginLeft: '0.5rem', textTransform: 'none', letterSpacing: 0, fontSize: '0.65rem' }}>(hover ? for details)</span>
+                        <span style={{ color: '#888', marginLeft: '0.5rem', textTransform: 'none', letterSpacing: 0, fontSize: '0.75rem' }}>(hover ? for details)</span>
                       </div>
                       {platforms.map(p => <PlatformBar key={p.platform} platform={p} />)}
                     </div>
@@ -576,7 +576,7 @@ export default function DashboardPage() {
                 {/* Summary */}
                 {latestJob.summary && (
                   <div style={{ padding: '1.25rem', background: '#0D0D0D', border: '1px solid #1a1a1a', marginBottom: '1.25rem' }}>
-                    <div style={{ fontSize: '0.6rem', color: '#777', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Summary</div>
+                    <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Summary</div>
                     <p style={{ color: '#AAAAAA', fontSize: '0.875rem', lineHeight: 1.7, margin: 0 }}>{latestJob.summary}</p>
                   </div>
                 )}
@@ -611,13 +611,13 @@ export default function DashboardPage() {
                 {/* Competitors */}
                 {competitors.length > 0 && (
                   <div style={{ background: '#0D0D0D', border: '1px solid #1a1a1a', padding: '1.5rem', marginBottom: '1.25rem' }}>
-                    <div style={{ fontSize: '0.6rem', color: '#777', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1rem' }}>
+                    <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1rem' }}>
                       Competitors appearing instead of you
                     </div>
                     {competitors.slice(0, 5).map((comp, i) => (
                       <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '0.5rem', borderBottom: i < Math.min(4, competitors.length - 1) ? '1px solid #111' : 'none', marginBottom: '0.5rem' }}>
                         <span style={{ fontSize: '0.875rem', color: '#CCCCCC' }}>{comp.name}</span>
-                        <span style={{ fontSize: '0.75rem', color: '#555' }}>{comp.count} mention{comp.count !== 1 ? 's' : ''}</span>
+                        <span style={{ fontSize: '0.75rem', color: '#888' }}>{comp.count} mention{comp.count !== 1 ? 's' : ''}</span>
                       </div>
                     ))}
                   </div>
@@ -625,7 +625,7 @@ export default function DashboardPage() {
 
                 {/* Chat */}
                 <div>
-                  <div style={{ fontSize: '0.6rem', color: '#777', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
                     Discuss your results
                   </div>
                   <ChatPane jobId={latestJob.id} businessName={client?.business_name || ''} />
@@ -639,7 +639,7 @@ export default function DashboardPage() {
         {activeTab === 'history' && (
           <div style={{ border: '1px solid #111' }}>
             {history.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '3rem', color: '#555' }}>No reports yet.</div>
+              <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>No reports yet.</div>
             ) : (
               history.map((report, i) => (
                 <div key={report.id} style={{
@@ -656,12 +656,12 @@ export default function DashboardPage() {
                         {report.completed_at ? fmt(report.completed_at) : fmt(report.created_at)}
                       </span>
                       {i === 0 && report.status === 'completed' && (
-                        <span style={{ fontSize: '0.6rem', padding: '2px 8px', background: '#1a1400', border: '1px solid #3a2e00', color: '#C9A84C', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                        <span style={{ fontSize: '0.75rem', padding: '2px 8px', background: '#1a1400', border: '1px solid #3a2e00', color: '#C9A84C', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                           Latest
                         </span>
                       )}
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: '#555' }}>
+                    <div style={{ fontSize: '0.75rem', color: '#888' }}>
                       {report.status === 'completed' ? 'Completed' : report.status === 'running' ? 'Running…' : report.status === 'pending' ? 'Queued' : 'Failed'}
                     </div>
                   </div>
@@ -669,15 +669,15 @@ export default function DashboardPage() {
                     {report.overall_score !== null && report.grade && (
                       <div style={{ textAlign: 'right' }}>
                         <div style={{ fontSize: '1.5rem', color: scoreColor(report.overall_score), fontWeight: 700, lineHeight: 1 }}>{report.overall_score}</div>
-                        <div style={{ fontSize: '0.65rem', color: '#555' }}>/ 100 · Grade {report.grade}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#888' }}>/ 100 · Grade {report.grade}</div>
                       </div>
                     )}
                     {report.report_path && (
                       <button
                         onClick={() => handleDownloadReport(report.id)}
-                        style={{ background: 'none', border: '1px solid #333', color: '#777', padding: '0.4rem 0.875rem', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'inherit' }}
+                        style={{ background: 'none', border: '1px solid #555', color: '#999', padding: '0.4rem 0.875rem', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'inherit' }}
                         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#C9A84C'; (e.currentTarget as HTMLElement).style.borderColor = '#C9A84C'; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#777'; (e.currentTarget as HTMLElement).style.borderColor = '#333'; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#999'; (e.currentTarget as HTMLElement).style.borderColor = '#555'; }}
                       >
                         ↓ PDF
                       </button>
@@ -693,13 +693,13 @@ export default function DashboardPage() {
         {activeTab === 'chat' && (
           latestJob ? (
             <div style={{ maxWidth: '700px' }}>
-              <p style={{ color: '#666', fontSize: '0.875rem', marginBottom: '1.5rem', lineHeight: 1.7 }}>
+              <p style={{ color: '#999', fontSize: '0.875rem', marginBottom: '1.5rem', lineHeight: 1.7 }}>
                 Ask anything about your results — what the scores mean, how competitors are outranking you, and exactly what to do to improve.
               </p>
               <ChatPane jobId={latestJob.id} businessName={client?.business_name || ''} />
             </div>
           ) : (
-            <div style={{ textAlign: 'center', padding: '3rem', color: '#555' }}>
+            <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>
               Chat will be available once your first report is ready.
             </div>
           )
