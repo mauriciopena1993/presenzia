@@ -47,29 +47,29 @@ export default function Navbar() {
 
       {/* Desktop Nav */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }} className="desktop-nav">
-        <Link href="/#how-it-works" style={{ color: '#888', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
+        <Link href="/#how-it-works" style={{ color: '#999', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
           onMouseEnter={e => (e.currentTarget.style.color = '#F5F0E8')}
-          onMouseLeave={e => (e.currentTarget.style.color = '#888')}>
+          onMouseLeave={e => (e.currentTarget.style.color = '#999')}>
           How it works
         </Link>
-        <Link href="/#pricing" style={{ color: '#888', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
+        <Link href="/#pricing" style={{ color: '#999', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
           onMouseEnter={e => (e.currentTarget.style.color = '#F5F0E8')}
-          onMouseLeave={e => (e.currentTarget.style.color = '#888')}>
+          onMouseLeave={e => (e.currentTarget.style.color = '#999')}>
           Pricing
         </Link>
-        <Link href="/#sample-report" style={{ color: '#888', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
+        <Link href="/#sample-report" style={{ color: '#999', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
           onMouseEnter={e => (e.currentTarget.style.color = '#F5F0E8')}
-          onMouseLeave={e => (e.currentTarget.style.color = '#888')}>
+          onMouseLeave={e => (e.currentTarget.style.color = '#999')}>
           Sample report
         </Link>
-        <Link href="/blog" style={{ color: '#888', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
+        <Link href="/blog" style={{ color: '#999', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
           onMouseEnter={e => (e.currentTarget.style.color = '#F5F0E8')}
-          onMouseLeave={e => (e.currentTarget.style.color = '#888')}>
+          onMouseLeave={e => (e.currentTarget.style.color = '#999')}>
           Blog
         </Link>
-        <Link href="/dashboard" style={{ color: '#888', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
+        <Link href="/dashboard" style={{ color: '#999', fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s' }}
           onMouseEnter={e => (e.currentTarget.style.color = '#F5F0E8')}
-          onMouseLeave={e => (e.currentTarget.style.color = '#888')}>
+          onMouseLeave={e => (e.currentTarget.style.color = '#999')}>
           Login
         </Link>
         <Link href="/#pricing" style={{
@@ -122,7 +122,7 @@ export default function Navbar() {
           ].map((item) => (
             <Link key={item.label} href={item.href}
               onClick={() => setMenuOpen(false)}
-              style={{ color: '#888', fontSize: '1rem', textDecoration: 'none' }}>
+              style={{ color: '#999', fontSize: '1rem', textDecoration: 'none' }}>
               {item.label}
             </Link>
           ))}

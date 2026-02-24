@@ -72,7 +72,7 @@ export default function Pricing() {
     }}>
       {/* Section header */}
       <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-        <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
+        <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
           Pricing
         </div>
         <h2 style={{
@@ -111,7 +111,7 @@ export default function Pricing() {
                 right: '1.5rem',
                 background: '#C9A84C',
                 color: '#0A0A0A',
-                fontSize: '0.65rem',
+                fontSize: '0.75rem',
                 fontWeight: 700,
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
@@ -134,7 +134,7 @@ export default function Pricing() {
                 }}>
                   {plan.price}
                 </span>
-                <span style={{ color: '#777777', fontSize: '0.875rem' }}>{plan.period}</span>
+                <span style={{ color: '#999999', fontSize: '0.875rem' }}>{plan.period}</span>
               </div>
               <p style={{ color: '#999999', fontSize: '0.875rem', lineHeight: 1.6 }}>{plan.description}</p>
             </div>
@@ -157,7 +157,7 @@ export default function Pricing() {
                 padding: '0.875rem 1.5rem',
                 background: plan.highlighted ? '#C9A84C' : 'transparent',
                 color: plan.highlighted ? '#0A0A0A' : '#DDDDDD',
-                border: plan.highlighted ? 'none' : '1px solid #333333',
+                border: plan.highlighted ? 'none' : '1px solid #555555',
                 fontWeight: 600,
                 fontSize: '0.875rem',
                 letterSpacing: '0.02em',
@@ -173,7 +173,7 @@ export default function Pricing() {
               onMouseLeave={e => {
                 const el = e.currentTarget;
                 if (plan.highlighted) el.style.background = '#C9A84C';
-                else { el.style.borderColor = '#333333'; el.style.color = '#DDDDDD'; }
+                else { el.style.borderColor = '#555555'; el.style.color = '#DDDDDD'; }
               }}
             >
               Get started →
@@ -185,11 +185,10 @@ export default function Pricing() {
                   display: 'block',
                   textAlign: 'center',
                   marginTop: '0.75rem',
-                  fontSize: '0.8rem',
-                  color: '#ffffff',
+                  fontSize: '0.85rem',
+                  color: '#C9A84C',
                   textDecoration: 'underline',
                   textUnderlineOffset: '3px',
-                  opacity: 0.7,
                 }}
               >
                 or book a discovery call
@@ -199,7 +198,7 @@ export default function Pricing() {
         ))}
       </div>
 
-      <p style={{ textAlign: 'center', color: '#777777', fontSize: '0.8rem', marginTop: '2rem' }}>
+      <p style={{ textAlign: 'center', color: '#999999', fontSize: '0.8rem', marginTop: '2rem' }}>
         All plans include VAT. Billed monthly. Cancel anytime with 30 days notice.
       </p>
     </section>

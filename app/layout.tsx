@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
-import ChatWidget from "@/components/ChatWidget";
+
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -110,7 +110,6 @@ export default function RootLayout({
       </head>
       <body className="antialiased" suppressHydrationWarning style={{ fontFamily: "var(--font-inter, Inter, sans-serif)" }}>
         {children}
-        <ChatWidget />
       </body>
     </html>
   );

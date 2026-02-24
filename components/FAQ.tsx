@@ -47,7 +47,7 @@ export default function FAQ() {
       margin: '0 auto',
     }}>
       <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-        <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
+        <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
           FAQs
         </div>
         <h2 style={{
@@ -129,7 +129,7 @@ export default function FAQ() {
       </div>
 
       <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-        <p style={{ color: '#555', fontSize: '0.875rem' }}>
+        <p style={{ color: '#999', fontSize: '0.9rem' }}>
           Still have questions?{' '}
           <a href="mailto:hello@presenzia.ai" style={{ color: '#C9A84C', textDecoration: 'none' }}>
             Email us at hello@presenzia.ai

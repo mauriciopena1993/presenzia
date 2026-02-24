@@ -29,7 +29,7 @@ export default function Testimonials() {
       margin: '0 auto',
     }}>
       <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-        <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
+        <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
           What clients say
         </div>
         <h2 style={{
@@ -81,7 +81,7 @@ export default function Testimonials() {
               </div>
               <div>
                 <div style={{ fontSize: '0.85rem', color: '#F5F0E8', fontWeight: 500 }}>{t.name}</div>
-                <div style={{ fontSize: '0.75rem', color: '#777777' }}>{t.role}</div>
+                <div style={{ fontSize: '0.8rem', color: '#999999' }}>{t.role}</div>
               </div>
             </div>
           </div>

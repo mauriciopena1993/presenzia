@@ -24,7 +24,7 @@ export default function Footer() {
             <p style={{ color: '#888888', fontSize: '0.825rem', lineHeight: 1.7, maxWidth: '220px' }}>
               AI search visibility audits for UK businesses. Know where you stand. Fix what&apos;s broken.
             </p>
-            <div style={{ marginTop: '1.5rem', fontSize: '0.75rem', color: '#666666', lineHeight: 1.6 }}>
+            <div style={{ marginTop: '1.5rem', fontSize: '0.75rem', color: '#999999', lineHeight: 1.6 }}>
               Trading name of Ketzal LTD<br />
               Company No. 14570156
             </div>
@@ -32,7 +32,7 @@ export default function Footer() {
 
           {/* Services Links */}
           <div>
-            <div style={{ fontSize: '0.65rem', color: '#777777', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>Services</div>
+            <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>Services</div>
             {[
               { label: 'How it works', href: '/#how-it-works' },
               { label: 'Pricing', href: '/#pricing' },
@@ -51,7 +51,7 @@ export default function Footer() {
 
           {/* Company Links */}
           <div>
-            <div style={{ fontSize: '0.65rem', color: '#777777', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>Company</div>
+            <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>Company</div>
             {[
               { label: 'About', href: '/about' },
               { label: 'Contact', href: 'mailto:hello@presenzia.ai' },
@@ -70,9 +70,9 @@ export default function Footer() {
 
           {/* CTA */}
           <div>
-            <div style={{ fontSize: '0.65rem', color: '#777777', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>Get started</div>
+            <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>Get started</div>
             <p style={{ color: '#888888', fontSize: '0.825rem', lineHeight: 1.7, marginBottom: '1.25rem' }}>
-              Ready to find out where you stand?
+              Find out where you rank. Then climb.
             </p>
             <Link href="/#pricing" style={{
               display: 'inline-block',
@@ -101,10 +101,10 @@ export default function Footer() {
           flexWrap: 'wrap',
           gap: '1rem',
         }}>
-          <div style={{ fontSize: '0.75rem', color: '#555555' }}>
+          <div style={{ fontSize: '0.8rem', color: '#888888' }}>
             © 2026 Ketzal LTD t/a presenzia.ai. All rights reserved.
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#555555' }}>
+          <div style={{ fontSize: '0.8rem', color: '#888888' }}>
             Made with precision in London.
           </div>
         </div>

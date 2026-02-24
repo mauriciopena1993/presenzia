@@ -33,7 +33,7 @@ export default function HowItWorks() {
       {/* Section header */}
       <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
         <div style={{
-          fontSize: '0.7rem',
+          fontSize: '0.75rem',
           letterSpacing: '0.15em',
           color: '#C9A84C',
           textTransform: 'uppercase',

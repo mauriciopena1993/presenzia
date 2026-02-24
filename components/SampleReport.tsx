@@ -17,7 +17,7 @@ export default function SampleReport() {
         }}>
           {/* Left: copy */}
           <div>
-            <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
+            <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
               Sample report
             </div>
             <h2 style={{
@@ -58,19 +58,19 @@ export default function SampleReport() {
             {/* Report header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid #222222' }}>
               <div>
-                <div style={{ fontSize: '0.65rem', color: '#777777', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.25rem' }}>presenzia.ai</div>
+                <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.25rem' }}>presenzia.ai</div>
                 <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#F5F0E8' }}>AI Visibility Report</div>
-                <div style={{ fontSize: '0.75rem', color: '#777777', marginTop: '0.25rem' }}>Smith & Co Solicitors · February 2026</div>
+                <div style={{ fontSize: '0.75rem', color: '#999999', marginTop: '0.25rem' }}>Smith & Co Solicitors · February 2026</div>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '2.5rem', color: '#C9A84C', lineHeight: 1 }}>34</div>
-                <div style={{ fontSize: '0.65rem', color: '#777777', letterSpacing: '0.05em' }}>/ 100 score</div>
+                <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.05em' }}>/ 100 score</div>
               </div>
             </div>
 
             {/* Platform breakdown */}
             <div style={{ marginBottom: '1.5rem' }}>
-              <div style={{ fontSize: '0.65rem', color: '#888888', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1rem' }}>Platform breakdown</div>
+              <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1rem' }}>Platform breakdown</div>
               {[
                 { name: 'ChatGPT', score: 2, max: 10, found: false },
                 { name: 'Claude', score: 4, max: 10, found: false },
@@ -83,7 +83,7 @@ export default function SampleReport() {
                     <span style={{ fontSize: '0.7rem', color: platform.found ? '#C9A84C' : '#555555' }}>{platform.found ? 'Found' : 'Not found'}</span>
                   </div>
                   <div style={{ height: '3px', background: '#222222', borderRadius: '2px' }}>
-                    <div style={{ height: '100%', width: `${(platform.score / platform.max) * 100}%`, background: platform.found ? '#C9A84C' : '#333333', borderRadius: '2px', transition: 'width 1s ease' }} />
+                    <div style={{ height: '100%', width: `${(platform.score / platform.max) * 100}%`, background: platform.found ? '#C9A84C' : '#555555', borderRadius: '2px', transition: 'width 1s ease' }} />
                   </div>
                 </div>
               ))}
@@ -91,7 +91,7 @@ export default function SampleReport() {
 
             {/* Top recommendation */}
             <div style={{ padding: '1rem', background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)' }}>
-              <div style={{ fontSize: '0.65rem', color: '#C9A84C', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Top recommendation</div>
+              <div style={{ fontSize: '0.75rem', color: '#C9A84C', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Top recommendation</div>
               <p style={{ fontSize: '0.8rem', color: '#AAAAAA', lineHeight: 1.65 }}>
                 Add structured FAQ content to your website answering &ldquo;best solicitor in [city]&rdquo;. This is the primary prompt pattern where competitors are being cited instead of you.
               </p>

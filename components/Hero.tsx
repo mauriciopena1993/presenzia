@@ -115,7 +115,7 @@ export default function Hero() {
           fontWeight: 400,
           fontSize: '0.9rem',
           textDecoration: 'none',
-          border: '1px solid #333333',
+          border: '1px solid #555555',
           transition: 'all 0.2s',
         }}
           onMouseEnter={e => {
@@ -125,7 +125,7 @@ export default function Hero() {
           }}
           onMouseLeave={e => {
             const el = e.currentTarget as HTMLElement;
-            el.style.borderColor = '#333333';
+            el.style.borderColor = '#555555';
             el.style.color = '#CCCCCC';
           }}>
           See sample report
@@ -153,20 +153,20 @@ export default function Hero() {
         ].map((item) => (
           <div key={item.stat} style={{ textAlign: 'center' }}>
             <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.75rem', color: '#C9A84C', fontWeight: 600 }}>{item.stat}</div>
-            <div style={{ fontSize: '0.75rem', color: '#888888', letterSpacing: '0.04em', marginTop: '0.3rem' }}>{item.label}</div>
+            <div style={{ fontSize: '0.8rem', color: '#999999', letterSpacing: '0.04em', marginTop: '0.3rem' }}>{item.label}</div>
           </div>
         ))}
       </div>
 
       {/* AI platform badges */}
       <div style={{ marginTop: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-        <span style={{ fontSize: '0.7rem', color: '#666666', letterSpacing: '0.1em', textTransform: 'uppercase', marginRight: '0.25rem' }}>Audited across</span>
+        <span style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.1em', textTransform: 'uppercase', marginRight: '0.25rem' }}>Audited across</span>
         {['ChatGPT', 'Claude', 'Perplexity', 'Google AI'].map((ai) => (
           <span key={ai} style={{
             padding: '0.3rem 0.75rem',
             border: '1px solid #2A2A2A',
             fontSize: '0.75rem',
-            color: '#888888',
+            color: '#999999',
             letterSpacing: '0.05em',
           }}>{ai}</span>
         ))}
