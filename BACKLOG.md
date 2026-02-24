@@ -3,18 +3,7 @@
 
 ---
 
-## PHASE 1: Brand & Design Revamp (CURRENT)
-- [ ] Brand audit: review all color, typography, contrast across the entire site
-- [ ] Fix low-contrast grey text throughout (readable on obsidian #0A0A0A bg)
-- [ ] Revamp landing page: copy, layout, CTA hierarchy, responsive polish
-- [ ] Revamp email templates: OTP codes, admin notifications, report delivery
-- [ ] Revamp PDF report: white background, professional layout, brand-consistent
-- [ ] Revamp login page: styling and polish
-- [ ] Revamp admin dashboard UI
-- [ ] Revamp client dashboard UI (major improvements needed)
-- [ ] SEO audit: meta tags, structured data, OG images, sitemap consistency
-
-## PHASE 2: Technical & Quality
+## PHASE 2: Technical & Quality (CURRENT)
 - [ ] Add Perplexity API key (`PERPLEXITY_API_KEY`) to Vercel
 - [ ] Add Google AI API key (`GOOGLE_AI_API_KEY`) to Vercel
 - [ ] Improve audit report depth and quality (richer analysis, better prompts)
@@ -36,12 +25,21 @@
 - [x] Unified login page (/dashboard/login handles both admin + client)
 - [x] Navbar copy: "Client login" → "Login"
 - [x] Login page copy: "Portal access / Sign in" → "Login"
-- [x] PDF report redesign (previous session)
+- [x] Remove ChatWidget from layout
+- [x] Brand audit: full contrast, typography, and font-size audit across all pages
+- [x] Fix landing page components (8 files): contrast #555→#999, fonts 0.7rem→0.75rem, copy polish
+- [x] Fix static pages (blog, blog post, privacy, terms, about): contrast and font fixes
+- [x] Fix login page: contrast #333→#888, #444→#999
+- [x] Fix client dashboard: all section labels 0.6rem→0.75rem, 0.65rem→0.75rem, #555→#888
+- [x] Fix admin dashboard: stat labels, table headers, badges — all contrast + font fixes
+- [x] Revamp email templates: OTP footer/disclaimer readability, admin notification contrast
+- [x] PDF report redesign: dark bg → white bg, warm cream surfaces, dark header stripe
+- [x] SEO: dynamic favicon (icon.tsx), RSS feed (/feed.xml), feed auto-discovery link
 - [x] Blog OG images (previous session)
 - [x] Admin email notifications (previous session)
 - [x] FAQ cleanup (previous session)
 - [x] Dashboard PlatformBar color coding (previous session)
-- [x] SEO canonical URLs (previous session)
+- [x] SEO canonical URLs, sitemap, robots.txt (previous session)
 - [x] Email deliverability improvements (previous session)
 
 ---
@@ -52,7 +50,9 @@
 - **Border**: `#1A1A1A` / `#2A2A2A`
 - **Accent Gold**: `#C9A84C`
 - **Text Primary**: Cream `#F5F0E8`
-- **Text Secondary**: should be minimum `#999` (currently many at `#555`/`#666` — too low contrast)
+- **Text Secondary**: minimum `#999` on dark, `#555` on white
+- **Text Muted**: `#888` on dark
 - **Heading Font**: Playfair Display (serif)
 - **Body Font**: Inter (sans-serif)
 - **Reports/Emails**: White background for readability
+- **Min font size**: `0.75rem` (12px) everywhere
