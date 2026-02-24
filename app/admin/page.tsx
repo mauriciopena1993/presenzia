@@ -108,7 +108,8 @@ export default function AdminDashboard() {
   }, [router]);
 
   const handleLogout = async () => {
-    document.cookie = '__presenzia_admin=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    // Cookie is httpOnly — must clear it server-side
+    await fetch('/api/admin/signout', { method: 'POST' });
     router.push('/admin/login');
   };
 

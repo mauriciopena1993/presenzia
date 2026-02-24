@@ -146,8 +146,7 @@ async function queryClaude(prompt: string): Promise<string> {
 // Query Perplexity
 async function queryPerplexity(prompt: string): Promise<string> {
   if (!process.env.PERPLEXITY_API_KEY) {
-    // Fallback: use OpenAI with web browsing simulation
-    return queryChatGPT(prompt);
+    throw new Error('PERPLEXITY_API_KEY not configured — platform skipped');
   }
 
   const response = await fetch('https://api.perplexity.ai/chat/completions', {
@@ -172,14 +171,14 @@ async function queryPerplexity(prompt: string): Promise<string> {
 }
 
 // Query Google AI (Gemini)
+// Get a free API key at: https://ai.google.dev — add as GOOGLE_AI_API_KEY in Vercel
 async function queryGoogleAI(prompt: string): Promise<string> {
   if (!process.env.GOOGLE_AI_API_KEY) {
-    // Fallback to ChatGPT
-    return queryChatGPT(prompt);
+    throw new Error('GOOGLE_AI_API_KEY not configured — platform skipped');
   }
 
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GOOGLE_AI_API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GOOGLE_AI_API_KEY}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -251,20 +250,43 @@ async function runPlatformAudit(
   return results;
 }
 
+// Which platforms can we actually query? Skip any with missing API keys.
+function getAvailablePlatforms(): string[] {
+  const available: string[] = [];
+  if (process.env.OPENAI_API_KEY)     available.push('ChatGPT');
+  if (process.env.ANTHROPIC_API_KEY)  available.push('Claude');
+  if (process.env.PERPLEXITY_API_KEY) available.push('Perplexity');
+  if (process.env.GOOGLE_AI_API_KEY)  available.push('Google AI');
+  return available;
+}
+
 // Main audit runner — platforms run in parallel, prompts within each platform are sequential
 export async function runAudit(
   config: AuditConfig,
   onProgress?: (progress: number, status: string) => void
 ): Promise<{ results: PromptResult[]; score: AuditScore }> {
   const prompts = buildPrompts(config.businessType, config.location, config.keywords);
-  const platforms = Object.keys(PLATFORM_QUERIERS);
+  const platforms = getAvailablePlatforms();
+
+  if (platforms.length === 0) {
+    throw new Error('No AI platform API keys configured. Set OPENAI_API_KEY and/or ANTHROPIC_API_KEY.');
+  }
+
+  // Log which platforms are being skipped (helps with debugging)
+  const allPlatforms = Object.keys(PLATFORM_QUERIERS);
+  const skipped = allPlatforms.filter(p => !platforms.includes(p));
+  if (skipped.length > 0) {
+    console.warn(`⚠️  Platforms skipped (no API key): ${skipped.join(', ')}`);
+    console.warn('   → Add PERPLEXITY_API_KEY (perplexity.ai/settings/api)');
+    console.warn('   → Add GOOGLE_AI_API_KEY (ai.google.dev) — free tier available');
+  }
 
   // Limit prompts for cost efficiency (top-weighted ones)
   const sortedPrompts = prompts
     .sort((a, b) => b.weight - a.weight)
     .slice(0, 20); // Max 20 prompts per run
 
-  onProgress?.(5, 'Starting audit across all AI platforms...');
+  onProgress?.(5, `Starting audit across ${platforms.length} AI platform${platforms.length !== 1 ? 's' : ''}...`);
 
   // Run all platforms concurrently
   const platformResults = await Promise.all(
