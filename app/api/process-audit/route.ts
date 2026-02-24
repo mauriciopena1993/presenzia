@@ -137,6 +137,29 @@ export async function POST(req: NextRequest) {
       })
       .eq('id', jobId);
 
+    // ✉️ Alert admin on audit failure
+    if (process.env.RESEND_API_KEY) {
+      resend.emails.send({
+        from: 'presenzia.ai <reports@presenzia.ai>',
+        to: 'hello@presenzia.ai',
+        subject: `🚨 Audit failed: ${client?.business_name || jobId}`,
+        html: `<div style="font-family:Inter,sans-serif;max-width:560px;background:#0A0A0A;color:#F5F0E8;padding:40px;">
+          <div style="font-size:18px;font-weight:600;border-bottom:2px solid #cc4444;padding-bottom:12px;margin-bottom:24px;">
+            presenzia<span style="color:#C9A84C;">.ai</span> <span style="color:#555;font-size:12px;font-weight:400;">Audit failure alert</span>
+          </div>
+          <div style="background:#111;border:1px solid #cc444444;padding:20px;">
+            <table style="width:100%;border-collapse:collapse;">
+              <tr><td style="color:#666;font-size:12px;padding:6px 0;width:130px;">Job ID</td><td style="color:#F5F0E8;font-size:13px;">${jobId}</td></tr>
+              <tr><td style="color:#666;font-size:12px;padding:6px 0;">Client</td><td style="color:#F5F0E8;font-size:13px;">${client?.business_name || '—'}</td></tr>
+              <tr><td style="color:#666;font-size:12px;padding:6px 0;">Email</td><td style="color:#F5F0E8;font-size:13px;">${client?.email || '—'}</td></tr>
+              <tr><td style="color:#666;font-size:12px;padding:6px 0;">Error</td><td style="color:#cc4444;font-size:13px;">${message}</td></tr>
+            </table>
+          </div>
+          <p style="color:#555;font-size:11px;margin-top:16px;">Manual retry may be required. Check Vercel logs for full stack trace.</p>
+        </div>`,
+      }).catch(err => console.error('Failed to send audit failure email:', err));
+    }
+
     return NextResponse.json({ status: 'failed', error: message }, { status: 500 });
   }
 }
