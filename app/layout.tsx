@@ -24,6 +24,9 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://presenzia.ai"),
   alternates: {
     canonical: "/",
+    types: {
+      "application/rss+xml": "/feed.xml",
+    },
   },
   openGraph: {
     title: "presenzia.ai | AI Search Visibility Audits for UK Businesses",
