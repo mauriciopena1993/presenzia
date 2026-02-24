@@ -100,7 +100,8 @@ export default function AdminLoginPage() {
     setLoading(false);
 
     if (data.success) {
-      router.push('/admin');
+      // Hard navigation to ensure middleware re-validates the session cookie
+      window.location.href = '/admin';
     } else {
       setError(data.error || 'Invalid code. Try again.');
     }

@@ -112,7 +112,8 @@ export default function ClientLoginPage() {
         return;
       }
 
-      router.push('/dashboard');
+      // Hard navigation to ensure middleware re-validates the session cookie
+      window.location.href = '/dashboard';
     } catch {
       setError('Network error. Please try again.');
     } finally {
