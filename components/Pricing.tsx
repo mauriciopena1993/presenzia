@@ -59,12 +59,10 @@ const plans = [
 
 export default function Pricing() {
   const handleClick = (planKey: string) => {
-    if (planKey === 'premium') {
-      window.location.href = 'mailto:hello@presenzia.ai?subject=Premium Plan Enquiry';
-      return;
-    }
     window.location.href = `/onboarding?plan=${planKey}`;
   };
+
+  const premiumMailto = `mailto:hello@presenzia.ai?subject=Premium%20Plan%20%E2%80%94%20Discovery%20Call%20Request&body=Hi%2C%0A%0AI%20would%20like%20to%20request%20more%20information%20about%20the%20Premium%20plan%20at%20presenzia.ai.%0A%0AName%20of%20company%3A%20%0AName%3A%20%0A%0AKind%20regards%2C`;
 
   return (
     <section id="pricing" style={{
@@ -178,8 +176,25 @@ export default function Pricing() {
                 else { el.style.borderColor = '#333333'; el.style.color = '#DDDDDD'; }
               }}
             >
-              {`${plan.cta} →`}
+              Get started →
             </button>
+            {plan.key === 'premium' && (
+              <a
+                href={premiumMailto}
+                style={{
+                  display: 'block',
+                  textAlign: 'center',
+                  marginTop: '0.75rem',
+                  fontSize: '0.8rem',
+                  color: '#ffffff',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: '3px',
+                  opacity: 0.7,
+                }}
+              >
+                or book a discovery call
+              </a>
+            )}
           </div>
         ))}
       </div>
