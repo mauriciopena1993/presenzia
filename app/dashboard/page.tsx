@@ -74,6 +74,20 @@ const PLAN_LABELS: Record<string, string> = {
   premium: 'Premium',
 };
 
+const PLAN_PRICES: Record<string, string> = {
+  starter: '£99',
+  growth: '£199',
+  premium: '£599',
+};
+
+const PLAN_FEATURES: Record<string, string[]> = {
+  starter: ['Monthly PDF report', 'Report download portal'],
+  growth: ['Weekly reports', 'Live dashboard with trends', 'Competitor monitoring', 'AI report assistant', 'Priority email support'],
+  premium: ['Daily updates', 'Dedicated account manager', 'Monthly strategy call', 'Custom prompt testing', 'Everything in Growth'],
+};
+
+const PLAN_ORDER = ['starter', 'growth', 'premium'];
+
 function scoreColor(score: number) {
   if (score >= 70) return '#4a9e6a';
   if (score >= 45) return '#C9A84C';
@@ -305,6 +319,10 @@ export default function DashboardPage() {
   const [history, setHistory] = useState<HistoryReport[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'report' | 'history' | 'chat'>('report');
+  const [showUpgrade, setShowUpgrade] = useState(false);
+  const [showCancel, setShowCancel] = useState(false);
+  const [cancelStep, setCancelStep] = useState<'offer' | 'confirming' | 'done' | 'saved'>('offer');
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -339,6 +357,67 @@ export default function DashboardPage() {
 
   const handleDownloadReport = (jobId: string) => {
     window.open(`/api/client/download?jobId=${jobId}`, '_blank');
+  };
+
+  const handleUpgrade = async (targetPlan: string) => {
+    setActionLoading(true);
+    try {
+      const res = await fetch('/api/client/upgrade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetPlan }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setClient(prev => prev ? { ...prev, plan: targetPlan } : null);
+        setShowUpgrade(false);
+        window.location.reload();
+      } else {
+        alert(data.error || 'Upgrade failed. Please contact hello@presenzia.ai');
+      }
+    } catch {
+      alert('Something went wrong. Please contact hello@presenzia.ai');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleAcceptRetention = async () => {
+    setActionLoading(true);
+    try {
+      const res = await fetch('/api/client/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'accept-offer' }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCancelStep('saved');
+      }
+    } catch {
+      alert('Something went wrong. Please contact hello@presenzia.ai');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleConfirmCancel = async () => {
+    setActionLoading(true);
+    try {
+      const res = await fetch('/api/client/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'confirm-cancel' }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCancelStep('done');
+      }
+    } catch {
+      alert('Something went wrong. Please contact hello@presenzia.ai');
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   if (loading) {
@@ -430,30 +509,144 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Upgrade banner */}
-          <div style={{ marginBottom: '1.25rem', padding: '1rem 1.5rem', background: '#0a0a00', border: '1px solid #2a2000', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-            <div>
-              <div style={{ fontSize: '0.8rem', color: '#C9A84C', fontWeight: 600, marginBottom: '2px' }}>Want a live dashboard?</div>
-              <div style={{ fontSize: '0.8rem', color: '#999' }}>See your scores online, track progress month by month, and get weekly updates.</div>
+          {/* Upgrade section */}
+          <div style={{ marginBottom: '1.25rem' }}>
+            <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Upgrade your plan</div>
+
+            <div style={{ marginBottom: '0.75rem', padding: '1.25rem 1.5rem', background: '#0a0a00', border: '1px solid #2a2000' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+                <div>
+                  <div style={{ fontSize: '0.9rem', color: '#C9A84C', fontWeight: 600, marginBottom: '6px' }}>Growth Plan · £199/mo</div>
+                  <div style={{ fontSize: '0.8rem', color: '#999', lineHeight: 1.6 }}>
+                    Weekly reports, live dashboard, competitor tracking, AI report assistant, and priority support.
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleUpgrade('growth')}
+                  disabled={actionLoading}
+                  style={{ background: '#C9A84C', color: '#0A0A0A', border: 'none', padding: '0.5rem 1.5rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', flexShrink: 0 }}
+                >
+                  {actionLoading ? 'Processing…' : 'Upgrade now'}
+                </button>
+              </div>
             </div>
-            <Link href="/#pricing" style={{ fontSize: '0.8rem', color: '#C9A84C', textDecoration: 'none', whiteSpace: 'nowrap', border: '1px solid #C9A84C44', padding: '0.4rem 1rem' }}>
-              View Growth plan →
-            </Link>
+
+            <div style={{ padding: '1.25rem 1.5rem', background: '#0a000a', border: '1px solid #1a001a' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+                <div>
+                  <div style={{ fontSize: '0.9rem', color: '#9b6bcc', fontWeight: 600, marginBottom: '6px' }}>Premium Plan · £599/mo</div>
+                  <div style={{ fontSize: '0.8rem', color: '#999', lineHeight: 1.6 }}>
+                    Daily updates, dedicated account manager, monthly strategy call, custom prompt testing.
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleUpgrade('premium')}
+                  disabled={actionLoading}
+                  style={{ background: '#9b6bcc', color: '#0A0A0A', border: 'none', padding: '0.5rem 1.5rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', flexShrink: 0 }}
+                >
+                  {actionLoading ? 'Processing…' : 'Upgrade now'}
+                </button>
+              </div>
+            </div>
+
+            <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.5rem' }}>
+              Upgrades take effect immediately. You only pay the difference for the rest of your billing cycle.
+            </p>
           </div>
 
-          <div style={{ padding: '1rem 1.5rem', background: '#0a000a', border: '1px solid #1a001a', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-            <div>
-              <div style={{ fontSize: '0.8rem', color: '#9b6bcc', fontWeight: 600, marginBottom: '2px' }}>Want AI-powered guidance?</div>
-              <div style={{ fontSize: '0.8rem', color: '#999' }}>Ask an AI expert questions about your report — what the scores mean and exactly what to do next.</div>
+          {/* Cancel */}
+          {!showCancel ? (
+            <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+              <p style={{ color: '#888', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
+                Questions? <a href="mailto:hello@presenzia.ai" style={{ color: '#999', textDecoration: 'none' }}>hello@presenzia.ai</a>
+              </p>
+              <button
+                onClick={() => { setShowCancel(true); setCancelStep('offer'); }}
+                style={{ background: 'none', border: 'none', color: '#555', fontSize: '0.7rem', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline' }}
+              >
+                Cancel subscription
+              </button>
             </div>
-            <Link href="/#pricing" style={{ fontSize: '0.8rem', color: '#9b6bcc', textDecoration: 'none', whiteSpace: 'nowrap', border: '1px solid #9b6bcc44', padding: '0.4rem 1rem' }}>
-              View Growth & Premium →
-            </Link>
-          </div>
-
-          <p style={{ textAlign: 'center', color: '#888', fontSize: '0.8rem', marginTop: '2.5rem' }}>
-            Questions about upgrading? <a href="mailto:hello@presenzia.ai" style={{ color: '#999', textDecoration: 'none' }}>hello@presenzia.ai</a>
-          </p>
+          ) : (
+            <div style={{ marginTop: '2rem', padding: '1.25rem', background: '#0D0D0D', border: '1px solid #1a1a1a' }}>
+              {cancelStep === 'offer' && (
+                <>
+                  <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem' }}>Before you go…</div>
+                  <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6, marginBottom: '1rem' }}>
+                    We'd hate to see you leave. How about <span style={{ color: '#C9A84C', fontWeight: 600 }}>50% off your next month</span>? Stay and keep tracking your AI visibility while you see the results from your latest report.
+                  </p>
+                  <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    <button
+                      onClick={handleAcceptRetention}
+                      disabled={actionLoading}
+                      style={{ background: '#C9A84C', color: '#0A0A0A', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit' }}
+                    >
+                      {actionLoading ? 'Applying…' : 'Yes, give me 50% off'}
+                    </button>
+                    <button
+                      onClick={() => setCancelStep('confirming')}
+                      disabled={actionLoading}
+                      style={{ background: 'none', border: '1px solid #333', color: '#888', padding: '0.5rem 1.25rem', fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'inherit' }}
+                    >
+                      No thanks, cancel anyway
+                    </button>
+                    <button
+                      onClick={() => setShowCancel(false)}
+                      style={{ background: 'none', border: 'none', color: '#555', padding: '0.5rem 0.75rem', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'inherit' }}
+                    >
+                      Never mind
+                    </button>
+                  </div>
+                </>
+              )}
+              {cancelStep === 'confirming' && (
+                <>
+                  <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem' }}>Are you sure?</div>
+                  <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6, marginBottom: '1rem' }}>
+                    Your subscription will remain active until the end of your current billing period. After that, you will lose access to reports and your dashboard.
+                  </p>
+                  <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    <button
+                      onClick={handleConfirmCancel}
+                      disabled={actionLoading}
+                      style={{ background: '#cc4444', color: '#fff', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit' }}
+                    >
+                      {actionLoading ? 'Cancelling…' : 'Confirm cancellation'}
+                    </button>
+                    <button
+                      onClick={() => { setCancelStep('offer'); }}
+                      disabled={actionLoading}
+                      style={{ background: 'none', border: '1px solid #333', color: '#888', padding: '0.5rem 1.25rem', fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'inherit' }}
+                    >
+                      Wait, show me the 50% offer
+                    </button>
+                  </div>
+                </>
+              )}
+              {cancelStep === 'done' && (
+                <>
+                  <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem' }}>Subscription cancelled</div>
+                  <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6 }}>
+                    Your subscription has been cancelled and will end at the close of your current billing period. You will continue to have access until then. If you change your mind, contact <a href="mailto:hello@presenzia.ai" style={{ color: '#C9A84C', textDecoration: 'none' }}>hello@presenzia.ai</a>.
+                  </p>
+                </>
+              )}
+              {cancelStep === 'saved' && (
+                <>
+                  <div style={{ fontSize: '0.9rem', color: '#C9A84C', fontWeight: 600, marginBottom: '0.5rem' }}>Discount applied!</div>
+                  <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6 }}>
+                    Your next month is 50% off. We're glad you're staying! Keep implementing the actions from your latest report and watch your AI visibility improve.
+                  </p>
+                  <button
+                    onClick={() => setShowCancel(false)}
+                    style={{ marginTop: '0.75rem', background: 'none', border: '1px solid #333', color: '#999', padding: '0.4rem 1rem', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'inherit' }}
+                  >
+                    Close
+                  </button>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -694,7 +887,7 @@ export default function DashboardPage() {
           latestJob ? (
             <div style={{ maxWidth: '700px' }}>
               <p style={{ color: '#999', fontSize: '0.875rem', marginBottom: '1.5rem', lineHeight: 1.7 }}>
-                Ask anything about your results — what the scores mean, how competitors are outranking you, and exactly what to do to improve.
+                Ask anything about your results: what the scores mean, how competitors are outranking you, and exactly what to do to improve.
               </p>
               <ChatPane jobId={latestJob.id} businessName={client?.business_name || ''} />
             </div>
@@ -704,6 +897,119 @@ export default function DashboardPage() {
             </div>
           )
         )}
+
+        {/* ─── SUBSCRIPTION MANAGEMENT ─── */}
+        <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid #1a1a1a' }}>
+          {/* Upgrade options (only show plans above current) */}
+          {client && PLAN_ORDER.indexOf(client.plan) < PLAN_ORDER.length - 1 && (
+            <div style={{ marginBottom: '2rem' }}>
+              {!showUpgrade ? (
+                <button
+                  onClick={() => setShowUpgrade(true)}
+                  style={{ background: '#C9A84C', color: '#0A0A0A', border: 'none', padding: '0.625rem 1.5rem', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
+                >
+                  Upgrade your plan
+                </button>
+              ) : (
+                <div>
+                  <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Available upgrades</div>
+                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                    {PLAN_ORDER.filter(p => PLAN_ORDER.indexOf(p) > PLAN_ORDER.indexOf(client.plan)).map(plan => (
+                      <div key={plan} style={{ flex: 1, minWidth: '260px', padding: '1.25rem', background: '#0D0D0D', border: '1px solid #1a1a1a' }}>
+                        <div style={{ fontSize: '0.9rem', color: plan === 'premium' ? '#9b6bcc' : '#C9A84C', fontWeight: 600, marginBottom: '4px' }}>
+                          {PLAN_LABELS[plan]} · {PLAN_PRICES[plan]}/mo
+                        </div>
+                        <ul style={{ margin: '0.5rem 0 1rem', padding: '0 0 0 1rem', fontSize: '0.8rem', color: '#999', lineHeight: 1.7 }}>
+                          {PLAN_FEATURES[plan]?.map((f, i) => <li key={i}>{f}</li>)}
+                        </ul>
+                        <button
+                          onClick={() => handleUpgrade(plan)}
+                          disabled={actionLoading}
+                          style={{ background: plan === 'premium' ? '#9b6bcc' : '#C9A84C', color: '#0A0A0A', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', width: '100%' }}
+                        >
+                          {actionLoading ? 'Processing…' : `Upgrade to ${PLAN_LABELS[plan]}`}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.5rem' }}>
+                    Upgrades take effect immediately. You only pay the difference for the rest of your billing cycle.
+                  </p>
+                  <button onClick={() => setShowUpgrade(false)} style={{ background: 'none', border: 'none', color: '#555', fontSize: '0.75rem', cursor: 'pointer', fontFamily: 'inherit', marginTop: '0.25rem' }}>
+                    Hide upgrade options
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Cancel */}
+          {!showCancel ? (
+            <button
+              onClick={() => { setShowCancel(true); setCancelStep('offer'); }}
+              style={{ background: 'none', border: 'none', color: '#444', fontSize: '0.7rem', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline' }}
+            >
+              Cancel subscription
+            </button>
+          ) : (
+            <div style={{ padding: '1.25rem', background: '#0D0D0D', border: '1px solid #1a1a1a', maxWidth: '500px' }}>
+              {cancelStep === 'offer' && (
+                <>
+                  <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem' }}>Before you go…</div>
+                  <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6, marginBottom: '1rem' }}>
+                    We'd hate to see you leave. How about <span style={{ color: '#C9A84C', fontWeight: 600 }}>50% off your next month</span>? Stay and keep tracking your AI visibility while you see the results from your latest report.
+                  </p>
+                  <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    <button onClick={handleAcceptRetention} disabled={actionLoading} style={{ background: '#C9A84C', color: '#0A0A0A', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit' }}>
+                      {actionLoading ? 'Applying…' : 'Yes, give me 50% off'}
+                    </button>
+                    <button onClick={() => setCancelStep('confirming')} disabled={actionLoading} style={{ background: 'none', border: '1px solid #333', color: '#888', padding: '0.5rem 1.25rem', fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'inherit' }}>
+                      No thanks, cancel anyway
+                    </button>
+                    <button onClick={() => setShowCancel(false)} style={{ background: 'none', border: 'none', color: '#555', padding: '0.5rem 0.75rem', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'inherit' }}>
+                      Never mind
+                    </button>
+                  </div>
+                </>
+              )}
+              {cancelStep === 'confirming' && (
+                <>
+                  <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem' }}>Are you sure?</div>
+                  <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6, marginBottom: '1rem' }}>
+                    Your subscription will remain active until the end of your current billing period. After that, you will lose access to reports and your dashboard.
+                  </p>
+                  <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    <button onClick={handleConfirmCancel} disabled={actionLoading} style={{ background: '#cc4444', color: '#fff', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit' }}>
+                      {actionLoading ? 'Cancelling…' : 'Confirm cancellation'}
+                    </button>
+                    <button onClick={() => setCancelStep('offer')} disabled={actionLoading} style={{ background: 'none', border: '1px solid #333', color: '#888', padding: '0.5rem 1.25rem', fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'inherit' }}>
+                      Wait, show me the 50% offer
+                    </button>
+                  </div>
+                </>
+              )}
+              {cancelStep === 'done' && (
+                <>
+                  <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem' }}>Subscription cancelled</div>
+                  <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6 }}>
+                    Your subscription will end at the close of your current billing period. You will continue to have access until then. If you change your mind, contact <a href="mailto:hello@presenzia.ai" style={{ color: '#C9A84C', textDecoration: 'none' }}>hello@presenzia.ai</a>.
+                  </p>
+                </>
+              )}
+              {cancelStep === 'saved' && (
+                <>
+                  <div style={{ fontSize: '0.9rem', color: '#C9A84C', fontWeight: 600, marginBottom: '0.5rem' }}>Discount applied!</div>
+                  <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6 }}>
+                    Your next month is 50% off. We're glad you're staying! Keep implementing the actions from your latest report and watch your AI visibility improve.
+                  </p>
+                  <button onClick={() => setShowCancel(false)} style={{ marginTop: '0.75rem', background: 'none', border: '1px solid #333', color: '#999', padding: '0.4rem 1rem', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'inherit' }}>
+                    Close
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <style>{`

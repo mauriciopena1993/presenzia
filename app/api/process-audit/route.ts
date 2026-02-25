@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { runAudit, AuditConfig } from '@/lib/audit/runner';
 import { generatePDFReport } from '@/lib/report/generate';
+import { generateInsights } from '@/lib/report/insights';
 import { Resend } from 'resend';
 
 // Allow up to 5 minutes for the audit to complete (Vercel Pro)
@@ -73,10 +74,11 @@ export async function POST(req: NextRequest) {
     console.log(`🔍 Running audit for ${config.businessName} (job: ${jobId})`);
 
     // Run the audit (platforms run in parallel — takes ~60-120s)
-    const { score } = await runAudit(config);
+    const { results, score } = await runAudit(config);
 
-    // Generate PDF report
-    const pdfBuffer = await generatePDFReport(config, score);
+    // Generate insights and PDF report
+    const insights = generateInsights(config, score, results);
+    const pdfBuffer = await generatePDFReport(config, score, results, insights);
 
     // Store report in Supabase Storage
     const reportFileName = `${jobId}.pdf`;
