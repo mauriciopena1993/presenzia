@@ -640,7 +640,7 @@ export default function SampleReport() {
               lineHeight: 1.25,
               marginTop: '0.15rem',
             }}>
-              Smith &amp; Co Solicitors
+              Smith and Co Solicitors
             </div>
             <div style={{ fontSize: '0.6rem', color: '#888', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: '0.2rem' }}>
               AI Visibility Audit &middot; February 2026

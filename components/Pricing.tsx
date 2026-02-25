@@ -1,6 +1,7 @@
 'use client';
 
-import { Check } from 'lucide-react';
+import { useState } from 'react';
+import { Check, ChevronDown } from 'lucide-react';
 
 const plans = [
   {
@@ -57,7 +58,7 @@ const plans = [
   },
 ];
 
-/* ── Comparison table data ── */
+/* ── Simplified comparison table data ── */
 
 type CellValue = boolean | string;
 
@@ -68,42 +69,17 @@ interface ComparisonRow {
   premium: CellValue;
 }
 
-interface ComparisonGroup {
-  heading: string;
-  rows: ComparisonRow[];
-}
-
-const comparisonData: ComparisonGroup[] = [
-  {
-    heading: 'Core Features',
-    rows: [
-      { feature: 'Monthly AI audit',      starter: true,  growth: true,     premium: true },
-      { feature: '4 AI platforms tested',  starter: true,  growth: true,     premium: true },
-      { feature: 'Visibility score & grade', starter: true, growth: true,   premium: true },
-      { feature: 'Competitor analysis',    starter: true,  growth: true,     premium: true },
-      { feature: 'Personalised action plan', starter: true, growth: true,   premium: true },
-      { feature: 'Email delivery (PDF)',   starter: true,  growth: true,     premium: true },
-    ],
-  },
-  {
-    heading: 'Dashboard & Tools',
-    rows: [
-      { feature: 'Live dashboard',        starter: false, growth: true,     premium: true },
-      { feature: 'Update frequency',       starter: '—',   growth: 'Weekly', premium: 'Daily' },
-      { feature: 'AI audit assistant',     starter: false, growth: true,     premium: true },
-      { feature: 'Competitor deep-dive',   starter: false, growth: true,     premium: true },
-    ],
-  },
-  {
-    heading: 'Support & Strategy',
-    rows: [
-      { feature: 'Priority support',      starter: false, growth: true,     premium: true },
-      { feature: 'Dedicated account manager', starter: false, growth: false, premium: true },
-      { feature: 'Monthly 1:1 strategy call', starter: false, growth: false, premium: true },
-      { feature: 'Custom prompt testing',  starter: false, growth: false,    premium: true },
-      { feature: 'Industry benchmarking',  starter: false, growth: false,    premium: true },
-    ],
-  },
+const comparisonRows: ComparisonRow[] = [
+  { feature: 'Monthly AI visibility audit (4 platforms)',  starter: true,  growth: true,     premium: true },
+  { feature: 'Visibility score, grade & action plan',      starter: true,  growth: true,     premium: true },
+  { feature: 'Competitor analysis',                        starter: 'Basic', growth: 'Deep-dive', premium: 'Deep-dive' },
+  { feature: 'Delivery format',                            starter: 'PDF',  growth: 'PDF + Dashboard', premium: 'PDF + Dashboard' },
+  { feature: 'Dashboard update frequency',                 starter: '—',   growth: 'Weekly', premium: 'Daily' },
+  { feature: 'AI audit assistant',                         starter: false, growth: true,     premium: true },
+  { feature: 'Priority support',                           starter: false, growth: true,     premium: true },
+  { feature: 'Dedicated account manager',                  starter: false, growth: false,    premium: true },
+  { feature: 'Monthly 1:1 strategy call',                  starter: false, growth: false,    premium: true },
+  { feature: 'Custom prompt testing & benchmarking',       starter: false, growth: false,    premium: true },
 ];
 
 /* ── Render helper for table cells ── */
@@ -115,13 +91,14 @@ function CellContent({ value }: { value: CellValue }) {
   if (value === false) {
     return <span style={{ color: '#444444', fontSize: '1rem' }}>—</span>;
   }
-  // string value (e.g. "Weekly", "Daily")
   return <span style={{ color: '#F5F0E8', fontSize: '0.8rem', fontWeight: 500 }}>{value}</span>;
 }
 
 /* ── Component ── */
 
 export default function Pricing() {
+  const [showComparison, setShowComparison] = useState(false);
+
   const handleClick = (planKey: string) => {
     window.location.href = `/onboarding?plan=${planKey}`;
   };
@@ -287,36 +264,65 @@ export default function Pricing() {
         All plans include VAT. Billed monthly. Cancel anytime with 30 days notice.
       </p>
 
-      {/* ── Comparison table ── */}
-      <div style={{ marginTop: '5rem' }}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <h3 style={{
-            fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
-            fontSize: 'clamp(1.5rem, 3vw, 2rem)',
-            color: '#F5F0E8',
-            fontWeight: 600,
-            marginBottom: '0.75rem',
-          }}>
-            Compare plans
-          </h3>
-          <p style={{ color: '#AAAAAA', fontSize: '0.9rem', lineHeight: 1.6 }}>
-            Every plan includes our full monthly audit. Higher tiers add dashboards, tools, and expert support.
-          </p>
-        </div>
+      {/* ── Compare plans toggle ── */}
+      <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <button
+          onClick={() => setShowComparison(!showComparison)}
+          style={{
+            background: 'none',
+            border: '1px solid #333333',
+            color: '#AAAAAA',
+            fontSize: '0.85rem',
+            fontWeight: 500,
+            padding: '0.7rem 1.5rem',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            transition: 'all 0.2s',
+            fontFamily: 'var(--font-inter, Inter, sans-serif)',
+            letterSpacing: '0.02em',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = '#C9A84C';
+            e.currentTarget.style.color = '#C9A84C';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = '#333333';
+            e.currentTarget.style.color = '#AAAAAA';
+          }}
+        >
+          {showComparison ? 'Hide comparison' : 'Compare all features'}
+          <ChevronDown
+            size={16}
+            style={{
+              transition: 'transform 0.3s ease',
+              transform: showComparison ? 'rotate(180deg)' : 'rotate(0deg)',
+            }}
+          />
+        </button>
+      </div>
 
+      {/* ── Comparison table (collapsible) ── */}
+      <div style={{
+        maxHeight: showComparison ? '800px' : '0',
+        overflow: 'hidden',
+        transition: 'max-height 0.5s ease, opacity 0.4s ease',
+        opacity: showComparison ? 1 : 0,
+        marginTop: showComparison ? '2rem' : '0',
+      }}>
         <div className="comparison-table-wrapper">
           <table style={{
             width: '100%',
-            minWidth: '640px',
+            minWidth: '580px',
             borderCollapse: 'collapse',
             fontFamily: 'var(--font-inter, Inter, sans-serif)',
           }}>
-            {/* Column header */}
             <thead>
               <tr>
                 <th style={{
                   textAlign: 'left',
-                  padding: '1rem 1.25rem',
+                  padding: '0.85rem 1.25rem',
                   color: '#666666',
                   fontSize: '0.7rem',
                   letterSpacing: '0.12em',
@@ -330,7 +336,7 @@ export default function Pricing() {
                 {(['Starter', 'Growth', 'Premium'] as const).map((name) => (
                   <th key={name} style={{
                     textAlign: 'center',
-                    padding: '1rem 1rem',
+                    padding: '0.85rem 1rem',
                     borderBottom: '1px solid #222222',
                     width: '20%',
                     ...(name === 'Growth' ? { background: 'rgba(201, 168, 76, 0.04)' } : {}),
@@ -344,66 +350,33 @@ export default function Pricing() {
                     }}>
                       {name}
                     </div>
-                    {name === 'Growth' && (
-                      <div style={{
-                        fontSize: '0.65rem',
-                        color: '#C9A84C',
-                        marginTop: '0.25rem',
-                        fontWeight: 600,
-                        letterSpacing: '0.08em',
-                        textTransform: 'uppercase',
-                        opacity: 0.7,
-                      }}>
-                        Most popular
-                      </div>
-                    )}
                   </th>
                 ))}
               </tr>
             </thead>
 
             <tbody>
-              {comparisonData.map((group) => (
-                <>
-                  {/* Group heading row */}
-                  <tr key={`heading-${group.heading}`}>
-                    <td colSpan={4} style={{
-                      padding: '1.25rem 1.25rem 0.5rem',
-                      fontSize: '0.7rem',
-                      letterSpacing: '0.12em',
-                      textTransform: 'uppercase',
-                      fontWeight: 600,
-                      color: '#C9A84C',
+              {comparisonRows.map((row) => (
+                <tr key={row.feature}>
+                  <td style={{
+                    padding: '0.7rem 1.25rem',
+                    fontSize: '0.82rem',
+                    color: '#AAAAAA',
+                    borderBottom: '1px solid #1a1a1a',
+                  }}>
+                    {row.feature}
+                  </td>
+                  {([row.starter, row.growth, row.premium] as CellValue[]).map((val, i) => (
+                    <td key={i} style={{
+                      textAlign: 'center',
+                      padding: '0.7rem 1rem',
                       borderBottom: '1px solid #1a1a1a',
+                      ...(i === 1 ? { background: 'rgba(201, 168, 76, 0.04)' } : {}),
                     }}>
-                      {group.heading}
+                      <CellContent value={val} />
                     </td>
-                  </tr>
-
-                  {/* Data rows */}
-                  {group.rows.map((row) => (
-                    <tr key={row.feature}>
-                      <td style={{
-                        padding: '0.75rem 1.25rem',
-                        fontSize: '0.85rem',
-                        color: '#AAAAAA',
-                        borderBottom: '1px solid #1a1a1a',
-                      }}>
-                        {row.feature}
-                      </td>
-                      {([row.starter, row.growth, row.premium] as CellValue[]).map((val, i) => (
-                        <td key={i} style={{
-                          textAlign: 'center',
-                          padding: '0.75rem 1rem',
-                          borderBottom: '1px solid #1a1a1a',
-                          ...(i === 1 ? { background: 'rgba(201, 168, 76, 0.04)' } : {}),
-                        }}>
-                          <CellContent value={val} />
-                        </td>
-                      ))}
-                    </tr>
                   ))}
-                </>
+                </tr>
               ))}
             </tbody>
           </table>
