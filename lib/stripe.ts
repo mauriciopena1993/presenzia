@@ -13,7 +13,7 @@ export const PLANS = {
     name: 'Starter',
     price: '£99',
     priceId: process.env.STRIPE_PRICE_STARTER!,
-    description: 'Monthly PDF report',
+    description: 'Monthly AI visibility audit',
   },
   growth: {
     name: 'Growth',

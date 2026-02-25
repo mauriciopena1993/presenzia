@@ -25,6 +25,8 @@ interface Client {
   website: string | null;
   created_at: string;
   audit_jobs: AuditJob[];
+  latest_rating: number | null;
+  latest_comment: string | null;
 }
 
 interface Lead {
@@ -222,12 +224,14 @@ export default function AdminDashboard() {
                 <th style={s.th}>Status</th>
                 <th style={s.th}>Latest audit</th>
                 <th style={s.th}>Score</th>
+                <th style={s.th}>Rating</th>
+                <th style={s.th}>Comment</th>
                 <th style={s.th}>Joined</th>
               </tr>
             </thead>
             <tbody>
               {clients.length === 0 ? (
-                <tr><td colSpan={7} style={{ ...s.td, textAlign: 'center', color: '#888', padding: '3rem' }}>No clients yet</td></tr>
+                <tr><td colSpan={9} style={{ ...s.td, textAlign: 'center', color: '#888', padding: '3rem' }}>No clients yet</td></tr>
               ) : clients.map(client => {
                 const latestJob = client.audit_jobs
                   ?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
@@ -275,6 +279,23 @@ export default function AdminDashboard() {
                       {latestJob?.overall_score != null ? (
                         <span style={{ color: '#C9A84C', fontWeight: 600 }}>
                           {latestJob.overall_score}/100 <span style={{ color: '#999' }}>({latestJob.grade})</span>
+                        </span>
+                      ) : <span style={{ color: '#888' }}>—</span>}
+                    </td>
+                    <td style={s.td}>
+                      {client.latest_rating != null ? (
+                        <span style={{
+                          color: client.latest_rating >= 4 ? '#3a7d44' : client.latest_rating === 3 ? '#C9A84C' : '#cc4444',
+                          fontWeight: 600,
+                        }}>
+                          {'★'.repeat(client.latest_rating)}{'☆'.repeat(5 - client.latest_rating)}{' '}{client.latest_rating}/5
+                        </span>
+                      ) : <span style={{ color: '#888' }}>—</span>}
+                    </td>
+                    <td style={{ ...s.td, maxWidth: '200px' }}>
+                      {client.latest_comment ? (
+                        <span title={client.latest_comment} style={{ color: '#999' }}>
+                          {client.latest_comment.length > 40 ? client.latest_comment.slice(0, 40) + '…' : client.latest_comment}
                         </span>
                       ) : <span style={{ color: '#888' }}>—</span>}
                     </td>

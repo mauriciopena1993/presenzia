@@ -14,11 +14,11 @@ const faqs = [
   },
   {
     q: 'What do I actually receive?',
-    a: 'Within 48 hours of signing up, you\'ll receive your report by email. It includes your overall AI Visibility Score (0–100), a platform-by-platform breakdown, a list of competitors that are currently appearing in your place, and specific, actionable recommendations to improve your visibility. Growth and Premium clients also get access to an online dashboard where they can track progress over time.',
+    a: 'Within 48 hours of signing up, you\'ll receive your audit by email. It includes your overall AI Visibility Score (0–100), a platform-by-platform breakdown, a list of competitors that are currently appearing in your place, and specific, actionable recommendations to improve your visibility. Growth and Premium clients also get access to an online dashboard where they can track progress over time.',
   },
   {
     q: 'How is this different from traditional SEO?',
-    a: 'Traditional SEO focuses on ranking in Google\'s blue-link search results. AI visibility is about appearing in AI-generated answers, which increasingly sit above those results or replace them entirely. The factors that drive it are different: structured content, authoritative mentions, clear business descriptions, and consistent signals across directories. Our reports tell you exactly what to focus on.',
+    a: 'Traditional SEO focuses on ranking in Google\'s blue-link search results. AI visibility is about appearing in AI-generated answers, which increasingly sit above those results or replace them entirely. The factors that drive it are different: structured content, authoritative mentions, clear business descriptions, and consistent signals across directories. Our audits tell you exactly what to focus on.',
   },
   {
     q: 'I\'m a small local business. Is this relevant to me?',
@@ -30,11 +30,11 @@ const faqs = [
   },
   {
     q: 'How quickly will I see results if I follow the recommendations?',
-    a: 'AI models update their knowledge bases on different schedules. Some changes, like improving your Google Business Profile or getting mentions in local press, can show results within 4–8 weeks. Others, like building topical authority through content, take longer. Our monthly (or weekly, on Growth) reports let you track progress as you implement changes.',
+    a: 'AI models update their knowledge bases on different schedules. Some changes, like improving your Google Business Profile or getting mentions in local press, can show results within 4–8 weeks. Others, like building topical authority through content, take longer. Our monthly (or weekly, on Growth) audits let you track progress as you implement changes.',
   },
   {
     q: 'Can I cancel at any time?',
-    a: 'Yes. All plans are monthly subscriptions with no long-term contract. You can cancel with 30 days\' notice at any time. Your reports and dashboard access remain available until the end of your billing period.',
+    a: 'Yes. All plans are monthly subscriptions with no long-term contract. You can cancel with 30 days\' notice at any time. Your audits and dashboard access remain available until the end of your billing period.',
   },
   {
     q: 'How do I get in touch?',

@@ -184,15 +184,16 @@ async function sendReportEmail(
     : '';
 
   const topCompHtml = topComp
-    ? `<p style="font-size:13px;color:#888888;margin:0 0 24px;line-height:1.6;">We found that <strong style="color:#555555;">${topComp}</strong> is currently being recommended by AI platforms in your category. Your report includes a detailed competitor analysis with tips to close the gap.</p>`
+    ? `<p style="font-size:13px;color:#888888;margin:0 0 24px;line-height:1.6;">We found that <strong style="color:#555555;">${topComp}</strong> is currently being recommended by AI platforms in your category. Your audit includes a detailed competitor analysis with tips to close the gap.</p>`
     : '';
 
   try {
     await resend.emails.send({
       from: 'presenzia.ai <reports@presenzia.ai>',
+      replyTo: 'hello@presenzia.ai',
       to: email,
-      subject: `Your AI Visibility Report: ${score}/100 (${scoreBand}) — ${businessName}`,
-      text: `Your AI Visibility Report for ${businessName} is ready.\n\nAI Visibility Score: ${score}/100 — Grade ${grade} (${scoreBand})\n\n${summary ?? ''}\n\n${topComp ? `Top competitor detected: ${topComp}\n\n` : ''}Your full report is attached as a PDF. It includes your platform-by-platform breakdown, competitor analysis, and actionable recommendations.\n\nLog in to your dashboard at https://presenzia.ai/dashboard to view your results online.\n\npresenzia.ai | Ketzal LTD (Co. No. 14570156)\nReport ID: ${jobId}`,
+      subject: `Your AI Visibility Audit: ${score}/100 (${scoreBand}) — ${businessName}`,
+      text: `Your AI Visibility Audit for ${businessName} is ready.\n\nAI Visibility Score: ${score}/100 — Grade ${grade} (${scoreBand})\n\n${summary ?? ''}\n\n${topComp ? `Top competitor detected: ${topComp}\n\n` : ''}Your full audit is attached. It includes your platform-by-platform breakdown, competitor analysis, and a personalised action plan.\n\nLog in to your dashboard at https://presenzia.ai/dashboard to view your results online.\n\nQuestions? Reply to this email and we'll get back to you within a few hours.\n\npresenzia.ai | Ketzal LTD (Co. No. 14570156)\nAudit ID: ${jobId}`,
       html: `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -204,7 +205,7 @@ async function sendReportEmail(
     <span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span>
   </td></tr>
   <tr><td style="padding:32px;">
-    <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">Your AI Visibility Report is ready</h1>
+    <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">Your AI Visibility Audit is ready</h1>
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.6;">We have completed your audit for <strong>${businessName}</strong>.</p>
 
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#F9F9F9;border:1px solid #E0E0E0;margin:0 0 24px;">
@@ -218,17 +219,17 @@ async function sendReportEmail(
     ${summaryHtml}
     ${topCompHtml}
 
-    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Your full report is attached to this email as a PDF. It includes your platform-by-platform breakdown, competitor analysis, and specific recommendations to improve your visibility.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Your full audit is attached. It includes your platform-by-platform breakdown, competitor analysis, and a personalised action plan to improve your visibility.</p>
 
     <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
       <tr><td style="background:#0A0A0A;padding:12px 24px;">
-        <a href="https://presenzia.ai/dashboard" style="color:#C9A84C;text-decoration:none;font-size:13px;font-weight:700;">View your report online →</a>
+        <a href="https://presenzia.ai/dashboard" style="color:#C9A84C;text-decoration:none;font-size:13px;font-weight:700;">View your results online →</a>
       </td></tr>
     </table>
   </td></tr>
   <tr><td style="padding:16px 32px;background:#F9F9F9;border-top:1px solid #E0E0E0;">
     <p style="font-size:12px;color:#999999;margin:0;">presenzia.ai · Ketzal LTD (Co. No. 14570156) · <a href="mailto:hello@presenzia.ai" style="color:#C9A84C;text-decoration:none;">hello@presenzia.ai</a></p>
-    <p style="font-size:11px;color:#AAAAAA;margin:4px 0 0;">Report ID: ${jobId}</p>
+    <p style="font-size:11px;color:#AAAAAA;margin:4px 0 0;">Audit ID: ${jobId}</p>
   </td></tr>
 </table>
 </td></tr>
@@ -236,7 +237,7 @@ async function sendReportEmail(
 </body></html>`,
       attachments: [
         {
-          filename: `presenzia-report-${businessName.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
+          filename: `presenzia-audit-${businessName.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
           content: pdfBuffer,
         },
       ],

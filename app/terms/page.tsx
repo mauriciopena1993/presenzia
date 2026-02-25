@@ -54,7 +54,7 @@ export default function TermsPage() {
           <p style={textStyle}>
             presenzia.ai provides AI search visibility auditing services for UK businesses. We query major AI platforms
             (including ChatGPT, Claude, Perplexity, and Google AI) to assess how often and how prominently your
-            business appears in AI-generated recommendations, and deliver a scored report with actionable insights.
+            business appears in AI-generated recommendations, and deliver a scored audit with actionable insights.
           </p>
         </div>
 
@@ -86,10 +86,10 @@ export default function TermsPage() {
         </div>
 
         <div style={sectionStyle}>
-          <h2 style={headingStyle}>4. Report Delivery</h2>
+          <h2 style={headingStyle}>4. Audit Delivery</h2>
           <p style={textStyle}>
-            We aim to deliver your first audit report within 48 hours of your subscription being activated
-            and your business details being provided. Subsequent reports are delivered on your subscription cycle.
+            We aim to deliver your first audit within 48 hours of your subscription being activated
+            and your business details being provided. Subsequent audits are delivered on your subscription cycle.
             Delivery times are estimates and may vary due to factors outside our control.
           </p>
         </div>

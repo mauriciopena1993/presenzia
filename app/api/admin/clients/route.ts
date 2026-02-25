@@ -24,5 +24,26 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ clients });
+  // Fetch latest ratings per client
+  const { data: ratings } = await supabase
+    .from('report_ratings')
+    .select('client_id, rating, comment, created_at')
+    .order('created_at', { ascending: false });
+
+  const ratingsMap = new Map<string, { rating: number; comment: string | null }>();
+  if (ratings) {
+    for (const r of ratings) {
+      if (!ratingsMap.has(r.client_id)) {
+        ratingsMap.set(r.client_id, { rating: r.rating, comment: r.comment });
+      }
+    }
+  }
+
+  const enrichedClients = (clients || []).map(client => ({
+    ...client,
+    latest_rating: ratingsMap.get(client.id)?.rating ?? null,
+    latest_comment: ratingsMap.get(client.id)?.comment ?? null,
+  }));
+
+  return NextResponse.json({ clients: enrichedClients });
 }

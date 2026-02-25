@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
+import AmbientBackground from "@/components/AmbientBackground";
 
 
 const playfair = Playfair_Display({
@@ -19,7 +20,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "presenzia.ai | AI Search Visibility Audits for UK Businesses",
-  description: "Find out if AI search engines recommend your business. Monthly audits across ChatGPT, Claude, Perplexity and Google AI with scored reports and actionable fixes.",
+  description: "Find out if AI search engines recommend your business. Monthly audits across ChatGPT, Claude, Perplexity and Google AI with scored audits and actionable fixes.",
   keywords: "AI search visibility, AI SEO, ChatGPT business listing, AI search audit, UK business AI, presenzia, AI recommendations, local business AI visibility",
   metadataBase: new URL("https://presenzia.ai"),
   alternates: {
@@ -71,6 +72,25 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <head>
+        {/* Google Analytics 4 */}
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`} />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
+                    page_title: document.title,
+                    send_page_view: true
+                  });
+                `,
+              }}
+            />
+          </>
+        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -112,6 +132,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased" suppressHydrationWarning style={{ fontFamily: "var(--font-inter, Inter, sans-serif)" }}>
+        <AmbientBackground />
         {children}
       </body>
     </html>

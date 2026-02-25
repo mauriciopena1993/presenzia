@@ -29,7 +29,7 @@ export interface CategoryBreakdown {
 export interface DetailedAction {
   priority: 'HIGH' | 'MEDIUM';
   phase: 1 | 2 | 3;        // 1=Immediate, 2=Short-term, 3=Ongoing
-  timeline: string;         // e.g. "This week", "Weeks 2–4", "Month 2+"
+  timeline: string;         // e.g. "Start here", "Next steps", "Ongoing"
   title: string;
   why: string;              // One-line explanation
   context?: string;         // Data-driven observation from the audit results
@@ -176,7 +176,7 @@ function buildActions(
     actions.push({
       priority: 'HIGH',
       phase: 1,
-      timeline: 'This week',
+      timeline: 'Start here',
       title: 'Complete Your Google Business Profile',
       context: gbpContext || undefined,
       why: 'Google Business Profile is the primary data source for Google AI and indirectly feeds all other platforms.',
@@ -267,7 +267,7 @@ function buildActions(
     actions.push({
       priority: 'HIGH',
       phase: 1,
-      timeline: 'This week',
+      timeline: 'Start here',
       title: `Close the Gap on ${topComp.name}`,
       context: compContext,
       why: `Understanding what makes ${topComp.name} visible to AI will help you replicate and surpass their strategy.`,
@@ -276,7 +276,7 @@ function buildActions(
         `Check their review volume on Google, Trustpilot, and industry-specific sites. Aim to match or exceed their total review count.`,
         `Identify which directories they are listed on that you are not, and create profiles on those platforms.`,
         `Analyse their website content: look for FAQ pages, service pages, and structured data that AI platforms may be citing.`,
-        `Monitor their presence over time. Your next Presenzia report will show whether the gap is closing.`,
+        `Monitor their presence over time. Your next Presenzia audit will show whether the gap is closing.`,
       ],
     });
   }
@@ -290,7 +290,7 @@ function buildActions(
     actions.push({
       priority: overall < 45 ? 'HIGH' : 'MEDIUM',
       phase: 2,
-      timeline: 'Weeks 2–4',
+      timeline: 'Next steps',
       title: 'Build Targeted Review Volume',
       context: revContext,
       why: 'Specific, location-rich reviews carry significantly more weight with AI than generic star ratings.',
@@ -312,7 +312,7 @@ function buildActions(
   actions.push({
     priority: overall < 40 ? 'HIGH' : 'MEDIUM',
     phase: 2,
-    timeline: 'Weeks 2–4',
+    timeline: 'Next steps',
     title: 'Add AI-Optimised Content to Your Website',
     context: contentContext,
     why: 'AI platforms cite websites that provide clear, factual, well-structured information.',
@@ -337,7 +337,7 @@ function buildActions(
     actions.push({
       priority: 'MEDIUM',
       phase: 3,
-      timeline: 'Month 2+',
+      timeline: 'Ongoing',
       title: `Optimise for ${weakest.platform}`,
       context: platContext,
       why: `Improving your ${weakest.platform} presence will increase your overall visibility and reach customers who prefer this platform.`,
@@ -352,7 +352,7 @@ function buildActions(
     actions.push({
       priority: 'MEDIUM',
       phase: 3,
-      timeline: 'Month 2+',
+      timeline: 'Ongoing',
       title: 'Get Featured in Local Publications',
       context: pubContext,
       why: 'Local press coverage creates authoritative citations that AI platforms reference when making recommendations.',

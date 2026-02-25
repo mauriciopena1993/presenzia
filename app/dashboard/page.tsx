@@ -81,9 +81,9 @@ const PLAN_PRICES: Record<string, string> = {
 };
 
 const PLAN_FEATURES: Record<string, string[]> = {
-  starter: ['Monthly report', 'Report download portal'],
-  growth: ['Weekly reports', 'Live dashboard with trends', 'Competitor monitoring', 'AI report assistant', 'Priority email support'],
-  premium: ['Daily updates', 'Dedicated account manager', 'Monthly strategy call', 'Custom prompt testing', 'Everything in Growth'],
+  starter: ['Monthly AI visibility audit', 'Delivered by email (PDF)'],
+  growth: ['Everything in Starter', 'Live dashboard (weekly updates)', 'AI audit assistant', 'Competitor deep-dive', 'Priority email support'],
+  premium: ['Everything in Growth', 'Daily dashboard updates', 'Dedicated account manager', 'Monthly 1:1 strategy call', 'Custom prompt testing'],
 };
 
 const PLAN_ORDER = ['starter', 'growth', 'premium'];
@@ -97,6 +97,12 @@ function scoreColor(score: number) {
 
 function fmt(date: string) {
   return new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function getNextAuditDate(lastDate: string): string {
+  const d = new Date(lastDate);
+  d.setMonth(d.getMonth() + 1);
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 function ScoreGauge({ score, grade }: { score: number; grade: string }) {
@@ -242,7 +248,7 @@ function ChatPane({ jobId, businessName }: { jobId: string; businessName: string
       <div style={{ padding: '0.875rem 1.25rem', borderBottom: '1px solid #1a1a1a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <div style={{ width: '6px', height: '6px', background: '#C9A84C', borderRadius: '50%' }} />
         <span style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-          AI Report Assistant
+          AI Audit Assistant
         </span>
       </div>
 
@@ -479,18 +485,18 @@ export default function DashboardPage() {
           <div style={{ marginBottom: '3rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '1.25rem' }}>
               <div>
-                <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>Report library</div>
-                <h2 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.5rem', color: '#F5F0E8', fontWeight: 600 }}>Your AI visibility reports</h2>
+                <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>Audit library</div>
+                <h2 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.5rem', color: '#F5F0E8', fontWeight: 600 }}>Your AI visibility audits</h2>
               </div>
-              <span style={{ fontSize: '0.75rem', color: '#888' }}>{completedReports.length} report{completedReports.length !== 1 ? 's' : ''}</span>
+              <span style={{ fontSize: '0.75rem', color: '#888' }}>{completedReports.length} audit{completedReports.length !== 1 ? 's' : ''}</span>
             </div>
 
             <div style={{ border: '1px solid #111' }}>
               {completedReports.length === 0 ? (
                 <div style={{ padding: '3rem', textAlign: 'center', color: '#888' }}>
                   {pendingJob
-                    ? 'Your first report is being prepared — check back shortly.'
-                    : 'Your first report will arrive by email once your audit is complete.'}
+                    ? 'Your first audit is being prepared — check back shortly.'
+                    : 'Your first audit will arrive by email once it is complete.'}
                 </div>
               ) : (
                 completedReports.map((report, i) => (
@@ -522,7 +528,7 @@ export default function DashboardPage() {
                         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#C9A84C'; (e.currentTarget as HTMLElement).style.borderColor = '#C9A84C'; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#999'; (e.currentTarget as HTMLElement).style.borderColor = '#555'; }}
                       >
-                        ↓ Download report
+                        ↓ Download audit
                       </button>
                     ) : (
                       <span style={{ fontSize: '0.75rem', color: '#888' }}>Processing…</span>
@@ -533,6 +539,27 @@ export default function DashboardPage() {
             </div>
           </div>
 
+          {/* Next audit date */}
+          {completedReports.length > 0 && (
+            <div style={{
+              padding: '1rem 1.25rem',
+              background: 'rgba(201,168,76,0.04)',
+              border: '1px solid rgba(201,168,76,0.15)',
+              marginBottom: '3rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+            }}>
+              <div style={{ width: '6px', height: '6px', background: '#C9A84C', borderRadius: '50%', flexShrink: 0 }} />
+              <span style={{ fontSize: '0.85rem', color: '#AAAAAA' }}>
+                Your next audit will be available on{' '}
+                <span style={{ color: '#C9A84C', fontWeight: 600 }}>
+                  {getNextAuditDate(completedReports[0].completed_at || completedReports[0].created_at)}
+                </span>
+              </span>
+            </div>
+          )}
+
           {/* Upgrade section */}
           <div style={{ marginBottom: '1.25rem' }}>
             <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Upgrade your plan</div>
@@ -542,7 +569,7 @@ export default function DashboardPage() {
                 <div>
                   <div style={{ fontSize: '0.9rem', color: '#C9A84C', fontWeight: 600, marginBottom: '6px' }}>Growth Plan · £199/mo</div>
                   <div style={{ fontSize: '0.8rem', color: '#999', lineHeight: 1.6 }}>
-                    Weekly reports, live dashboard, competitor tracking, AI report assistant, and priority support.
+                    Weekly dashboard updates, competitor tracking, AI audit assistant, and priority support.
                   </div>
                 </div>
                 <button
@@ -597,7 +624,7 @@ export default function DashboardPage() {
                 <>
                   <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem' }}>Before you go…</div>
                   <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6, marginBottom: '1rem' }}>
-                    We'd hate to see you leave. How about <span style={{ color: '#C9A84C', fontWeight: 600 }}>50% off your next month</span>? Stay and keep tracking your AI visibility while you see the results from your latest report.
+                    We'd hate to see you leave. How about <span style={{ color: '#C9A84C', fontWeight: 600 }}>50% off your next month</span>? Stay and keep tracking your AI visibility while you see the results from your latest audit.
                   </p>
                   <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                     <button
@@ -627,7 +654,7 @@ export default function DashboardPage() {
                 <>
                   <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem' }}>Are you sure?</div>
                   <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6, marginBottom: '1rem' }}>
-                    Your subscription will remain active until the end of your current billing period. After that, you will lose access to reports and your dashboard.
+                    Your subscription will remain active until the end of your current billing period. After that, you will lose access to audits and your dashboard.
                   </p>
                   <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                     <button
@@ -667,7 +694,7 @@ export default function DashboardPage() {
                 <>
                   <div style={{ fontSize: '0.9rem', color: '#C9A84C', fontWeight: 600, marginBottom: '0.5rem' }}>Discount applied!</div>
                   <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6 }}>
-                    Your next month is 50% off. We're glad you're staying! Keep implementing the actions from your latest report and watch your AI visibility improve.
+                    Your next month is 50% off. We're glad you're staying! Keep implementing the actions from your latest audit and watch your AI visibility improve.
                   </p>
                   <button
                     onClick={() => setShowCancel(false)}
@@ -726,7 +753,7 @@ export default function DashboardPage() {
         {/* Tabs */}
         <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #1a1a1a', marginBottom: '2rem' }}>
           {([
-            { key: 'report', label: 'Latest Report' },
+            { key: 'report', label: 'Latest Audit' },
             { key: 'history', label: `History (${completedCount})` },
             { key: 'chat', label: 'Ask AI' },
           ] as const).map(tab => (
@@ -756,12 +783,12 @@ export default function DashboardPage() {
           !latestJob ? (
             <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
               <div style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.5rem', color: '#F5F0E8', marginBottom: '1rem' }}>
-                {pendingJob ? 'Your first audit is running…' : 'Your report is on its way'}
+                {pendingJob ? 'Your first audit is running…' : 'Your audit is on its way'}
               </div>
               <p style={{ color: '#999', fontSize: '0.9rem', maxWidth: '400px', margin: '0 auto', lineHeight: 1.7 }}>
                 {pendingJob
                   ? 'Your AI visibility audit is processing. Results will appear here automatically.'
-                  : 'Your first report will be ready shortly. Check back in a few minutes or look for an email from us.'}
+                  : 'Your first audit will be ready shortly. Check back in a few minutes or look for an email from us.'}
               </p>
             </div>
           ) : (
@@ -774,7 +801,7 @@ export default function DashboardPage() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.75rem', paddingBottom: '1.5rem', borderBottom: '1px solid #1a1a1a' }}>
                     <div>
                       <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>presenzia.ai</div>
-                      <div style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1rem', color: '#F5F0E8' }}>AI Visibility Report</div>
+                      <div style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1rem', color: '#F5F0E8' }}>AI Visibility Audit</div>
                       {latestJob.completed_at && (
                         <div style={{ fontSize: '0.75rem', color: '#999', marginTop: '3px' }}>
                           {client?.business_name} · {fmt(latestJob.completed_at)}
@@ -826,8 +853,26 @@ export default function DashboardPage() {
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#C9A84C'; (e.currentTarget as HTMLElement).style.color = '#C9A84C'; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#333'; (e.currentTarget as HTMLElement).style.color = '#AAAAAA'; }}
                   >
-                    ↓ Download report
+                    ↓ Download audit
                   </button>
+                )}
+
+                {/* Next audit date */}
+                {latestJob.completed_at && (
+                  <div style={{
+                    marginTop: '1rem',
+                    padding: '0.875rem 1rem',
+                    background: 'rgba(201,168,76,0.04)',
+                    border: '1px solid rgba(201,168,76,0.15)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.625rem',
+                  }}>
+                    <div style={{ width: '6px', height: '6px', background: '#C9A84C', borderRadius: '50%', flexShrink: 0 }} />
+                    <span style={{ fontSize: '0.8rem', color: '#AAAAAA' }}>
+                      Next audit: <span style={{ color: '#C9A84C', fontWeight: 600 }}>{getNextAuditDate(latestJob.completed_at)}</span>
+                    </span>
+                  </div>
                 )}
               </div>
 
@@ -864,7 +909,7 @@ export default function DashboardPage() {
         {activeTab === 'history' && (
           <div style={{ border: '1px solid #111' }}>
             {history.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>No reports yet.</div>
+              <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>No audits yet.</div>
             ) : (
               history.map((report, i) => (
                 <div key={report.id} style={{
@@ -904,7 +949,7 @@ export default function DashboardPage() {
                         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#C9A84C'; (e.currentTarget as HTMLElement).style.borderColor = '#C9A84C'; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#999'; (e.currentTarget as HTMLElement).style.borderColor = '#555'; }}
                       >
-                        ↓ Report
+                        ↓ Audit
                       </button>
                     )}
                   </div>
@@ -925,7 +970,7 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>
-              Chat will be available once your first report is ready.
+              Chat will be available once your first audit is ready.
             </div>
           )
         )}
@@ -989,7 +1034,7 @@ export default function DashboardPage() {
                 <>
                   <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem' }}>Before you go…</div>
                   <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6, marginBottom: '1rem' }}>
-                    We'd hate to see you leave. How about <span style={{ color: '#C9A84C', fontWeight: 600 }}>50% off your next month</span>? Stay and keep tracking your AI visibility while you see the results from your latest report.
+                    We'd hate to see you leave. How about <span style={{ color: '#C9A84C', fontWeight: 600 }}>50% off your next month</span>? Stay and keep tracking your AI visibility while you see the results from your latest audit.
                   </p>
                   <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                     <button onClick={handleAcceptRetention} disabled={actionLoading} style={{ background: '#C9A84C', color: '#0A0A0A', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit' }}>
@@ -1008,7 +1053,7 @@ export default function DashboardPage() {
                 <>
                   <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem' }}>Are you sure?</div>
                   <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6, marginBottom: '1rem' }}>
-                    Your subscription will remain active until the end of your current billing period. After that, you will lose access to reports and your dashboard.
+                    Your subscription will remain active until the end of your current billing period. After that, you will lose access to audits and your dashboard.
                   </p>
                   <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                     <button onClick={handleConfirmCancel} disabled={actionLoading} style={{ background: '#cc4444', color: '#fff', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit' }}>
@@ -1037,7 +1082,7 @@ export default function DashboardPage() {
                 <>
                   <div style={{ fontSize: '0.9rem', color: '#C9A84C', fontWeight: 600, marginBottom: '0.5rem' }}>Discount applied!</div>
                   <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6 }}>
-                    Your next month is 50% off. We're glad you're staying! Keep implementing the actions from your latest report and watch your AI visibility improve.
+                    Your next month is 50% off. We're glad you're staying! Keep implementing the actions from your latest audit and watch your AI visibility improve.
                   </p>
                   <button onClick={() => setShowCancel(false)} style={{ marginTop: '0.75rem', background: 'none', border: '1px solid #333', color: '#999', padding: '0.4rem 1rem', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'inherit' }}>
                     Close

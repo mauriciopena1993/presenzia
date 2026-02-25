@@ -138,7 +138,7 @@ export default function Hero() {
             el.style.borderColor = '#555555';
             el.style.color = '#CCCCCC';
           }}>
-          See sample report
+          See sample audit
         </Link>
       </div>
 
@@ -158,8 +158,8 @@ export default function Hero() {
       }}>
         {[
           { stat: '94%', label: 'of UK SMEs not found on ChatGPT' },
-          { stat: '4 AIs', label: 'audited per report' },
-          { stat: '48h', label: 'first report delivered' },
+          { stat: '4 AIs', label: 'audited per business' },
+          { stat: '48h', label: 'first audit delivered' },
         ].map((item) => (
           <div key={item.stat} style={{ textAlign: 'center' }}>
             <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.75rem', color: '#C9A84C', fontWeight: 600 }}>{item.stat}</div>

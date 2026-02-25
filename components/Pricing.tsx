@@ -8,14 +8,14 @@ const plans = [
     name: 'Starter',
     price: '£99',
     period: '/month',
-    description: 'Everything you need to see where you stand with AI.',
+    description: 'See exactly where your business stands across AI search — delivered to your inbox every month.',
     features: [
-      'Monthly AI search audit',
-      'Audit across 4 AI platforms',
-      'Report delivered by email',
-      'Visibility score (0\u2013100)',
-      'Competitor mentions tracked',
-      'Actionable recommendations',
+      'Monthly AI visibility audit',
+      '4 AI platforms tested',
+      'Visibility score & grade',
+      'Competitor analysis',
+      'Personalised action plan',
+      'Delivered by email (PDF)',
     ],
     cta: 'Get started',
     highlighted: false,
@@ -25,15 +25,14 @@ const plans = [
     name: 'Growth',
     price: '£199',
     period: '/month',
-    description: 'For businesses actively improving their AI visibility.',
+    description: 'Your monthly audit plus a live dashboard and AI tools to actively improve your visibility.',
     features: [
-      'Weekly AI search audit',
-      'Audit across all 4 AI platforms',
-      'Client dashboard access',
-      'Report + live dashboard',
-      'Competitor deep-dive analysis',
-      'Weekly progress tracking',
-      'Improvement recommendations',
+      'Everything in Starter',
+      'Live client dashboard',
+      'Weekly dashboard updates',
+      'AI audit assistant',
+      'Competitor deep-dive',
+      'Priority support',
     ],
     cta: 'Get started',
     highlighted: true,
@@ -44,20 +43,83 @@ const plans = [
     name: 'Premium',
     price: '£599',
     period: '/month',
-    description: 'The full service for businesses that want expert guidance.',
+    description: 'The full service — expert guidance, daily insights, and a dedicated strategist in your corner.',
     features: [
       'Everything in Growth',
       'Daily dashboard updates',
       'Dedicated account manager',
       'Monthly 1:1 strategy call',
-      'Custom action plan',
-      'Priority report delivery',
+      'Custom prompt testing',
       'Industry benchmarking',
     ],
     cta: 'Book a call',
     highlighted: false,
   },
 ];
+
+/* ── Comparison table data ── */
+
+type CellValue = boolean | string;
+
+interface ComparisonRow {
+  feature: string;
+  starter: CellValue;
+  growth: CellValue;
+  premium: CellValue;
+}
+
+interface ComparisonGroup {
+  heading: string;
+  rows: ComparisonRow[];
+}
+
+const comparisonData: ComparisonGroup[] = [
+  {
+    heading: 'Core Features',
+    rows: [
+      { feature: 'Monthly AI audit',      starter: true,  growth: true,     premium: true },
+      { feature: '4 AI platforms tested',  starter: true,  growth: true,     premium: true },
+      { feature: 'Visibility score & grade', starter: true, growth: true,   premium: true },
+      { feature: 'Competitor analysis',    starter: true,  growth: true,     premium: true },
+      { feature: 'Personalised action plan', starter: true, growth: true,   premium: true },
+      { feature: 'Email delivery (PDF)',   starter: true,  growth: true,     premium: true },
+    ],
+  },
+  {
+    heading: 'Dashboard & Tools',
+    rows: [
+      { feature: 'Live dashboard',        starter: false, growth: true,     premium: true },
+      { feature: 'Update frequency',       starter: '—',   growth: 'Weekly', premium: 'Daily' },
+      { feature: 'AI audit assistant',     starter: false, growth: true,     premium: true },
+      { feature: 'Competitor deep-dive',   starter: false, growth: true,     premium: true },
+    ],
+  },
+  {
+    heading: 'Support & Strategy',
+    rows: [
+      { feature: 'Priority support',      starter: false, growth: true,     premium: true },
+      { feature: 'Dedicated account manager', starter: false, growth: false, premium: true },
+      { feature: 'Monthly 1:1 strategy call', starter: false, growth: false, premium: true },
+      { feature: 'Custom prompt testing',  starter: false, growth: false,    premium: true },
+      { feature: 'Industry benchmarking',  starter: false, growth: false,    premium: true },
+    ],
+  },
+];
+
+/* ── Render helper for table cells ── */
+
+function CellContent({ value }: { value: CellValue }) {
+  if (value === true) {
+    return <Check size={16} strokeWidth={2.5} style={{ color: '#C9A84C' }} />;
+  }
+  if (value === false) {
+    return <span style={{ color: '#444444', fontSize: '1rem' }}>—</span>;
+  }
+  // string value (e.g. "Weekly", "Daily")
+  return <span style={{ color: '#F5F0E8', fontSize: '0.8rem', fontWeight: 500 }}>{value}</span>;
+}
+
+/* ── Component ── */
 
 export default function Pricing() {
   const handleClick = (planKey: string) => {
@@ -72,7 +134,7 @@ export default function Pricing() {
       maxWidth: '1100px',
       margin: '0 auto',
     }}>
-      {/* Section header */}
+      {/* ── Section header ── */}
       <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
         <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
           Pricing
@@ -87,16 +149,32 @@ export default function Pricing() {
           Simple, transparent pricing
         </h2>
         <p style={{ color: '#AAAAAA', maxWidth: '500px', margin: '0 auto', fontSize: '1rem', lineHeight: 1.7 }}>
-          No setup fees. No long-term contracts. Cancel anytime. Your first report is delivered within 48 hours of signing up.
+          No setup fees. No long-term contracts. Cancel anytime. Your first audit is delivered within 48 hours of signing up.
         </p>
       </div>
 
-      {/* Plans grid */}
+      {/* ── Responsive styles ── */}
       <style>{`
         @media (max-width: 860px) {
           .pricing-grid { grid-template-columns: 1fr !important; }
         }
+        .comparison-table-wrapper {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+        .comparison-table-wrapper::-webkit-scrollbar {
+          height: 6px;
+        }
+        .comparison-table-wrapper::-webkit-scrollbar-track {
+          background: #111111;
+        }
+        .comparison-table-wrapper::-webkit-scrollbar-thumb {
+          background: #333333;
+          border-radius: 3px;
+        }
       `}</style>
+
+      {/* ── Plans grid ── */}
       <div className="pricing-grid" style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
@@ -156,7 +234,7 @@ export default function Pricing() {
             </ul>
 
             <button
-              onClick={() => handleClick(plan.key)}
+              onClick={() => plan.key === 'premium' ? (window.location.href = premiumMailto) : handleClick(plan.key)}
               style={{
                 display: 'block',
                 width: '100%',
@@ -183,7 +261,7 @@ export default function Pricing() {
                 else { el.style.borderColor = '#555555'; el.style.color = '#DDDDDD'; }
               }}
             >
-              Get started →
+              {plan.cta} →
             </button>
             {plan.key === 'premium' && (
               <a
@@ -208,6 +286,129 @@ export default function Pricing() {
       <p style={{ textAlign: 'center', color: '#999999', fontSize: '0.8rem', marginTop: '2rem' }}>
         All plans include VAT. Billed monthly. Cancel anytime with 30 days notice.
       </p>
+
+      {/* ── Comparison table ── */}
+      <div style={{ marginTop: '5rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <h3 style={{
+            fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
+            fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+            color: '#F5F0E8',
+            fontWeight: 600,
+            marginBottom: '0.75rem',
+          }}>
+            Compare plans
+          </h3>
+          <p style={{ color: '#AAAAAA', fontSize: '0.9rem', lineHeight: 1.6 }}>
+            Every plan includes our full monthly audit. Higher tiers add dashboards, tools, and expert support.
+          </p>
+        </div>
+
+        <div className="comparison-table-wrapper">
+          <table style={{
+            width: '100%',
+            minWidth: '640px',
+            borderCollapse: 'collapse',
+            fontFamily: 'var(--font-inter, Inter, sans-serif)',
+          }}>
+            {/* Column header */}
+            <thead>
+              <tr>
+                <th style={{
+                  textAlign: 'left',
+                  padding: '1rem 1.25rem',
+                  color: '#666666',
+                  fontSize: '0.7rem',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  fontWeight: 500,
+                  borderBottom: '1px solid #222222',
+                  width: '40%',
+                }}>
+                  Feature
+                </th>
+                {(['Starter', 'Growth', 'Premium'] as const).map((name) => (
+                  <th key={name} style={{
+                    textAlign: 'center',
+                    padding: '1rem 1rem',
+                    borderBottom: '1px solid #222222',
+                    width: '20%',
+                    ...(name === 'Growth' ? { background: 'rgba(201, 168, 76, 0.04)' } : {}),
+                  }}>
+                    <div style={{
+                      fontSize: '0.7rem',
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      fontWeight: 500,
+                      color: name === 'Growth' ? '#C9A84C' : '#666666',
+                    }}>
+                      {name}
+                    </div>
+                    {name === 'Growth' && (
+                      <div style={{
+                        fontSize: '0.65rem',
+                        color: '#C9A84C',
+                        marginTop: '0.25rem',
+                        fontWeight: 600,
+                        letterSpacing: '0.08em',
+                        textTransform: 'uppercase',
+                        opacity: 0.7,
+                      }}>
+                        Most popular
+                      </div>
+                    )}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            <tbody>
+              {comparisonData.map((group) => (
+                <>
+                  {/* Group heading row */}
+                  <tr key={`heading-${group.heading}`}>
+                    <td colSpan={4} style={{
+                      padding: '1.25rem 1.25rem 0.5rem',
+                      fontSize: '0.7rem',
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      fontWeight: 600,
+                      color: '#C9A84C',
+                      borderBottom: '1px solid #1a1a1a',
+                    }}>
+                      {group.heading}
+                    </td>
+                  </tr>
+
+                  {/* Data rows */}
+                  {group.rows.map((row) => (
+                    <tr key={row.feature}>
+                      <td style={{
+                        padding: '0.75rem 1.25rem',
+                        fontSize: '0.85rem',
+                        color: '#AAAAAA',
+                        borderBottom: '1px solid #1a1a1a',
+                      }}>
+                        {row.feature}
+                      </td>
+                      {([row.starter, row.growth, row.premium] as CellValue[]).map((val, i) => (
+                        <td key={i} style={{
+                          textAlign: 'center',
+                          padding: '0.75rem 1rem',
+                          borderBottom: '1px solid #1a1a1a',
+                          ...(i === 1 ? { background: 'rgba(201, 168, 76, 0.04)' } : {}),
+                        }}>
+                          <CellContent value={val} />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </section>
   );
 }

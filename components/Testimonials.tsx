@@ -8,7 +8,7 @@ const testimonials = [
     initial: "M",
   },
   {
-    quote: "The report is incredibly clear. I'm not technical at all but I understood exactly what needed to change. Worth every penny of the Growth plan.",
+    quote: "The audit is incredibly clear. I'm not technical at all but I understood exactly what needed to change. Worth every penny of the Growth plan.",
     name: "Sarah K.",
     role: "Accountant, London",
     initial: "S",

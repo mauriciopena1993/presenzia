@@ -198,7 +198,7 @@ function OnboardingForm() {
                 onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                 style={inputStyle}
               />
-              <div style={hintStyle}>We'll send your audit report here</div>
+              <div style={hintStyle}>We'll send your audit here</div>
             </div>
 
             {/* Business Name */}

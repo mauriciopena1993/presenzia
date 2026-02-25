@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
     status: 200,
     headers: {
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="presenzia-report-${jobId}.pdf"`,
+      'Content-Disposition': `attachment; filename="presenzia-audit-${jobId}.pdf"`,
       'Content-Length': buffer.length.toString(),
     },
   });

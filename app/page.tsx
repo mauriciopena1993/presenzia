@@ -4,8 +4,10 @@ import HowItWorks from '@/components/HowItWorks';
 import Pricing from '@/components/Pricing';
 import SampleReport from '@/components/SampleReport';
 import Testimonials from '@/components/Testimonials';
+import About from '@/components/About';
 import FAQ from '@/components/FAQ';
 import Footer from '@/components/Footer';
+// AmbientBackground is rendered globally in layout.tsx
 
 const faqSchema = {
   '@context': 'https://schema.org',
@@ -32,7 +34,7 @@ const faqSchema = {
       name: 'What do I actually receive?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "Within 48 hours of signing up, you'll receive your report by email. It includes your overall AI Visibility Score (0–100), a platform-by-platform breakdown, a list of competitors that are currently appearing in your place, and specific, actionable recommendations to improve your visibility. Growth and Premium clients also get access to an online dashboard.",
+        text: "Within 48 hours of signing up, you'll receive your audit by email. It includes your overall AI Visibility Score (0–100), a platform-by-platform breakdown, a list of competitors that are currently appearing in your place, and specific, actionable recommendations to improve your visibility. Growth and Premium clients also get access to an online dashboard.",
       },
     },
     {
@@ -64,7 +66,7 @@ const faqSchema = {
       name: 'Can I cancel at any time?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "Yes. All plans are monthly subscriptions with no long-term contract. You can cancel with 30 days' notice at any time. Your reports and dashboard access remain available until the end of your billing period.",
+        text: "Yes. All plans are monthly subscriptions with no long-term contract. You can cancel with 30 days' notice at any time. Your audits and dashboard access remain available until the end of your billing period.",
       },
     },
   ],
@@ -72,19 +74,22 @@ const faqSchema = {
 
 export default function Home() {
   return (
-    <main style={{ background: '#0A0A0A', minHeight: '100vh' }}>
+    <main style={{ background: '#0A0A0A', minHeight: '100vh', position: 'relative' }}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <Navbar />
-      <Hero />
-      <HowItWorks />
-      <SampleReport />
-      <Pricing />
-      <Testimonials />
-      <FAQ />
-      <Footer />
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <Navbar />
+        <Hero />
+        <HowItWorks />
+        <SampleReport />
+        <Pricing />
+        <Testimonials />
+        <About />
+        <FAQ />
+        <Footer />
+      </div>
     </main>
   );
 }
