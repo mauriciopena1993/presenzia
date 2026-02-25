@@ -24,10 +24,10 @@ export default function SampleReport() {
             marginBottom: '1rem',
             lineHeight: 1.2,
           }}>
-            See exactly what you&apos;ll receive
+            See what&apos;s inside your report
           </h2>
           <p style={{ color: '#AAAAAA', fontSize: '0.95rem', lineHeight: 1.8, maxWidth: '600px', margin: '0 auto' }}>
-            Every report is clear, professional, and designed to be understood without any technical knowledge. Here&apos;s what a typical report looks like.
+            Selected sections from a 5-page report. Every insight is backed by real AI search data specific to your business.
           </p>
         </div>
 
@@ -60,7 +60,10 @@ export default function SampleReport() {
               <div style={{ fontSize: '0.7rem', color: '#666', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.2rem' }}>presenzia.ai</div>
               <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.05rem', color: '#F5F0E8' }}>AI Visibility Report</div>
             </div>
-            <div style={{ fontSize: '0.75rem', color: '#666' }}>Smith &amp; Co Solicitors · Manchester · Feb 2026</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.75rem', color: '#666' }}>Smith &amp; Co Solicitors · Manchester · Feb 2026</span>
+              <span style={{ fontSize: '0.55rem', color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.15rem 0.5rem', border: '1px solid #333' }}>Preview</span>
+            </div>
           </div>
 
           {/* Score hero */}
@@ -100,7 +103,7 @@ export default function SampleReport() {
                 }}>GRADE F</span>
               </div>
               <p style={{ color: '#888', fontSize: '0.8rem', lineHeight: 1.6, margin: 0 }}>
-                Your business was found in only 1 of 4 AI platforms tested. When customers in Manchester ask AI for solicitor recommendations, competitors are being cited significantly more often.
+                Found in only 7 of 80 AI searches across 4 platforms. When customers in Manchester ask AI for solicitor recommendations, your competitors are being recommended instead.
               </p>
             </div>
           </div>
@@ -112,8 +115,8 @@ export default function SampleReport() {
             flexWrap: 'wrap',
           }}>
             {[
-              { value: '32', label: 'Searches tested' },
-              { value: '3', label: 'Times found', highlight: false },
+              { value: '80', label: 'Searches tested' },
+              { value: '7', label: 'Times found', highlight: false },
               { value: '4', label: 'Platforms audited' },
               { value: '6', label: 'Competitors found', warn: true },
             ].map((stat, i) => (
@@ -143,10 +146,10 @@ export default function SampleReport() {
             <div style={{ flex: 1, minWidth: '260px', padding: '1.5rem 2rem', borderRight: '1px solid #222222' }}>
               <div style={{ fontSize: '0.7rem', color: '#666', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1rem' }}>Platform breakdown</div>
               {[
-                { name: 'ChatGPT', score: 2, max: 10, found: false },
-                { name: 'Claude', score: 4, max: 10, found: false },
-                { name: 'Perplexity', score: 8, max: 10, found: true },
-                { name: 'Google AI', score: 3, max: 10, found: false },
+                { name: 'ChatGPT', score: 0, max: 100, mentions: '0/20', found: false },
+                { name: 'Perplexity', score: 55, max: 100, mentions: '5/20', found: true },
+                { name: 'Google AI', score: 15, max: 100, mentions: '2/20', found: false },
+                { name: 'Claude', score: 0, max: 100, mentions: '0/20', found: false },
               ].map(platform => (
                 <div key={platform.name} style={{ marginBottom: '0.65rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
@@ -157,15 +160,15 @@ export default function SampleReport() {
                       }
                       <span style={{ fontSize: '0.75rem', color: platform.found ? '#F5F0E8' : '#777' }}>{platform.name}</span>
                     </div>
-                    <span style={{ fontSize: '0.7rem', color: platform.found ? '#C9A84C' : '#555', fontFamily: "'Playfair Display', serif" }}>{platform.score}/{platform.max}</span>
+                    <span style={{ fontSize: '0.65rem', color: '#555' }}>{platform.mentions}</span>
                   </div>
                   <div style={{ height: '3px', background: '#222222', borderRadius: '2px' }}>
-                    <div style={{ height: '100%', width: `${(platform.score / platform.max) * 100}%`, background: platform.found ? '#C9A84C' : '#444', borderRadius: '2px' }} />
+                    <div style={{ height: '100%', width: `${(platform.score / platform.max) * 100}%`, background: platform.found ? '#C9A84C' : platform.score > 0 ? '#666' : '#333', borderRadius: '2px' }} />
                   </div>
                 </div>
               ))}
               <div style={{ marginTop: '0.75rem', fontSize: '0.7rem', color: '#555', lineHeight: 1.5 }}>
-                Found on <span style={{ color: '#C9A84C' }}>1</span> of 4 platforms
+                Mentioned on <span style={{ color: '#C9A84C' }}>1</span> of 4 platforms consistently
               </div>
             </div>
 
@@ -236,7 +239,7 @@ export default function SampleReport() {
             ))}
             <div style={{ marginTop: '0.75rem', fontSize: '0.7rem', color: '#555', lineHeight: 1.5 }}>
               <Search size={11} style={{ color: '#555', verticalAlign: 'middle', marginRight: '0.3rem' }} />
-              32 total prompts tested across all platforms · 3 mentions found
+              Showing 4 of 80 searches tested · 7 total mentions found across all platforms
             </div>
           </div>
 
@@ -245,9 +248,9 @@ export default function SampleReport() {
             <div style={{ fontSize: '0.7rem', color: '#666', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1rem' }}>Key findings</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {[
-                { icon: 'critical', text: 'Not mentioned at all on ChatGPT, the most widely used AI assistant. This is your biggest gap.' },
-                { icon: 'warning', text: 'Perplexity is the only platform citing your business, likely from directory listings, but position is inconsistent.' },
-                { icon: 'warning', text: 'Competitors have stronger signals from Google Business Profile, legal directories, and local press coverage.' },
+                { icon: 'critical', text: 'Absent from ChatGPT entirely (0 of 20 searches). This is the most widely used AI assistant and your biggest gap.' },
+                { icon: 'warning', text: 'Perplexity is the only platform recommending you consistently (5 of 20 searches), likely from directory listings.' },
+                { icon: 'warning', text: 'Taylor Rose MW appeared 14 times where you were absent. They have stronger directory, review, and press signals.' },
               ].map((finding, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem' }}>
                   <AlertTriangle
@@ -301,7 +304,7 @@ export default function SampleReport() {
                   <span style={{ fontSize: '0.82rem', color: '#F5F0E8', fontWeight: 600 }}>Complete your Google Business Profile</span>
                 </div>
                 <div style={{ fontSize: '0.72rem', color: '#777', marginBottom: '0.6rem', lineHeight: 1.5, fontStyle: 'italic' }}>
-                  Google AI did not find your business in any of the 8 searches we tested. This strongly suggests your profile is either unclaimed, incomplete, or not optimised.
+                  Google AI found you in only 2 of 20 searches, and never above position 5. Your profile is likely incomplete or not optimised for AI discovery.
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                   {[
@@ -375,7 +378,7 @@ export default function SampleReport() {
                   <span style={{ fontSize: '0.82rem', color: '#F5F0E8', fontWeight: 600 }}>Get listed on key legal directories</span>
                 </div>
                 <div style={{ fontSize: '0.72rem', color: '#777', marginBottom: '0.6rem', lineHeight: 1.5, fontStyle: 'italic' }}>
-                  Your business was absent from 91% of all AI searches. This level of absence typically indicates limited presence across the directories AI platforms rely on.
+                  You appeared in only 7 of 80 AI searches (9%). Directory presence is a key signal that AI platforms rely on for local recommendations.
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                   {[
@@ -463,7 +466,7 @@ export default function SampleReport() {
                   <span style={{ fontSize: '0.82rem', color: '#F5F0E8', fontWeight: 600 }}>Optimise specifically for ChatGPT</span>
                 </div>
                 <div style={{ fontSize: '0.72rem', color: '#777', marginBottom: '0.6rem', lineHeight: 1.5, fontStyle: 'italic' }}>
-                  ChatGPT found you in 0 of 8 searches. This is your biggest platform gap.
+                  ChatGPT returned 0 mentions across all 20 searches. This platform relies heavily on authoritative backlinks and training data coverage.
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                   {[
@@ -487,8 +490,8 @@ export default function SampleReport() {
             textAlign: 'center',
             background: '#0D0D0D',
           }}>
-            <p style={{ fontSize: '0.75rem', color: '#666', marginBottom: '0.15rem' }}>
-              This is a preview. Your full report includes personalised data, competitor analysis, and a tailored action plan for your business.
+            <p style={{ fontSize: '0.7rem', color: '#555', marginBottom: '0.5rem', lineHeight: 1.6 }}>
+              You&apos;re viewing selected sections. The full 5-page report includes complete search results, detailed competitor analysis, and a personalised action plan for your business.
             </p>
             <a
               href="/#pricing"

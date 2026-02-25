@@ -33,14 +33,6 @@ export default function Hero() {
         />
       </div>
 
-      {/* Background grid */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        backgroundImage: `linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px)`,
-        backgroundSize: '60px 60px',
-        pointerEvents: 'none',
-      }} />
 
       {/* Radial glow */}
       <div style={{
