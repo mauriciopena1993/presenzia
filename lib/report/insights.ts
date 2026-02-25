@@ -179,7 +179,7 @@ function buildActions(
       timeline: 'This week',
       title: 'Complete Your Google Business Profile',
       context: gbpContext || undefined,
-      why: 'Google Business Profile data directly feeds into Google AI and indirectly influences all other platforms.',
+      why: 'Google Business Profile is the primary data source for Google AI and indirectly feeds all other platforms.',
       steps: [
         `Go to business.google.com and claim or verify your listing for "${config.businessName}".`,
         `Write a detailed business description that naturally includes "${config.businessType} in ${config.location}". Cover your services, specialisms, and history in at least 3-4 sentences.`,
@@ -198,9 +198,9 @@ function buildActions(
     const overallFoundPct = Math.round((totalFoundCount / Math.max(totalResultCount, 1)) * 100);
     let dirContext = '';
     if (overallFoundPct < 30) {
-      dirContext = `Your business was absent from ${100 - overallFoundPct}% of all AI searches we tested. This level of absence typically indicates limited presence across the directories and review sites that AI platforms rely on.`;
+      dirContext = `Absent from ${100 - overallFoundPct}% of AI searches (${totalFoundCount}/${totalResultCount}). This typically indicates limited presence across directories and review sites that AI relies on.`;
     } else {
-      dirContext = `You appeared in ${overallFoundPct}% of AI searches, but gaps remain. Expanding your presence across key directories would improve consistency across all platforms.`;
+      dirContext = `Found in ${overallFoundPct}% of searches (${totalFoundCount}/${totalResultCount}), but gaps remain. Expanding your directory presence would improve consistency across platforms.`;
     }
 
     const directorySteps: string[] = [
@@ -255,7 +255,7 @@ function buildActions(
       timeline: overall < 50 ? 'This week' : 'Weeks 2–4',
       title: 'Get Listed on Key Review & Directory Sites',
       context: dirContext,
-      why: 'AI platforms cross-reference multiple sources. Each new listing strengthens your data footprint and makes it easier for AI to verify and recommend you.',
+      why: 'AI platforms cross-reference multiple sources. Each new listing strengthens your digital footprint and makes it easier for AI to verify and recommend you.',
       steps: directorySteps,
     });
   }
@@ -285,7 +285,7 @@ function buildActions(
   if (overall < 70) {
     const revStats = getCategoryFoundRate(results, 'rev');
     const revContext = revStats.tested > 0
-      ? `In trust and review-based searches, you appeared in ${revStats.pct}% of results. AI platforms weight review volume, recency, and specificity heavily when answering these queries.`
+      ? `You appeared in ${revStats.pct}% of trust and review-based searches (${revStats.found}/${revStats.tested}). AI platforms weight review volume, recency, and specificity heavily.`
       : undefined;
     actions.push({
       priority: overall < 45 ? 'HIGH' : 'MEDIUM',
@@ -307,8 +307,8 @@ function buildActions(
   // ── Action: Add AI-Optimised Content to Your Website ──
   const svcStats = getCategoryFoundRate(results, 'svc');
   const contentContext = svcStats.tested > 0
-    ? `Service-specific searches returned your business in ${svcStats.pct}% of tests. Clear, structured website content directly affects how AI platforms understand and recommend your services.`
-    : `AI platforms are not consistently finding your business in service-related searches. Structured, keyword-rich website content would help all platforms identify and recommend you.`;
+    ? `You appeared in ${svcStats.pct}% of service-specific searches (${svcStats.found}/${svcStats.tested}). Structured website content directly affects how AI understands and recommends your services.`
+    : `AI platforms are not finding your business in service-related searches. Structured, keyword-rich website content would help all platforms identify and recommend you.`;
   actions.push({
     priority: overall < 40 ? 'HIGH' : 'MEDIUM',
     phase: 2,
@@ -333,7 +333,7 @@ function buildActions(
   if (weakPlatforms.length > 0) {
     const weakest = weakPlatforms[0];
     const platformSteps = getPlatformSpecificSteps(weakest, config);
-    const platContext = `${weakest.platform} found you in only ${weakest.promptsMentioned} of ${weakest.promptsTested} searches, giving you a score of ${weakest.score}/100. This is your biggest platform gap.`;
+    const platContext = `${weakest.platform} found you in ${weakest.promptsMentioned} of ${weakest.promptsTested} searches (${weakest.score}/100). This is your biggest platform gap.`;
     actions.push({
       priority: 'MEDIUM',
       phase: 3,
@@ -348,7 +348,7 @@ function buildActions(
   // ── Action: Get Featured in Local Publications ──
   if (overall < 60) {
     const publicationSteps = getLocalPublicationSteps(config);
-    const pubContext = `With a visibility score of ${overall}/100, your business has limited presence in the authoritative sources AI platforms trust most. Local press mentions are among the strongest signals for improving AI recommendations.`;
+    const pubContext = `At ${overall}/100, you have limited presence in authoritative sources AI platforms trust most. Local press mentions are among the strongest signals for improving recommendations.`;
     actions.push({
       priority: 'MEDIUM',
       phase: 3,

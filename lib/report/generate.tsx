@@ -412,6 +412,9 @@ function AuditReport({ config, score, insights, reportDate }: ReportData) {
           <Text style={s.secLabel}>Audit Summary</Text>
           <View style={s.grayBox}>
             <Text style={s.bodyText}>{score.summary}</Text>
+            <Text style={[s.bodySmall, { marginTop: 6, color: TEXT_MUTED }]}>
+              Found in {score.mentionedInCount} of {score.totalPrompts} searches across {score.platforms.length} platforms ({Math.round((score.mentionedInCount / Math.max(score.totalPrompts, 1)) * 100)}% hit rate).
+            </Text>
           </View>
 
           {/* Priority actions preview */}
@@ -440,13 +443,14 @@ function AuditReport({ config, score, insights, reportDate }: ReportData) {
 
           <Text style={s.secLabel}>Platform-by-Platform Breakdown</Text>
           <Text style={s.secSub}>
-            How your business performs on each major AI search platform. Scores are based on mention frequency and ranking position.
+            Your visibility on each AI platform, based on {score.totalPrompts} real search queries. Each platform sources information differently, so results vary.
           </Text>
 
           <View style={s.platGrid}>
             {score.platforms.map(platform => {
               const pColor = scoreColor(platform.score);
               const found = platform.score > 0;
+              const hitRate = platform.promptsTested > 0 ? Math.round((platform.promptsMentioned / platform.promptsTested) * 100) : 0;
               return (
                 <View key={platform.platform} style={s.platCard}>
                   <View style={s.platHdr}>
@@ -456,10 +460,10 @@ function AuditReport({ config, score, insights, reportDate }: ReportData) {
                     </Text>
                   </View>
                   <Text style={[s.platScore, { color: pColor }]}>
-                    {platform.score}<Text style={[s.platOf, { color: TEXT_MUTED }]}>/100</Text>
+                    {platform.promptsMentioned}<Text style={[s.platOf, { color: TEXT_MUTED }]}>/{platform.promptsTested}</Text>
                   </Text>
                   <Text style={s.platDetail}>
-                    Mentioned in {platform.promptsMentioned} of {platform.promptsTested} searches
+                    {hitRate}% hit rate  ·  Score: {platform.score}/100
                   </Text>
                   {platform.avgPosition !== null && (
                     <Text style={s.platDetail}>
@@ -479,7 +483,7 @@ function AuditReport({ config, score, insights, reportDate }: ReportData) {
             <View style={{ marginBottom: 14 }}>
               <Text style={s.secLabel}>Competitors Being Recommended Instead of You</Text>
               <Text style={s.secSub}>
-                These businesses appeared in AI responses where you were absent. Higher counts indicate stronger AI presence.
+                We found {score.topCompetitors.length} competitor{score.topCompetitors.length !== 1 ? 's' : ''} being recommended where you were absent. {score.topCompetitors[0] ? `${score.topCompetitors[0].name} appeared ${score.topCompetitors[0].count} times, the most of any competitor.` : ''}
               </Text>
               {score.topCompetitors.slice(0, 8).map((comp, i) => (
                 <View key={comp.name} style={s.compRow}>
@@ -498,12 +502,19 @@ function AuditReport({ config, score, insights, reportDate }: ReportData) {
           )}
 
           {/* Platform insight box */}
-          <View style={s.goldBox}>
-            <Text style={{ fontSize: 8, fontWeight: 600, color: TEXT_PRIMARY, marginBottom: 4 }}>Why platform differences matter</Text>
-            <Text style={s.bodySmall}>
-              Each AI platform sources information differently. ChatGPT uses training data and web browsing; Perplexity searches the live web; Google AI draws from Google's index; Claude uses training knowledge. A consistent presence across all four means you get recommended regardless of which AI a customer uses.
-            </Text>
-          </View>
+          {(() => {
+            const bestPlat = score.platforms.reduce((a, b) => a.score > b.score ? a : b, score.platforms[0]);
+            const worstPlat = score.platforms.reduce((a, b) => a.score < b.score ? a : b, score.platforms[0]);
+            const platformsFound = score.platforms.filter(p => p.promptsMentioned > 0).length;
+            return (
+              <View style={s.goldBox}>
+                <Text style={{ fontSize: 8, fontWeight: 600, color: TEXT_PRIMARY, marginBottom: 4 }}>What this means for you</Text>
+                <Text style={s.bodySmall}>
+                  You were found on {platformsFound} of {score.platforms.length} platforms. {bestPlat.score > 0 ? `Your strongest platform is ${bestPlat.platform} (${bestPlat.promptsMentioned}/${bestPlat.promptsTested} searches). ` : ''}{worstPlat.platform !== bestPlat.platform ? `Your biggest gap is ${worstPlat.platform} (${worstPlat.promptsMentioned}/${worstPlat.promptsTested}). ` : ''}Each AI sources information differently, so improving the weakest platform has the highest marginal impact on your overall score.
+                </Text>
+              </View>
+            );
+          })()}
 
         </View>
         <Footer left="Ketzal LTD (Co. No. 14570156)" />
@@ -555,11 +566,27 @@ function AuditReport({ config, score, insights, reportDate }: ReportData) {
             })}
 
             {/* Summary */}
-            <View style={[s.grayBox, { marginTop: 4 }]}>
-              <Text style={s.bodySmall}>
-                Your strongest category is where you appear most frequently. Focus your efforts on the categories and platforms where you are currently absent to maximise improvement.
-              </Text>
-            </View>
+            {(() => {
+              const sorted = [...insights!.categories].sort((a, b) => {
+                const aPct = a.totalSearches > 0 ? a.timesFound / a.totalSearches : 0;
+                const bPct = b.totalSearches > 0 ? b.timesFound / b.totalSearches : 0;
+                return bPct - aPct;
+              });
+              const best = sorted[0];
+              const worst = sorted[sorted.length - 1];
+              const bestPct = best && best.totalSearches > 0 ? Math.round((best.timesFound / best.totalSearches) * 100) : 0;
+              const worstPct = worst && worst.totalSearches > 0 ? Math.round((worst.timesFound / worst.totalSearches) * 100) : 0;
+              return (
+                <View style={[s.grayBox, { marginTop: 4 }]}>
+                  <Text style={s.bodySmall}>
+                    {best && worst && best.category !== worst.category
+                      ? `Your strongest category is ${best.label} (${bestPct}% found). Your weakest is ${worst.label} (${worstPct}%). Focus on improving the weakest categories first for the biggest impact on your overall score.`
+                      : `You appeared in ${insights!.totalFound} of ${insights!.totalSearches} total searches (${Math.round((insights!.totalFound / Math.max(insights!.totalSearches, 1)) * 100)}%). Improving your presence in the categories where you are absent will have the biggest impact.`
+                    }
+                  </Text>
+                </View>
+              );
+            })()}
 
           </View>
           <Footer left="Ketzal LTD (Co. No. 14570156)" />
@@ -628,7 +655,7 @@ function AuditReport({ config, score, insights, reportDate }: ReportData) {
           <Text style={s.secLabel}>How We Test</Text>
           <View style={s.goldBox}>
             <Text style={s.bodySmall}>
-              This report was generated by querying {score.platforms.length} major AI platforms (ChatGPT, Google AI, Perplexity, and Claude) with {Math.round(score.totalPrompts / score.platforms.length)} realistic search prompts, the same questions real customers ask when looking for a {config.businessType.toLowerCase()} in {config.location}. All tests were conducted in fresh sessions with no browsing history, preferences, or prior context, representing a neutral baseline.
+              We queried {score.platforms.length} AI platforms with {Math.round(score.totalPrompts / score.platforms.length)} prompts each ({score.totalPrompts} total), simulating how real customers search for a {config.businessType.toLowerCase()} in {config.location}. All tests ran in fresh sessions with no browsing history or prior context, representing a neutral baseline.
             </Text>
           </View>
 
