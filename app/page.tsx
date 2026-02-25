@@ -4,7 +4,6 @@ import HowItWorks from '@/components/HowItWorks';
 import Pricing from '@/components/Pricing';
 import SampleReport from '@/components/SampleReport';
 import Testimonials from '@/components/Testimonials';
-import About from '@/components/About';
 import FAQ from '@/components/FAQ';
 import Footer from '@/components/Footer';
 // AmbientBackground is rendered globally in layout.tsx
@@ -86,7 +85,6 @@ export default function Home() {
         <SampleReport />
         <Pricing />
         <Testimonials />
-        <About />
         <FAQ />
         <Footer />
       </div>

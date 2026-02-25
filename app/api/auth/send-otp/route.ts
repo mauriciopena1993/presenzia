@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
     if (process.env.RESEND_API_KEY) {
       await resend.emails.send({
         from: 'presenzia.ai <reports@presenzia.ai>',
+        replyTo: 'hello@presenzia.ai',
         to: email,
         subject: `Your presenzia.ai login code: ${otp}`,
         text: `Your presenzia.ai login code is: ${otp}\n\nExpires in 30 minutes. Do not share it.\n\npresenzia.ai`,
@@ -114,6 +115,7 @@ export async function POST(req: NextRequest) {
     const businessLine = client.business_name ? `\nAccount: ${client.business_name}` : '';
     await resend.emails.send({
       from: 'presenzia.ai <reports@presenzia.ai>',
+      replyTo: 'hello@presenzia.ai',
       to: email,
       subject: `Your presenzia.ai login code: ${code}`,
       text: `Your presenzia.ai login code is: ${code}\n\nExpires in 30 minutes.${businessLine}\n\nIf you did not request this, you can safely ignore this email.\n\npresenzia.ai`,

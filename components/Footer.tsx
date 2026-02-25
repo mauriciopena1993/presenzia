@@ -53,7 +53,7 @@ export default function Footer() {
           <div>
             <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>Company</div>
             {[
-              { label: 'About', href: '/#about' },
+              { label: 'About', href: '/about' },
               { label: 'Contact', href: 'mailto:hello@presenzia.ai' },
               { label: 'Privacy policy', href: '/privacy' },
               { label: 'Terms of service', href: '/terms' },

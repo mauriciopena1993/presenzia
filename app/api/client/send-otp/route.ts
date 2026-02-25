@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
     const businessLine = client.business_name ? `\nSigning in as: ${client.business_name}` : '';
     const result = await resend.emails.send({
       from: 'presenzia.ai <reports@presenzia.ai>',
+      replyTo: 'hello@presenzia.ai',
       to: normalizedEmail,
       subject: `Your presenzia.ai login code: ${code}`,
       text: `Your presenzia.ai login code is: ${code}\n\nThis code expires in 30 minutes.${businessLine}\n\nIf you did not request this, you can safely ignore this email.\n\npresenzia.ai`,
