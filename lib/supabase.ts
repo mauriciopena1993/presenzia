@@ -33,6 +33,7 @@ export interface Client {
   location: string | null;
   keywords: string[] | null;
   website: string | null;
+  last_retention_offer_at: string | null;
   created_at: string;
   updated_at: string;
 }

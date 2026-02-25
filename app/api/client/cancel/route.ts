@@ -3,6 +3,14 @@ import { supabase } from '@/lib/supabase';
 import { stripe } from '@/lib/stripe';
 import { verifySessionToken, SESSION_COOKIE } from '@/lib/client-auth';
 
+const RETENTION_COOLDOWN_MS = 90 * 24 * 60 * 60 * 1000; // ~3 months in ms
+
+function isRetentionOfferEligible(lastOfferAt: string | null): boolean {
+  if (!lastOfferAt) return true; // never used
+  const elapsed = Date.now() - new Date(lastOfferAt).getTime();
+  return elapsed >= RETENTION_COOLDOWN_MS;
+}
+
 export async function POST(req: NextRequest) {
   const token = req.cookies.get(SESSION_COOKIE)?.value;
   if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -14,7 +22,7 @@ export async function POST(req: NextRequest) {
 
   const { data: client } = await supabase
     .from('clients')
-    .select('id, plan, stripe_subscription_id, stripe_customer_id')
+    .select('id, plan, stripe_subscription_id, stripe_customer_id, last_retention_offer_at')
     .eq('email', email)
     .single();
 
@@ -24,8 +32,21 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // ── Check retention eligibility (used by dashboard to show/hide the offer) ──
+    if (action === 'check-retention') {
+      const eligible = isRetentionOfferEligible(client.last_retention_offer_at);
+      return NextResponse.json({ eligible });
+    }
+
     // ── Accept retention offer: 50% off next invoice ──
     if (action === 'accept-offer') {
+      // Enforce 3-month cooldown
+      if (!isRetentionOfferEligible(client.last_retention_offer_at)) {
+        return NextResponse.json({
+          error: 'The 50% discount was already used recently. It can be used once every 3 months.',
+        }, { status: 400 });
+      }
+
       // Create a one-time 50% coupon for next invoice
       const coupon = await stripe.coupons.create({
         percent_off: 50,
@@ -39,6 +60,12 @@ export async function POST(req: NextRequest) {
         discounts: [{ coupon: coupon.id }],
         cancel_at_period_end: false,
       });
+
+      // Record when this offer was used
+      await supabase
+        .from('clients')
+        .update({ last_retention_offer_at: new Date().toISOString() })
+        .eq('id', client.id);
 
       return NextResponse.json({ success: true, action: 'discount-applied' });
     }

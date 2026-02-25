@@ -323,6 +323,7 @@ export default function DashboardPage() {
   const [showCancel, setShowCancel] = useState(false);
   const [cancelStep, setCancelStep] = useState<'offer' | 'confirming' | 'done' | 'saved'>('offer');
   const [actionLoading, setActionLoading] = useState(false);
+  const [retentionEligible, setRetentionEligible] = useState(true);
 
   useEffect(() => {
     const load = async () => {
@@ -382,6 +383,25 @@ export default function DashboardPage() {
     }
   };
 
+  const handleStartCancel = async () => {
+    setShowCancel(true);
+    // Check if 50% retention offer is eligible (3-month cooldown)
+    try {
+      const res = await fetch('/api/client/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'check-retention' }),
+      });
+      const data = await res.json();
+      setRetentionEligible(data.eligible !== false);
+      setCancelStep(data.eligible !== false ? 'offer' : 'confirming');
+    } catch {
+      // If check fails, default to showing the offer
+      setRetentionEligible(true);
+      setCancelStep('offer');
+    }
+  };
+
   const handleAcceptRetention = async () => {
     setActionLoading(true);
     try {
@@ -393,6 +413,10 @@ export default function DashboardPage() {
       const data = await res.json();
       if (data.success) {
         setCancelStep('saved');
+      } else if (data.error) {
+        // Offer rejected (cooldown), skip to confirmation
+        setRetentionEligible(false);
+        setCancelStep('confirming');
       }
     } catch {
       alert('Something went wrong. Please contact hello@presenzia.ai');
@@ -561,7 +585,7 @@ export default function DashboardPage() {
                 Questions? <a href="mailto:hello@presenzia.ai" style={{ color: '#999', textDecoration: 'none' }}>hello@presenzia.ai</a>
               </p>
               <button
-                onClick={() => { setShowCancel(true); setCancelStep('offer'); }}
+                onClick={handleStartCancel}
                 style={{ background: 'none', border: 'none', color: '#555', fontSize: '0.7rem', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline' }}
               >
                 Cancel subscription
@@ -613,12 +637,20 @@ export default function DashboardPage() {
                     >
                       {actionLoading ? 'Cancelling…' : 'Confirm cancellation'}
                     </button>
+                    {retentionEligible && (
+                      <button
+                        onClick={() => { setCancelStep('offer'); }}
+                        disabled={actionLoading}
+                        style={{ background: 'none', border: '1px solid #333', color: '#888', padding: '0.5rem 1.25rem', fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'inherit' }}
+                      >
+                        Wait, show me the 50% offer
+                      </button>
+                    )}
                     <button
-                      onClick={() => { setCancelStep('offer'); }}
-                      disabled={actionLoading}
-                      style={{ background: 'none', border: '1px solid #333', color: '#888', padding: '0.5rem 1.25rem', fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'inherit' }}
+                      onClick={() => setShowCancel(false)}
+                      style={{ background: 'none', border: 'none', color: '#555', padding: '0.5rem 0.75rem', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'inherit' }}
                     >
-                      Wait, show me the 50% offer
+                      Never mind
                     </button>
                   </div>
                 </>
@@ -946,7 +978,7 @@ export default function DashboardPage() {
           {/* Cancel */}
           {!showCancel ? (
             <button
-              onClick={() => { setShowCancel(true); setCancelStep('offer'); }}
+              onClick={handleStartCancel}
               style={{ background: 'none', border: 'none', color: '#444', fontSize: '0.7rem', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline' }}
             >
               Cancel subscription
@@ -982,8 +1014,13 @@ export default function DashboardPage() {
                     <button onClick={handleConfirmCancel} disabled={actionLoading} style={{ background: '#cc4444', color: '#fff', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit' }}>
                       {actionLoading ? 'Cancelling…' : 'Confirm cancellation'}
                     </button>
-                    <button onClick={() => setCancelStep('offer')} disabled={actionLoading} style={{ background: 'none', border: '1px solid #333', color: '#888', padding: '0.5rem 1.25rem', fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'inherit' }}>
-                      Wait, show me the 50% offer
+                    {retentionEligible && (
+                      <button onClick={() => setCancelStep('offer')} disabled={actionLoading} style={{ background: 'none', border: '1px solid #333', color: '#888', padding: '0.5rem 1.25rem', fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'inherit' }}>
+                        Wait, show me the 50% offer
+                      </button>
+                    )}
+                    <button onClick={() => setShowCancel(false)} style={{ background: 'none', border: 'none', color: '#555', padding: '0.5rem 0.75rem', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'inherit' }}>
+                      Never mind
                     </button>
                   </div>
                 </>
