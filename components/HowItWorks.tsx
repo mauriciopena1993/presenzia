@@ -1,26 +1,33 @@
 'use client';
 
+import { ClipboardList, Cpu, FileText, TrendingUp } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+
 export default function HowItWorks() {
-  const steps = [
+  const steps: { number: string; title: string; description: string; icon: LucideIcon }[] = [
     {
       number: '01',
       title: 'You tell us about your business',
       description: 'Share your business type, location, and the keywords your customers use. Takes 5 minutes.',
+      icon: ClipboardList,
     },
     {
       number: '02',
       title: 'We run the audit',
       description: 'Our engine tests hundreds of prompts across ChatGPT, Claude, Perplexity, and Google AI. We record exactly where you appear, where you don\'t, and who does instead.',
+      icon: Cpu,
     },
     {
       number: '03',
       title: 'You receive your report',
       description: 'A clear, beautifully formatted PDF lands in your inbox within 48 hours. Your visibility score, competitor gaps, and exact recommendations.',
+      icon: FileText,
     },
     {
       number: '04',
       title: 'We fix it and track it',
       description: 'On Growth and Premium plans, we provide monthly follow-up audits so you can see your score improve over time.',
+      icon: TrendingUp,
     },
   ];
 
@@ -72,6 +79,7 @@ export default function HowItWorks() {
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#111111'; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#0D0D0D'; }}
           >
+            <step.icon size={24} strokeWidth={1.5} style={{ color: '#C9A84C', marginBottom: '1rem', display: 'block' }} />
             <div style={{
               fontFamily: "'Playfair Display', serif",
               fontSize: '3rem',

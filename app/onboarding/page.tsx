@@ -6,19 +6,19 @@ import { Suspense, useState } from 'react';
 
 const BUSINESS_TYPES = [
   'Restaurant / Cafe / Food & Drink',
-  'Retail / Shop',
-  'Professional Services (Legal, Financial, Accounting)',
+  'Bar / Pub / Nightclub',
+  'Beauty / Hair Salon / Barbershop',
+  'Gym / Fitness Studio / Yoga',
+  'Wellness / Spa / Aesthetics',
   'Healthcare / Medical / Dental',
-  'Beauty / Wellness / Spa',
-  'Home Services (Plumbing, Electrical, Cleaning)',
+  'Professional Services (Solicitor, Accountant, Financial Adviser)',
   'Hotel / Accommodation / Hospitality',
-  'Gym / Fitness / Sports',
-  'Education / Training / Coaching',
-  'Technology / Software / IT',
-  'Consulting / Agency',
-  'Construction / Architecture',
+  'Retail / Shop / Boutique',
   'Estate Agent / Property',
-  'Automotive',
+  'Veterinary Practice',
+  'Education / Training / Tutoring',
+  'Wedding Venue / Events',
+  'Consulting / Agency',
   'Other',
 ];
 
@@ -160,7 +160,7 @@ function OnboardingForm() {
         <div style={{ fontSize: '0.8rem', color: '#888', letterSpacing: '0.05em' }}>Step 1 of 2</div>
       </div>
 
-      <div style={{ maxWidth: '600px', margin: '0 auto', padding: '3rem 2rem 4rem' }}>
+      <div style={{ maxWidth: '600px', margin: '0 auto', padding: '3rem clamp(1rem, 3vw, 2rem) 4rem' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>

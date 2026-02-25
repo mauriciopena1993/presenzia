@@ -42,9 +42,14 @@ export default function Testimonials() {
         </h2>
       </div>
 
-      <div style={{
+      <style>{`
+        @media (max-width: 860px) {
+          .testimonials-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+      <div className="testimonials-grid" style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gridTemplateColumns: 'repeat(3, 1fr)',
         gap: '1px',
         background: '#222222',
         border: '1px solid #222222',
@@ -67,14 +72,15 @@ export default function Testimonials() {
                 width: '36px',
                 height: '36px',
                 borderRadius: '50%',
-                background: 'rgba(201,168,76,0.12)',
-                border: '1px solid rgba(201,168,76,0.25)',
+                background: 'linear-gradient(135deg, rgba(201,168,76,0.2) 0%, rgba(201,168,76,0.08) 100%)',
+                border: '1px solid rgba(201,168,76,0.3)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: '0.8rem',
                 color: '#C9A84C',
                 fontWeight: 600,
+                fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
                 flexShrink: 0,
               }}>
                 {t.initial}

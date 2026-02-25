@@ -6,6 +6,8 @@ export interface BlogPost {
   readTime: string;
   category: string;
   content: string;
+  heroImage: string;
+  heroImageAlt: string;
 }
 
 export const BLOG_POSTS: BlogPost[] = [
@@ -16,6 +18,8 @@ export const BLOG_POSTS: BlogPost[] = [
     date: '2026-01-28',
     readTime: '5 min read',
     category: 'Local Business',
+    heroImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&h=630&fit=crop&q=80',
+    heroImageAlt: 'Warmly lit restaurant dining room with ambient evening lighting',
     content: `
 When someone is hungry and unfamiliar with an area, fewer and fewer people type "best Italian restaurant near me" into Google. Instead, they open ChatGPT or Google's AI Overview and ask: "What's a good Italian restaurant in Shoreditch?"
 
@@ -71,6 +75,8 @@ The businesses that take this seriously now will own their category in AI search
     date: '2026-02-04',
     readTime: '6 min read',
     category: 'Fitness & Wellness',
+    heroImage: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&h=630&fit=crop&q=80',
+    heroImageAlt: 'Modern gym interior with equipment in dramatic lighting',
     content: `
 January is peak season for gyms. New Year, new resolutions, and a flood of people actively looking for a fitness studio. Increasingly, that search begins not with Google but with a direct question to an AI assistant.
 
@@ -135,6 +141,8 @@ The window to be an early mover in this channel is closing. Most gym owners have
     date: '2026-02-11',
     readTime: '7 min read',
     category: 'Strategy',
+    heroImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=630&fit=crop&q=80',
+    heroImageAlt: 'Business analytics and data displayed on a laptop screen',
     content: `
 Ten years ago, the question was: "Does my business appear on the first page of Google?"
 
@@ -209,6 +217,8 @@ That's what presenzia.ai is built for.
     date: '2026-02-18',
     readTime: '8 min read',
     category: 'How-To',
+    heroImage: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200&h=630&fit=crop&q=80',
+    heroImageAlt: 'Small business team collaborating at a workspace',
     content: `
 If you own a local business and someone in your area asks ChatGPT for a recommendation in your category, there are two possible outcomes: your business is mentioned, or a competitor's is.
 

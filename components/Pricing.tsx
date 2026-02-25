@@ -1,5 +1,7 @@
 'use client';
 
+import { Check } from 'lucide-react';
+
 const plans = [
   {
     key: 'starter',
@@ -66,7 +68,7 @@ export default function Pricing() {
 
   return (
     <section id="pricing" style={{
-      padding: '6rem 2rem',
+      padding: '6rem clamp(1rem, 3vw, 2rem)',
       maxWidth: '1100px',
       margin: '0 auto',
     }}>
@@ -90,16 +92,21 @@ export default function Pricing() {
       </div>
 
       {/* Plans grid */}
-      <div style={{
+      <style>{`
+        @media (max-width: 860px) {
+          .pricing-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+      <div className="pricing-grid" style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gridTemplateColumns: 'repeat(3, 1fr)',
         gap: '1px',
         background: '#222222',
         border: '1px solid #222222',
       }}>
         {plans.map((plan) => (
           <div key={plan.name} style={{
-            padding: '2.5rem',
+            padding: 'clamp(1.5rem, 4vw, 2.5rem)',
             background: plan.highlighted ? '#0F0F0F' : '#0A0A0A',
             position: 'relative',
             borderTop: plan.highlighted ? '2px solid #C9A84C' : '2px solid transparent',
@@ -142,7 +149,7 @@ export default function Pricing() {
             <ul style={{ listStyle: 'none', marginBottom: '2.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {plan.features.map((feature) => (
                 <li key={feature} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', fontSize: '0.875rem', color: '#AAAAAA' }}>
-                  <span style={{ color: '#C9A84C', marginTop: '2px', flexShrink: 0 }}>✓</span>
+                  <Check size={14} strokeWidth={2.5} style={{ color: '#C9A84C', marginTop: '3px', flexShrink: 0 }} />
                   {feature}
                 </li>
               ))}

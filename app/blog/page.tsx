@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import { BLOG_POSTS } from '@/lib/blog-posts';
 
@@ -58,19 +59,22 @@ export default function BlogPage() {
             >
               <div style={{ display: 'flex', gap: '1.75rem', alignItems: 'flex-start' }}>
                 {/* Thumbnail */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`/blog/${post.slug}/opengraph-image`}
-                  alt=""
-                  style={{
-                    width: '140px',
-                    height: '74px',
-                    objectFit: 'cover',
-                    flexShrink: 0,
-                    border: '1px solid #1A1A1A',
-                    display: 'block',
-                  }}
-                />
+                <div style={{
+                  width: '140px',
+                  height: '74px',
+                  position: 'relative',
+                  flexShrink: 0,
+                  overflow: 'hidden',
+                  border: '1px solid #1A1A1A',
+                }}>
+                  <Image
+                    src={post.heroImage}
+                    alt=""
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    sizes="140px"
+                  />
+                </div>
                 {/* Text */}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '0.6rem', flexWrap: 'wrap' as const }}>

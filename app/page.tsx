@@ -48,7 +48,15 @@ const faqSchema = {
       name: "I'm a small local business. Is this relevant to me?",
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Especially so. Local searches — "best Italian in Shoreditch", "reliable plumber in Bristol", "accountant near me" — are exactly the type of queries AI assistants are used for most. Local businesses are often the least represented in AI outputs, which creates a real opportunity for those who act early.',
+        text: 'Especially so. Local searches like "best Italian in Shoreditch", "top-rated salon in Bristol", or "accountant near me" are exactly the type of queries AI assistants are used for most. Local businesses are often the least represented in AI outputs, which creates a real opportunity for those who act early.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is this right for my business?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'If customers could find you by asking AI something like "best [your service] in [your area]", then yes. We work with restaurants, salons, gyms, dental practices, solicitors, accountants, and many more. Online-only businesses are welcome too.',
       },
     },
     {

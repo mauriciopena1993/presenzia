@@ -28,10 +28,12 @@ export interface CategoryBreakdown {
 
 export interface DetailedAction {
   priority: 'HIGH' | 'MEDIUM';
+  phase: 1 | 2 | 3;        // 1=Immediate, 2=Short-term, 3=Ongoing
+  timeline: string;         // e.g. "This week", "Weeks 2–4", "Month 2+"
   title: string;
-  why: string;       // One-line explanation
-  context?: string;  // Data-driven observation from the audit results
-  steps: string[];   // 3-6 specific, actionable bullet points
+  why: string;              // One-line explanation
+  context?: string;         // Data-driven observation from the audit results
+  steps: string[];          // 3-6 specific, actionable bullet points
 }
 
 export interface ReportInsights {
@@ -173,6 +175,8 @@ function buildActions(
     }
     actions.push({
       priority: 'HIGH',
+      phase: 1,
+      timeline: 'This week',
       title: 'Complete Your Google Business Profile',
       context: gbpContext || undefined,
       why: 'Google Business Profile data directly feeds into Google AI and indirectly influences all other platforms.',
@@ -247,6 +251,8 @@ function buildActions(
 
     actions.push({
       priority: overall < 50 ? 'HIGH' : 'MEDIUM',
+      phase: overall < 50 ? 1 : 2,
+      timeline: overall < 50 ? 'This week' : 'Weeks 2–4',
       title: 'Get Listed on Key Review & Directory Sites',
       context: dirContext,
       why: 'AI platforms cross-reference multiple sources. Each new listing strengthens your data footprint and makes it easier for AI to verify and recommend you.',
@@ -260,6 +266,8 @@ function buildActions(
     const compContext = `${topComp.name} was cited ${topComp.count} time${topComp.count !== 1 ? 's' : ''} in searches where you were absent. When customers ask AI for a ${bt} in ${config.location}, they are currently being directed to ${topComp.name} instead of you.`;
     actions.push({
       priority: 'HIGH',
+      phase: 1,
+      timeline: 'This week',
       title: `Close the Gap on ${topComp.name}`,
       context: compContext,
       why: `Understanding what makes ${topComp.name} visible to AI will help you replicate and surpass their strategy.`,
@@ -281,6 +289,8 @@ function buildActions(
       : undefined;
     actions.push({
       priority: overall < 45 ? 'HIGH' : 'MEDIUM',
+      phase: 2,
+      timeline: 'Weeks 2–4',
       title: 'Build Targeted Review Volume',
       context: revContext,
       why: 'Specific, location-rich reviews carry significantly more weight with AI than generic star ratings.',
@@ -301,6 +311,8 @@ function buildActions(
     : `AI platforms are not consistently finding your business in service-related searches. Structured, keyword-rich website content would help all platforms identify and recommend you.`;
   actions.push({
     priority: overall < 40 ? 'HIGH' : 'MEDIUM',
+    phase: 2,
+    timeline: 'Weeks 2–4',
     title: 'Add AI-Optimised Content to Your Website',
     context: contentContext,
     why: 'AI platforms cite websites that provide clear, factual, well-structured information.',
@@ -324,6 +336,8 @@ function buildActions(
     const platContext = `${weakest.platform} found you in only ${weakest.promptsMentioned} of ${weakest.promptsTested} searches, giving you a score of ${weakest.score}/100. This is your biggest platform gap.`;
     actions.push({
       priority: 'MEDIUM',
+      phase: 3,
+      timeline: 'Month 2+',
       title: `Optimise for ${weakest.platform}`,
       context: platContext,
       why: `Improving your ${weakest.platform} presence will increase your overall visibility and reach customers who prefer this platform.`,
@@ -337,6 +351,8 @@ function buildActions(
     const pubContext = `With a visibility score of ${overall}/100, your business has limited presence in the authoritative sources AI platforms trust most. Local press mentions are among the strongest signals for improving AI recommendations.`;
     actions.push({
       priority: 'MEDIUM',
+      phase: 3,
+      timeline: 'Month 2+',
       title: 'Get Featured in Local Publications',
       context: pubContext,
       why: 'Local press coverage creates authoritative citations that AI platforms reference when making recommendations.',

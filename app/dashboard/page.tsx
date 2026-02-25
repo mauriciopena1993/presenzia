@@ -158,7 +158,7 @@ function PlatformBar({ platform }: { platform: PlatformScore }) {
                 fontSize: '0.75rem',
                 color: '#AAAAAA',
                 lineHeight: 1.5,
-                width: '240px',
+                width: 'min(240px, 80vw)',
                 zIndex: 10,
                 pointerEvents: 'none',
                 boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
@@ -458,22 +458,22 @@ export default function DashboardPage() {
     return (
       <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'var(--font-inter, Inter, sans-serif)', color: '#F5F0E8' }}>
         {/* Nav */}
-        <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: '#0A0A0A', zIndex: 50 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-            <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.2rem', color: '#F5F0E8', textDecoration: 'none' }}>
+        <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1rem clamp(1rem, 3vw, 2rem)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: '#0A0A0A', zIndex: 50, gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(0.5rem, 2vw, 1.5rem)', minWidth: 0 }}>
+            <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.2rem', color: '#F5F0E8', textDecoration: 'none', flexShrink: 0 }}>
               presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
             </Link>
-            <div style={{ fontSize: '0.75rem', color: '#999', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              {client.business_name || client.email}
-              <span style={{ padding: '2px 8px', background: '#1a1a1a', border: '1px solid #333', fontSize: '0.75rem', color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Starter</span>
+            <div style={{ fontSize: '0.75rem', color: '#999', display: 'flex', alignItems: 'center', gap: '0.5rem', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{client.business_name || client.email}</span>
+              <span style={{ padding: '2px 8px', background: '#1a1a1a', border: '1px solid #333', fontSize: '0.75rem', color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em', flexShrink: 0 }}>Starter</span>
             </div>
           </div>
-          <button onClick={handleSignOut} style={{ background: 'none', border: '1px solid #2a2a2a', color: '#999', padding: '0.4rem 1rem', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem' }}>
+          <button onClick={handleSignOut} style={{ background: 'none', border: '1px solid #2a2a2a', color: '#999', padding: '0.4rem 1rem', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem', flexShrink: 0 }}>
             Sign out
           </button>
         </div>
 
-        <div style={{ maxWidth: '860px', margin: '0 auto', padding: '2.5rem 2rem 4rem' }}>
+        <div style={{ maxWidth: '860px', margin: '0 auto', padding: '2.5rem clamp(1rem, 3vw, 2rem) 4rem' }}>
 
           {/* Report repository */}
           <div style={{ marginBottom: '3rem' }}>
@@ -691,15 +691,15 @@ export default function DashboardPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'var(--font-inter, Inter, sans-serif)', color: '#F5F0E8' }}>
       {/* Nav */}
-      <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: '#0A0A0A', zIndex: 50 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.2rem', color: '#F5F0E8', textDecoration: 'none' }}>
+      <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1rem clamp(1rem, 3vw, 2rem)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: '#0A0A0A', zIndex: 50, gap: '0.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(0.5rem, 2vw, 1.5rem)', minWidth: 0 }}>
+          <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.2rem', color: '#F5F0E8', textDecoration: 'none', flexShrink: 0 }}>
             presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
           </Link>
           {client && (
-            <div style={{ fontSize: '0.75rem', color: '#999', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              {client.business_name || client.email}
-              <span style={{ padding: '2px 8px', background: '#1a1a1a', border: '1px solid #333', fontSize: '0.75rem', color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div style={{ fontSize: '0.75rem', color: '#999', display: 'flex', alignItems: 'center', gap: '0.5rem', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{client.business_name || client.email}</span>
+              <span style={{ padding: '2px 8px', background: '#1a1a1a', border: '1px solid #333', fontSize: '0.75rem', color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em', flexShrink: 0 }}>
                 {PLAN_LABELS[client.plan] || client.plan}
               </span>
             </div>
@@ -707,13 +707,13 @@ export default function DashboardPage() {
         </div>
         <button
           onClick={handleSignOut}
-          style={{ background: 'none', border: '1px solid #2a2a2a', color: '#999', padding: '0.4rem 1rem', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem' }}
+          style={{ background: 'none', border: '1px solid #2a2a2a', color: '#999', padding: '0.4rem 1rem', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem', flexShrink: 0 }}
         >
           Sign out
         </button>
       </div>
 
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 2rem 4rem' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem clamp(1rem, 3vw, 2rem) 4rem' }}>
 
         {/* Audit running banner */}
         {pendingJob && (
@@ -765,7 +765,7 @@ export default function DashboardPage() {
               </p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', gap: '1.5rem' }}>
 
               {/* Left column: Score + Platforms + Summary + Download */}
               <div>
@@ -947,7 +947,7 @@ export default function DashboardPage() {
                   <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Available upgrades</div>
                   <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                     {PLAN_ORDER.filter(p => PLAN_ORDER.indexOf(p) > PLAN_ORDER.indexOf(client.plan)).map(plan => (
-                      <div key={plan} style={{ flex: 1, minWidth: '260px', padding: '1.25rem', background: '#0D0D0D', border: '1px solid #1a1a1a' }}>
+                      <div key={plan} style={{ flex: 1, minWidth: 'min(260px, 100%)', padding: '1.25rem', background: '#0D0D0D', border: '1px solid #1a1a1a' }}>
                         <div style={{ fontSize: '0.9rem', color: plan === 'premium' ? '#9b6bcc' : '#C9A84C', fontWeight: 600, marginBottom: '4px' }}>
                           {PLAN_LABELS[plan]} · {PLAN_PRICES[plan]}/mo
                         </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Hero() {
   return (
@@ -15,6 +16,23 @@ export default function Hero() {
       overflow: 'hidden',
       textAlign: 'center',
     }}>
+      {/* Ambient background photo */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        pointerEvents: 'none',
+        opacity: 0.07,
+      }}>
+        <Image
+          src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=1080&fit=crop&q=60"
+          alt=""
+          fill
+          style={{ objectFit: 'cover', filter: 'grayscale(30%)' }}
+          sizes="100vw"
+          priority
+        />
+      </div>
+
       {/* Background grid */}
       <div style={{
         position: 'absolute',

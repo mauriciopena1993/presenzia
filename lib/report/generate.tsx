@@ -290,7 +290,8 @@ function getFallbackActions(score: AuditScore, config: AuditConfig): DetailedAct
   const actions: DetailedAction[] = [];
   if (score.overall < 55) {
     actions.push({
-      priority: 'HIGH', title: 'Complete Your Google Business Profile',
+      priority: 'HIGH', phase: 1, timeline: 'This week',
+      title: 'Complete Your Google Business Profile',
       why: 'Google Business Profile data directly feeds into Google AI and influences all platforms.',
       steps: [
         `Verify or claim your listing at business.google.com`,
@@ -303,7 +304,8 @@ function getFallbackActions(score: AuditScore, config: AuditConfig): DetailedAct
   }
   if (score.overall < 65) {
     actions.push({
-      priority: 'HIGH', title: 'Build Targeted Review Volume',
+      priority: 'HIGH', phase: 2, timeline: 'Weeks 2–4',
+      title: 'Build Targeted Review Volume',
       why: 'Specific, location-rich reviews carry significantly more weight with AI than generic ratings.',
       steps: [
         `Ask satisfied customers to mention "${config.businessType.toLowerCase()} in ${config.location}" in reviews`,
@@ -315,6 +317,7 @@ function getFallbackActions(score: AuditScore, config: AuditConfig): DetailedAct
   }
   actions.push({
     priority: score.overall < 40 ? 'HIGH' : 'MEDIUM',
+    phase: 2, timeline: 'Weeks 2–4',
     title: 'Add AI-Optimised Content to Your Website',
     why: 'AI platforms cite websites that provide clear, factual, well-structured information.',
     steps: [
@@ -568,14 +571,49 @@ function AuditReport({ config, score, insights, reportDate }: ReportData) {
         <Header label="Your Action Plan" businessName={config.businessName} reportDate={reportDate} />
         <View style={s.content}>
 
-          <Text style={s.secLabel}>Recommended Actions</Text>
+          <Text style={s.secLabel}>Your Action Plan</Text>
           <Text style={s.secSub}>
-            These specific steps are ordered by expected impact on your AI visibility. Complete high-priority actions first. They have the greatest effect on your score.
+            Ordered by priority. Complete Phase 1 first for the fastest improvement to your score.
           </Text>
 
-          {actions.map((action, i) => (
-            <ActionCard key={i} action={action} index={i} />
-          ))}
+          {/* Phase 1: Immediate */}
+          {actions.filter(a => a.phase === 1).length > 0 && (
+            <View style={{ marginBottom: 10 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomColor: BORDER, borderBottomWidth: 1, paddingBottom: 4, marginBottom: 8 }}>
+                <Text style={{ fontSize: 8, fontWeight: 700, color: RED, letterSpacing: 1 }}>PHASE 1: IMMEDIATE</Text>
+                <Text style={{ fontSize: 7, color: TEXT_MUTED, marginLeft: 'auto' }}>This week</Text>
+              </View>
+              {actions.filter(a => a.phase === 1).map((action, i) => (
+                <ActionCard key={`p1-${i}`} action={action} index={i} />
+              ))}
+            </View>
+          )}
+
+          {/* Phase 2: Short-term */}
+          {actions.filter(a => a.phase === 2).length > 0 && (
+            <View style={{ marginBottom: 10 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomColor: BORDER, borderBottomWidth: 1, paddingBottom: 4, marginBottom: 8 }}>
+                <Text style={{ fontSize: 8, fontWeight: 700, color: GOLD, letterSpacing: 1 }}>PHASE 2: SHORT TERM</Text>
+                <Text style={{ fontSize: 7, color: TEXT_MUTED, marginLeft: 'auto' }}>Weeks 2–4</Text>
+              </View>
+              {actions.filter(a => a.phase === 2).map((action, i) => (
+                <ActionCard key={`p2-${i}`} action={action} index={i} />
+              ))}
+            </View>
+          )}
+
+          {/* Phase 3: Ongoing */}
+          {actions.filter(a => a.phase === 3).length > 0 && (
+            <View style={{ marginBottom: 10 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomColor: BORDER, borderBottomWidth: 1, paddingBottom: 4, marginBottom: 8 }}>
+                <Text style={{ fontSize: 8, fontWeight: 700, color: TEXT_MUTED, letterSpacing: 1 }}>PHASE 3: ONGOING</Text>
+                <Text style={{ fontSize: 7, color: TEXT_MUTED, marginLeft: 'auto' }}>Month 2+</Text>
+              </View>
+              {actions.filter(a => a.phase === 3).map((action, i) => (
+                <ActionCard key={`p3-${i}`} action={action} index={i} />
+              ))}
+            </View>
+          )}
 
         </View>
         <Footer left="Ketzal LTD (Co. No. 14570156)" />

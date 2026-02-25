@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -26,6 +27,30 @@ export default function AboutPage() {
         <h1 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: 'clamp(2rem, 4vw, 2.75rem)', color: '#F5F0E8', fontWeight: 600, marginBottom: '2rem', lineHeight: 1.2 }}>
           Your customers are searching differently now. We help you keep up.
         </h1>
+
+        <div style={{
+          position: 'relative',
+          width: '100%',
+          aspectRatio: '16 / 7',
+          marginBottom: '2.5rem',
+          overflow: 'hidden',
+          border: '1px solid #1A1A1A',
+        }}>
+          <Image
+            src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1200&h=525&fit=crop&q=80"
+            alt="London cityscape at dusk with warm lights reflecting on the Thames"
+            fill
+            style={{ objectFit: 'cover' }}
+            sizes="(max-width: 720px) 100vw, 720px"
+            priority
+          />
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to top, rgba(10,10,10,0.5) 0%, transparent 50%)',
+            pointerEvents: 'none',
+          }} />
+        </div>
 
         <p style={{ color: '#AAAAAA', fontSize: '1.05rem', lineHeight: 1.8, marginBottom: '1.5rem' }}>
           Something changed in 2024. Millions of people stopped typing into Google and started asking ChatGPT,

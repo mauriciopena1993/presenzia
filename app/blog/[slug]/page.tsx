@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { BLOG_POSTS, getBlogPost } from '@/lib/blog-posts';
@@ -168,18 +169,30 @@ export default async function BlogPostPage({ params }: Props) {
           {post.title}
         </h1>
 
-        {/* Hero image — dynamically generated from opengraph-image.tsx */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={`/blog/${slug}/opengraph-image`}
-          alt={post.title}
-          style={{
-            width: '100%',
-            display: 'block',
-            marginBottom: '2rem',
-            border: '1px solid #1A1A1A',
-          }}
-        />
+        {/* Hero image */}
+        <div style={{
+          position: 'relative',
+          width: '100%',
+          aspectRatio: '1200 / 630',
+          marginBottom: '2rem',
+          overflow: 'hidden',
+          border: '1px solid #1A1A1A',
+        }}>
+          <Image
+            src={post.heroImage}
+            alt={post.heroImageAlt}
+            fill
+            style={{ objectFit: 'cover' }}
+            sizes="(max-width: 680px) 100vw, 680px"
+            priority
+          />
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to top, rgba(10,10,10,0.4) 0%, transparent 40%)',
+            pointerEvents: 'none',
+          }} />
+        </div>
 
         {/* Description */}
         <p style={{ color: '#999', fontSize: '1.05rem', lineHeight: 1.7, marginBottom: '3rem', borderBottom: '1px solid #1A1A1A', paddingBottom: '2rem' }}>

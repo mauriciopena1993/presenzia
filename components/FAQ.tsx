@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { Plus } from 'lucide-react';
 
 const faqs = [
   {
     q: 'What is AI search visibility, and why does it matter?',
-    a: 'When someone asks ChatGPT, Claude, Perplexity, or Google\'s AI to recommend a business like yours — a restaurant, a gym, a solicitor — the AI generates a response from its training data and real-time knowledge. If your business isn\'t being recommended, you\'re invisible to a growing segment of customers who never get as far as a Google search. AI search visibility measures how often and how prominently your business appears in these AI-generated recommendations.',
+    a: 'When someone asks ChatGPT, Claude, Perplexity, or Google\'s AI to recommend a business like yours (a restaurant, a gym, a solicitor), the AI generates a response from its training data and real-time knowledge. If your business isn\'t being recommended, you\'re invisible to a growing segment of customers who never get as far as a Google search. AI search visibility measures how often and how prominently your business appears in these AI-generated recommendations.',
   },
   {
     q: 'How does presenzia.ai actually test my visibility?',
@@ -21,11 +22,15 @@ const faqs = [
   },
   {
     q: 'I\'m a small local business. Is this relevant to me?',
-    a: 'Especially so. Local searches like "best Italian in Shoreditch", "reliable plumber in Bristol", or "accountant near me" are exactly the type of queries AI assistants handle most. Local businesses are often the least represented in AI outputs, which creates a real opportunity for those who act early. If a competitor is appearing and you\'re not, you\'re losing customers you don\'t even know about.',
+    a: 'Especially so. Local searches like "best Italian in Shoreditch", "top-rated salon in Bristol", or "accountant near me" are exactly the type of queries AI assistants handle most. Local businesses are often the least represented in AI outputs, which creates a real opportunity for those who act early. If a competitor is appearing and you\'re not, you\'re losing customers you don\'t even know about.',
+  },
+  {
+    q: 'Is this right for my business?',
+    a: 'If customers could find you by asking AI something like "best [your service] in [your area]", then yes. We work with restaurants, salons, gyms, dental practices, solicitors, accountants, and many more. Online-only businesses are welcome too. If people search for what you do, AI visibility matters.',
   },
   {
     q: 'How quickly will I see results if I follow the recommendations?',
-    a: 'AI models update their knowledge bases on different schedules. Some changes — like improving your Google Business Profile or getting mentions in local press — can show results within 4–8 weeks. Others, like building topical authority through content, take longer. Our monthly (or weekly, on Growth) reports let you track progress as you implement changes.',
+    a: 'AI models update their knowledge bases on different schedules. Some changes, like improving your Google Business Profile or getting mentions in local press, can show results within 4–8 weeks. Others, like building topical authority through content, take longer. Our monthly (or weekly, on Growth) reports let you track progress as you implement changes.',
   },
   {
     q: 'Can I cancel at any time?',
@@ -99,18 +104,17 @@ export default function FAQ() {
               }}>
                 {faq.q}
               </span>
-              <span style={{
-                color: '#C9A84C',
-                fontSize: '1.25rem',
-                lineHeight: 1,
-                flexShrink: 0,
-                marginTop: '2px',
-                transform: open === i ? 'rotate(45deg)' : 'none',
-                transition: 'transform 0.2s',
-                display: 'inline-block',
-              }}>
-                +
-              </span>
+              <Plus
+                size={18}
+                strokeWidth={1.5}
+                style={{
+                  color: '#C9A84C',
+                  flexShrink: 0,
+                  marginTop: '2px',
+                  transform: open === i ? 'rotate(45deg)' : 'none',
+                  transition: 'transform 0.2s',
+                }}
+              />
             </button>
 
             {open === i && (

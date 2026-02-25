@@ -105,7 +105,7 @@ export default function Footer() {
             © 2026 Ketzal LTD t/a presenzia.ai. All rights reserved.
           </div>
           <div style={{ fontSize: '0.8rem', color: '#888888' }}>
-            Made with precision in London.
+            Built in London, UK.
           </div>
         </div>
       </div>
