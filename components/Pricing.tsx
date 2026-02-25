@@ -12,7 +12,7 @@ const plans = [
     features: [
       'Monthly AI search audit',
       'Audit across 4 AI platforms',
-      'PDF report delivered by email',
+      'Report delivered by email',
       'Visibility score (0\u2013100)',
       'Competitor mentions tracked',
       'Actionable recommendations',
@@ -30,7 +30,7 @@ const plans = [
       'Weekly AI search audit',
       'Audit across all 4 AI platforms',
       'Client dashboard access',
-      'PDF report + live dashboard',
+      'Report + live dashboard',
       'Competitor deep-dive analysis',
       'Weekly progress tracking',
       'Improvement recommendations',

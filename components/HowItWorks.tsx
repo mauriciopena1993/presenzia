@@ -20,7 +20,7 @@ export default function HowItWorks() {
     {
       number: '03',
       title: 'You receive your report',
-      description: 'A clear, beautifully formatted PDF lands in your inbox within 48 hours. Your visibility score, competitor gaps, and exact recommendations.',
+      description: 'A clear, beautifully formatted report lands in your inbox within 48 hours. Your visibility score, competitor gaps, and exact recommendations.',
       icon: FileText,
     },
     {

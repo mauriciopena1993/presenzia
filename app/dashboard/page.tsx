@@ -81,7 +81,7 @@ const PLAN_PRICES: Record<string, string> = {
 };
 
 const PLAN_FEATURES: Record<string, string[]> = {
-  starter: ['Monthly PDF report', 'Report download portal'],
+  starter: ['Monthly report', 'Report download portal'],
   growth: ['Weekly reports', 'Live dashboard with trends', 'Competitor monitoring', 'AI report assistant', 'Priority email support'],
   premium: ['Daily updates', 'Dedicated account manager', 'Monthly strategy call', 'Custom prompt testing', 'Everything in Growth'],
 };
@@ -522,7 +522,7 @@ export default function DashboardPage() {
                         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#C9A84C'; (e.currentTarget as HTMLElement).style.borderColor = '#C9A84C'; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#999'; (e.currentTarget as HTMLElement).style.borderColor = '#555'; }}
                       >
-                        ↓ Download PDF
+                        ↓ Download report
                       </button>
                     ) : (
                       <span style={{ fontSize: '0.75rem', color: '#888' }}>Processing…</span>
@@ -826,7 +826,7 @@ export default function DashboardPage() {
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#C9A84C'; (e.currentTarget as HTMLElement).style.color = '#C9A84C'; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#333'; (e.currentTarget as HTMLElement).style.color = '#AAAAAA'; }}
                   >
-                    ↓ Download PDF report
+                    ↓ Download report
                   </button>
                 )}
               </div>
@@ -904,7 +904,7 @@ export default function DashboardPage() {
                         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#C9A84C'; (e.currentTarget as HTMLElement).style.borderColor = '#C9A84C'; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#999'; (e.currentTarget as HTMLElement).style.borderColor = '#555'; }}
                       >
-                        ↓ PDF
+                        ↓ Report
                       </button>
                     )}
                   </div>
