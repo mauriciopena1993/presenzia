@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const testimonials = [
   {
@@ -31,17 +32,37 @@ export default function Testimonials() {
     setActive((prev) => (prev + 1) % testimonials.length);
   }, []);
 
-  // Auto-advance every 6 seconds, pause on hover
+  const goPrev = useCallback(() => {
+    setActive((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  }, []);
+
+  // Auto-advance every 7 seconds, pause on hover
   useEffect(() => {
     if (isHovered) return;
-    const timer = setInterval(goNext, 6000);
+    const timer = setInterval(goNext, 7000);
     return () => clearInterval(timer);
   }, [isHovered, goNext]);
+
+  const arrowStyle: React.CSSProperties = {
+    background: 'none',
+    border: '1px solid rgba(201,168,76,0.25)',
+    borderRadius: '50%',
+    width: '40px',
+    height: '40px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    color: '#C9A84C',
+    transition: 'all 0.2s',
+    flexShrink: 0,
+    padding: 0,
+  };
 
   return (
     <section style={{
       padding: '6rem 2rem',
-      maxWidth: '700px',
+      maxWidth: '780px',
       margin: '0 auto',
     }}>
       <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
@@ -58,87 +79,128 @@ export default function Testimonials() {
         </h2>
       </div>
 
-      {/* Testimonial card */}
+      {/* Carousel with arrows */}
       <div
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        style={{ position: 'relative' }}
+        style={{
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 'clamp(0.5rem, 2vw, 1.5rem)',
+        }}
       >
-        {testimonials.map((t, i) => (
-          <div
-            key={t.name}
-            style={{
-              display: i === active ? 'block' : 'none',
-              textAlign: 'center',
-              padding: '2.5rem 2rem',
-            }}
-          >
-            <div style={{
-              color: '#C9A84C',
-              fontSize: '3rem',
-              lineHeight: 1,
-              marginBottom: '1.5rem',
-              fontFamily: 'Georgia, serif',
-            }}>
-              &ldquo;
-            </div>
-            <p style={{
-              color: '#CCCCCC',
-              fontSize: 'clamp(0.95rem, 2vw, 1.1rem)',
-              lineHeight: 1.9,
-              marginBottom: '2rem',
-              fontStyle: 'italic',
-              maxWidth: '560px',
-              margin: '0 auto 2rem',
-            }}>
-              {t.quote}
-            </p>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, rgba(201,168,76,0.2) 0%, rgba(201,168,76,0.08) 100%)',
-                border: '1px solid rgba(201,168,76,0.3)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '0.85rem',
-                color: '#C9A84C',
-                fontWeight: 600,
-                fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
-                flexShrink: 0,
-              }}>
-                {t.initial}
-              </div>
-              <div style={{ textAlign: 'left' }}>
-                <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 500 }}>{t.name}</div>
-                <div style={{ fontSize: '0.8rem', color: '#999999' }}>{t.role}</div>
-              </div>
-            </div>
-          </div>
-        ))}
+        {/* Left arrow */}
+        <button
+          onClick={goPrev}
+          aria-label="Previous testimonial"
+          style={arrowStyle}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = '#C9A84C';
+            e.currentTarget.style.background = 'rgba(201,168,76,0.08)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = 'rgba(201,168,76,0.25)';
+            e.currentTarget.style.background = 'none';
+          }}
+        >
+          <ChevronLeft size={18} strokeWidth={1.5} />
+        </button>
 
-        {/* Dots */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.6rem', marginTop: '1.5rem' }}>
-          {testimonials.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setActive(i)}
-              aria-label={`Testimonial ${i + 1}`}
+        {/* Testimonial content */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {testimonials.map((t, i) => (
+            <div
+              key={t.name}
               style={{
-                width: i === active ? '24px' : '8px',
-                height: '8px',
-                borderRadius: '4px',
-                border: 'none',
-                cursor: 'pointer',
-                background: i === active ? '#C9A84C' : 'rgba(201,168,76,0.25)',
-                transition: 'all 0.3s ease',
-                padding: 0,
+                display: i === active ? 'block' : 'none',
+                textAlign: 'center',
+                padding: 'clamp(1.5rem, 3vw, 2.5rem) clamp(0.5rem, 2vw, 1.5rem)',
               }}
-            />
+            >
+              <div style={{
+                color: '#C9A84C',
+                fontSize: '2.5rem',
+                lineHeight: 1,
+                marginBottom: '1.25rem',
+                fontFamily: 'Georgia, serif',
+              }}>
+                &ldquo;
+              </div>
+              <p style={{
+                color: '#CCCCCC',
+                fontSize: 'clamp(0.9rem, 2vw, 1.05rem)',
+                lineHeight: 1.85,
+                fontStyle: 'italic',
+                maxWidth: '520px',
+                margin: '0 auto 1.75rem',
+              }}>
+                {t.quote}
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
+                <div style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, rgba(201,168,76,0.2) 0%, rgba(201,168,76,0.08) 100%)',
+                  border: '1px solid rgba(201,168,76,0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.8rem',
+                  color: '#C9A84C',
+                  fontWeight: 600,
+                  fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
+                  flexShrink: 0,
+                }}>
+                  {t.initial}
+                </div>
+                <div style={{ textAlign: 'left' }}>
+                  <div style={{ fontSize: '0.875rem', color: '#F5F0E8', fontWeight: 500 }}>{t.name}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#999999' }}>{t.role}</div>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
+
+        {/* Right arrow */}
+        <button
+          onClick={goNext}
+          aria-label="Next testimonial"
+          style={arrowStyle}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = '#C9A84C';
+            e.currentTarget.style.background = 'rgba(201,168,76,0.08)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = 'rgba(201,168,76,0.25)';
+            e.currentTarget.style.background = 'none';
+          }}
+        >
+          <ChevronRight size={18} strokeWidth={1.5} />
+        </button>
+      </div>
+
+      {/* Dots */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '1.25rem' }}>
+        {testimonials.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setActive(i)}
+            aria-label={`Testimonial ${i + 1}`}
+            style={{
+              width: i === active ? '24px' : '8px',
+              height: '8px',
+              borderRadius: '4px',
+              border: 'none',
+              cursor: 'pointer',
+              background: i === active ? '#C9A84C' : 'rgba(201,168,76,0.2)',
+              transition: 'all 0.3s ease',
+              padding: 0,
+            }}
+          />
+        ))}
       </div>
     </section>
   );
