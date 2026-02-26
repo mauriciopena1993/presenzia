@@ -78,7 +78,7 @@ const s = StyleSheet.create({
   brand: { fontSize: 12, color: '#F5F0E8', fontWeight: 600 },
   dot: { color: GOLD },
   bizHeaderName: { fontSize: 8.5, color: '#AAAAAA', fontWeight: 400, textAlign: 'right' },
-  pageLabel: { fontSize: 6.5, color: '#777777', letterSpacing: 1, textTransform: 'uppercase' },
+  // pageLabel removed — no subtitle in banner
 
   // Content area
   content: { paddingHorizontal: 40, paddingTop: 28, paddingBottom: 64 },
@@ -218,17 +218,16 @@ function ScoreBandVisual({ score }: { score: number }) {
 }
 
 // ── Page Header (reusable) ───────────────────────────────────
-function Header({ label, businessName, reportDate, showBizName = true }: { label: string; businessName?: string; reportDate?: string; showBizName?: boolean }) {
+function Header({ businessName, reportDate, showBizName = true }: { businessName?: string; reportDate?: string; showBizName?: boolean }) {
   return (
     <View style={s.stripe} fixed>
       <View>
         <Text style={s.brand}>presenzia<Text style={s.dot}>.ai</Text></Text>
-        <Text style={s.pageLabel}>{label}</Text>
       </View>
       {showBizName && businessName && (
         <View style={{ alignItems: 'flex-end' }}>
           <Text style={s.bizHeaderName}>{businessName}</Text>
-          {reportDate && <Text style={[s.pageLabel, { marginTop: 1 }]}>{reportDate}</Text>}
+          {reportDate && <Text style={{ fontSize: 6.5, color: '#777777', letterSpacing: 1, textTransform: 'uppercase' as const, marginTop: 1 }}>{reportDate}</Text>}
         </View>
       )}
     </View>
@@ -240,7 +239,7 @@ function Footer({ left }: { left: string }) {
   return (
     <View style={s.footer} fixed>
       <Text style={s.footerText}>{left}</Text>
-      <Text style={s.footerBrand} render={({ pageNumber, totalPages }) => `Page ${pageNumber} of ${totalPages}  ·  presenzia.ai`} />
+      <Text style={s.footerBrand} render={({ pageNumber, totalPages }) => `Page ${pageNumber} of ${totalPages}`} />
     </View>
   );
 }
@@ -390,7 +389,7 @@ interface ReportData {
 
 function AuditReport({ config, score, insights, reportDate, jobId }: ReportData) {
   const actions = insights?.actions ?? getFallbackActions(score, config);
-  const highPriority = actions.filter(a => a.priority === 'HIGH');
+  const topPriorities = actions.slice(0, 2); // Always show first 2 as priorities
   const mainColor = scoreColor(score.overall);
   const band = scoreBand(score.overall);
   const maxCompCount = score.topCompetitors[0]?.count || 1;
@@ -402,7 +401,7 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
 
       {/* ═══════════════════════ PAGE 1: YOUR AI VISIBILITY SCORE */}
       <Page size="A4" style={s.page}>
-        <Header label="AI Visibility Audit" businessName={config.businessName} reportDate={reportDate} showBizName={false} />
+        <Header businessName={config.businessName} reportDate={reportDate} showBizName={false} />
         <View style={s.content}>
 
           {/* Business + Score */}
@@ -469,11 +468,11 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
           </View>
 
           {/* Priority actions preview */}
-          {highPriority.length > 0 && (
+          {topPriorities.length > 0 && (
             <View>
               <Text style={s.secTitle}>Your Priority Actions</Text>
               <Text style={[s.secSub, { marginBottom: 6 }]}>Full details in your Action Plan on page {actionPageNum}.</Text>
-              {highPriority.slice(0, 4).map((act, i) => (
+              {topPriorities.map((act, i) => (
                 <View key={i} style={s.prioItem}>
                   <View style={[s.prioBullet, { backgroundColor: GOLD }]}>
                     <Text style={s.prioBulletTxt}>{i + 1}</Text>
@@ -485,12 +484,12 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
           )}
 
         </View>
-        <Footer left="Ketzal LTD (Co. No. 14570156)" />
+        <Footer left="presenzia.ai · hello@presenzia.ai" />
       </Page>
 
       {/* ═══════════════════════ PAGE 2: PLATFORM BREAKDOWN */}
       <Page size="A4" style={s.page}>
-        <Header label="Platform Analysis" businessName={config.businessName} reportDate={reportDate} />
+        <Header businessName={config.businessName} reportDate={reportDate} />
         <View style={s.content}>
 
           <Text style={s.secTitle}>Platform-by-Platform Breakdown</Text>
@@ -569,13 +568,13 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
           })()}
 
         </View>
-        <Footer left="Ketzal LTD (Co. No. 14570156)" />
+        <Footer left="presenzia.ai · hello@presenzia.ai" />
       </Page>
 
       {/* ═══════════════════════ PAGE 3: WHAT WE SEARCHED (only with insights) */}
       {hasInsights && (
         <Page size="A4" style={s.page}>
-          <Header label="Search Analysis" businessName={config.businessName} reportDate={reportDate} />
+          <Header businessName={config.businessName} reportDate={reportDate} />
           <View style={s.content}>
 
             <Text style={s.secTitle}>Search Prompts Tested</Text>
@@ -642,100 +641,83 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
             })()}
 
           </View>
-          <Footer left="Ketzal LTD (Co. No. 14570156)" />
+          <Footer left="presenzia.ai · hello@presenzia.ai" />
         </Page>
       )}
 
-      {/* ═══════════════════════ PAGE 4+: YOUR ACTION PLAN (auto-overflows) */}
+      {/* ═══════════════════════ PAGE 4: ACTION PLAN — TOP 2 PRIORITIES */}
       <Page size="A4" style={s.page}>
-        <Header label="Your Action Plan" businessName={config.businessName} reportDate={reportDate} />
+        <Header businessName={config.businessName} reportDate={reportDate} />
         <View style={s.content}>
 
           <Text style={s.secTitle}>Your Action Plan</Text>
           <Text style={s.secSub}>
-            Ordered by impact. Focus on the priorities first — complete as many as you can before your next audit, and you will see measurable improvement.
+            5 key recommendations ordered by impact. Focus on the priorities first — complete as many as you can before your next audit, and you will see measurable improvement.
           </Text>
 
-          {/* This Month's Priorities (Phase 1 + 2) */}
-          {(() => {
-            const priorities = actions.filter(a => a.phase === 1 || a.phase === 2);
-            if (priorities.length === 0) return null;
-            let actionNum = 0;
-            return (
-              <View style={{ marginBottom: 8 }}>
-                {/* Header + first card wrapped together to prevent orphan headers */}
-                <View wrap={false}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomColor: BORDER, borderBottomWidth: 1, paddingBottom: 4, marginBottom: 8 }}>
-                    <Text style={{ fontSize: 8, fontWeight: 700, color: RED, letterSpacing: 1 }}>THIS MONTH&apos;S PRIORITIES</Text>
-                    <Text style={{ fontSize: 7, color: TEXT_MUTED, marginLeft: 'auto' }}>Complete before your next audit</Text>
-                  </View>
-                  <ActionCard action={priorities[0]} index={actionNum++} />
-                </View>
-                {priorities.slice(1).map((action) => (
-                  <ActionCard key={`pri-${actionNum}`} action={action} index={actionNum++} />
-                ))}
-              </View>
-            );
-          })()}
-
-          {/* Also Important (Phase 3) */}
-          {(() => {
-            const alsoImportant = actions.filter(a => a.phase === 3);
-            if (alsoImportant.length === 0) return null;
-            const offset = actions.filter(a => a.phase === 1 || a.phase === 2).length;
-            return (
-              <View style={{ marginBottom: 8 }}>
-                <View wrap={false}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomColor: BORDER, borderBottomWidth: 1, paddingBottom: 4, marginBottom: 8 }}>
-                    <Text style={{ fontSize: 8, fontWeight: 700, color: GOLD, letterSpacing: 1 }}>ALSO IMPORTANT</Text>
-                    <Text style={{ fontSize: 7, color: TEXT_MUTED, marginLeft: 'auto' }}>Start when you can</Text>
-                  </View>
-                  <ActionCard action={alsoImportant[0]} index={offset} />
-                </View>
-                {alsoImportant.slice(1).map((action, i) => (
-                  <ActionCard key={`also-${i + 1}`} action={action} index={offset + i + 1} />
-                ))}
-              </View>
-            );
-          })()}
-
-          {/* Next month spoiler */}
-          <View wrap={false} style={[s.goldBox, { marginTop: 4 }]}>
-            <Text style={{ fontSize: 8.5, fontWeight: 600, color: TEXT_PRIMARY, marginBottom: 3 }}>Looking Ahead: Your Next Audit</Text>
-            <Text style={s.bodySmall}>
-              Once you have completed the priorities above, your next audit will measure the impact. Based on your current profile, we expect next month&apos;s report to focus on fine-tuning your review strategy, monitoring competitor movements, and identifying new content opportunities. The more actions you complete this month, the more your next report can shift from foundational fixes to growth tactics.
-            </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomColor: BORDER, borderBottomWidth: 1, paddingBottom: 4, marginBottom: 8 }}>
+            <Text style={{ fontSize: 8, fontWeight: 700, color: RED, letterSpacing: 1 }}>THIS MONTH&apos;S PRIORITIES</Text>
+            <Text style={{ fontSize: 7, color: TEXT_MUTED, marginLeft: 'auto' }}>Complete before your next audit</Text>
           </View>
 
+          {actions.slice(0, 2).map((action, i) => (
+            <ActionCard key={`pri-${i}`} action={{ ...action, priority: 'HIGH' }} index={i} />
+          ))}
 
         </View>
-        <Footer left="Ketzal LTD (Co. No. 14570156)" />
+        <Footer left="presenzia.ai · hello@presenzia.ai" />
       </Page>
 
-      {/* ═══════════════════════ FINAL PAGE: ABOUT · DISCLAIMERS · NEXT STEPS */}
+      {/* ═══════════════════════ PAGE 5: ACTION PLAN — 3 MORE + TRAILER */}
       <Page size="A4" style={s.page}>
-        <Header label="About This Audit" businessName={config.businessName} reportDate={reportDate} />
+        <Header businessName={config.businessName} reportDate={reportDate} />
         <View style={s.content}>
 
-          {/* Retention hook — moved here to avoid blank overflow page on action plan */}
-          <View style={[s.goldBox, { marginBottom: 14 }]}>
-            <Text style={{ fontSize: 8.5, fontWeight: 600, color: TEXT_PRIMARY, marginBottom: 3 }}>What happens next</Text>
-            <Text style={s.bodySmall}>
-              Your next AI Visibility Audit will measure the impact of these actions. The businesses that improve fastest are those that complete this month&apos;s priorities before their next audit. Focus there first, and you will see measurable progress.
-            </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomColor: BORDER, borderBottomWidth: 1, paddingBottom: 4, marginBottom: 8 }}>
+            <Text style={{ fontSize: 8, fontWeight: 700, color: GOLD, letterSpacing: 1 }}>ALSO RECOMMENDED</Text>
+            <Text style={{ fontSize: 7, color: TEXT_MUTED, marginLeft: 'auto' }}>Start when you can</Text>
           </View>
+
+          {actions.slice(2, 5).map((action, i) => (
+            <ActionCard key={`rec-${i}`} action={{ ...action, priority: 'MEDIUM' }} index={i + 2} />
+          ))}
+
+        </View>
+        <Footer left="presenzia.ai · hello@presenzia.ai" />
+      </Page>
+
+      {/* ═══════════════════════ FINAL PAGE: ABOUT · DISCLAIMERS (static content) */}
+      <Page size="A4" style={s.page}>
+        <Header businessName={config.businessName} reportDate={reportDate} />
+        <View style={s.content}>
+
+          {/* Looking Ahead — trailer with next-month hints */}
+          {(() => {
+            const hints = insights?.nextMonthHints ?? [];
+            const hintText = hints.length > 0
+              ? ` We also identified additional areas to work on: ${hints.join(', ')}. Once you complete this month's priorities, those will become the focus.`
+              : ' The more you complete now, the more your next report can shift from foundational fixes to growth tactics.';
+            return (
+              <View style={[s.goldBox, { marginBottom: 16 }]}>
+                <Text style={{ fontSize: 8.5, fontWeight: 600, color: TEXT_PRIMARY, marginBottom: 3 }}>Looking Ahead</Text>
+                <Text style={s.bodySmall}>
+                  Your next audit will measure the impact of these changes.{hintText} Complete as much as you can this month, and watch your score climb.
+                </Text>
+              </View>
+            );
+          })()}
 
           {/* Methodology */}
           <Text style={s.secTitle}>How We Test</Text>
           <View style={s.goldBox}>
             <Text style={s.bodySmall}>
-              We queried {score.platforms.length} AI platforms with {Math.round(score.totalPrompts / score.platforms.length)} prompts each ({score.totalPrompts} total), simulating how real customers search for a {config.businessType.toLowerCase()} in {config.location}. All tests ran in fresh sessions with no browsing history or prior context, representing a neutral baseline. Your score is weighted by each platform's approximate market share.
+              We queried {score.platforms.length} AI platforms with {Math.round(score.totalPrompts / score.platforms.length)} prompts each ({score.totalPrompts} total), simulating how real customers search for a {config.businessType.toLowerCase()} in {config.location}. All tests ran in fresh sessions with no browsing history or prior context, representing a neutral baseline. Your score is weighted by each platform&apos;s approximate market share.
             </Text>
           </View>
 
           {/* Disclaimers */}
           <Text style={s.secTitle}>Important Notes</Text>
-          <View style={[s.grayBox, { marginBottom: 10 }]}>
+          <View style={[s.grayBox, { marginBottom: 12 }]}>
             <Text style={s.bodySmall}>
               <Text style={{ fontWeight: 600 }}>Results vary by user</Text> — AI responses differ based on search history, location, and context. This audit represents a neutral baseline.{'\n'}
               <Text style={{ fontWeight: 600 }}>AI data may not be fully current</Text> — AI platforms draw from training data and web sources that may not reflect very recent changes.{'\n'}
@@ -744,11 +726,11 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
             </Text>
           </View>
 
-          {/* Dashboard / Next Audit */}
-          <View style={[s.goldBox, { marginBottom: 10 }]}>
+          {/* Dashboard */}
+          <View style={[s.goldBox, { marginBottom: 12 }]}>
             <Text style={{ fontSize: 8.5, fontWeight: 600, color: TEXT_PRIMARY, marginBottom: 3 }}>Your Online Dashboard</Text>
             <Text style={s.bodySmall}>
-              Log in at presenzia.ai/dashboard to check and download all your previous reports, see the exact date your next audit will be generated, and track your score over time. Your next audit will be generated automatically on your billing cycle.
+              Log in at presenzia.ai/dashboard to check and download all your previous reports, see the exact date your next audit will be generated, and track your score over time.
             </Text>
             <Link src="https://presenzia.ai/dashboard">
               <View style={{ backgroundColor: GOLD, paddingVertical: 4, paddingHorizontal: 14, alignSelf: 'flex-start', marginTop: 5 }}>
@@ -758,7 +740,7 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
           </View>
 
           {/* Upsell */}
-          <View style={{ padding: 12, backgroundColor: DARK, borderColor: GOLD, borderWidth: 1, marginBottom: 10 }}>
+          <View style={{ padding: 12, backgroundColor: DARK, borderColor: GOLD, borderWidth: 1, marginBottom: 12 }}>
             <Text style={{ fontSize: 9, fontWeight: 700, color: GOLD, marginBottom: 4 }}>Don&apos;t want to wait another month?</Text>
             <Text style={{ fontSize: 7.5, color: '#CCCCCC', lineHeight: 1.6, marginBottom: 4 }}>
               Upgrade to Growth for weekly audits, an online dashboard with trend analysis, competitor monitoring, and priority support. Still within your first 30 days? You only pay the difference.
@@ -772,7 +754,7 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
           </View>
 
           {/* Rating */}
-          <View style={[s.grayBox, { marginBottom: 10 }]}>
+          <View style={[s.grayBox, { marginBottom: 12 }]}>
             <Text style={{ fontSize: 8.5, fontWeight: 600, color: TEXT_PRIMARY, marginBottom: 3 }}>Rate this audit</Text>
             <Text style={{ fontSize: 7.5, color: TEXT_MUTED, lineHeight: 1.5, marginBottom: 5 }}>
               Your feedback helps us improve. Rate your experience and let us know how we can do better.
@@ -784,10 +766,12 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
             </Link>
           </View>
 
-          {/* Contact */}
-          <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 4 }}>
-            <Text style={{ fontSize: 7.5, color: TEXT_MUTED }}>Questions?</Text>
-            <Link src="mailto:hello@presenzia.ai"><Text style={{ fontSize: 7.5, color: GOLD, textDecoration: 'underline' }}>hello@presenzia.ai</Text></Link>
+          {/* Contact — vertically centred in remaining space */}
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', gap: 4 }}>
+              <Text style={{ fontSize: 7.5, color: TEXT_MUTED }}>Questions?</Text>
+              <Link src="mailto:hello@presenzia.ai"><Text style={{ fontSize: 7.5, color: GOLD, textDecoration: 'underline' }}>hello@presenzia.ai</Text></Link>
+            </View>
           </View>
 
         </View>

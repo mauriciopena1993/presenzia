@@ -44,6 +44,7 @@ export interface DetailedAction {
 export interface ReportInsights {
   categories: CategoryBreakdown[];
   actions: DetailedAction[];
+  nextMonthHints: string[];  // Action titles that didn't make top 5 — teasers for next month
   totalSearches: number;
   totalFound: number;
 }
@@ -139,10 +140,9 @@ function buildCategories(results: PromptResult[]): CategoryBreakdown[] {
       timesFound += t.platforms.filter((p) => p.found).length;
     }
 
-    // Top examples sorted by weight (descending) — show up to 5 per category for a fuller page
+    // All examples sorted by weight (descending) — show everything for a complete picture
     const examples = [...tests]
-      .sort((a, b) => b.weight - a.weight)
-      .slice(0, 5);
+      .sort((a, b) => b.weight - a.weight);
 
     categories.push({
       category: cat,
@@ -389,33 +389,16 @@ function buildActions(
     context: contentContext,
     why: 'AI platforms cite websites that provide clear, factual, well-structured information.',
     steps: [
-      {
-        text: `Create or update your About page to clearly state who you are, what you do, and your service area in ${config.location}.`,
-        substeps: [
-          `Include a clear opening line: "${config.businessName} is a ${bt} based in ${config.location}..."`,
-          'Cover: your history, your team, your specialisms, and the area you serve',
-          'Make sure your address and phone number appear as plain text (not in images)',
-        ],
-      },
+      `Create or update your About page: clearly state who you are, what you do, and your service area. Include "${config.businessName} is a ${bt} based in ${config.location}" as an opening line.`,
       {
         text: `Add a FAQ page answering the exact questions customers ask AI.`,
         substeps: [
           `"What is the best ${bt} in ${config.location}?" — answer with what makes you stand out`,
           `"How much does a ${bt} cost in ${config.location}?" — provide price ranges or starting prices`,
-          `"Which ${bt} has the best reviews in ${config.location}?" — mention your review count and ratings`,
-          'Each FAQ answer should be 2-4 sentences of factual, helpful content',
         ],
       },
-      {
-        text: 'Add Schema.org LocalBusiness structured data (JSON-LD) to your homepage.',
-        substeps: [
-          'This is a small code snippet your web developer adds to the page <head>',
-          'Include: name, address, phone, opening hours, price range, geo coordinates',
-          'Free generator: technicalseo.com/tools/schema-markup-generator',
-          'Test with: search.google.com/test/rich-results',
-        ],
-      },
-      `Ensure your address, phone, and email appear as selectable plain text on every page — not embedded in images or PDFs.`,
+      `Add Schema.org LocalBusiness structured data (JSON-LD) to your homepage. Free generator: technicalseo.com/tools/schema-markup-generator`,
+      `Ensure your address, phone, and email appear as selectable plain text on every page — not embedded in images.`,
       `Publish at least 1-2 blog posts per month demonstrating expertise: guides, case studies, and tips related to ${config.businessType} in ${config.location}.`,
     ],
   });
@@ -471,7 +454,7 @@ function buildActions(
     });
   }
 
-  return actions.slice(0, 8);
+  return actions;
 }
 
 function getPlatformSpecificSteps(
@@ -614,7 +597,9 @@ export function generateInsights(
   results: PromptResult[],
 ): ReportInsights {
   const categories = buildCategories(results);
-  const actions = buildActions(config, score, results);
+  const allActions = buildActions(config, score, results);
+  const actions = allActions.slice(0, 5);
+  const nextMonthHints = allActions.slice(5).map(a => a.title);
 
   // Compute totals from raw results
   const totalSearches = results.length;
@@ -623,6 +608,7 @@ export function generateInsights(
   return {
     categories,
     actions,
+    nextMonthHints,
     totalSearches,
     totalFound,
   };
