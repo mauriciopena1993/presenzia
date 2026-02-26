@@ -90,11 +90,10 @@ export default function AmbientBackground() {
   const pathname = usePathname();
   const containerRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
-
-  // Dashboard pages have solid backgrounds — skip the ambient map
-  if (pathname?.startsWith('/dashboard')) return null;
+  const isDashboard = pathname?.startsWith('/dashboard');
 
   useEffect(() => {
+    if (isDashboard) return;
     const container = containerRef.current;
     if (!container) return;
 
@@ -119,7 +118,10 @@ export default function AmbientBackground() {
       window.removeEventListener('scroll', onScroll);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, []);
+  }, [isDashboard]);
+
+  // Dashboard pages have solid backgrounds — skip the ambient map
+  if (isDashboard) return null;
 
   return (
     <div
