@@ -86,7 +86,7 @@ const comparisonRows: ComparisonRow[] = [
 
 function CellContent({ value }: { value: CellValue }) {
   if (value === true) {
-    return <Check size={16} strokeWidth={2.5} style={{ color: '#C9A84C' }} />;
+    return <span style={{ display: 'inline-flex', justifyContent: 'center' }}><Check size={16} strokeWidth={2.5} style={{ color: '#C9A84C' }} /></span>;
   }
   if (value === false) {
     return <span style={{ color: '#444444', fontSize: '1rem' }}>—</span>;

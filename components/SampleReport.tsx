@@ -372,9 +372,9 @@ function ActionPlanCard() {
       labelColor: RED,
       timeframe: 'Week 1–2',
       items: [
-        { title: 'Complete your Google Business Profile', impact: 'High', desc: 'Google AI found you in only 2 of 20 searches. Add services, description, 10+ photos, and respond to all reviews.' },
-        { title: 'Add FAQ schema markup to your website', impact: 'High', desc: 'Structured data helps ChatGPT and Google AI extract and cite your content directly.' },
-        { title: 'Claim profiles on legal directories', impact: 'Medium', desc: 'Perplexity and Claude pull from directories like Chambers, Legal 500, and Trustpilot.' },
+        { title: 'Update your Google Business Profile at business.google.com', impact: 'High', desc: 'Your profile is missing a business description and has only 2 photos. Add a 150+ word description mentioning "commercial solicitors Manchester", upload 10 professional photos (office, team, signage), and reply to all 14 existing Google reviews.' },
+        { title: 'Add FAQ schema markup to smithandco.co.uk/services', impact: 'High', desc: 'ChatGPT found you 0/20 times. Adding structured FAQ data (JSON-LD) to your services page lets GPT extract answers directly. Harrison & Co does this — that\u2019s why they appear 14/20.' },
+        { title: 'Claim your profile on legal500.com and trustpilot.com', impact: 'Medium', desc: 'Perplexity cited Legal 500 as a source in 8 of 20 responses. Your firm isn\u2019t listed. Belmont Legal has 47 Trustpilot reviews — Claude cited them in 9/20 searches because of it.' },
       ],
     },
     {
@@ -384,8 +384,8 @@ function ActionPlanCard() {
       labelColor: AMBER,
       timeframe: 'Week 3–6',
       items: [
-        { title: 'Publish 4 long-form practice area guides', impact: 'High', desc: 'AI models favour in-depth, authoritative content. Target: 2,000+ words per guide on your key services.' },
-        { title: 'Create a client case studies page', impact: 'Medium', desc: 'Real outcomes with specific details give AI models concrete evidence to cite your firm.' },
+        { title: 'Pitch a quote to manchestereveningnews.co.uk about commercial lease trends', impact: 'High', desc: 'Harrison & Co were cited by 3 of 4 AI platforms largely because MEN quoted them in a Jan 2026 article. Contact their business desk at business@men-news.co.uk — one article can shift your visibility within weeks.' },
+        { title: 'Publish a 2,000-word guide: "Commercial Lease Law in Manchester: What Businesses Need to Know"', impact: 'High', desc: 'Claude and ChatGPT favour long-form, authoritative content. Your site has no pages over 400 words. Harrison & Co\u2019s guide on the same topic is 2,800 words and cited by both platforms.' },
       ],
     },
     {
@@ -395,8 +395,8 @@ function ActionPlanCard() {
       labelColor: GREEN,
       timeframe: 'Ongoing',
       items: [
-        { title: 'Publish monthly industry insights', impact: 'Medium', desc: 'Regular fresh content signals ongoing authority. AI models prioritise recently-updated sources.' },
-        { title: 'Monitor and respond to all reviews', impact: 'Medium', desc: 'Review signals influence AI recommendations. Aim for 50+ reviews across Google and Trustpilot.' },
+        { title: 'Ask 5 recent clients to leave reviews on Google and Trustpilot this week', impact: 'Medium', desc: 'You have 14 Google reviews (avg 4.2\u2605). Belmont Legal has 47 (avg 4.7\u2605). AI platforms weight review volume and recency — aim for 30+ reviews within 3 months. Send clients a direct link to your Google review page.' },
+        { title: 'Post a monthly blog on smithandco.co.uk covering local business law updates', impact: 'Medium', desc: 'Your last blog post is from 2023. AI models deprioritise stale websites. A 600+ word monthly post on topics like "new leasehold reform" or "Manchester business rates update" signals ongoing authority.' },
       ],
     },
   ];
