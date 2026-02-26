@@ -525,7 +525,7 @@ export default function SampleReport() {
       padding: '6rem 2rem',
       borderTop: '1px solid #222222',
       borderBottom: '1px solid #222222',
-      background: '#080808',
+      background: 'rgba(8,8,8,0.92)',
     }}>
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
         {/* Section header */}

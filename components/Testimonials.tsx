@@ -51,17 +51,17 @@ export default function Testimonials() {
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
         gap: '1px',
-        background: '#222222',
-        border: '1px solid #222222',
+        background: 'rgba(34,34,34,0.9)',
+        border: '1px solid rgba(34,34,34,0.9)',
       }}>
         {testimonials.map((t) => (
           <div key={t.name} style={{
             padding: '2.5rem',
-            background: '#0A0A0A',
+            background: 'rgba(10,10,10,0.9)',
             transition: 'background 0.3s',
           }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#0F0F0F'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#0A0A0A'; }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(15,15,15,0.92)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(10,10,10,0.9)'; }}
           >
             <div style={{ color: '#C9A84C', fontSize: '2rem', lineHeight: 1, marginBottom: '1.25rem', fontFamily: 'Georgia, serif' }}>&ldquo;</div>
             <p style={{ color: '#BBBBBB', fontSize: '0.9rem', lineHeight: 1.8, marginBottom: '2rem', fontStyle: 'italic' }}>

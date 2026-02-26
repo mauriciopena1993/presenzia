@@ -67,17 +67,17 @@ export default function HowItWorks() {
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
         gap: '1px',
-        background: '#222222',
+        background: 'rgba(34,34,34,0.9)',
       }}>
         {steps.map((step, i) => (
           <div key={step.number} style={{
             padding: '2.5rem',
-            background: '#0D0D0D',
+            background: 'rgba(13,13,13,0.9)',
             position: 'relative',
             transition: 'background 0.3s',
           }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#111111'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#0D0D0D'; }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(17,17,17,0.92)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(13,13,13,0.9)'; }}
           >
             <step.icon size={24} strokeWidth={1.5} style={{ color: '#C9A84C', marginBottom: '1rem', display: 'block' }} />
             <div style={{

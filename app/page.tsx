@@ -73,7 +73,7 @@ const faqSchema = {
 
 export default function Home() {
   return (
-    <main style={{ background: '#0A0A0A', minHeight: '100vh', position: 'relative' }}>
+    <main style={{ background: 'rgba(10,10,10,0.92)', minHeight: '100vh', position: 'relative' }}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
