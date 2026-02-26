@@ -81,12 +81,23 @@ const PLAN_PRICES: Record<string, string> = {
 };
 
 const PLAN_FEATURES: Record<string, string[]> = {
-  starter: ['Monthly AI visibility audit', 'Delivered by email (PDF)'],
-  growth: ['Everything in Starter', 'Live dashboard (weekly updates)', 'AI audit assistant', 'Competitor deep-dive', 'Priority email support'],
+  starter: ['Monthly AI visibility audit', 'Delivered by email (report)'],
+  growth: ['Everything in Starter', 'Online client dashboard (weekly updates)', 'AI audit assistant', 'Competitor deep-dive', 'Priority email support'],
   premium: ['Everything in Growth', 'Daily dashboard updates', 'Dedicated account manager', 'Monthly 1:1 strategy call', 'Custom prompt testing'],
 };
 
 const PLAN_ORDER = ['starter', 'growth', 'premium'];
+
+// Premium strategy call booking link — replace with Calendly/Cal.com URL when ready
+const BOOKING_URL = 'https://calendly.com/presenzia/strategy-call';
+
+const GRADE_CONTEXT: Record<string, string> = {
+  'A': 'Excellent — AI assistants are actively recommending your business. Keep monitoring to maintain your position.',
+  'B': 'Good visibility with room to grow. A few targeted improvements could push you into the top tier.',
+  'C': 'Moderate presence. You appear on some platforms but competitors are being recommended more often.',
+  'D': 'Low visibility. Most AI searches in your category are recommending competitors instead of you.',
+  'F': 'Not visible. AI assistants are not currently recommending your business. Immediate action needed.',
+};
 
 function scoreColor(score: number) {
   if (score >= 70) return '#4a9e6a';
@@ -103,6 +114,112 @@ function getNextAuditDate(lastDate: string): string {
   const d = new Date(lastDate);
   d.setMonth(d.getMonth() + 1);
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function CongratsBanner({ plan, onClose }: { plan: string; onClose: () => void }) {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 5000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      zIndex: 200,
+      background: 'rgba(0,0,0,0.85)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontFamily: 'var(--font-inter, Inter, sans-serif)',
+    }}>
+      <div style={{
+        position: 'relative',
+        maxWidth: '480px',
+        width: '90%',
+        padding: 'clamp(2rem, 5vw, 3rem)',
+        background: '#0D0D0D',
+        border: '1px solid rgba(201,168,76,0.3)',
+        textAlign: 'center',
+      }}>
+        {/* Close X */}
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          style={{
+            position: 'absolute',
+            top: '0.75rem',
+            right: '0.75rem',
+            background: 'none',
+            border: 'none',
+            color: '#666',
+            fontSize: '1.2rem',
+            cursor: 'pointer',
+            padding: '0.25rem',
+            lineHeight: 1,
+          }}
+        >
+          ✕
+        </button>
+
+        <div style={{
+          width: '48px',
+          height: '48px',
+          borderRadius: '50%',
+          background: 'rgba(201,168,76,0.15)',
+          border: '1px solid rgba(201,168,76,0.3)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '0 auto 1.25rem',
+          fontSize: '1.5rem',
+        }}>
+          ✓
+        </div>
+
+        <div style={{
+          fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
+          fontSize: '1.5rem',
+          color: '#F5F0E8',
+          fontWeight: 600,
+          marginBottom: '0.5rem',
+        }}>
+          Welcome to {PLAN_LABELS[plan] || plan}
+        </div>
+
+        <p style={{
+          color: '#AAAAAA',
+          fontSize: '0.9rem',
+          lineHeight: 1.7,
+          marginBottom: '1.5rem',
+        }}>
+          {plan === 'growth'
+            ? 'Your online dashboard is now unlocked. Access your full audit report, competitor insights, and AI assistant — all in one place.'
+            : 'You now have access to everything — daily updates, your dedicated account manager, and monthly strategy calls. We\'re excited to work with you.'}
+        </p>
+
+        <div style={{
+          width: '100%',
+          height: '2px',
+          background: '#1a1a1a',
+          borderRadius: '1px',
+          overflow: 'hidden',
+        }}>
+          <div style={{
+            height: '100%',
+            background: '#C9A84C',
+            animation: 'congrats-progress 5s linear forwards',
+          }} />
+        </div>
+        <style>{`
+          @keyframes congrats-progress {
+            from { width: 100%; }
+            to { width: 0%; }
+          }
+        `}</style>
+      </div>
+    </div>
+  );
 }
 
 function ScoreGauge({ score, grade }: { score: number; grade: string }) {
@@ -136,22 +253,30 @@ function ScoreGauge({ score, grade }: { score: number; grade: string }) {
   );
 }
 
-function PlatformBar({ platform }: { platform: PlatformScore }) {
+function PlatformCard({ platform }: { platform: PlatformScore }) {
   const [tooltip, setTooltip] = useState(false);
   const pct = Math.round(platform.score);
   const isFound = platform.score > 0;
+  const hitRate = platform.promptsTested > 0
+    ? Math.round((platform.promptsMentioned / platform.promptsTested) * 100)
+    : 0;
 
   return (
-    <div style={{ marginBottom: '1.25rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+    <div className="dash-platform-card" style={{
+      background: '#0D0D0D',
+      border: '1px solid #1a1a1a',
+      padding: '1.25rem',
+    }}>
+      {/* Platform name + tooltip */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ fontSize: '0.875rem', color: isFound ? '#F5F0E8' : '#999' }}>{platform.platform}</span>
+          <span style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 500 }}>{platform.platform}</span>
           <div
             style={{ position: 'relative', cursor: 'help' }}
             onMouseEnter={() => setTooltip(true)}
             onMouseLeave={() => setTooltip(false)}
           >
-            <span style={{ fontSize: '0.75rem', color: '#888', border: '1px solid #555', borderRadius: '50%', width: '16px', height: '16px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>?</span>
+            <span style={{ fontSize: '0.65rem', color: '#666', border: '1px solid #444', borderRadius: '50%', width: '14px', height: '14px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>?</span>
             {tooltip && (
               <div style={{
                 position: 'absolute',
@@ -174,14 +299,33 @@ function PlatformBar({ platform }: { platform: PlatformScore }) {
             )}
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <span style={{ fontSize: '0.75rem', color: '#888' }}>{platform.promptsMentioned}/{platform.promptsTested} prompts</span>
-          <span style={{ fontSize: '0.75rem', color: isFound ? scoreColor(platform.score) : '#888', letterSpacing: '0.05em' }}>
-            {isFound ? 'Visible' : 'Not found'}
-          </span>
-        </div>
+        <span style={{
+          fontSize: '0.7rem',
+          padding: '2px 8px',
+          background: isFound ? scoreColor(platform.score) + '18' : '#1a1a1a',
+          border: `1px solid ${isFound ? scoreColor(platform.score) + '40' : '#333'}`,
+          color: isFound ? scoreColor(platform.score) : '#666',
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em',
+        }}>
+          {isFound ? 'Visible' : 'Not found'}
+        </span>
       </div>
-      <div style={{ height: '4px', background: '#222', borderRadius: '2px' }}>
+
+      {/* Score number */}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.35rem', marginBottom: '0.75rem' }}>
+        <span style={{
+          fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
+          fontSize: '2rem',
+          color: isFound ? scoreColor(platform.score) : '#444',
+          fontWeight: 600,
+          lineHeight: 1,
+        }}>{pct}</span>
+        <span style={{ fontSize: '0.75rem', color: '#666' }}>/100</span>
+      </div>
+
+      {/* Progress bar */}
+      <div style={{ height: '3px', background: '#1a1a1a', borderRadius: '2px', marginBottom: '1rem' }}>
         <div style={{
           height: '100%',
           width: `${pct}%`,
@@ -189,6 +333,24 @@ function PlatformBar({ platform }: { platform: PlatformScore }) {
           borderRadius: '2px',
           transition: 'width 1s ease',
         }} />
+      </div>
+
+      {/* Stats row */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem' }}>
+        <div>
+          <div style={{ fontSize: '0.7rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '2px' }}>Hit rate</div>
+          <div style={{ fontSize: '0.85rem', color: '#AAAAAA' }}>{hitRate}%</div>
+        </div>
+        <div>
+          <div style={{ fontSize: '0.7rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '2px' }}>Prompts</div>
+          <div style={{ fontSize: '0.85rem', color: '#AAAAAA' }}>{platform.promptsMentioned}/{platform.promptsTested}</div>
+        </div>
+        {platform.avgPosition !== null && (
+          <div>
+            <div style={{ fontSize: '0.7rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '2px' }}>Avg pos.</div>
+            <div style={{ fontSize: '0.85rem', color: '#AAAAAA' }}>#{Math.round(platform.avgPosition)}</div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -330,6 +492,7 @@ export default function DashboardPage() {
   const [cancelStep, setCancelStep] = useState<'offer' | 'confirming' | 'done' | 'saved'>('offer');
   const [actionLoading, setActionLoading] = useState(false);
   const [retentionEligible, setRetentionEligible] = useState(true);
+  const [congratsPlan, setCongratsPlan] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -378,7 +541,7 @@ export default function DashboardPage() {
       if (data.success) {
         setClient(prev => prev ? { ...prev, plan: targetPlan } : null);
         setShowUpgrade(false);
-        window.location.reload();
+        setCongratsPlan(targetPlan);
       } else {
         alert(data.error || 'Upgrade failed. Please contact hello@presenzia.ai');
       }
@@ -387,6 +550,11 @@ export default function DashboardPage() {
     } finally {
       setActionLoading(false);
     }
+  };
+
+  const handleCongratsClose = () => {
+    setCongratsPlan(null);
+    window.location.reload();
   };
 
   const handleStartCancel = async () => {
@@ -463,6 +631,8 @@ export default function DashboardPage() {
     const completedReports = history.filter(r => r.status === 'completed');
     return (
       <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'var(--font-inter, Inter, sans-serif)', color: '#F5F0E8' }}>
+        {/* Congratulations overlay */}
+        {congratsPlan && <CongratsBanner plan={congratsPlan} onClose={handleCongratsClose} />}
         {/* Nav */}
         <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1rem clamp(1rem, 3vw, 2rem)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: '#0A0A0A', zIndex: 50, gap: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(0.5rem, 2vw, 1.5rem)', minWidth: 0 }}>
@@ -717,6 +887,9 @@ export default function DashboardPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'var(--font-inter, Inter, sans-serif)', color: '#F5F0E8' }}>
+      {/* Congratulations overlay */}
+      {congratsPlan && <CongratsBanner plan={congratsPlan} onClose={handleCongratsClose} />}
+
       {/* Nav */}
       <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1rem clamp(1rem, 3vw, 2rem)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: '#0A0A0A', zIndex: 50, gap: '0.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(0.5rem, 2vw, 1.5rem)', minWidth: 0 }}>
@@ -741,6 +914,47 @@ export default function DashboardPage() {
       </div>
 
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem clamp(1rem, 3vw, 2rem) 4rem' }}>
+
+        {/* Premium: Strategy call booking */}
+        {client?.plan === 'premium' && (
+          <div style={{
+            padding: '1rem 1.25rem',
+            background: 'rgba(155,107,204,0.06)',
+            border: '1px solid rgba(155,107,204,0.2)',
+            marginBottom: '1.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '1rem',
+            flexWrap: 'wrap',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ width: '8px', height: '8px', background: '#9b6bcc', borderRadius: '50%', flexShrink: 0 }} />
+              <div>
+                <div style={{ fontSize: '0.875rem', color: '#F5F0E8', fontWeight: 500 }}>Monthly strategy call</div>
+                <div style={{ fontSize: '0.75rem', color: '#999' }}>Book your 1:1 with your account manager</div>
+              </div>
+            </div>
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-block',
+                padding: '0.5rem 1.25rem',
+                background: '#9b6bcc',
+                color: '#0A0A0A',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                textDecoration: 'none',
+                letterSpacing: '0.02em',
+                flexShrink: 0,
+              }}
+            >
+              Book a slot →
+            </a>
+          </div>
+        )}
 
         {/* Audit running banner */}
         {pendingJob && (
@@ -792,113 +1006,254 @@ export default function DashboardPage() {
               </p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))', gap: '1.5rem' }}>
+            <div>
+              {/* ── Report header: Score + Business info ── */}
+              <div style={{
+                background: '#0D0D0D',
+                border: '1px solid #1a1a1a',
+                padding: 'clamp(1.5rem, 3vw, 2.5rem)',
+                marginBottom: '1.25rem',
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                  <div style={{ fontSize: '0.7rem', color: '#666', letterSpacing: '0.12em', textTransform: 'uppercase' }}>presenzia.ai · AI Visibility Report</div>
+                  {latestJob.completed_at && (
+                    <div style={{ fontSize: '0.7rem', color: '#666' }}>{fmt(latestJob.completed_at)}</div>
+                  )}
+                </div>
 
-              {/* Left column: Score + Platforms + Summary + Download */}
-              <div>
-                <div style={{ background: '#0D0D0D', border: '1px solid #1a1a1a', padding: '1.75rem', marginBottom: '1.25rem' }}>
-                  {/* Header */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.75rem', paddingBottom: '1.5rem', borderBottom: '1px solid #1a1a1a' }}>
-                    <div>
-                      <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>presenzia.ai</div>
-                      <div style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1rem', color: '#F5F0E8' }}>AI Visibility Audit</div>
-                      {latestJob.completed_at && (
-                        <div style={{ fontSize: '0.75rem', color: '#999', marginTop: '3px' }}>
-                          {client?.business_name} · {fmt(latestJob.completed_at)}
-                        </div>
+                <div className="dash-score-header" style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'clamp(1.5rem, 4vw, 3rem)',
+                  paddingTop: '1.25rem',
+                }}>
+                  {/* Score */}
+                  {latestJob.overall_score !== null && latestJob.grade && (
+                    <div style={{ flexShrink: 0 }}>
+                      <ScoreGauge score={latestJob.overall_score} grade={latestJob.grade} />
+                    </div>
+                  )}
+
+                  {/* Business info + context */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{
+                      fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
+                      fontSize: 'clamp(1.1rem, 2.5vw, 1.4rem)',
+                      color: '#F5F0E8',
+                      fontWeight: 600,
+                      marginBottom: '0.5rem',
+                    }}>
+                      {client?.business_name || 'Your business'}
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                      {client?.business_type && (
+                        <span style={{ fontSize: '0.7rem', padding: '3px 8px', background: '#111', border: '1px solid #222', color: '#888' }}>
+                          {client.business_type}
+                        </span>
+                      )}
+                      {client?.location && (
+                        <span style={{ fontSize: '0.7rem', padding: '3px 8px', background: '#111', border: '1px solid #222', color: '#888' }}>
+                          {client.location}
+                        </span>
+                      )}
+                      {platforms.length > 0 && (
+                        <span style={{ fontSize: '0.7rem', padding: '3px 8px', background: '#111', border: '1px solid #222', color: '#888' }}>
+                          {platforms.reduce((sum, p) => sum + p.promptsTested, 0)} prompts tested
+                        </span>
                       )}
                     </div>
-                    {latestJob.overall_score !== null && latestJob.grade && (
-                      <ScoreGauge score={latestJob.overall_score} grade={latestJob.grade} />
+                    {latestJob.grade && GRADE_CONTEXT[latestJob.grade] && (
+                      <p style={{ color: '#888', fontSize: '0.82rem', lineHeight: 1.6, margin: 0 }}>
+                        {GRADE_CONTEXT[latestJob.grade]}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Platform breakdown — cards grid ── */}
+              {platforms.length > 0 && (
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <div style={{ fontSize: '0.7rem', color: '#666', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem', paddingLeft: '2px' }}>
+                    Platform breakdown
+                  </div>
+                  <div className="dash-platform-grid" style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(min(220px, 100%), 1fr))',
+                    gap: '0.75rem',
+                  }}>
+                    {platforms.map(p => <PlatformCard key={p.platform} platform={p} />)}
+                  </div>
+                </div>
+              )}
+
+              {/* ── Two-column: Competitors + Summary | Chat + Account manager ── */}
+              <div className="dash-report-grid" style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '1.25rem',
+              }}>
+                {/* Left: Competitors + Summary + Download */}
+                <div>
+                  {/* Competitors */}
+                  {competitors.length > 0 && (() => {
+                    const maxCount = competitors[0]?.count || 1;
+                    return (
+                      <div style={{ background: '#0D0D0D', border: '1px solid #1a1a1a', padding: '1.25rem', marginBottom: '1.25rem' }}>
+                        <div style={{ fontSize: '0.7rem', color: '#666', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1rem' }}>
+                          Competitors appearing instead of you
+                        </div>
+                        {competitors.slice(0, 6).map((comp, i) => (
+                          <div key={i} style={{ marginBottom: i < Math.min(5, competitors.length - 1) ? '0.75rem' : 0 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <span style={{ fontSize: '0.7rem', color: '#555', fontWeight: 600, width: '16px' }}>#{i + 1}</span>
+                                <span style={{ fontSize: '0.85rem', color: '#CCCCCC' }}>{comp.name}</span>
+                              </div>
+                              <span style={{ fontSize: '0.7rem', color: '#888' }}>{comp.count} mention{comp.count !== 1 ? 's' : ''}</span>
+                            </div>
+                            <div style={{ height: '2px', background: '#1a1a1a', marginLeft: '24px' }}>
+                              <div style={{
+                                height: '100%',
+                                width: `${Math.round((comp.count / maxCount) * 100)}%`,
+                                background: 'rgba(204,68,68,0.4)',
+                                transition: 'width 0.8s ease',
+                              }} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
+
+                  {/* Summary */}
+                  {latestJob.summary && (
+                    <div style={{ padding: '1.25rem', background: '#0D0D0D', border: '1px solid #1a1a1a', marginBottom: '1.25rem' }}>
+                      <div style={{ fontSize: '0.7rem', color: '#666', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Audit summary</div>
+                      <p style={{ color: '#AAAAAA', fontSize: '0.85rem', lineHeight: 1.75, margin: 0 }}>{latestJob.summary}</p>
+                    </div>
+                  )}
+
+                  {/* Download + Next audit */}
+                  <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    {latestJob.report_path && (
+                      <button
+                        onClick={() => handleDownloadReport(latestJob.id)}
+                        style={{
+                          flex: 1,
+                          minWidth: '160px',
+                          padding: '0.7rem 1rem',
+                          background: 'transparent',
+                          border: '1px solid #333',
+                          color: '#AAAAAA',
+                          fontSize: '0.82rem',
+                          cursor: 'pointer',
+                          fontFamily: 'inherit',
+                          textAlign: 'center',
+                          transition: 'all 0.2s',
+                        }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#C9A84C'; (e.currentTarget as HTMLElement).style.color = '#C9A84C'; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#333'; (e.currentTarget as HTMLElement).style.color = '#AAAAAA'; }}
+                      >
+                        ↓ Download full report (PDF)
+                      </button>
                     )}
                   </div>
 
-                  {/* Platform breakdown */}
-                  {platforms.length > 0 && (
-                    <div>
-                      <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>
-                        Platform breakdown
-                        <span style={{ color: '#888', marginLeft: '0.5rem', textTransform: 'none', letterSpacing: 0, fontSize: '0.75rem' }}>(hover ? for details)</span>
-                      </div>
-                      {platforms.map(p => <PlatformBar key={p.platform} platform={p} />)}
+                  {latestJob.completed_at && (
+                    <div style={{
+                      marginTop: '0.75rem',
+                      padding: '0.75rem 1rem',
+                      background: 'rgba(201,168,76,0.04)',
+                      border: '1px solid rgba(201,168,76,0.12)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                    }}>
+                      <div style={{ width: '5px', height: '5px', background: '#C9A84C', borderRadius: '50%', flexShrink: 0 }} />
+                      <span style={{ fontSize: '0.78rem', color: '#999' }}>
+                        Next audit: <span style={{ color: '#C9A84C', fontWeight: 600 }}>{getNextAuditDate(latestJob.completed_at)}</span>
+                      </span>
                     </div>
                   )}
                 </div>
 
-                {/* Summary */}
-                {latestJob.summary && (
-                  <div style={{ padding: '1.25rem', background: '#0D0D0D', border: '1px solid #1a1a1a', marginBottom: '1.25rem' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Summary</div>
-                    <p style={{ color: '#AAAAAA', fontSize: '0.875rem', lineHeight: 1.7, margin: 0 }}>{latestJob.summary}</p>
-                  </div>
-                )}
-
-                {/* Download PDF */}
-                {latestJob.report_path && (
-                  <button
-                    onClick={() => handleDownloadReport(latestJob.id)}
-                    style={{
-                      display: 'block',
-                      width: '100%',
-                      padding: '0.75rem',
-                      background: 'transparent',
-                      border: '1px solid #333',
-                      color: '#AAAAAA',
-                      fontSize: '0.875rem',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                      textAlign: 'center',
-                      transition: 'all 0.2s',
-                    }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#C9A84C'; (e.currentTarget as HTMLElement).style.color = '#C9A84C'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#333'; (e.currentTarget as HTMLElement).style.color = '#AAAAAA'; }}
-                  >
-                    ↓ Download audit
-                  </button>
-                )}
-
-                {/* Next audit date */}
-                {latestJob.completed_at && (
-                  <div style={{
-                    marginTop: '1rem',
-                    padding: '0.875rem 1rem',
-                    background: 'rgba(201,168,76,0.04)',
-                    border: '1px solid rgba(201,168,76,0.15)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.625rem',
-                  }}>
-                    <div style={{ width: '6px', height: '6px', background: '#C9A84C', borderRadius: '50%', flexShrink: 0 }} />
-                    <span style={{ fontSize: '0.8rem', color: '#AAAAAA' }}>
-                      Next audit: <span style={{ color: '#C9A84C', fontWeight: 600 }}>{getNextAuditDate(latestJob.completed_at)}</span>
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Right column: Competitors + Chat */}
-              <div>
-                {/* Competitors */}
-                {competitors.length > 0 && (
-                  <div style={{ background: '#0D0D0D', border: '1px solid #1a1a1a', padding: '1.5rem', marginBottom: '1.25rem' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1rem' }}>
-                      Competitors appearing instead of you
-                    </div>
-                    {competitors.slice(0, 5).map((comp, i) => (
-                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '0.5rem', borderBottom: i < Math.min(4, competitors.length - 1) ? '1px solid #111' : 'none', marginBottom: '0.5rem' }}>
-                        <span style={{ fontSize: '0.875rem', color: '#CCCCCC' }}>{comp.name}</span>
-                        <span style={{ fontSize: '0.75rem', color: '#888' }}>{comp.count} mention{comp.count !== 1 ? 's' : ''}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Chat */}
+                {/* Right: Chat + Account manager */}
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
-                    Discuss your results
+                  <div style={{ fontSize: '0.7rem', color: '#666', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+                    Ask about your results
                   </div>
                   <ChatPane jobId={latestJob.id} businessName={client?.business_name || ''} />
+
+                  {/* Premium: Account manager + Booking */}
+                  {client?.plan === 'premium' && (
+                    <div style={{ background: '#0D0D0D', border: '1px solid #1a1a1a', padding: '1.25rem', marginTop: '1.25rem' }}>
+                      <div style={{ fontSize: '0.7rem', color: '#9b6bcc', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+                        Your account manager
+                      </div>
+                      <p style={{ fontSize: '0.82rem', color: '#888', lineHeight: 1.6, marginBottom: '0.75rem' }}>
+                        Have questions between calls? Reach your dedicated account manager directly.
+                      </p>
+                      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                        <a
+                          href={BOOKING_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: 'inline-block',
+                            padding: '0.5rem 1rem',
+                            background: '#9b6bcc',
+                            color: '#0A0A0A',
+                            fontSize: '0.8rem',
+                            fontWeight: 600,
+                            textDecoration: 'none',
+                          }}
+                        >
+                          Book strategy call →
+                        </a>
+                        <a
+                          href="mailto:hello@presenzia.ai?subject=Premium%20Support%20Request"
+                          style={{
+                            display: 'inline-block',
+                            padding: '0.5rem 1rem',
+                            background: 'none',
+                            border: '1px solid #444',
+                            color: '#888',
+                            fontSize: '0.8rem',
+                            textDecoration: 'none',
+                          }}
+                        >
+                          Email support
+                        </a>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Growth: Upgrade nudge */}
+                  {client?.plan === 'growth' && (
+                    <div style={{ background: 'rgba(155,107,204,0.04)', border: '1px solid rgba(155,107,204,0.15)', padding: '1rem', marginTop: '1.25rem' }}>
+                      <div style={{ fontSize: '0.82rem', color: '#AAAAAA', lineHeight: 1.6, marginBottom: '0.5rem' }}>
+                        Need expert guidance? <span style={{ color: '#9b6bcc', fontWeight: 500 }}>Premium</span> includes a monthly strategy call and dedicated account manager.
+                      </div>
+                      <button
+                        onClick={() => setShowUpgrade(true)}
+                        style={{
+                          background: 'none',
+                          border: '1px solid rgba(155,107,204,0.3)',
+                          color: '#9b6bcc',
+                          padding: '0.4rem 1rem',
+                          fontSize: '0.78rem',
+                          cursor: 'pointer',
+                          fontFamily: 'inherit',
+                          transition: 'all 0.2s',
+                        }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#9b6bcc'; (e.currentTarget as HTMLElement).style.background = 'rgba(155,107,204,0.08)'; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(155,107,204,0.3)'; (e.currentTarget as HTMLElement).style.background = 'none'; }}
+                      >
+                        Learn about Premium →
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -1098,6 +1453,26 @@ export default function DashboardPage() {
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.4; }
+        }
+
+        /* Dashboard responsive */
+        @media (max-width: 768px) {
+          .dash-score-header {
+            flex-direction: column !important;
+            text-align: center;
+            gap: 1.25rem !important;
+          }
+          .dash-report-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .dash-platform-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .dash-platform-grid {
+            grid-template-columns: 1fr !important;
+          }
         }
       `}</style>
     </div>
