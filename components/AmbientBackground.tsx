@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 
 /*
  * UK Network Map — a subtle, static background texture showing
@@ -86,8 +87,12 @@ const NI_PATH = `
 `;
 
 export default function AmbientBackground() {
+  const pathname = usePathname();
   const containerRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
+
+  // Dashboard pages have solid backgrounds — skip the ambient map
+  if (pathname?.startsWith('/dashboard')) return null;
 
   useEffect(() => {
     const container = containerRef.current;
