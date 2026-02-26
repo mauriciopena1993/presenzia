@@ -679,9 +679,9 @@ export default function SampleReport() {
             ))}
           </div>
 
-          {/* Scrollable card viewport */}
+          {/* Scrollable card viewport — deliberately clips content to imply depth */}
           <div style={{
-            maxHeight: '520px',
+            maxHeight: '420px',
             position: 'relative',
             overflow: 'hidden',
           }}>
@@ -698,14 +698,14 @@ export default function SampleReport() {
               <ActiveCard />
             </div>
 
-            {/* Gradient fade at bottom */}
+            {/* Strong gradient fade at bottom — signals there's much more content below */}
             <div style={{
               position: 'absolute',
               bottom: 0,
               left: 0,
               right: 0,
-              height: '60px',
-              background: `linear-gradient(to bottom, transparent, ${W})`,
+              height: '120px',
+              background: `linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.3) 25%, rgba(255,255,255,0.7) 55%, ${W} 85%)`,
               pointerEvents: 'none',
               zIndex: 2,
             }} />

@@ -5,26 +5,26 @@ import { useEffect, useRef } from 'react';
 // Deterministic pseudo-random positions for city light dots
 // Each dot: [left%, top%, size(px), baseOpacity, animationDelay(s), animationDuration(s)]
 const CITY_LIGHTS: [number, number, number, number, number, number][] = [
-  [8, 12, 2, 0.04, 0, 7],
-  [15, 45, 3, 0.05, 1.2, 9],
-  [22, 78, 2, 0.03, 3.5, 8],
-  [31, 23, 2, 0.04, 0.8, 11],
-  [37, 67, 3, 0.05, 2.1, 7],
-  [44, 34, 2, 0.03, 4.3, 10],
-  [52, 88, 2, 0.04, 1.7, 8],
-  [58, 15, 3, 0.05, 3.0, 9],
-  [63, 52, 2, 0.03, 0.5, 11],
-  [71, 81, 2, 0.04, 2.8, 7],
-  [76, 28, 3, 0.05, 4.0, 9],
-  [83, 61, 2, 0.03, 1.5, 8],
-  [89, 42, 2, 0.04, 3.2, 10],
-  [94, 73, 3, 0.05, 0.3, 7],
-  [12, 91, 2, 0.03, 2.5, 11],
-  [47, 8, 2, 0.04, 4.7, 8],
-  [67, 38, 3, 0.05, 1.0, 9],
-  [28, 55, 2, 0.03, 3.8, 10],
-  [79, 15, 2, 0.04, 0.6, 7],
-  [55, 70, 3, 0.05, 2.3, 9],
+  [8, 12, 2, 0.15, 0, 7],
+  [15, 45, 3, 0.18, 1.2, 9],
+  [22, 78, 2, 0.12, 3.5, 8],
+  [31, 23, 2, 0.15, 0.8, 11],
+  [37, 67, 3, 0.18, 2.1, 7],
+  [44, 34, 2, 0.12, 4.3, 10],
+  [52, 88, 2, 0.15, 1.7, 8],
+  [58, 15, 3, 0.18, 3.0, 9],
+  [63, 52, 2, 0.12, 0.5, 11],
+  [71, 81, 2, 0.15, 2.8, 7],
+  [76, 28, 3, 0.18, 4.0, 9],
+  [83, 61, 2, 0.12, 1.5, 8],
+  [89, 42, 2, 0.15, 3.2, 10],
+  [94, 73, 3, 0.18, 0.3, 7],
+  [12, 91, 2, 0.12, 2.5, 11],
+  [47, 8, 2, 0.15, 4.7, 8],
+  [67, 38, 3, 0.18, 1.0, 9],
+  [28, 55, 2, 0.12, 3.8, 10],
+  [79, 15, 2, 0.15, 0.6, 7],
+  [55, 70, 3, 0.18, 2.3, 9],
 ];
 
 export default function AmbientBackground() {
@@ -46,22 +46,19 @@ export default function AmbientBackground() {
         rafRef.current = requestAnimationFrame(() => {
           const scrollY = scrollRef.current;
           const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-          // Normalize scroll progress 0-1
           const progress = maxScroll > 0 ? Math.min(scrollY / maxScroll, 1) : 0;
 
-          // Update CSS custom properties for parallax and brightness
           container.style.setProperty('--scroll-y', `${scrollY}`);
           container.style.setProperty('--scroll-progress', `${progress}`);
 
-          // Parallax offsets for each orb layer (different speeds)
           container.style.setProperty('--parallax-1', `${scrollY * -0.02}px`);
           container.style.setProperty('--parallax-2', `${scrollY * 0.015}px`);
           container.style.setProperty('--parallax-3', `${scrollY * -0.025}px`);
           container.style.setProperty('--parallax-4', `${scrollY * 0.01}px`);
           container.style.setProperty('--parallax-5', `${scrollY * -0.018}px`);
 
-          // Scroll-linked opacity boost (0.03 base -> up to 0.055 at full scroll)
-          const opacityBoost = progress * 0.025;
+          // Scroll-linked opacity boost — grows as user scrolls
+          const opacityBoost = progress * 0.08;
           container.style.setProperty('--scroll-opacity-boost', `${opacityBoost}`);
 
           ticking = false;
@@ -70,7 +67,6 @@ export default function AmbientBackground() {
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    // Initialize values
     onScroll();
 
     return () => {
@@ -110,12 +106,8 @@ export default function AmbientBackground() {
           70% { transform: translate(-35px, calc(15px + var(--parallax-5, 0px))) scale(0.94); }
         }
         @keyframes ambient-twinkle {
-          0%, 100% { opacity: var(--dot-base-opacity, 0.04); }
-          50% { opacity: calc(var(--dot-base-opacity, 0.04) + 0.02 + var(--scroll-opacity-boost, 0)); }
-        }
-        @keyframes ambient-pulse {
-          0%, 100% { opacity: 0.03; transform: scale(1); }
-          50% { opacity: 0.05; transform: scale(1.15); }
+          0%, 100% { opacity: var(--dot-base-opacity, 0.15); }
+          50% { opacity: calc(var(--dot-base-opacity, 0.15) + 0.1 + var(--scroll-opacity-boost, 0)); }
         }
       `}</style>
 
@@ -128,7 +120,6 @@ export default function AmbientBackground() {
           zIndex: 0,
           pointerEvents: 'none',
           overflow: 'hidden',
-          // CSS custom properties initialized
           ['--scroll-y' as string]: '0',
           ['--scroll-progress' as string]: '0',
           ['--parallax-1' as string]: '0px',
@@ -150,9 +141,9 @@ export default function AmbientBackground() {
             width: '700px',
             height: '700px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(201,168,76,0.09) 0%, rgba(201,168,76,0.03) 40%, transparent 70%)',
-            filter: 'blur(100px)',
-            opacity: `calc(0.07 + var(--scroll-opacity-boost, 0))`,
+            background: 'radial-gradient(circle, rgba(201,168,76,0.25) 0%, rgba(201,168,76,0.08) 40%, transparent 70%)',
+            filter: 'blur(80px)',
+            opacity: `calc(0.3 + var(--scroll-opacity-boost, 0))`,
             animation: 'ambient-float-1 25s ease-in-out infinite',
             willChange: 'transform, opacity',
           }}
@@ -167,9 +158,9 @@ export default function AmbientBackground() {
             width: '500px',
             height: '500px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(139,118,49,0.08) 0%, rgba(139,118,49,0.025) 45%, transparent 70%)',
-            filter: 'blur(90px)',
-            opacity: `calc(0.06 + var(--scroll-opacity-boost, 0))`,
+            background: 'radial-gradient(circle, rgba(139,118,49,0.2) 0%, rgba(139,118,49,0.06) 45%, transparent 70%)',
+            filter: 'blur(70px)',
+            opacity: `calc(0.25 + var(--scroll-opacity-boost, 0))`,
             animation: 'ambient-float-2 30s ease-in-out infinite',
             willChange: 'transform, opacity',
           }}
@@ -184,9 +175,9 @@ export default function AmbientBackground() {
             width: '350px',
             height: '350px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(201,168,76,0.07) 0%, rgba(201,168,76,0.02) 50%, transparent 70%)',
-            filter: 'blur(80px)',
-            opacity: `calc(0.06 + var(--scroll-opacity-boost, 0))`,
+            background: 'radial-gradient(circle, rgba(201,168,76,0.2) 0%, rgba(201,168,76,0.05) 50%, transparent 70%)',
+            filter: 'blur(60px)',
+            opacity: `calc(0.25 + var(--scroll-opacity-boost, 0))`,
             animation: 'ambient-float-3 20s ease-in-out infinite',
             willChange: 'transform, opacity',
           }}
@@ -201,9 +192,9 @@ export default function AmbientBackground() {
             width: '800px',
             height: '800px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(201,168,76,0.07) 0%, rgba(139,118,49,0.02) 40%, transparent 65%)',
-            filter: 'blur(120px)',
-            opacity: `calc(0.07 + var(--scroll-opacity-boost, 0))`,
+            background: 'radial-gradient(circle, rgba(201,168,76,0.2) 0%, rgba(139,118,49,0.06) 40%, transparent 65%)',
+            filter: 'blur(100px)',
+            opacity: `calc(0.3 + var(--scroll-opacity-boost, 0))`,
             animation: 'ambient-float-4 35s ease-in-out infinite',
             willChange: 'transform, opacity',
           }}
@@ -218,9 +209,9 @@ export default function AmbientBackground() {
             width: '250px',
             height: '600px',
             borderRadius: '50%',
-            background: 'radial-gradient(ellipse, rgba(201,168,76,0.06) 0%, rgba(201,168,76,0.02) 50%, transparent 70%)',
-            filter: 'blur(100px)',
-            opacity: `calc(0.05 + var(--scroll-opacity-boost, 0))`,
+            background: 'radial-gradient(ellipse, rgba(201,168,76,0.15) 0%, rgba(201,168,76,0.04) 50%, transparent 70%)',
+            filter: 'blur(80px)',
+            opacity: `calc(0.2 + var(--scroll-opacity-boost, 0))`,
             transform: 'rotate(-30deg)',
             animation: 'ambient-float-5 28s ease-in-out infinite',
             willChange: 'transform, opacity',
@@ -239,10 +230,10 @@ export default function AmbientBackground() {
               height: `${size}px`,
               borderRadius: '50%',
               backgroundColor: i % 3 === 0
-                ? 'rgba(201,168,76,0.9)'    // warm gold
+                ? 'rgba(201,168,76,0.9)'
                 : i % 3 === 1
-                  ? 'rgba(232,201,106,0.8)'  // lighter gold
-                  : 'rgba(139,111,46,0.85)',  // deep gold
+                  ? 'rgba(232,201,106,0.8)'
+                  : 'rgba(139,111,46,0.85)',
               ['--dot-base-opacity' as string]: `${baseOpacity}`,
               opacity: baseOpacity,
               animation: `ambient-twinkle ${duration}s ease-in-out ${delay}s infinite`,
@@ -251,7 +242,7 @@ export default function AmbientBackground() {
           />
         ))}
 
-        {/* === SUBTLE VEIN LINES (light veins running through the dark) === */}
+        {/* === VEIN LINES === */}
         <div
           style={{
             position: 'absolute',
@@ -259,8 +250,8 @@ export default function AmbientBackground() {
             left: '0',
             width: '100%',
             height: '1px',
-            background: 'linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.03) 20%, rgba(201,168,76,0.05) 50%, rgba(201,168,76,0.03) 80%, transparent 100%)',
-            opacity: `calc(0.5 + var(--scroll-opacity-boost, 0) * 8)`,
+            background: 'linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.08) 20%, rgba(201,168,76,0.12) 50%, rgba(201,168,76,0.08) 80%, transparent 100%)',
+            opacity: 1,
             animation: 'ambient-float-4 40s ease-in-out infinite',
           }}
         />
@@ -271,22 +262,22 @@ export default function AmbientBackground() {
             left: '0',
             width: '100%',
             height: '1px',
-            background: 'linear-gradient(90deg, transparent 0%, rgba(139,118,49,0.03) 30%, rgba(201,168,76,0.04) 60%, transparent 100%)',
-            opacity: `calc(0.4 + var(--scroll-opacity-boost, 0) * 6)`,
+            background: 'linear-gradient(90deg, transparent 0%, rgba(139,118,49,0.06) 30%, rgba(201,168,76,0.1) 60%, transparent 100%)',
+            opacity: 1,
             animation: 'ambient-float-2 45s ease-in-out infinite',
           }}
         />
 
-        {/* Horizon glow - faint warm light at the bottom edge like a distant city horizon */}
+        {/* Horizon glow */}
         <div
           style={{
             position: 'absolute',
             bottom: '0',
             left: '0',
             width: '100%',
-            height: '200px',
-            background: 'linear-gradient(to top, rgba(201,168,76,0.05) 0%, rgba(139,118,49,0.02) 40%, transparent 100%)',
-            opacity: `calc(0.8 + var(--scroll-opacity-boost, 0) * 5)`,
+            height: '250px',
+            background: 'linear-gradient(to top, rgba(201,168,76,0.1) 0%, rgba(139,118,49,0.04) 40%, transparent 100%)',
+            opacity: 1,
           }}
         />
       </div>
