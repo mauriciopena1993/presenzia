@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
 
     // Generate insights and PDF report
     const insights = generateInsights(config, score, results);
-    const pdfBuffer = await generatePDFReport(config, score, results, insights);
+    const pdfBuffer = await generatePDFReport(config, score, results, insights, jobId);
 
     // Store report in Supabase Storage
     const reportFileName = `${jobId}.pdf`;

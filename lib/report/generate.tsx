@@ -11,7 +11,7 @@ import {
 } from '@react-pdf/renderer';
 import type { AuditScore, PromptResult } from '../audit/scorer';
 import type { AuditConfig } from '../audit/runner';
-import type { ReportInsights, CategoryBreakdown, DetailedAction, PromptTestResult } from './insights';
+import type { ReportInsights, CategoryBreakdown, DetailedAction, PromptTestResult, ActionStep } from './insights';
 
 // Register fonts — use local TTF files (woff2 is not supported by @react-pdf/renderer)
 Font.register({
@@ -74,11 +74,11 @@ const s = StyleSheet.create({
   page: { backgroundColor: WHITE, color: TEXT_PRIMARY, fontFamily: 'Inter', fontSize: 10, padding: 0 },
 
   // Header stripe
-  stripe: { backgroundColor: DARK, borderBottomColor: GOLD, borderBottomWidth: 2, paddingHorizontal: 40, paddingVertical: 12, flexDirection: 'column', alignItems: 'center' },
-  brand: { fontSize: 14, color: '#F5F0E8', fontWeight: 600 },
+  stripe: { backgroundColor: DARK, borderBottomColor: GOLD, borderBottomWidth: 2, paddingHorizontal: 40, paddingVertical: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  brand: { fontSize: 12, color: '#F5F0E8', fontWeight: 600 },
   dot: { color: GOLD },
-  bizHeaderName: { fontSize: 14, color: '#F5F0E8', fontWeight: 600, marginTop: 2 },
-  pageLabel: { fontSize: 7, color: '#999999', letterSpacing: 1, textTransform: 'uppercase', marginTop: 3 },
+  bizHeaderName: { fontSize: 8.5, color: '#AAAAAA', fontWeight: 400, textAlign: 'right' },
+  pageLabel: { fontSize: 6.5, color: '#777777', letterSpacing: 1, textTransform: 'uppercase' },
 
   // Content area
   content: { paddingHorizontal: 40, paddingTop: 28, paddingBottom: 64 },
@@ -146,20 +146,21 @@ const s = StyleSheet.create({
   compCount: { fontSize: 8, color: TEXT_MUTED, width: 55, textAlign: 'right' },
 
   // ── Page 3: Search Results ──────────────────
-  catBlock: { marginBottom: 8 },
-  catHdr: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderBottomColor: BORDER, borderBottomWidth: 1, paddingBottom: 4, marginBottom: 5 },
-  catLabel: { fontSize: 7.5, color: TEXT_PRIMARY, fontWeight: 600 },
-  catStat: { fontSize: 7, color: TEXT_MUTED },
-  promptRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 2.5, paddingLeft: 4 },
-  promptTxt: { flex: 1, fontSize: 7, color: TEXT_SECONDARY },
-  platCol: { width: 52, alignItems: 'center', justifyContent: 'center' },
-  platColHdr: { fontSize: 6, color: TEXT_MUTED, fontWeight: 600, letterSpacing: 0.5, textAlign: 'center' },
-  dotFound: { fontSize: 7, color: GREEN, textAlign: 'center' },
-  dotMissing: { fontSize: 7, color: '#DDDDDD', textAlign: 'center' },
+  catBlock: { marginBottom: 6 },
+  catHdr: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderBottomColor: BORDER, borderBottomWidth: 1, paddingBottom: 3, marginBottom: 4 },
+  catLabel: { fontSize: 8.5, color: TEXT_PRIMARY, fontWeight: 600 },
+  catStat: { fontSize: 7.5, color: TEXT_MUTED },
+  promptRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 2.5, paddingHorizontal: 4 },
+  promptRowAlt: { backgroundColor: '#FAFAF8' },
+  promptTxt: { flex: 1, fontSize: 8, color: TEXT_SECONDARY },
+  platCol: { width: 54, alignItems: 'center', justifyContent: 'center' },
+  platColHdr: { fontSize: 7.5, color: TEXT_PRIMARY, fontWeight: 700, letterSpacing: 0.5, textAlign: 'center' },
+  dotFound: { fontSize: 8, color: GREEN, textAlign: 'center', fontWeight: 600 },
+  dotMissing: { fontSize: 8, color: '#CCCCCC', textAlign: 'center' },
   legendRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4, paddingVertical: 4, paddingHorizontal: 4 },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  legendDot: { fontSize: 7 },
-  legendText: { fontSize: 6.5, color: TEXT_MUTED },
+  legendDot: { fontSize: 8 },
+  legendText: { fontSize: 7, color: TEXT_MUTED },
 
   // ── Page 4: Action plan ─────────────────────
   actCard: { padding: 11, marginBottom: 7, backgroundColor: SURFACE, borderColor: BORDER, borderWidth: 1 },
@@ -172,6 +173,9 @@ const s = StyleSheet.create({
   stepRow: { flexDirection: 'row', marginBottom: 3, paddingLeft: 2 },
   stepBullet: { width: 10, fontSize: 7.5, color: GOLD, fontWeight: 700 },
   stepText: { flex: 1, fontSize: 7.5, color: TEXT_SECONDARY, lineHeight: 1.5 },
+  subStepRow: { flexDirection: 'row', marginBottom: 2, paddingLeft: 14 },
+  subStepBullet: { width: 8, fontSize: 6.5, color: TEXT_MUTED },
+  subStepText: { flex: 1, fontSize: 7, color: TEXT_MUTED, lineHeight: 1.5 },
 
   // ── Page 5: About / Disclaimers ─────────────
   noteRow: { flexDirection: 'row', marginBottom: 5, paddingLeft: 2 },
@@ -214,16 +218,19 @@ function ScoreBandVisual({ score }: { score: number }) {
 }
 
 // ── Page Header (reusable) ───────────────────────────────────
-function Header({ label, businessName, reportDate }: { label: string; businessName?: string; reportDate?: string }) {
+function Header({ label, businessName, reportDate, showBizName = true }: { label: string; businessName?: string; reportDate?: string; showBizName?: boolean }) {
   return (
     <View style={s.stripe} fixed>
-      <Text style={s.brand}>presenzia<Text style={s.dot}>.ai</Text></Text>
-      {businessName && (
-        <Text style={s.bizHeaderName}>{businessName}</Text>
+      <View>
+        <Text style={s.brand}>presenzia<Text style={s.dot}>.ai</Text></Text>
+        <Text style={s.pageLabel}>{label}</Text>
+      </View>
+      {showBizName && businessName && (
+        <View style={{ alignItems: 'flex-end' }}>
+          <Text style={s.bizHeaderName}>{businessName}</Text>
+          {reportDate && <Text style={[s.pageLabel, { marginTop: 1 }]}>{reportDate}</Text>}
+        </View>
       )}
-      <Text style={s.pageLabel}>
-        {label}{reportDate ? `  ·  ${reportDate}` : ''}
-      </Text>
     </View>
   );
 }
@@ -239,9 +246,9 @@ function Footer({ left }: { left: string }) {
 }
 
 // ── Prompt Result Row ────────────────────────────────────────
-function PromptResultRow({ prompt }: { prompt: PromptTestResult }) {
+function PromptResultRow({ prompt, isAlt }: { prompt: PromptTestResult; isAlt?: boolean }) {
   return (
-    <View style={s.promptRow}>
+    <View style={[s.promptRow, isAlt ? s.promptRowAlt : {}]}>
       <Text style={s.promptTxt}>{prompt.promptText}</Text>
       {PLATFORM_ORDER.map(pName => {
         const p = prompt.platforms.find(pl => pl.name === pName);
@@ -284,29 +291,45 @@ function StepWithLinks({ text }: { text: string }) {
   );
 }
 
-// ── Action Card with Steps ───────────────────────────────────
+// ── Action Card with Steps + Substeps ────────────────────────
 function ActionCard({ action, index }: { action: DetailedAction; index: number }) {
   const isHigh = action.priority === 'HIGH';
+  // Always allow wrapping — header section has its own wrap={false} to prevent orphan titles
   return (
-    <View wrap={false} style={[s.actCard, isHigh ? s.actCardHigh : {}]}>
-      <View style={s.actHdr}>
-        <View style={[s.actBadge, { backgroundColor: isHigh ? GOLD + '22' : BORDER }]}>
-          <Text style={[s.actBadgeTxt, { color: isHigh ? GOLD : '#888' }]}>
-            {isHigh ? 'HIGH PRIORITY' : 'RECOMMENDED'}
-          </Text>
+    <View style={[s.actCard, isHigh ? s.actCardHigh : {}]}>
+      {/* Header area: keep together so the title+context never get orphaned from steps */}
+      <View wrap={false}>
+        <View style={s.actHdr}>
+          <View style={[s.actBadge, { backgroundColor: isHigh ? GOLD + '22' : BORDER }]}>
+            <Text style={[s.actBadgeTxt, { color: isHigh ? GOLD : '#888' }]}>
+              {isHigh ? 'HIGH PRIORITY' : 'RECOMMENDED'}
+            </Text>
+          </View>
+          <Text style={s.actTitle}>{index + 1}. {action.title}</Text>
         </View>
-        <Text style={s.actTitle}>{index + 1}. {action.title}</Text>
+        {action.context && (
+          <Text style={{ fontSize: 7.5, color: TEXT_PRIMARY, marginBottom: 4, lineHeight: 1.5, fontWeight: 600 }}>{action.context}</Text>
+        )}
+        <Text style={s.actWhy}>{action.why}</Text>
       </View>
-      {action.context && (
-        <Text style={{ fontSize: 7.5, color: TEXT_PRIMARY, marginBottom: 4, lineHeight: 1.5, fontWeight: 600 }}>{action.context}</Text>
-      )}
-      <Text style={s.actWhy}>{action.why}</Text>
-      {action.steps.map((step, i) => (
-        <View key={i} style={s.stepRow}>
-          <Text style={s.stepBullet}>›</Text>
-          <StepWithLinks text={step} />
-        </View>
-      ))}
+      {action.steps.map((step, i) => {
+        const stepText = typeof step === 'string' ? step : step.text;
+        const substeps = typeof step === 'string' ? undefined : step.substeps;
+        return (
+          <View key={i}>
+            <View style={s.stepRow}>
+              <Text style={s.stepBullet}>›</Text>
+              <StepWithLinks text={stepText} />
+            </View>
+            {substeps && substeps.map((sub, j) => (
+              <View key={j} style={s.subStepRow}>
+                <Text style={s.subStepBullet}>–</Text>
+                <Text style={s.subStepText}>{sub}</Text>
+              </View>
+            ))}
+          </View>
+        );
+      })}
     </View>
   );
 }
@@ -362,9 +385,10 @@ interface ReportData {
   score: AuditScore;
   insights?: ReportInsights;
   reportDate: string;
+  jobId?: string;
 }
 
-function AuditReport({ config, score, insights, reportDate }: ReportData) {
+function AuditReport({ config, score, insights, reportDate, jobId }: ReportData) {
   const actions = insights?.actions ?? getFallbackActions(score, config);
   const highPriority = actions.filter(a => a.priority === 'HIGH');
   const mainColor = scoreColor(score.overall);
@@ -378,7 +402,7 @@ function AuditReport({ config, score, insights, reportDate }: ReportData) {
 
       {/* ═══════════════════════ PAGE 1: YOUR AI VISIBILITY SCORE */}
       <Page size="A4" style={s.page}>
-        <Header label="AI Visibility Audit" businessName={config.businessName} reportDate={reportDate} />
+        <Header label="AI Visibility Audit" businessName={config.businessName} reportDate={reportDate} showBizName={false} />
         <View style={s.content}>
 
           {/* Business + Score */}
@@ -560,20 +584,20 @@ function AuditReport({ config, score, insights, reportDate }: ReportData) {
             </Text>
 
             {/* Table header row — aligned with data rows */}
-            <View style={[s.promptRow, { paddingVertical: 5, borderBottomColor: BORDER, borderBottomWidth: 1, marginBottom: 2 }]}>
+            <View style={[s.promptRow, { paddingVertical: 5, borderBottomColor: DARK, borderBottomWidth: 1, marginBottom: 2, backgroundColor: SURFACE }]}>
               <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <View style={s.legendItem}>
                   <Text style={[s.legendDot, { color: GREEN }]}>#N</Text>
                   <Text style={s.legendText}>= Position</Text>
                 </View>
                 <View style={s.legendItem}>
-                  <Text style={[s.legendDot, { color: '#DDDDDD' }]}>—</Text>
+                  <Text style={[s.legendDot, { color: '#CCCCCC' }]}>—</Text>
                   <Text style={s.legendText}>= Not found</Text>
                 </View>
               </View>
               {PLATFORM_ORDER.map(p => (
                 <View key={p} style={[s.platCol, { justifyContent: 'center' }]}>
-                  <Text style={[s.platColHdr, { textAlign: 'center' }]}>{p === 'Google AI' ? 'Google' : p}</Text>
+                  <Text style={s.platColHdr}>{p === 'Google AI' ? 'Google' : p}</Text>
                 </View>
               ))}
             </View>
@@ -588,7 +612,7 @@ function AuditReport({ config, score, insights, reportDate }: ReportData) {
                     <Text style={s.catStat}>Found in {cat.timesFound} of {cat.totalSearches} ({pct}%)</Text>
                   </View>
                   {cat.examples.map((ex, i) => (
-                    <PromptResultRow key={i} prompt={ex} />
+                    <PromptResultRow key={i} prompt={ex} isAlt={i % 2 === 1} />
                   ))}
                 </View>
               );
@@ -629,77 +653,60 @@ function AuditReport({ config, score, insights, reportDate }: ReportData) {
 
           <Text style={s.secTitle}>Your Action Plan</Text>
           <Text style={s.secSub}>
-            Ordered by impact. Complete Phase 1 first for the fastest improvement to your visibility score. Your next audit will measure the progress from these changes.
+            Ordered by impact. Focus on the priorities first — complete as many as you can before your next audit, and you will see measurable improvement.
           </Text>
 
-          {/* Phase 1: Immediate */}
+          {/* This Month's Priorities (Phase 1 + 2) */}
           {(() => {
-            const phase1 = actions.filter(a => a.phase === 1);
-            if (phase1.length === 0) return null;
+            const priorities = actions.filter(a => a.phase === 1 || a.phase === 2);
+            if (priorities.length === 0) return null;
+            let actionNum = 0;
             return (
-              <View style={{ marginBottom: 10 }}>
+              <View style={{ marginBottom: 8 }}>
                 {/* Header + first card wrapped together to prevent orphan headers */}
                 <View wrap={false}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomColor: BORDER, borderBottomWidth: 1, paddingBottom: 4, marginBottom: 8 }}>
-                    <Text style={{ fontSize: 8, fontWeight: 700, color: RED, letterSpacing: 1 }}>PHASE 1: START HERE</Text>
-                    <Text style={{ fontSize: 7, color: TEXT_MUTED, marginLeft: 'auto' }}>Highest impact</Text>
+                    <Text style={{ fontSize: 8, fontWeight: 700, color: RED, letterSpacing: 1 }}>THIS MONTH&apos;S PRIORITIES</Text>
+                    <Text style={{ fontSize: 7, color: TEXT_MUTED, marginLeft: 'auto' }}>Complete before your next audit</Text>
                   </View>
-                  <ActionCard action={phase1[0]} index={0} />
+                  <ActionCard action={priorities[0]} index={actionNum++} />
                 </View>
-                {phase1.slice(1).map((action, i) => (
-                  <ActionCard key={`p1-${i + 1}`} action={action} index={i + 1} />
+                {priorities.slice(1).map((action) => (
+                  <ActionCard key={`pri-${actionNum}`} action={action} index={actionNum++} />
                 ))}
               </View>
             );
           })()}
 
-          {/* Phase 2: Important */}
+          {/* Also Important (Phase 3) */}
           {(() => {
-            const phase2 = actions.filter(a => a.phase === 2);
-            if (phase2.length === 0) return null;
+            const alsoImportant = actions.filter(a => a.phase === 3);
+            if (alsoImportant.length === 0) return null;
+            const offset = actions.filter(a => a.phase === 1 || a.phase === 2).length;
             return (
-              <View style={{ marginBottom: 10 }}>
+              <View style={{ marginBottom: 8 }}>
                 <View wrap={false}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomColor: BORDER, borderBottomWidth: 1, paddingBottom: 4, marginBottom: 8 }}>
-                    <Text style={{ fontSize: 8, fontWeight: 700, color: GOLD, letterSpacing: 1 }}>PHASE 2: NEXT STEPS</Text>
-                    <Text style={{ fontSize: 7, color: TEXT_MUTED, marginLeft: 'auto' }}>Important</Text>
+                    <Text style={{ fontSize: 8, fontWeight: 700, color: GOLD, letterSpacing: 1 }}>ALSO IMPORTANT</Text>
+                    <Text style={{ fontSize: 7, color: TEXT_MUTED, marginLeft: 'auto' }}>Start when you can</Text>
                   </View>
-                  <ActionCard action={phase2[0]} index={0} />
+                  <ActionCard action={alsoImportant[0]} index={offset} />
                 </View>
-                {phase2.slice(1).map((action, i) => (
-                  <ActionCard key={`p2-${i + 1}`} action={action} index={i + 1} />
+                {alsoImportant.slice(1).map((action, i) => (
+                  <ActionCard key={`also-${i + 1}`} action={action} index={offset + i + 1} />
                 ))}
               </View>
             );
           })()}
 
-          {/* Phase 3: Ongoing */}
-          {(() => {
-            const phase3 = actions.filter(a => a.phase === 3);
-            if (phase3.length === 0) return null;
-            return (
-              <View style={{ marginBottom: 10 }}>
-                <View wrap={false}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomColor: BORDER, borderBottomWidth: 1, paddingBottom: 4, marginBottom: 8 }}>
-                    <Text style={{ fontSize: 8, fontWeight: 700, color: TEXT_MUTED, letterSpacing: 1 }}>PHASE 3: BUILD OVER TIME</Text>
-                    <Text style={{ fontSize: 7, color: TEXT_MUTED, marginLeft: 'auto' }}>Ongoing</Text>
-                  </View>
-                  <ActionCard action={phase3[0]} index={0} />
-                </View>
-                {phase3.slice(1).map((action, i) => (
-                  <ActionCard key={`p3-${i + 1}`} action={action} index={i + 1} />
-                ))}
-              </View>
-            );
-          })()}
-
-          {/* Retention hook */}
-          <View style={[s.goldBox, { marginTop: 4 }]}>
-            <Text style={{ fontSize: 8, fontWeight: 600, color: TEXT_PRIMARY, marginBottom: 3 }}>What happens next</Text>
+          {/* Next month spoiler */}
+          <View wrap={false} style={[s.goldBox, { marginTop: 4 }]}>
+            <Text style={{ fontSize: 8.5, fontWeight: 600, color: TEXT_PRIMARY, marginBottom: 3 }}>Looking Ahead: Your Next Audit</Text>
             <Text style={s.bodySmall}>
-              Your next AI Visibility Audit will measure the impact of these actions. The businesses that improve fastest are those that complete Phase 1 before their next audit. Focus there first, and you will see measurable progress.
+              Once you have completed the priorities above, your next audit will measure the impact. Based on your current profile, we expect next month&apos;s report to focus on fine-tuning your review strategy, monitoring competitor movements, and identifying new content opportunities. The more actions you complete this month, the more your next report can shift from foundational fixes to growth tactics.
             </Text>
           </View>
+
 
         </View>
         <Footer left="Ketzal LTD (Co. No. 14570156)" />
@@ -709,6 +716,14 @@ function AuditReport({ config, score, insights, reportDate }: ReportData) {
       <Page size="A4" style={s.page}>
         <Header label="About This Audit" businessName={config.businessName} reportDate={reportDate} />
         <View style={s.content}>
+
+          {/* Retention hook — moved here to avoid blank overflow page on action plan */}
+          <View style={[s.goldBox, { marginBottom: 14 }]}>
+            <Text style={{ fontSize: 8.5, fontWeight: 600, color: TEXT_PRIMARY, marginBottom: 3 }}>What happens next</Text>
+            <Text style={s.bodySmall}>
+              Your next AI Visibility Audit will measure the impact of these actions. The businesses that improve fastest are those that complete this month&apos;s priorities before their next audit. Focus there first, and you will see measurable progress.
+            </Text>
+          </View>
 
           {/* Methodology */}
           <Text style={s.secTitle}>How We Test</Text>
@@ -720,61 +735,33 @@ function AuditReport({ config, score, insights, reportDate }: ReportData) {
 
           {/* Disclaimers */}
           <Text style={s.secTitle}>Important Notes</Text>
-          <View style={{ marginBottom: 14 }}>
-            <View style={s.noteRow}>
-              <Text style={s.noteBullet}>›</Text>
-              <View style={{ flex: 1 }}>
-                <Text style={s.noteTitle}>Results vary by user</Text>
-                <Text style={s.noteText}>
-                  Every person gets slightly different AI responses depending on their search history, location, and conversation context. This audit represents a neutral baseline tested without any personalisation.
-                </Text>
-              </View>
-            </View>
-            <View style={s.noteRow}>
-              <Text style={s.noteBullet}>›</Text>
-              <View style={{ flex: 1 }}>
-                <Text style={s.noteTitle}>AI data may not be fully current</Text>
-                <Text style={s.noteText}>
-                  AI platforms draw from training data and web sources that may not reflect very recent changes. This is valuable because it shows you exactly what potential customers are being told right now.
-                </Text>
-              </View>
-            </View>
-            <View style={s.noteRow}>
-              <Text style={s.noteBullet}>›</Text>
-              <View style={{ flex: 1 }}>
-                <Text style={s.noteTitle}>No guaranteed outcomes</Text>
-                <Text style={s.noteText}>
-                  Implementing these recommendations is expected to improve your visibility over time, but specific results cannot be guaranteed.
-                </Text>
-              </View>
-            </View>
-            <View style={s.noteRow}>
-              <Text style={s.noteBullet}>›</Text>
-              <View style={{ flex: 1 }}>
-                <Text style={s.noteTitle}>Point-in-time snapshot</Text>
-                <Text style={s.noteText}>
-                  This captures your visibility at the time of testing. Each subsequent audit tracks your progress so you can measure impact.
-                </Text>
-              </View>
-            </View>
+          <View style={[s.grayBox, { marginBottom: 10 }]}>
+            <Text style={s.bodySmall}>
+              <Text style={{ fontWeight: 600 }}>Results vary by user</Text> — AI responses differ based on search history, location, and context. This audit represents a neutral baseline.{'\n'}
+              <Text style={{ fontWeight: 600 }}>AI data may not be fully current</Text> — AI platforms draw from training data and web sources that may not reflect very recent changes.{'\n'}
+              <Text style={{ fontWeight: 600 }}>No guaranteed outcomes</Text> — these recommendations are expected to improve visibility over time, but specific results cannot be guaranteed.{'\n'}
+              <Text style={{ fontWeight: 600 }}>Point-in-time snapshot</Text> — each subsequent audit tracks your progress so you can measure impact.
+            </Text>
           </View>
 
-          {/* Next Audit */}
-          <View style={s.goldBox}>
-            <Text style={{ fontSize: 8.5, fontWeight: 600, color: TEXT_PRIMARY, marginBottom: 4 }}>Your Next Audit</Text>
+          {/* Dashboard / Next Audit */}
+          <View style={[s.goldBox, { marginBottom: 10 }]}>
+            <Text style={{ fontSize: 8.5, fontWeight: 600, color: TEXT_PRIMARY, marginBottom: 3 }}>Your Online Dashboard</Text>
             <Text style={s.bodySmall}>
-              Your next AI Visibility Audit will be generated automatically on your billing cycle. Continue implementing the actions in your plan and track your improvement month over month. Each audit compares your progress so you can see exactly what is working.
+              Log in at presenzia.ai/dashboard to check and download all your previous reports, see the exact date your next audit will be generated, and track your score over time. Your next audit will be generated automatically on your billing cycle.
             </Text>
+            <Link src="https://presenzia.ai/dashboard">
+              <View style={{ backgroundColor: GOLD, paddingVertical: 4, paddingHorizontal: 14, alignSelf: 'flex-start', marginTop: 5 }}>
+                <Text style={{ fontSize: 7.5, fontWeight: 700, color: DARK }}>Log in to your dashboard</Text>
+              </View>
+            </Link>
           </View>
 
           {/* Upsell */}
-          <View style={{ marginTop: 4, padding: 14, backgroundColor: DARK, borderColor: GOLD, borderWidth: 1 }}>
-            <Text style={{ fontSize: 9, fontWeight: 700, color: GOLD, marginBottom: 5 }}>Don&apos;t want to wait another month?</Text>
-            <Text style={{ fontSize: 8, color: '#CCCCCC', lineHeight: 1.6, marginBottom: 6 }}>
-              Upgrade to Growth and get weekly audits instead of monthly, so you can see the impact of every change in near real time. Plus a live dashboard with trend analysis, competitor monitoring, and priority support.
-            </Text>
-            <Text style={{ fontSize: 7.5, color: '#AAAAAA', lineHeight: 1.5, marginBottom: 8 }}>
-              Still within your first 30 days? You only pay the difference. No double-charging.
+          <View style={{ padding: 12, backgroundColor: DARK, borderColor: GOLD, borderWidth: 1, marginBottom: 10 }}>
+            <Text style={{ fontSize: 9, fontWeight: 700, color: GOLD, marginBottom: 4 }}>Don&apos;t want to wait another month?</Text>
+            <Text style={{ fontSize: 7.5, color: '#CCCCCC', lineHeight: 1.6, marginBottom: 4 }}>
+              Upgrade to Growth for weekly audits, an online dashboard with trend analysis, competitor monitoring, and priority support. Still within your first 30 days? You only pay the difference.
             </Text>
             <Text style={{ fontSize: 7.5, color: GOLD, fontWeight: 600 }}>
               Upgrade at{' '}
@@ -784,23 +771,23 @@ function AuditReport({ config, score, insights, reportDate }: ReportData) {
             </Text>
           </View>
 
-          {/* Rating CTA */}
-          <View style={[s.grayBox, { marginTop: 6 }]}>
-            <Text style={{ fontSize: 8.5, fontWeight: 600, color: TEXT_PRIMARY, marginBottom: 4 }}>Rate this audit</Text>
-            <Text style={[s.bodySmall, { marginBottom: 6 }]}>
+          {/* Rating */}
+          <View style={[s.grayBox, { marginBottom: 10 }]}>
+            <Text style={{ fontSize: 8.5, fontWeight: 600, color: TEXT_PRIMARY, marginBottom: 3 }}>Rate this audit</Text>
+            <Text style={{ fontSize: 7.5, color: TEXT_MUTED, lineHeight: 1.5, marginBottom: 5 }}>
               Your feedback helps us improve. Rate your experience and let us know how we can do better.
             </Text>
-            <Link src="https://presenzia.ai/dashboard/rate">
-              <View style={{ backgroundColor: GOLD, paddingVertical: 6, paddingHorizontal: 14, alignSelf: 'flex-start' }}>
-                <Text style={{ fontSize: 8, fontWeight: 700, color: DARK }}>Leave your rating →</Text>
+            <Link src={`https://presenzia.ai/dashboard/rate${jobId ? `?jobId=${jobId}` : ''}`}>
+              <View style={{ backgroundColor: GOLD, paddingVertical: 5, paddingHorizontal: 14, alignSelf: 'flex-start' }}>
+                <Text style={{ fontSize: 7.5, fontWeight: 700, color: DARK }}>Leave your rating</Text>
               </View>
             </Link>
-            <View style={{ flexDirection: 'row', gap: 16, marginTop: 8 }}>
-              <View style={s.ctaRow}>
-                <Text style={s.ctaLabel}>Questions?</Text>
-                <Link src="mailto:hello@presenzia.ai"><Text style={[s.ctaValue, { color: GOLD, textDecoration: 'underline' }]}>hello@presenzia.ai</Text></Link>
-              </View>
-            </View>
+          </View>
+
+          {/* Contact */}
+          <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 4 }}>
+            <Text style={{ fontSize: 7.5, color: TEXT_MUTED }}>Questions?</Text>
+            <Link src="mailto:hello@presenzia.ai"><Text style={{ fontSize: 7.5, color: GOLD, textDecoration: 'underline' }}>hello@presenzia.ai</Text></Link>
           </View>
 
         </View>
@@ -817,6 +804,7 @@ export async function generatePDFReport(
   score: AuditScore,
   results?: PromptResult[],
   insights?: ReportInsights,
+  jobId?: string,
 ): Promise<Buffer> {
   const reportDate = new Date().toLocaleDateString('en-GB', {
     year: 'numeric',
@@ -824,7 +812,7 @@ export async function generatePDFReport(
     day: 'numeric',
   });
 
-  const doc = <AuditReport config={config} score={score} insights={insights} reportDate={reportDate} />;
+  const doc = <AuditReport config={config} score={score} insights={insights} reportDate={reportDate} jobId={jobId} />;
   const buffer = await renderToBuffer(doc);
   return Buffer.from(buffer);
 }

@@ -26,6 +26,11 @@ export interface CategoryBreakdown {
   examples: PromptTestResult[];  // Top 3-4 examples by weight
 }
 
+export interface ActionStep {
+  text: string;
+  substeps?: string[];      // Optional nested sub-steps for more granular guidance
+}
+
 export interface DetailedAction {
   priority: 'HIGH' | 'MEDIUM';
   phase: 1 | 2 | 3;        // 1=Immediate, 2=Short-term, 3=Ongoing
@@ -33,7 +38,7 @@ export interface DetailedAction {
   title: string;
   why: string;              // One-line explanation
   context?: string;         // Data-driven observation from the audit results
-  steps: string[];          // 3-6 specific, actionable bullet points
+  steps: (string | ActionStep)[];  // 3-6 specific, actionable bullet points (string for backward compat)
 }
 
 export interface ReportInsights {
@@ -134,10 +139,10 @@ function buildCategories(results: PromptResult[]): CategoryBreakdown[] {
       timesFound += t.platforms.filter((p) => p.found).length;
     }
 
-    // Top 3-4 examples sorted by weight (descending)
+    // Top examples sorted by weight (descending) — show up to 5 per category for a fuller page
     const examples = [...tests]
       .sort((a, b) => b.weight - a.weight)
-      .slice(0, 4);
+      .slice(0, 5);
 
     categories.push({
       category: cat,
@@ -181,12 +186,27 @@ function buildActions(
       context: gbpContext || undefined,
       why: 'Google Business Profile is the primary data source for Google AI and indirectly feeds all other platforms.',
       steps: [
-        `Go to business.google.com and claim or verify your listing for "${config.businessName}".`,
-        `Write a detailed business description that naturally includes "${config.businessType} in ${config.location}". Cover your services, specialisms, and history in at least 3-4 sentences.`,
-        `Upload at least 10 high-quality photos: exterior, interior, team, and examples of your work or products.`,
-        `Select every relevant business category. Both primary and secondary categories matter.`,
-        `Ensure your opening hours are accurate and mark any special holiday hours.`,
-        `Respond to every existing review (positive and negative) within 48 hours.`,
+        {
+          text: `Go to business.google.com and claim or verify your listing for "${config.businessName}".`,
+          substeps: [
+            'Sign in with your business Google account (or create one)',
+            'Search for your business name — if it appears, click "Claim this business"',
+            'If not listed, click "Add your business" and follow the verification steps',
+            'Google will send a verification postcard or offer phone/email verification',
+          ],
+        },
+        {
+          text: `Write a detailed business description (750 characters) that naturally includes "${config.businessType} in ${config.location}".`,
+          substeps: [
+            'Cover: what you do, who you serve, your specialisms, and how long you have been operating',
+            `Use natural phrasing like "We are a ${bt} based in ${config.location}, specialising in..."`,
+            'Avoid keyword stuffing — write for humans, AI will pick it up naturally',
+          ],
+        },
+        `Upload at least 10 high-quality photos: exterior signage, interior, your team at work, and examples of your products or services. AI platforms reference image metadata.`,
+        `Select every relevant business category — both primary and secondary categories matter. Your primary should be "${config.businessType}" or the closest match available.`,
+        `Ensure your opening hours are set for all 7 days, including any special holiday hours.`,
+        `Respond to every existing review (positive and negative) within 48 hours. AI systems note active, responsive businesses.`,
       ],
     });
   }
@@ -203,50 +223,74 @@ function buildActions(
       dirContext = `Found in ${overallFoundPct}% of searches (${totalFoundCount}/${totalResultCount}), but gaps remain. Expanding your directory presence would improve consistency across platforms.`;
     }
 
-    const directorySteps: string[] = [
-      'List on Google Business Profile at business.google.com (essential, free listing).',
-      'List on Yell.com at yell.com/free-listing (free listing available).',
-      'List on FreeIndex at freeindex.co.uk (free listing available).',
-      'List on Thomson Local at thomsonlocal.com (free listing available).',
+    const directorySteps: (string | ActionStep)[] = [
+      {
+        text: 'Claim or verify these essential free directory listings:',
+        substeps: [
+          'Google Business Profile -business.google.com (most important — do this first)',
+          'Yell.com -yell.com/free-listing (free, high UK authority)',
+          'FreeIndex -freeindex.co.uk (free, feeds multiple AI sources)',
+          'Thomson Local -thomsonlocal.com (free, long-standing UK directory)',
+        ],
+      },
     ];
 
     // Food / hospitality types
     if (businessTypeMatches(bt, ['food', 'restaurant', 'cafe', 'bakery', 'bar', 'pub'])) {
-      directorySteps.push(
-        'List on TripAdvisor at tripadvisor.com/Owners (essential for hospitality).',
-        'List on Yelp UK at biz.yelp.co.uk/signup (free listing available).',
-        'List on OpenTable at restaurant.opentable.co.uk (if you take reservations).',
-      );
+      directorySteps.push({
+        text: 'Claim these hospitality-specific directories (essential for your industry):',
+        substeps: [
+          'TripAdvisor -tripadvisor.com/Owners (free owner listing, high AI authority for food/hospitality)',
+          'Yelp UK -biz.yelp.co.uk/signup (free listing, frequently cited by ChatGPT)',
+          'OpenTable -restaurant.opentable.co.uk (if you take reservations — boosts discoverability)',
+        ],
+      });
     }
 
     // Trade types
     if (businessTypeMatches(bt, ['trade', 'plumber', 'plumbing', 'electrician', 'electrical', 'builder', 'building', 'roofing', 'roofer', 'carpenter', 'joiner', 'handyman'])) {
-      directorySteps.push(
-        'List on Checkatrade at checkatrade.com/trades/apply (high trust with consumers).',
-        'List on MyBuilder at mybuilder.com (free to create a profile).',
-        'List on Bark at bark.com (connects you directly with local leads).',
-      );
+      directorySteps.push({
+        text: 'Claim these trade-specific directories (high consumer trust in your sector):',
+        substeps: [
+          'Checkatrade -checkatrade.com/trades/apply (top trust signal for UK trades)',
+          'MyBuilder -mybuilder.com (free profile, connects with local jobs)',
+          'Bark -bark.com (direct local leads and visibility)',
+        ],
+      });
     }
 
     // Professional / legal / accounting types
     if (businessTypeMatches(bt, ['professional', 'legal', 'solicitor', 'lawyer', 'accounting', 'accountant', 'consulting', 'consultant', 'agency'])) {
-      directorySteps.push(
-        'List on Clutch at clutch.co (B2B reviews and directory).',
-        'List on G2 at g2.com (business software and services reviews).',
-      );
+      directorySteps.push({
+        text: 'Claim these professional services directories:',
+        substeps: [
+          'Clutch -clutch.co (B2B reviews — cited by AI for professional services)',
+          'G2 -g2.com (if you offer software/SaaS — major AI citation source)',
+        ],
+      });
     }
 
     // Health / beauty / salon types
     if (businessTypeMatches(bt, ['health', 'beauty', 'salon', 'spa', 'hairdresser', 'barber', 'therapist', 'massage', 'aesthetics', 'clinic'])) {
-      directorySteps.push(
-        'List on Treatwell at treatwell.co.uk (UK-leading beauty marketplace).',
-        'List on Booksy at booksy.com (free online booking and visibility).',
-      );
+      directorySteps.push({
+        text: 'Claim these health & beauty directories:',
+        substeps: [
+          'Treatwell -treatwell.co.uk (UK-leading beauty marketplace, frequently cited by AI)',
+          'Booksy -booksy.com (free online booking profile, growing AI authority)',
+        ],
+      });
     }
 
     directorySteps.push(
-      'List on Trustpilot at business.trustpilot.com (free business account, high AI authority).',
-      'Ensure your business name, address, and phone number (NAP) are identical across every listing.',
+      'Claim your free Trustpilot business account at business.trustpilot.com — Trustpilot is one of the highest-authority review sources for AI platforms.',
+      {
+        text: 'Ensure your NAP (Name, Address, Phone) is identical across every single listing.',
+        substeps: [
+          'Use the exact same business name spelling, including "Ltd" or "Limited"',
+          'Use the same phone number format everywhere (e.g. 0161 xxx xxxx, not +44 161)',
+          'Use the same address format — AI cross-references these to verify your business',
+        ],
+      },
     );
 
     actions.push({
@@ -263,7 +307,8 @@ function buildActions(
   // ── Action: Close the Gap on [Top Competitor] ──
   if (topCompetitors.length > 0 && overall < 70) {
     const topComp = topCompetitors[0];
-    const compContext = `${topComp.name} was cited ${topComp.count} time${topComp.count !== 1 ? 's' : ''} in searches where you were absent. When customers ask AI for a ${bt} in ${config.location}, they are currently being directed to ${topComp.name} instead of you.`;
+    const runner = topCompetitors.length > 1 ? topCompetitors[1] : null;
+    const compContext = `${topComp.name} was cited ${topComp.count} time${topComp.count !== 1 ? 's' : ''} in searches where you were absent.${runner ? ` ${runner.name} appeared ${runner.count} time${runner.count !== 1 ? 's' : ''}.` : ''} When customers ask AI for a ${bt} in ${config.location}, they are currently being directed to your competitors instead of you.`;
     actions.push({
       priority: 'HIGH',
       phase: 1,
@@ -272,11 +317,25 @@ function buildActions(
       context: compContext,
       why: `Understanding what makes ${topComp.name} visible to AI will help you replicate and surpass their strategy.`,
       steps: [
-        `Search for "${topComp.name}" on Google and note which directories, review sites, and publications they appear on.`,
-        `Check their review volume on Google, Trustpilot, and industry-specific sites. Aim to match or exceed their total review count.`,
-        `Identify which directories they are listed on that you are not, and create profiles on those platforms.`,
-        `Analyse their website content: look for FAQ pages, service pages, and structured data that AI platforms may be citing.`,
-        `Monitor their presence over time. Your next Presenzia audit will show whether the gap is closing.`,
+        {
+          text: `Research ${topComp.name}'s online presence to understand why AI recommends them:`,
+          substeps: [
+            `Google "${topComp.name} ${config.location}" and note every directory, review site, and article they appear on`,
+            `Check their Google Business Profile: note their review count, photo count, and how detailed their description is`,
+            `Visit their website: check for FAQ pages, blog content, and structured data (view source -search for "schema.org")`,
+            `Check Trustpilot, Yelp, and any industry-specific review sites for their presence`,
+          ],
+        },
+        {
+          text: `Match their directory presence — create profiles on every platform where they appear and you don't.`,
+          substeps: [
+            'Focus first on the platforms cited most often by AI: Google, Yelp, TripAdvisor, Trustpilot',
+            'Use the exact same NAP format across all new listings for consistency',
+          ],
+        },
+        `Aim to match or exceed their Google review count. If ${topComp.name} has 50+ reviews and you have fewer than 20, this is likely a primary reason for the gap.`,
+        `Check if ${topComp.name} has been featured in local press or publications — if so, pitch your own story to those same outlets (see "Get Featured in Local Publications" below).`,
+        `Your next Presenzia audit will show whether the gap is closing. Track your progress over time.`,
       ],
     });
   }
@@ -295,10 +354,23 @@ function buildActions(
       context: revContext,
       why: 'Specific, location-rich reviews carry significantly more weight with AI than generic star ratings.',
       steps: [
-        `Ask satisfied customers to mention your specific services and "${config.location}" in their reviews, e.g. "the best ${bt} in ${config.location}".`,
-        'Send a text or email with a direct review link immediately after a positive interaction, while the experience is fresh.',
+        {
+          text: `Ask satisfied customers to write detailed reviews that mention your specific services and "${config.location}".`,
+          substeps: [
+            `Suggest phrasing like: "the best ${bt} in ${config.location}" or "highly recommend for [specific service] in ${config.location}"`,
+            'Reviews that mention specific services and your location carry 3-5x more weight with AI than generic "great service" reviews',
+          ],
+        },
+        {
+          text: 'Send a direct Google review link within 1 hour of a positive interaction.',
+          substeps: [
+            'Go to your Google Business Profile -Share review form -copy the short link',
+            'Send this link via text or email immediately after a positive customer interaction',
+            'The shorter the delay, the more likely the customer is to leave a review',
+          ],
+        },
         'Set a target of 5-10 new genuine reviews per month across Google, Trustpilot, and relevant directories.',
-        'Respond to every review, both positive and negative, within 24 hours. AI systems note active responsiveness.',
+        'Respond to every review (positive and negative) within 24 hours. AI systems note active, responsive businesses.',
         'Never buy or incentivise fake reviews. AI platforms are increasingly able to detect and penalise this.',
       ],
     });
@@ -317,17 +389,40 @@ function buildActions(
     context: contentContext,
     why: 'AI platforms cite websites that provide clear, factual, well-structured information.',
     steps: [
-      `Create a dedicated About page that clearly states who you are, what you do, and your service area in ${config.location}.`,
-      `Add a FAQ page answering common queries like "best ${bt} in ${config.location}" and "how much does a ${bt} cost in ${config.location}".`,
-      'Add Schema.org LocalBusiness structured data markup to your homepage. This helps all AI platforms parse your information correctly.',
-      'Ensure your address, phone number, and email are in plain text (not embedded in images) on every page.',
-      `Publish regular blog content demonstrating your expertise: guides, case studies, and tips related to ${config.businessType}.`,
+      {
+        text: `Create or update your About page to clearly state who you are, what you do, and your service area in ${config.location}.`,
+        substeps: [
+          `Include a clear opening line: "${config.businessName} is a ${bt} based in ${config.location}..."`,
+          'Cover: your history, your team, your specialisms, and the area you serve',
+          'Make sure your address and phone number appear as plain text (not in images)',
+        ],
+      },
+      {
+        text: `Add a FAQ page answering the exact questions customers ask AI.`,
+        substeps: [
+          `"What is the best ${bt} in ${config.location}?" — answer with what makes you stand out`,
+          `"How much does a ${bt} cost in ${config.location}?" — provide price ranges or starting prices`,
+          `"Which ${bt} has the best reviews in ${config.location}?" — mention your review count and ratings`,
+          'Each FAQ answer should be 2-4 sentences of factual, helpful content',
+        ],
+      },
+      {
+        text: 'Add Schema.org LocalBusiness structured data (JSON-LD) to your homepage.',
+        substeps: [
+          'This is a small code snippet your web developer adds to the page <head>',
+          'Include: name, address, phone, opening hours, price range, geo coordinates',
+          'Free generator: technicalseo.com/tools/schema-markup-generator',
+          'Test with: search.google.com/test/rich-results',
+        ],
+      },
+      `Ensure your address, phone, and email appear as selectable plain text on every page — not embedded in images or PDFs.`,
+      `Publish at least 1-2 blog posts per month demonstrating expertise: guides, case studies, and tips related to ${config.businessType} in ${config.location}.`,
     ],
   });
 
   // ── Action: Optimise for [Weakest Platform] ──
   const weakPlatforms = platforms
-    .filter((p) => p.score < 35)
+    .filter((p) => p.score <= 40)
     .sort((a, b) => a.score - b.score);
 
   if (weakPlatforms.length > 0) {
@@ -343,6 +438,22 @@ function buildActions(
       why: `Improving your ${weakest.platform} presence will increase your overall visibility and reach customers who prefer this platform.`,
       steps: platformSteps,
     });
+
+    // Add second weak platform if available
+    if (weakPlatforms.length > 1) {
+      const second = weakPlatforms[1];
+      const secondSteps = getPlatformSpecificSteps(second, config);
+      const secondContext = `${second.platform} found you in ${second.promptsMentioned} of ${second.promptsTested} searches (${second.score}/100).`;
+      actions.push({
+        priority: 'MEDIUM',
+        phase: 3,
+        timeline: 'Ongoing',
+        title: `Improve ${second.platform} Visibility`,
+        context: secondContext,
+        why: `${second.platform} is another platform where your visibility is below average. Targeted improvements here will lift your overall score.`,
+        steps: secondSteps,
+      });
+    }
   }
 
   // ── Action: Get Featured in Local Publications ──
@@ -360,38 +471,52 @@ function buildActions(
     });
   }
 
-  return actions.slice(0, 6);
+  return actions.slice(0, 8);
 }
 
 function getPlatformSpecificSteps(
   platform: PlatformScore,
   config: AuditConfig,
-): string[] {
+): (string | ActionStep)[] {
   const name = platform.platform;
 
   if (name === 'Perplexity') {
     return [
-      'Verify your website in Bing Webmaster Tools at bing.com/webmasters. Perplexity uses Bing\'s index to find businesses.',
+      {
+        text: 'Submit your website to Bing Webmaster Tools at bing.com/webmasters — Perplexity primarily uses Bing\'s index.',
+        substeps: [
+          'Create a free account, add your site URL, and verify ownership',
+          'Submit your sitemap.xml for faster indexing',
+          'Check for any crawl errors and fix them',
+        ],
+      },
       'Ensure your website loads in under 2 seconds. Perplexity favours fast, accessible sites.',
       'Add Schema.org LocalBusiness structured data markup to your homepage.',
       `Make sure your site has a clear, crawlable page for "${config.businessType} in ${config.location}" with plain-text contact details.`,
-      'Check that your robots.txt does not block Bing or Perplexity crawlers.',
+      'Check your robots.txt file — make sure it does not block PerplexityBot or Bingbot.',
     ];
   }
 
   if (name === 'ChatGPT') {
     return [
-      'Focus on building authoritative web content. ChatGPT draws from its training data and web browsing.',
-      'Aim for mentions in Wikipedia, local press, and industry publications. These carry the most weight.',
-      'Build high-authority backlinks from established local sites, chambers of commerce, and industry bodies.',
-      `Ensure your business has detailed, factual entries on well-indexed directories such as Yell.com, FreeIndex, and Thomson Local.`,
-      'Publish long-form content on your website that positions you as an expert in your field.',
+      'Focus on building authoritative web content. ChatGPT draws from its training data and live web browsing.',
+      {
+        text: 'Aim for mentions in high-authority sources that ChatGPT frequently cites:',
+        substeps: [
+          'Local press (Manchester Evening News, TimeOut, etc.) — pitch a story about your business',
+          'Industry publications and trade bodies relevant to your sector',
+          'Wikipedia (if notable enough) — or ensure existing Wikipedia references to your area mention you',
+        ],
+      },
+      `Build high-authority backlinks from chambers of commerce, local business associations, and industry directories.`,
+      `Ensure detailed, factual entries on well-indexed directories: Yell.com, FreeIndex, Thomson Local, Trustpilot.`,
+      `Publish long-form expert content (1,000+ words) on your website — guides, case studies, and thought leadership.`,
     ];
   }
 
   if (name === 'Claude') {
     return [
-      'Ensure your business is present on established, well-known directories. Claude draws from authoritative web sources.',
+      'Ensure your business is present on established, well-known directories — Claude prioritises authoritative web sources.',
       'Maintain consistent NAP (Name, Address, Phone) data across every platform and listing.',
       'Build a comprehensive website with clear service descriptions, an About page, and structured data.',
       `Add detailed content covering your services in ${config.location}. Specificity helps Claude identify relevant businesses.`,
@@ -401,10 +526,17 @@ function getPlatformSpecificSteps(
 
   if (name === 'Google AI') {
     return [
-      'Complete your Google Business Profile. This is the primary data source for Google AI responses.',
-      'Add Google-specific structured data (Schema.org) to your website, including LocalBusiness, Service, and Review markup.',
-      'Ensure your website appears in Google Search Console with no indexing errors.',
-      'Build Google reviews. Volume and recency both matter for Google AI recommendations.',
+      {
+        text: 'Complete your Google Business Profile — this is the #1 data source for Google AI responses.',
+        substeps: [
+          'Verify ownership at business.google.com',
+          'Fill out every single field: description, categories, services, attributes',
+          'Add 10+ photos and update them monthly',
+        ],
+      },
+      'Add Schema.org structured data to your website: LocalBusiness, Service, and Review markup.',
+      'Verify your site in Google Search Console (search.google.com/search-console) — fix any indexing errors.',
+      'Build Google review volume. Both the number of reviews and how recent they are matter for Google AI.',
       `Optimise your site content for queries like "best ${config.businessType.toLowerCase()} in ${config.location}".`,
     ];
   }
@@ -418,70 +550,57 @@ function getPlatformSpecificSteps(
   ];
 }
 
-function getLocalPublicationSteps(config: AuditConfig): string[] {
+function getLocalPublicationSteps(config: AuditConfig): (string | ActionStep)[] {
   const location = config.location.toLowerCase();
-  const steps: string[] = [];
+  const steps: (string | ActionStep)[] = [];
 
   // City-specific publication suggestions
-  if (location.includes('manchester')) {
-    steps.push(
-      'Pitch your story to Manchester Evening News, Manchester Confidential, and I Love MCR . These are high-authority local sources.',
-    );
-  } else if (location.includes('london')) {
-    steps.push(
-      'Pitch your story to TimeOut London, Evening Standard, and Londonist . These are high-authority local sources.',
-    );
-  } else if (location.includes('birmingham')) {
-    steps.push(
-      'Pitch your story to Birmingham Mail and I Choose Birmingham . These are high-authority local sources.',
-    );
-  } else if (location.includes('leeds')) {
-    steps.push(
-      'Pitch your story to Leeds Live and Yorkshire Evening Post . These are high-authority local sources.',
-    );
-  } else if (location.includes('liverpool')) {
-    steps.push(
-      'Pitch your story to Liverpool Echo and The Guide Liverpool . These are high-authority local sources.',
-    );
-  } else if (location.includes('bristol')) {
-    steps.push(
-      'Pitch your story to Bristol Post and Bristol24/7 . These are high-authority local sources.',
-    );
-  } else if (location.includes('edinburgh')) {
-    steps.push(
-      'Pitch your story to Edinburgh Evening News and The Skinny . These are high-authority local sources.',
-    );
-  } else if (location.includes('glasgow')) {
-    steps.push(
-      'Pitch your story to Glasgow Live and The Herald . These are high-authority local sources.',
-    );
-  } else if (location.includes('cardiff')) {
-    steps.push(
-      'Pitch your story to Wales Online and Cardiff Times . These are high-authority local sources.',
-    );
-  } else if (location.includes('newcastle')) {
-    steps.push(
-      'Pitch your story to Chronicle Live and Newcastle Magazine . These are high-authority local sources.',
-    );
-  } else if (location.includes('sheffield')) {
-    steps.push(
-      'Pitch your story to The Star Sheffield and Sheffield Telegraph . These are high-authority local sources.',
-    );
-  } else if (location.includes('nottingham')) {
-    steps.push(
-      'Pitch your story to Nottingham Post and LeftLion . These are high-authority local sources.',
-    );
+  const publicationMap: Record<string, string[]> = {
+    manchester: ['Manchester Evening News (manchestereveningnews.co.uk)', 'Manchester Confidential (confidentials.com)', 'I Love MCR (ilovemanchester.com)'],
+    london: ['TimeOut London (timeout.com/london)', 'Evening Standard (standard.co.uk)', 'Londonist (londonist.com)'],
+    birmingham: ['Birmingham Mail (birminghammail.co.uk)', 'I Choose Birmingham (ichoosebirmingham.com)'],
+    leeds: ['Leeds Live (leeds-live.co.uk)', 'Yorkshire Evening Post (yorkshireeveningpost.co.uk)'],
+    liverpool: ['Liverpool Echo (liverpoolecho.co.uk)', 'The Guide Liverpool (theguideliverpool.com)'],
+    bristol: ['Bristol Post (bristolpost.co.uk)', 'Bristol24/7 (bristol247.com)'],
+    edinburgh: ['Edinburgh Evening News (edinburghnews.scotsman.com)', 'The Skinny (theskinny.co.uk)'],
+    glasgow: ['Glasgow Live (glasgowlive.co.uk)', 'The Herald (heraldscotland.com)'],
+    cardiff: ['Wales Online (walesonline.co.uk)', 'Cardiff Times (cardifftimes.co.uk)'],
+    newcastle: ['Chronicle Live (chroniclelive.co.uk)', 'Newcastle Magazine (newcastlemagazine.co.uk)'],
+    sheffield: ['The Star Sheffield (thestar.co.uk)', 'Sheffield Telegraph (sheffieldtelegraph.co.uk)'],
+    nottingham: ['Nottingham Post (nottinghampost.com)', 'LeftLion (leftlion.co.uk)'],
+  };
+
+  const matchedCity = Object.keys(publicationMap).find(city => location.includes(city));
+  if (matchedCity) {
+    steps.push({
+      text: `Pitch your story to these high-authority local publications in ${config.location}:`,
+      substeps: [
+        ...publicationMap[matchedCity].map(pub => `${pub} — email their editorial/features desk`),
+        'Look for a "Contact us" or "Submit a story" page on each site',
+      ],
+    });
   } else {
-    steps.push(
-      `Contact local publications and news outlets in ${config.location} . Local press coverage is highly trusted by AI platforms.`,
-    );
+    steps.push({
+      text: `Contact local publications and news outlets in ${config.location} — local press coverage is highly trusted by AI.`,
+      substeps: [
+        'Search Google for "[your city] news" and "[your city] magazine" to find local outlets',
+        'Look for their editorial contact or "Submit a story" page',
+      ],
+    });
   }
 
   steps.push(
-    `Pitch a story angle: "How ${config.businessName} is [serving/helping/transforming] ${config.location}" . Journalists want a narrative, not an advert.`,
-    `Offer to be quoted as a local expert source on topics related to ${config.businessType} . Reporters frequently need expert commentary.`,
+    {
+      text: `Pitch a story angle — journalists want a narrative, not an advert.`,
+      substeps: [
+        `Try: "How ${config.businessName} is [serving/helping/transforming] ${config.location}"`,
+        `Or: "The rise of [your niche] in ${config.location} — a local business perspective"`,
+        'Keep your email pitch under 150 words with a clear subject line',
+      ],
+    },
+    `Offer to be quoted as a local expert on topics related to ${config.businessType}. Reporters frequently need expert commentary.`,
     'Create a press/media page on your website with your story, high-resolution photos, and a press contact email.',
-    'Share any coverage on your Google Business Profile and social channels to amplify the signal.',
+    'Share any coverage on your Google Business Profile, social channels, and directory listings to amplify the signal.',
   );
 
   return steps;

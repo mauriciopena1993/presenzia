@@ -433,7 +433,7 @@ async function main() {
   const insights = generateInsights(config, score, results);
   console.log(`  ${insights.categories.length} categories, ${insights.actions.length} actions generated`);
 
-  const buffer = await generatePDFReport(config, score, results, insights);
+  const buffer = await generatePDFReport(config, score, results, insights, 'sample-report');
 
   const outputPath = path.join(process.cwd(), 'sample-report.pdf');
   fs.writeFileSync(outputPath, buffer);
