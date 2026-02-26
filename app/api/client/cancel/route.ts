@@ -55,9 +55,15 @@ export async function POST(req: NextRequest) {
         max_redemptions: 1,
       });
 
-      // Apply the coupon to the subscription and undo any pending cancellation
+      // Retrieve current subscription to preserve existing discounts
+      const subscription = await stripe.subscriptions.retrieve(client.stripe_subscription_id);
+      const existingDiscounts = (subscription.discounts || [])
+        .map((d) => (typeof d === 'string' ? null : d.id ? { discount: d.id } : null))
+        .filter((d): d is { discount: string } => d !== null);
+
+      // Apply the retention coupon alongside any existing discounts
       await stripe.subscriptions.update(client.stripe_subscription_id, {
-        discounts: [{ coupon: coupon.id }],
+        discounts: [...existingDiscounts, { coupon: coupon.id }],
         cancel_at_period_end: false,
       });
 
