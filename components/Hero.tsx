@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function Hero() {
   return (
@@ -16,36 +15,6 @@ export default function Hero() {
       overflow: 'hidden',
       textAlign: 'center',
     }}>
-      {/* Ambient background photo */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        pointerEvents: 'none',
-        opacity: 0.07,
-      }}>
-        <Image
-          src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=1080&fit=crop&q=60"
-          alt=""
-          fill
-          style={{ objectFit: 'cover', filter: 'grayscale(30%)' }}
-          sizes="100vw"
-          priority
-        />
-      </div>
-
-
-      {/* Radial glow */}
-      <div style={{
-        position: 'absolute',
-        top: '30%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '800px',
-        height: '600px',
-        background: 'radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%)',
-        pointerEvents: 'none',
-      }} />
-
       {/* Badge */}
       <div style={{
         display: 'inline-flex',
@@ -150,11 +119,8 @@ export default function Hero() {
         flexWrap: 'wrap',
         justifyContent: 'center',
         padding: '1.75rem 2.5rem',
-        borderTop: '1px solid #222222',
-        borderBottom: '1px solid #222222',
         width: '100%',
         maxWidth: '720px',
-        background: 'rgba(255,255,255,0.01)',
       }}>
         {[
           { stat: '94%', label: 'of UK SMEs not found on ChatGPT' },

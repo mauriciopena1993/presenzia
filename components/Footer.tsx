@@ -5,9 +5,8 @@ import Link from 'next/link';
 export default function Footer() {
   return (
     <footer style={{
-      borderTop: '1px solid #222222',
       padding: '4rem 2rem 2rem',
-      background: 'rgba(8,8,8,0.92)',
+      background: 'rgba(8,8,8,0.88)',
     }}>
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
         <div style={{
@@ -94,7 +93,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div style={{
           paddingTop: '2rem',
-          borderTop: '1px solid #1A1A1A',
+          borderTop: '1px solid rgba(255,255,255,0.04)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',

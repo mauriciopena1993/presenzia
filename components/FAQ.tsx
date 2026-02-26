@@ -75,8 +75,8 @@ export default function FAQ() {
           <div
             key={i}
             style={{
-              borderTop: '1px solid #1a1a1a',
-              borderBottom: i === faqs.length - 1 ? '1px solid #1a1a1a' : 'none',
+              borderTop: '1px solid rgba(255,255,255,0.04)',
+              borderBottom: i === faqs.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
             }}
           >
             <button

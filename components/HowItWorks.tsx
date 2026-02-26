@@ -66,18 +66,17 @@ export default function HowItWorks() {
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-        gap: '1px',
-        background: 'rgba(34,34,34,0.9)',
+        gap: '0',
       }}>
         {steps.map((step, i) => (
           <div key={step.number} style={{
             padding: '2.5rem',
-            background: 'rgba(13,13,13,0.9)',
+            background: 'rgba(13,13,13,0.88)',
             position: 'relative',
             transition: 'background 0.3s',
           }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(17,17,17,0.92)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(13,13,13,0.9)'; }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(17,17,17,0.9)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(13,13,13,0.88)'; }}
           >
             <step.icon size={24} strokeWidth={1.5} style={{ color: '#C9A84C', marginBottom: '1rem', display: 'block' }} />
             <div style={{

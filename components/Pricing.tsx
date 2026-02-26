@@ -16,7 +16,7 @@ const plans = [
       'Visibility score & grade',
       'Competitor analysis',
       'Personalised action plan',
-      'Delivered by email (PDF)',
+      'Delivered by email (report)',
     ],
     cta: 'Get started',
     highlighted: false,
@@ -29,7 +29,7 @@ const plans = [
     description: 'Your monthly audit plus a live dashboard and AI tools to actively improve your visibility.',
     features: [
       'Everything in Starter',
-      'Live client dashboard',
+      'Online client dashboard',
       'Weekly dashboard updates',
       'AI audit assistant',
       'Competitor deep-dive',
@@ -73,7 +73,7 @@ const comparisonRows: ComparisonRow[] = [
   { feature: 'Monthly AI visibility audit (4 platforms)',  starter: true,  growth: true,     premium: true },
   { feature: 'Visibility score, grade & action plan',      starter: true,  growth: true,     premium: true },
   { feature: 'Competitor analysis',                        starter: 'Basic', growth: 'Deep-dive', premium: 'Deep-dive' },
-  { feature: 'Delivery format',                            starter: 'PDF',  growth: 'PDF + Dashboard', premium: 'PDF + Dashboard' },
+  { feature: 'Delivery format',                            starter: 'Report',  growth: 'Report + Online Dashboard', premium: 'Report + Online Dashboard' },
   { feature: 'Dashboard update frequency',                 starter: '—',   growth: 'Weekly', premium: 'Daily' },
   { feature: 'AI audit assistant',                         starter: false, growth: true,     premium: true },
   { feature: 'Priority support',                           starter: false, growth: true,     premium: true },
@@ -135,34 +135,18 @@ export default function Pricing() {
         @media (max-width: 860px) {
           .pricing-grid { grid-template-columns: 1fr !important; }
         }
-        .comparison-table-wrapper {
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-        }
-        .comparison-table-wrapper::-webkit-scrollbar {
-          height: 6px;
-        }
-        .comparison-table-wrapper::-webkit-scrollbar-track {
-          background: #111111;
-        }
-        .comparison-table-wrapper::-webkit-scrollbar-thumb {
-          background: #333333;
-          border-radius: 3px;
-        }
       `}</style>
 
       {/* ── Plans grid ── */}
       <div className="pricing-grid" style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '1px',
-        background: 'rgba(34,34,34,0.9)',
-        border: '1px solid rgba(34,34,34,0.9)',
+        gap: '0',
       }}>
         {plans.map((plan) => (
           <div key={plan.name} style={{
             padding: 'clamp(1.5rem, 4vw, 2.5rem)',
-            background: plan.highlighted ? 'rgba(15,15,15,0.92)' : 'rgba(10,10,10,0.9)',
+            background: plan.highlighted ? 'rgba(15,15,15,0.88)' : 'rgba(10,10,10,0.88)',
             position: 'relative',
             borderTop: plan.highlighted ? '2px solid #C9A84C' : '2px solid transparent',
           }}>
@@ -303,84 +287,58 @@ export default function Pricing() {
         </button>
       </div>
 
-      {/* ── Comparison table (collapsible) ── */}
+      {/* ── Comparison (collapsible, mobile-friendly) ── */}
       <div style={{
-        maxHeight: showComparison ? '800px' : '0',
+        maxHeight: showComparison ? '2000px' : '0',
         overflow: 'hidden',
         transition: 'max-height 0.5s ease, opacity 0.4s ease',
         opacity: showComparison ? 1 : 0,
         marginTop: showComparison ? '2rem' : '0',
       }}>
-        <div className="comparison-table-wrapper">
-          <table style={{
-            width: '100%',
-            minWidth: '580px',
-            borderCollapse: 'collapse',
+        {/* Column headers */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr repeat(3, 60px)',
+          gap: '0',
+          padding: '0.75rem 1rem',
+          fontFamily: 'var(--font-inter, Inter, sans-serif)',
+        }}>
+          <div style={{ fontSize: '0.65rem', color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 500 }}>Feature</div>
+          {(['Starter', 'Growth', 'Premium'] as const).map((name) => (
+            <div key={name} style={{
+              textAlign: 'center',
+              fontSize: '0.6rem',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              fontWeight: 600,
+              color: name === 'Growth' ? '#C9A84C' : '#666666',
+            }}>
+              {name}
+            </div>
+          ))}
+        </div>
+
+        {/* Rows */}
+        {comparisonRows.map((row, idx) => (
+          <div key={row.feature} style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr repeat(3, 60px)',
+            gap: '0',
+            padding: '0.6rem 1rem',
+            borderTop: idx === 0 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+            borderBottom: '1px solid rgba(255,255,255,0.04)',
             fontFamily: 'var(--font-inter, Inter, sans-serif)',
           }}>
-            <thead>
-              <tr>
-                <th style={{
-                  textAlign: 'left',
-                  padding: '0.85rem 1.25rem',
-                  color: '#666666',
-                  fontSize: '0.7rem',
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  fontWeight: 500,
-                  borderBottom: '1px solid #222222',
-                  width: '40%',
-                }}>
-                  Feature
-                </th>
-                {(['Starter', 'Growth', 'Premium'] as const).map((name) => (
-                  <th key={name} style={{
-                    textAlign: 'center',
-                    padding: '0.85rem 1rem',
-                    borderBottom: '1px solid #222222',
-                    width: '20%',
-                    ...(name === 'Growth' ? { background: 'rgba(201, 168, 76, 0.04)' } : {}),
-                  }}>
-                    <div style={{
-                      fontSize: '0.7rem',
-                      letterSpacing: '0.12em',
-                      textTransform: 'uppercase',
-                      fontWeight: 500,
-                      color: name === 'Growth' ? '#C9A84C' : '#666666',
-                    }}>
-                      {name}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-
-            <tbody>
-              {comparisonRows.map((row) => (
-                <tr key={row.feature}>
-                  <td style={{
-                    padding: '0.7rem 1.25rem',
-                    fontSize: '0.82rem',
-                    color: '#AAAAAA',
-                    borderBottom: '1px solid #1a1a1a',
-                  }}>
-                    {row.feature}
-                  </td>
-                  {([row.starter, row.growth, row.premium] as CellValue[]).map((val, i) => (
-                    <td key={i} style={{
-                      textAlign: 'center',
-                      padding: '0.7rem 1rem',
-                      borderBottom: '1px solid #1a1a1a',
-                      ...(i === 1 ? { background: 'rgba(201, 168, 76, 0.04)' } : {}),
-                    }}>
-                      <CellContent value={val} />
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            <div style={{ fontSize: '0.78rem', color: '#AAAAAA', paddingRight: '0.5rem' }}>
+              {row.feature}
+            </div>
+            {([row.starter, row.growth, row.premium] as CellValue[]).map((val, i) => (
+              <div key={i} style={{ textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <CellContent value={val} />
+              </div>
+            ))}
+          </div>
+        ))}
       </div>
     </section>
   );
