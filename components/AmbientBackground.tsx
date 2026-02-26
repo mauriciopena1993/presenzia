@@ -160,7 +160,7 @@ export default function AmbientBackground() {
           const progress = maxScroll > 0 ? Math.min(scrollY / maxScroll, 1) : 0;
 
           // Parallax: shift the whole map as you scroll
-          container.style.setProperty('--map-y', `${scrollY * -0.12}px`);
+          container.style.setProperty('--map-y', `${scrollY * -0.08}px`);
           // Scroll progress for brightness
           container.style.setProperty('--scroll-progress', `${progress}`);
 
@@ -182,36 +182,36 @@ export default function AmbientBackground() {
     <>
       <style>{`
         @keyframes city-pulse {
-          0%, 100% { opacity: var(--city-base, 0.5); transform: scale(1); }
-          50% { opacity: calc(var(--city-base, 0.5) + 0.15); transform: scale(1.25); }
+          0%, 100% { opacity: var(--city-base, 0.12); transform: scale(1); }
+          50% { opacity: calc(var(--city-base, 0.12) + 0.05); transform: scale(1.08); }
         }
         @keyframes ambient-pulse {
-          0%, 100% { opacity: 0.25; transform: scale(1); }
-          50% { opacity: 0.4; transform: scale(1.2); }
+          0%, 100% { opacity: 0.06; transform: scale(1); }
+          50% { opacity: 0.1; transform: scale(1.05); }
         }
         @keyframes connection-flow {
           0% { stroke-dashoffset: 20; opacity: 0; }
-          20% { opacity: 0.3; }
-          50% { opacity: 0.12; }
-          80% { opacity: 0.3; }
+          20% { opacity: 0.06; }
+          50% { opacity: 0.03; }
+          80% { opacity: 0.06; }
           100% { stroke-dashoffset: -20; opacity: 0; }
         }
         @keyframes ambient-flow {
           0% { stroke-dashoffset: 16; opacity: 0; }
-          25% { opacity: 0.18; }
-          50% { opacity: 0.06; }
-          75% { opacity: 0.18; }
+          25% { opacity: 0.04; }
+          50% { opacity: 0.02; }
+          75% { opacity: 0.04; }
           100% { stroke-dashoffset: -16; opacity: 0; }
         }
         @keyframes data-packet {
           0% { offset-distance: 0%; opacity: 0; }
-          15% { opacity: 0.6; }
-          85% { opacity: 0.6; }
+          15% { opacity: 0.12; }
+          85% { opacity: 0.12; }
           100% { offset-distance: 100%; opacity: 0; }
         }
         @keyframes glow-breathe {
-          0%, 100% { opacity: 0.06; }
-          50% { opacity: 0.12; }
+          0%, 100% { opacity: 0.02; }
+          50% { opacity: 0.05; }
         }
       `}</style>
 
@@ -261,7 +261,7 @@ export default function AmbientBackground() {
 
             {/* Radial gradient for London (capital glow) */}
             <radialGradient id="capital-glow">
-              <stop offset="0%" stopColor="rgba(201,168,76,0.7)" />
+              <stop offset="0%" stopColor="rgba(201,168,76,0.08)" />
               <stop offset="100%" stopColor="rgba(201,168,76,0)" />
             </radialGradient>
           </defs>
@@ -270,34 +270,34 @@ export default function AmbientBackground() {
           <path
             d={UK_PATH}
             fill="none"
-            stroke="rgba(201,168,76,0.5)"
-            strokeWidth="0.6"
+            stroke="rgba(201,168,76,0.07)"
+            strokeWidth="0.4"
             filter="url(#map-glow)"
           />
           <path
             d={NI_PATH}
             fill="none"
-            stroke="rgba(201,168,76,0.4)"
-            strokeWidth="0.5"
+            stroke="rgba(201,168,76,0.05)"
+            strokeWidth="0.3"
             filter="url(#map-glow)"
           />
 
           {/* Filled silhouette */}
           <path
             d={UK_PATH}
-            fill="rgba(201,168,76,0.12)"
+            fill="rgba(201,168,76,0.025)"
             stroke="none"
           >
             <animate
               attributeName="fill-opacity"
-              values="0.12;0.18;0.12"
-              dur="14s"
+              values="0.025;0.04;0.025"
+              dur="20s"
               repeatCount="indefinite"
             />
           </path>
           <path
             d={NI_PATH}
-            fill="rgba(201,168,76,0.08)"
+            fill="rgba(201,168,76,0.015)"
             stroke="none"
           />
 
@@ -313,11 +313,11 @@ export default function AmbientBackground() {
                 key={`amb-conn-${i}`}
                 x1={x1} y1={y1}
                 x2={x2} y2={y2}
-                stroke="rgba(201,168,76,0.35)"
-                strokeWidth="0.15"
+                stroke="rgba(201,168,76,0.05)"
+                strokeWidth="0.1"
                 strokeDasharray="3 5"
                 style={{
-                  animation: `ambient-flow ${14 + (i % 8)}s ease-in-out ${delay}s infinite`,
+                  animation: `ambient-flow ${20 + (i % 8)}s ease-in-out ${delay}s infinite`,
                 }}
               />
             );
@@ -332,11 +332,11 @@ export default function AmbientBackground() {
                 key={`conn-${i}`}
                 x1={x1} y1={y1}
                 x2={x2} y2={y2}
-                stroke="rgba(201,168,76,0.6)"
-                strokeWidth="0.2"
+                stroke="rgba(201,168,76,0.08)"
+                strokeWidth="0.15"
                 strokeDasharray="2 3"
                 style={{
-                  animation: `connection-flow ${10 + (i % 6)}s ease-in-out ${delay}s infinite`,
+                  animation: `connection-flow ${16 + (i % 6)}s ease-in-out ${delay}s infinite`,
                 }}
               />
             );
@@ -347,50 +347,37 @@ export default function AmbientBackground() {
             <circle
               key={`amb-${i}`}
               cx={x} cy={y}
-              r={size * 0.4}
-              fill="rgba(201,168,76,0.8)"
+              r={size * 0.3}
+              fill="rgba(201,168,76,0.1)"
               style={{
-                animation: `ambient-pulse ${8 + (i % 8)}s ease-in-out ${i * 1.2}s infinite`,
+                animation: `ambient-pulse ${12 + (i % 8)}s ease-in-out ${i * 1.5}s infinite`,
               }}
             />
           ))}
 
           {/* City dots */}
-          {CITIES.map(([name, cx, cy, size, isCapital], i) => (
+          {CITIES.map(([, cx, cy, size, isCapital], i) => (
             <g key={`city-${i}`}>
               {/* Outer glow ring for capitals */}
               {isCapital && (
                 <circle
                   cx={cx} cy={cy}
-                  r={size * 3}
+                  r={size * 2.5}
                   fill="url(#capital-glow)"
-                  style={{ animation: 'glow-breathe 10s ease-in-out infinite' }}
+                  style={{ animation: 'glow-breathe 14s ease-in-out infinite' }}
                 />
               )}
               {/* City dot */}
               <circle
                 cx={cx} cy={cy}
-                r={size * 0.4}
-                fill={isCapital ? 'rgba(232,201,106,1)' : 'rgba(201,168,76,0.9)'}
+                r={size * 0.35}
+                fill={isCapital ? 'rgba(232,201,106,0.2)' : 'rgba(201,168,76,0.12)'}
                 filter="url(#city-glow)"
                 style={{
-                  ['--city-base' as string]: isCapital ? '0.6' : '0.4',
-                  animation: `city-pulse ${7 + (i % 7)}s ease-in-out ${i * 1}s infinite`,
+                  ['--city-base' as string]: isCapital ? '0.15' : '0.08',
+                  animation: `city-pulse ${10 + (i % 7)}s ease-in-out ${i * 1.2}s infinite`,
                 }}
               />
-              {/* Tiny label (only for larger cities) */}
-              {size >= 3 && (
-                <text
-                  x={cx + size * 0.7}
-                  y={cy + 0.4}
-                  fill="rgba(201,168,76,0.4)"
-                  fontSize="2"
-                  fontFamily="Inter, sans-serif"
-                  fontWeight="400"
-                >
-                  {name}
-                </text>
-              )}
             </g>
           ))}
 
@@ -407,11 +394,11 @@ export default function AmbientBackground() {
                   stroke="none"
                 />
                 <circle
-                  r="0.5"
-                  fill="rgba(232,201,106,1)"
+                  r="0.35"
+                  fill="rgba(232,201,106,0.15)"
                   style={{
                     offsetPath: `path('M ${x1} ${y1} L ${x2} ${y2}')`,
-                    animation: `data-packet ${6 + i * 2}s ease-in-out ${delay + 2}s infinite`,
+                    animation: `data-packet ${10 + i * 3}s ease-in-out ${delay + 2}s infinite`,
                   }}
                 />
               </g>
@@ -428,9 +415,9 @@ export default function AmbientBackground() {
             width: '500px',
             height: '700px',
             borderRadius: '50%',
-            background: 'radial-gradient(ellipse, rgba(201,168,76,0.15) 0%, transparent 70%)',
-            filter: 'blur(80px)',
-            opacity: 1,
+            background: 'radial-gradient(ellipse, rgba(201,168,76,0.03) 0%, transparent 70%)',
+            filter: 'blur(100px)',
+            opacity: 0.6,
             transform: `translateY(var(--map-y, 0px))`,
           }}
         />

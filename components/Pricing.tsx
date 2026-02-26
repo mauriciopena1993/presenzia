@@ -26,7 +26,7 @@ const plans = [
     name: 'Growth',
     price: '£199',
     period: '/month',
-    description: 'Your monthly audit plus a live dashboard and AI tools to actively improve your visibility.',
+    description: 'Your monthly audit plus an online dashboard and AI tools to actively improve your visibility.',
     features: [
       'Everything in Starter',
       'Online client dashboard',
@@ -134,6 +134,12 @@ export default function Pricing() {
       <style>{`
         @media (max-width: 860px) {
           .pricing-grid { grid-template-columns: 1fr !important; }
+        }
+        .comparison-desktop { display: block; }
+        .comparison-mobile { display: none; }
+        @media (max-width: 640px) {
+          .comparison-desktop { display: none !important; }
+          .comparison-mobile { display: block !important; }
         }
       `}</style>
 
@@ -287,58 +293,102 @@ export default function Pricing() {
         </button>
       </div>
 
-      {/* ── Comparison (collapsible, mobile-friendly) ── */}
+      {/* ── Comparison (collapsible) ── */}
       <div style={{
-        maxHeight: showComparison ? '2000px' : '0',
+        maxHeight: showComparison ? '3000px' : '0',
         overflow: 'hidden',
         transition: 'max-height 0.5s ease, opacity 0.4s ease',
         opacity: showComparison ? 1 : 0,
         marginTop: showComparison ? '2rem' : '0',
       }}>
-        {/* Column headers */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr repeat(3, 60px)',
-          gap: '0',
-          padding: '0.75rem 1rem',
-          fontFamily: 'var(--font-inter, Inter, sans-serif)',
-        }}>
-          <div style={{ fontSize: '0.65rem', color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 500 }}>Feature</div>
-          {(['Starter', 'Growth', 'Premium'] as const).map((name) => (
-            <div key={name} style={{
-              textAlign: 'center',
-              fontSize: '0.6rem',
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              fontWeight: 600,
-              color: name === 'Growth' ? '#C9A84C' : '#666666',
+        {/* Desktop: grid table */}
+        <div className="comparison-desktop">
+          {/* Column headers */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr repeat(3, 80px)',
+            gap: '0',
+            padding: '0.75rem 1rem',
+            fontFamily: 'var(--font-inter, Inter, sans-serif)',
+          }}>
+            <div style={{ fontSize: '0.65rem', color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 500 }}>Feature</div>
+            {(['Starter', 'Growth', 'Premium'] as const).map((name) => (
+              <div key={name} style={{
+                textAlign: 'center',
+                fontSize: '0.65rem',
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                fontWeight: 600,
+                color: name === 'Growth' ? '#C9A84C' : '#666666',
+              }}>
+                {name}
+              </div>
+            ))}
+          </div>
+
+          {/* Rows */}
+          {comparisonRows.map((row, idx) => (
+            <div key={row.feature} style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr repeat(3, 80px)',
+              gap: '0',
+              padding: '0.6rem 1rem',
+              borderTop: idx === 0 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+              borderBottom: '1px solid rgba(255,255,255,0.04)',
+              fontFamily: 'var(--font-inter, Inter, sans-serif)',
             }}>
-              {name}
+              <div style={{ fontSize: '0.78rem', color: '#AAAAAA', paddingRight: '0.5rem' }}>
+                {row.feature}
+              </div>
+              {([row.starter, row.growth, row.premium] as CellValue[]).map((val, i) => (
+                <div key={i} style={{ textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <CellContent value={val} />
+                </div>
+              ))}
             </div>
           ))}
         </div>
 
-        {/* Rows */}
-        {comparisonRows.map((row, idx) => (
-          <div key={row.feature} style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr repeat(3, 60px)',
-            gap: '0',
-            padding: '0.6rem 1rem',
-            borderTop: idx === 0 ? '1px solid rgba(255,255,255,0.04)' : 'none',
-            borderBottom: '1px solid rgba(255,255,255,0.04)',
-            fontFamily: 'var(--font-inter, Inter, sans-serif)',
-          }}>
-            <div style={{ fontSize: '0.78rem', color: '#AAAAAA', paddingRight: '0.5rem' }}>
-              {row.feature}
-            </div>
-            {([row.starter, row.growth, row.premium] as CellValue[]).map((val, i) => (
-              <div key={i} style={{ textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <CellContent value={val} />
+        {/* Mobile: stacked feature cards */}
+        <div className="comparison-mobile">
+          {comparisonRows.map((row, idx) => (
+            <div key={row.feature} style={{
+              padding: '1rem 0',
+              borderBottom: '1px solid rgba(255,255,255,0.04)',
+              borderTop: idx === 0 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+              fontFamily: 'var(--font-inter, Inter, sans-serif)',
+            }}>
+              <div style={{ fontSize: '0.82rem', color: '#AAAAAA', marginBottom: '0.6rem' }}>
+                {row.feature}
               </div>
-            ))}
-          </div>
-        ))}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                {([
+                  { label: 'Starter', value: row.starter, highlight: false },
+                  { label: 'Growth', value: row.growth, highlight: true },
+                  { label: 'Premium', value: row.premium, highlight: false },
+                ] as const).map(({ label, value, highlight }) => (
+                  <div key={label} style={{
+                    textAlign: 'center',
+                    padding: '0.4rem 0.25rem',
+                    background: 'rgba(255,255,255,0.02)',
+                  }}>
+                    <div style={{
+                      fontSize: '0.6rem',
+                      letterSpacing: '0.08em',
+                      textTransform: 'uppercase',
+                      color: highlight ? '#C9A84C' : '#555',
+                      fontWeight: 600,
+                      marginBottom: '0.3rem',
+                    }}>
+                      {label}
+                    </div>
+                    <CellContent value={value} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

@@ -30,8 +30,10 @@ export default function PrivacyPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#0A0A0A',
+      background: 'rgba(10,10,10,0.97)',
       fontFamily: 'var(--font-inter, Inter, sans-serif)',
+      position: 'relative',
+      zIndex: 1,
     }}>
       {/* Nav bar */}
       <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1.25rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

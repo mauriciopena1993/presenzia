@@ -142,7 +142,7 @@ export default async function BlogPostPage({ params }: Props) {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'var(--font-inter, Inter, sans-serif)' }}>
+    <div style={{ minHeight: '100vh', background: 'rgba(10,10,10,0.97)', fontFamily: 'var(--font-inter, Inter, sans-serif)', position: 'relative', zIndex: 1 }}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingSchema) }}
