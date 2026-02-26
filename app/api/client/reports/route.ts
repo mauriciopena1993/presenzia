@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
 
   const { data: reports } = await supabase
     .from('audit_jobs')
-    .select('id, status, overall_score, grade, completed_at, created_at, report_path')
+    .select('id, status, overall_score, grade, completed_at, created_at, report_path, platforms_json')
     .eq('client_id', client.id)
     .order('created_at', { ascending: false });
 

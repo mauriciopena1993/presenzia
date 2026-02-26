@@ -424,20 +424,20 @@ export default function Pricing() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
                 {([
-                  { label: 'Starter', value: row.starter, highlight: false },
-                  { label: 'Growth', value: row.growth, highlight: true },
-                  { label: 'Premium', value: row.premium, highlight: false },
-                ] as const).map(({ label, value, highlight }) => (
+                  { label: 'Starter', value: row.starter },
+                  { label: 'Growth', value: row.growth },
+                  { label: 'Premium', value: row.premium },
+                ] as const).map(({ label, value }, colIdx) => (
                   <div key={label} style={{
                     textAlign: 'center',
                     padding: '0.4rem 0.25rem',
-                    background: 'rgba(255,255,255,0.02)',
+                    background: colIdx === mobileTab ? 'rgba(201,168,76,0.04)' : 'rgba(255,255,255,0.02)',
                   }}>
                     <div style={{
                       fontSize: '0.6rem',
                       letterSpacing: '0.08em',
                       textTransform: 'uppercase',
-                      color: highlight ? '#C9A84C' : '#555',
+                      color: colIdx === mobileTab ? '#C9A84C' : '#555',
                       fontWeight: 600,
                       marginBottom: '0.3rem',
                     }}>

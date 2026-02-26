@@ -46,6 +46,7 @@ interface HistoryReport {
   completed_at: string | null;
   created_at: string;
   report_path: string | null;
+  platforms_json: PlatformScore[] | null;
 }
 
 interface ChatMessage {
@@ -249,6 +250,177 @@ function ScoreGauge({ score, grade }: { score: number; grade: string }) {
       }}>
         Grade {grade}
       </div>
+    </div>
+  );
+}
+
+function ScoreTrendGraph({ reports, plan }: { reports: HistoryReport[]; plan: string }) {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  // Filter to completed reports with scores, sort oldest-first
+  const data = reports
+    .filter(r => r.status === 'completed' && r.overall_score !== null)
+    .sort((a, b) => new Date(a.completed_at || a.created_at).getTime() - new Date(b.completed_at || b.created_at).getTime());
+
+  if (data.length < 2) return null;
+
+  // SVG dimensions
+  const W = 600;
+  const H = 180;
+  const PAD = { top: 16, right: 16, bottom: 28, left: 32 };
+  const plotW = W - PAD.left - PAD.right;
+  const plotH = H - PAD.top - PAD.bottom;
+
+  // Map data to coordinates
+  const points = data.map((r, i) => ({
+    x: PAD.left + (data.length === 1 ? plotW / 2 : (i / (data.length - 1)) * plotW),
+    y: PAD.top + plotH - ((r.overall_score! / 100) * plotH),
+    score: r.overall_score!,
+    grade: r.grade || '',
+    date: r.completed_at || r.created_at,
+  }));
+
+  // SVG paths
+  const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ');
+  const areaPath = linePath + ` L ${points[points.length - 1].x},${PAD.top + plotH} L ${points[0].x},${PAD.top + plotH} Z`;
+
+  // Grid lines at 25, 50, 75
+  const gridValues = [25, 50, 75];
+  const gridYs = gridValues.map(v => PAD.top + plotH - (v / 100) * plotH);
+
+  // X-axis labels: adaptive spacing
+  const labelEvery = plan === 'premium' && data.length > 14 ? 7
+    : data.length > 10 ? Math.ceil(data.length / 6)
+    : 1;
+
+  const formatShort = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  };
+
+  // Handle mouse/touch interaction
+  const findNearest = (clientX: number) => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const rect = svg.getBoundingClientRect();
+    const mouseX = ((clientX - rect.left) / rect.width) * W;
+    let nearest = 0;
+    let minDist = Infinity;
+    for (let i = 0; i < points.length; i++) {
+      const dist = Math.abs(points[i].x - mouseX);
+      if (dist < minDist) { minDist = dist; nearest = i; }
+    }
+    setHoveredIndex(nearest);
+  };
+
+  // Tooltip position (clamped to SVG bounds)
+  const hovered = hoveredIndex !== null ? points[hoveredIndex] : null;
+  const tooltipX = hovered ? Math.min(Math.max(hovered.x, PAD.left + 40), W - PAD.right - 40) : 0;
+  const tooltipAbove = hovered ? hovered.y > PAD.top + 40 : true;
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <svg
+        ref={svgRef}
+        viewBox={`0 0 ${W} ${H}`}
+        style={{ width: '100%', height: 'auto', display: 'block', cursor: 'crosshair' }}
+        onMouseMove={e => findNearest(e.clientX)}
+        onMouseLeave={() => setHoveredIndex(null)}
+        onTouchMove={e => { if (e.touches[0]) findNearest(e.touches[0].clientX); }}
+        onTouchEnd={() => setHoveredIndex(null)}
+      >
+        {/* Grid lines */}
+        {gridYs.map((y, i) => (
+          <g key={i}>
+            <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#1a1a1a" strokeWidth="1" />
+            <text x={PAD.left - 6} y={y + 3} textAnchor="end" fill="#555" fontSize="9" fontFamily="var(--font-inter, Inter, sans-serif)">
+              {gridValues[i]}
+            </text>
+          </g>
+        ))}
+        {/* Y-axis 0 and 100 labels */}
+        <text x={PAD.left - 6} y={PAD.top + plotH + 3} textAnchor="end" fill="#555" fontSize="9" fontFamily="var(--font-inter, Inter, sans-serif)">0</text>
+        <text x={PAD.left - 6} y={PAD.top + 3} textAnchor="end" fill="#555" fontSize="9" fontFamily="var(--font-inter, Inter, sans-serif)">100</text>
+
+        {/* Baseline */}
+        <line x1={PAD.left} y1={PAD.top + plotH} x2={W - PAD.right} y2={PAD.top + plotH} stroke="#1a1a1a" strokeWidth="1" />
+
+        {/* X-axis date labels */}
+        {points.map((p, i) => (
+          i % labelEvery === 0 || i === points.length - 1 ? (
+            <text key={i} x={p.x} y={H - 4} textAnchor="middle" fill="#555" fontSize="8.5" fontFamily="var(--font-inter, Inter, sans-serif)">
+              {formatShort(data[i].completed_at || data[i].created_at)}
+            </text>
+          ) : null
+        ))}
+
+        {/* Area fill */}
+        <path d={areaPath} fill="rgba(201,168,76,0.05)" />
+
+        {/* Line */}
+        <path d={linePath} fill="none" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+
+        {/* Data dots */}
+        {points.map((p, i) => {
+          const isHovered = hoveredIndex === i;
+          const isLatest = i === points.length - 1;
+          return (
+            <circle
+              key={i}
+              cx={p.x}
+              cy={p.y}
+              r={isHovered ? 5 : isLatest ? 4 : 3}
+              fill={isHovered ? '#E8C96A' : '#C9A84C'}
+              stroke="#0D0D0D"
+              strokeWidth={2}
+              style={{ transition: 'r 0.15s ease' }}
+            />
+          );
+        })}
+
+        {/* Hover vertical line */}
+        {hovered && (
+          <line x1={hovered.x} y1={PAD.top} x2={hovered.x} y2={PAD.top + plotH} stroke="rgba(201,168,76,0.2)" strokeWidth="1" strokeDasharray="3 3" />
+        )}
+      </svg>
+
+      {/* Tooltip */}
+      {hovered && hoveredIndex !== null && (
+        <div style={{
+          position: 'absolute',
+          left: `${(tooltipX / W) * 100}%`,
+          top: tooltipAbove ? `${((hovered.y - 50) / H) * 100}%` : `${((hovered.y + 15) / H) * 100}%`,
+          transform: 'translateX(-50%)',
+          background: '#161616',
+          border: '1px solid #2a2a2a',
+          padding: '0.4rem 0.65rem',
+          pointerEvents: 'none',
+          zIndex: 5,
+          whiteSpace: 'nowrap',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.15rem' }}>
+            <span style={{ fontSize: '0.9rem', color: scoreColor(hovered.score), fontWeight: 700 }}>{hovered.score}</span>
+            <span style={{ fontSize: '0.7rem', color: '#666' }}>/100</span>
+            {hovered.grade && (
+              <span style={{
+                fontSize: '0.6rem',
+                padding: '1px 5px',
+                background: scoreColor(hovered.score) + '22',
+                color: scoreColor(hovered.score),
+                fontWeight: 700,
+                letterSpacing: '0.05em',
+              }}>
+                {hovered.grade}
+              </span>
+            )}
+          </div>
+          <div style={{ fontSize: '0.7rem', color: '#888' }}>
+            {formatShort(data[hoveredIndex].completed_at || data[hoveredIndex].created_at)}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1070,6 +1242,27 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </div>
+
+              {/* ── Score trend graph ── */}
+              {history.filter(r => r.status === 'completed' && r.overall_score !== null).length >= 2 && (
+                <div style={{
+                  background: '#0D0D0D',
+                  border: '1px solid #1a1a1a',
+                  padding: 'clamp(1rem, 2vw, 1.5rem)',
+                  marginBottom: '1.25rem',
+                }}>
+                  <div style={{
+                    fontSize: '0.7rem',
+                    color: '#666',
+                    letterSpacing: '0.12em',
+                    textTransform: 'uppercase',
+                    marginBottom: '0.75rem',
+                  }}>
+                    Score trend ({client?.plan === 'premium' ? 'daily' : 'weekly'} audits)
+                  </div>
+                  <ScoreTrendGraph reports={history} plan={client?.plan || 'growth'} />
+                </div>
+              )}
 
               {/* ── Platform breakdown — cards grid ── */}
               {platforms.length > 0 && (
