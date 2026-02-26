@@ -9,11 +9,24 @@ export async function GET(req: NextRequest) {
   const { valid, email } = verifySessionToken(token);
   if (!valid || !email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { data: client } = await supabase
+  // Try with pending-plan columns first; fall back if they don't exist yet
+  let { data: client, error } = await supabase
     .from('clients')
     .select('id, email, plan, status, business_name, business_type, location, website, keywords, created_at, pending_plan_change, pending_change_date')
     .eq('email', email)
     .single();
+
+  if (error && !client) {
+    // Columns may not exist yet — retry without them
+    const fallback = await supabase
+      .from('clients')
+      .select('id, email, plan, status, business_name, business_type, location, website, keywords, created_at')
+      .eq('email', email)
+      .single();
+    client = fallback.data
+      ? { ...fallback.data, pending_plan_change: null, pending_change_date: null }
+      : null;
+  }
 
   if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 

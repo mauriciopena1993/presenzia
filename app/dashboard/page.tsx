@@ -1153,44 +1153,54 @@ export default function DashboardPage() {
                 </div>
               )}
 
-              {/* Upgrade section */}
+              {/* Plan options — all 3 plans, current highlighted */}
               <div style={{ marginBottom: '1.25rem' }}>
-                <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Change your plan</div>
+                <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Your plan</div>
 
-                <div style={{ marginBottom: '0.75rem', padding: '1.25rem 1.5rem', background: '#0a0a00', border: '1px solid #2a2000' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
-                    <div>
-                      <div style={{ fontSize: '0.9rem', color: '#C9A84C', fontWeight: 600, marginBottom: '6px' }}>Growth Plan · £199/mo</div>
-                      <div style={{ fontSize: '0.8rem', color: '#999', lineHeight: 1.6 }}>
-                        Weekly dashboard updates, competitor tracking, AI audit assistant, and priority support.
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  {PLAN_ORDER.map(plan => {
+                    const isCurrent = plan === 'starter';
+                    const accentColor = plan === 'premium' ? '#9b6bcc' : '#C9A84C';
+                    return (
+                      <div key={plan} style={{
+                        flex: 1,
+                        minWidth: 'min(240px, 100%)',
+                        padding: '1.25rem',
+                        background: isCurrent ? '#0D0D0D' : '#0A0A0A',
+                        border: isCurrent ? '2px solid #C9A84C' : '1px solid #1a1a1a',
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                          <div style={{ fontSize: '0.9rem', color: isCurrent ? '#F5F0E8' : accentColor, fontWeight: 600 }}>
+                            {PLAN_LABELS[plan]} · {PLAN_PRICES[plan]}/mo
+                          </div>
+                          {isCurrent && (
+                            <span style={{ fontSize: '0.65rem', color: '#C9A84C', letterSpacing: '0.05em', textTransform: 'uppercase', fontWeight: 700, background: 'rgba(201,168,76,0.12)', padding: '2px 8px' }}>
+                              Current plan
+                            </span>
+                          )}
+                          {!isCurrent && (
+                            <span style={{ fontSize: '0.65rem', color: accentColor, letterSpacing: '0.05em', textTransform: 'uppercase', fontWeight: 600 }}>Upgrade</span>
+                          )}
+                        </div>
+                        <ul style={{ margin: '0.5rem 0 1rem', padding: '0 0 0 1rem', fontSize: '0.8rem', color: isCurrent ? '#AAAAAA' : '#999', lineHeight: 1.7 }}>
+                          {PLAN_FEATURES[plan]?.map((f, i) => <li key={i}>{f}</li>)}
+                        </ul>
+                        {isCurrent ? (
+                          <div style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, textAlign: 'center', color: '#666', border: '1px solid #222', background: '#111' }}>
+                            Your current plan
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => handleChangePlan(plan)}
+                            disabled={actionLoading}
+                            style={{ background: accentColor, color: '#0A0A0A', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', width: '100%' }}
+                          >
+                            {actionLoading ? 'Processing…' : `Upgrade to ${PLAN_LABELS[plan]}`}
+                          </button>
+                        )}
                       </div>
-                    </div>
-                    <button
-                      onClick={() => handleChangePlan('growth')}
-                      disabled={actionLoading}
-                      style={{ background: '#C9A84C', color: '#0A0A0A', border: 'none', padding: '0.5rem 1.5rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', flexShrink: 0 }}
-                    >
-                      {actionLoading ? 'Processing…' : 'Upgrade now'}
-                    </button>
-                  </div>
-                </div>
-
-                <div style={{ padding: '1.25rem 1.5rem', background: '#0a000a', border: '1px solid #1a001a' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
-                    <div>
-                      <div style={{ fontSize: '0.9rem', color: '#9b6bcc', fontWeight: 600, marginBottom: '6px' }}>Premium Plan · £599/mo</div>
-                      <div style={{ fontSize: '0.8rem', color: '#999', lineHeight: 1.6 }}>
-                        Daily updates, dedicated account manager, monthly strategy call, custom prompt testing.
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handleChangePlan('premium')}
-                      disabled={actionLoading}
-                      style={{ background: '#9b6bcc', color: '#0A0A0A', border: 'none', padding: '0.5rem 1.5rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', flexShrink: 0 }}
-                    >
-                      {actionLoading ? 'Processing…' : 'Upgrade now'}
-                    </button>
-                  </div>
+                    );
+                  })}
                 </div>
 
                 <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.5rem' }}>
@@ -1743,7 +1753,7 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* Plan options (upgrades + downgrades) */}
+          {/* Plan options (all 3 plans, current highlighted) */}
           {client && (
             <div style={{ marginBottom: '2rem' }}>
               {!showUpgrade ? (
@@ -1755,33 +1765,55 @@ export default function DashboardPage() {
                 </button>
               ) : (
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Available plans</div>
+                  <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Your plan</div>
                   <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                    {PLAN_ORDER.filter(p => p !== client.plan).map(plan => {
+                    {PLAN_ORDER.map(plan => {
+                      const isCurrent = plan === client.plan;
                       const isUpgrade = PLAN_ORDER.indexOf(plan) > PLAN_ORDER.indexOf(client.plan);
                       const accentColor = plan === 'premium' ? '#9b6bcc' : '#C9A84C';
                       return (
-                        <div key={plan} style={{ flex: 1, minWidth: 'min(260px, 100%)', padding: '1.25rem', background: '#0D0D0D', border: `1px solid ${isUpgrade ? '#1a1a1a' : '#1a1a1a'}` }}>
+                        <div key={plan} style={{
+                          flex: 1,
+                          minWidth: 'min(260px, 100%)',
+                          padding: '1.25rem',
+                          background: isCurrent ? '#0D0D0D' : '#0A0A0A',
+                          border: isCurrent ? '2px solid #C9A84C' : '1px solid #1a1a1a',
+                          position: 'relative',
+                        }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                            <div style={{ fontSize: '0.9rem', color: isUpgrade ? accentColor : '#999', fontWeight: 600 }}>
+                            <div style={{ fontSize: '0.9rem', color: isCurrent ? '#F5F0E8' : isUpgrade ? accentColor : '#999', fontWeight: 600 }}>
                               {PLAN_LABELS[plan]} · {PLAN_PRICES[plan]}/mo
                             </div>
-                            <span style={{ fontSize: '0.65rem', color: isUpgrade ? accentColor : '#666', letterSpacing: '0.05em', textTransform: 'uppercase', fontWeight: 600 }}>
-                              {isUpgrade ? 'Upgrade' : 'Downgrade'}
-                            </span>
+                            {isCurrent ? (
+                              <span style={{ fontSize: '0.65rem', color: '#C9A84C', letterSpacing: '0.05em', textTransform: 'uppercase', fontWeight: 700, background: 'rgba(201,168,76,0.12)', padding: '2px 8px' }}>
+                                Current plan
+                              </span>
+                            ) : (
+                              <span style={{ fontSize: '0.65rem', color: isUpgrade ? accentColor : '#666', letterSpacing: '0.05em', textTransform: 'uppercase', fontWeight: 600 }}>
+                                {isUpgrade ? 'Upgrade' : 'Downgrade'}
+                              </span>
+                            )}
                           </div>
-                          <ul style={{ margin: '0.5rem 0 1rem', padding: '0 0 0 1rem', fontSize: '0.8rem', color: '#999', lineHeight: 1.7 }}>
+                          <ul style={{ margin: '0.5rem 0 1rem', padding: '0 0 0 1rem', fontSize: '0.8rem', color: isCurrent ? '#AAAAAA' : '#999', lineHeight: 1.7 }}>
                             {PLAN_FEATURES[plan]?.map((f, i) => <li key={i}>{f}</li>)}
                           </ul>
-                          <button
-                            onClick={() => handleChangePlan(plan)}
-                            disabled={actionLoading}
-                            style={{ background: isUpgrade ? accentColor : 'transparent', color: isUpgrade ? '#0A0A0A' : '#999', border: isUpgrade ? 'none' : '1px solid #333', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', width: '100%' }}
-                          >
-                            {actionLoading ? 'Processing...' : isUpgrade ? `Upgrade to ${PLAN_LABELS[plan]}` : `Switch to ${PLAN_LABELS[plan]}`}
-                          </button>
-                          {!isUpgrade && (
-                            <p style={{ fontSize: '0.7rem', color: '#666', marginTop: '4px', textAlign: 'center' }}>Takes effect at end of billing cycle</p>
+                          {isCurrent ? (
+                            <div style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, textAlign: 'center', color: '#666', border: '1px solid #222', background: '#111' }}>
+                              Your current plan
+                            </div>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => handleChangePlan(plan)}
+                                disabled={actionLoading}
+                                style={{ background: isUpgrade ? accentColor : 'transparent', color: isUpgrade ? '#0A0A0A' : '#999', border: isUpgrade ? 'none' : '1px solid #333', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', width: '100%' }}
+                              >
+                                {actionLoading ? 'Processing...' : isUpgrade ? `Upgrade to ${PLAN_LABELS[plan]}` : `Switch to ${PLAN_LABELS[plan]}`}
+                              </button>
+                              {!isUpgrade && (
+                                <p style={{ fontSize: '0.7rem', color: '#666', marginTop: '4px', textAlign: 'center' }}>Takes effect at end of billing cycle</p>
+                              )}
+                            </>
                           )}
                         </div>
                       );
