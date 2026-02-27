@@ -25,8 +25,8 @@ export default function HowItWorks() {
     },
     {
       number: '04',
-      title: 'We fix it and track it',
-      description: 'Growth and Premium plans include weekly or daily dashboard updates, so you can track your score improving over time.',
+      title: 'Track, improve, repeat',
+      description: 'Every plan includes monthly follow-up audits so you can track your progress. Growth adds an online dashboard with weekly updates and an AI assistant. Premium upgrades to daily insights with a dedicated strategist.',
       icon: TrendingUp,
     },
   ];
