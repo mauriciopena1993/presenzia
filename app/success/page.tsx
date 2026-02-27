@@ -123,7 +123,7 @@ function SuccessContent() {
         marginBottom: '1rem',
       }}>
         You&apos;re on the <strong style={{ color: '#F5F0E8' }}>{planNames[plan] || 'Starter'}</strong> plan.
-        We&apos;re now testing how AI platforms respond to queries about your business across 100+ prompts.
+        We&apos;re now testing how AI platforms respond to queries about your business across 80+ prompts.
       </p>
 
       <p style={{
@@ -150,7 +150,7 @@ function SuccessContent() {
         <ul style={{ listStyle: 'none', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '0.6rem', padding: 0, margin: 0 }}>
           {[
             'Confirmation email sent to your inbox',
-            'AI platforms tested across 100+ prompts',
+            'AI platforms tested across 80+ prompts',
             'Platform-by-platform breakdown prepared',
             'Full audit delivered to your email shortly',
           ].map((step, i) => (

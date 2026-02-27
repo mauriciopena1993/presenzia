@@ -124,7 +124,7 @@ export default function Hero() {
       }}>
         {[
           { stat: '94%', label: 'of UK SMEs not found on ChatGPT' },
-          { stat: '4 AIs', label: 'audited per business' },
+          { stat: '80+', label: 'prompts tested across 4 AIs' },
           { stat: '<15 min', label: 'to your first audit' },
         ].map((item) => (
           <div key={item.stat} style={{ textAlign: 'center' }}>
