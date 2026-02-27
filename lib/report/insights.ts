@@ -9,6 +9,11 @@
 import type { PromptResult, AuditScore, PlatformScore } from '../audit/scorer';
 import type { AuditConfig } from '../audit/runner';
 
+/** Turn "Restaurant / Cafe" → "restaurant" (takes first term before slash) */
+function cleanBusinessType(bt: string): string {
+  return bt.split('/')[0].trim().toLowerCase();
+}
+
 // ── Exported Types ───────────────────────────────────────────
 
 export interface PromptTestResult {
@@ -165,7 +170,7 @@ function buildActions(
 ): DetailedAction[] {
   const actions: DetailedAction[] = [];
   const { overall, platforms, topCompetitors } = score;
-  const bt = config.businessType.toLowerCase();
+  const bt = cleanBusinessType(config.businessType);
 
   // ── Action: Complete Your Google Business Profile ──
   if (overall < 65) {
@@ -196,7 +201,7 @@ function buildActions(
           ],
         },
         {
-          text: `Write a detailed business description (750 characters) that naturally includes "${config.businessType} in ${config.location}".`,
+          text: `Write a detailed business description (750 characters) that naturally includes "${bt}in ${config.location}".`,
           substeps: [
             'Cover: what you do, who you serve, your specialisms, and how long you have been operating',
             `Use natural phrasing like "We are a ${bt} based in ${config.location}, specialising in..."`,
@@ -204,7 +209,7 @@ function buildActions(
           ],
         },
         `Upload at least 10 high-quality photos: exterior signage, interior, your team at work, and examples of your products or services. AI platforms reference image metadata.`,
-        `Select every relevant business category — both primary and secondary categories matter. Your primary should be "${config.businessType}" or the closest match available.`,
+        `Select every relevant business category — both primary and secondary categories matter. Your primary should be "${bt}" or the closest match available.`,
         `Ensure your opening hours are set for all 7 days, including any special holiday hours.`,
         `Respond to every existing review (positive and negative) within 48 hours. AI systems note active, responsive businesses.`,
       ],
@@ -399,7 +404,7 @@ function buildActions(
       },
       `Add Schema.org LocalBusiness structured data (JSON-LD) to your homepage. Free generator: technicalseo.com/tools/schema-markup-generator`,
       `Ensure your address, phone, and email appear as selectable plain text on every page — not embedded in images.`,
-      `Publish at least 1-2 blog posts per month demonstrating expertise: guides, case studies, and tips related to ${config.businessType} in ${config.location}.`,
+      `Publish at least 1-2 blog posts per month demonstrating expertise: guides, case studies, and tips related to ${bt}in ${config.location}.`,
     ],
   });
 
@@ -475,7 +480,7 @@ function getPlatformSpecificSteps(
       },
       'Ensure your website loads in under 2 seconds. Perplexity favours fast, accessible sites.',
       'Add Schema.org LocalBusiness structured data markup to your homepage.',
-      `Make sure your site has a clear, crawlable page for "${config.businessType} in ${config.location}" with plain-text contact details.`,
+      `Make sure your site has a clear, crawlable page for "${cleanBusinessType(config.businessType)} in ${config.location}" with plain-text contact details.`,
       'Check your robots.txt file — make sure it does not block PerplexityBot or Bingbot.',
     ];
   }
@@ -520,7 +525,7 @@ function getPlatformSpecificSteps(
       'Add Schema.org structured data to your website: LocalBusiness, Service, and Review markup.',
       'Verify your site in Google Search Console (search.google.com/search-console) — fix any indexing errors.',
       'Build Google review volume. Both the number of reviews and how recent they are matter for Google AI.',
-      `Optimise your site content for queries like "best ${config.businessType.toLowerCase()} in ${config.location}".`,
+      `Optimise your site content for queries like "best ${cleanBusinessType(config.businessType)} in ${config.location}".`,
     ];
   }
 
@@ -529,7 +534,7 @@ function getPlatformSpecificSteps(
     'Ensure your business is listed on all major directories with consistent information.',
     'Build review volume across multiple platforms.',
     'Add structured data markup to your website.',
-    `Create content that clearly associates your business with "${config.businessType}" and "${config.location}".`,
+    `Create content that clearly associates your business with "${cleanBusinessType(config.businessType)}" and "${config.location}".`,
   ];
 }
 
@@ -581,7 +586,7 @@ function getLocalPublicationSteps(config: AuditConfig): (string | ActionStep)[] 
         'Keep your email pitch under 150 words with a clear subject line',
       ],
     },
-    `Offer to be quoted as a local expert on topics related to ${config.businessType}. Reporters frequently need expert commentary.`,
+    `Offer to be quoted as a local expert on topics related to ${cleanBusinessType(config.businessType)}. Reporters frequently need expert commentary.`,
     'Create a press/media page on your website with your story, high-resolution photos, and a press contact email.',
     'Share any coverage on your Google Business Profile, social channels, and directory listings to amplify the signal.',
   );

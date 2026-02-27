@@ -3,7 +3,7 @@ import { stripe, PLANS, PlanKey } from '@/lib/stripe';
 
 export async function POST(req: NextRequest) {
   try {
-    const { plan, email, business_name, business_type, location, website, keywords } = await req.json();
+    const { plan, email, business_name, business_type, description, location, website, keywords } = await req.json();
 
     if (!plan || !PLANS[plan as PlanKey]) {
       return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
         plan,
         business_name: business_name.trim(),
         business_type: business_type.trim(),
+        description: (description || '').trim(),
         location: (location || '').trim(),
         website: website?.trim() || '',
         keywords: keywords?.trim() || '',

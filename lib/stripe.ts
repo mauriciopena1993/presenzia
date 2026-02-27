@@ -30,3 +30,11 @@ export const PLANS = {
 } as const;
 
 export type PlanKey = keyof typeof PLANS;
+
+/** Reverse-lookup: get plan key from a Stripe price ID */
+export function planFromPriceId(priceId: string): string | null {
+  for (const [key, plan] of Object.entries(PLANS)) {
+    if (plan.priceId === priceId) return key;
+  }
+  return null;
+}

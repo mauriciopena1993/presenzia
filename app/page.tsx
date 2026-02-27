@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'What do I actually receive?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "Within 48 hours of signing up, you'll receive your audit by email. It includes your overall AI Visibility Score (0–100), a platform-by-platform breakdown, a list of competitors that are currently appearing in your place, and specific, actionable recommendations to improve your visibility. Growth and Premium clients also get access to an online dashboard.",
+        text: "Within minutes of signing up, your audit begins running automatically. You'll receive your full report by email shortly after. It includes your overall AI Visibility Score (0–100), a platform-by-platform breakdown, a list of competitors that are currently appearing in your place, and specific, actionable recommendations to improve your visibility. Growth and Premium clients also get access to an online dashboard.",
       },
     },
     {

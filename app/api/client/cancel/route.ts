@@ -2,11 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { stripe } from '@/lib/stripe';
 import { verifySessionToken, SESSION_COOKIE } from '@/lib/client-auth';
+import { Resend } from 'resend';
 
 const RETENTION_COOLDOWN_MS = 90 * 24 * 60 * 60 * 1000; // ~3 months in ms
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+const PLAN_LABELS: Record<string, string> = { starter: 'Starter', growth: 'Growth', premium: 'Premium' };
 
 function isRetentionOfferEligible(lastOfferAt: string | null): boolean {
-  if (!lastOfferAt) return true; // never used
+  if (!lastOfferAt) return true;
   const elapsed = Date.now() - new Date(lastOfferAt).getTime();
   return elapsed >= RETENTION_COOLDOWN_MS;
 }
@@ -18,11 +22,11 @@ export async function POST(req: NextRequest) {
   const { valid, email } = verifySessionToken(token);
   if (!valid || !email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { action } = await req.json();
+  const { action, feedback } = await req.json();
 
   const { data: client } = await supabase
     .from('clients')
-    .select('id, plan, stripe_subscription_id, stripe_customer_id, last_retention_offer_at')
+    .select('id, plan, business_name, stripe_subscription_id, stripe_customer_id, last_retention_offer_at')
     .eq('email', email)
     .single();
 
@@ -32,7 +36,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // ── Check retention eligibility (used by dashboard to show/hide the offer) ──
+    // ── Check retention eligibility ──
     if (action === 'check-retention') {
       const eligible = isRetentionOfferEligible(client.last_retention_offer_at);
       return NextResponse.json({ eligible });
@@ -40,14 +44,12 @@ export async function POST(req: NextRequest) {
 
     // ── Accept retention offer: 50% off next invoice ──
     if (action === 'accept-offer') {
-      // Enforce 3-month cooldown
       if (!isRetentionOfferEligible(client.last_retention_offer_at)) {
         return NextResponse.json({
-          error: 'The 50% discount was already used recently. It can be used once every 3 months.',
+          error: 'The 50% discount was already used recently.',
         }, { status: 400 });
       }
 
-      // Create a one-time 50% coupon for next invoice
       const coupon = await stripe.coupons.create({
         percent_off: 50,
         duration: 'once',
@@ -55,19 +57,16 @@ export async function POST(req: NextRequest) {
         max_redemptions: 1,
       });
 
-      // Retrieve current subscription to preserve existing discounts
       const subscription = await stripe.subscriptions.retrieve(client.stripe_subscription_id);
       const existingDiscounts = (subscription.discounts || [])
         .map((d) => (typeof d === 'string' ? null : d.id ? { discount: d.id } : null))
         .filter((d): d is { discount: string } => d !== null);
 
-      // Apply the retention coupon alongside any existing discounts
       await stripe.subscriptions.update(client.stripe_subscription_id, {
         discounts: [...existingDiscounts, { coupon: coupon.id }],
         cancel_at_period_end: false,
       });
 
-      // Record when this offer was used
       await supabase
         .from('clients')
         .update({ last_retention_offer_at: new Date().toISOString() })
@@ -82,16 +81,61 @@ export async function POST(req: NextRequest) {
         cancel_at_period_end: true,
       });
 
-      return NextResponse.json({ success: true, action: 'cancellation-scheduled' });
+      // Get period end date to tell client when it ends
+      const subscription = await stripe.subscriptions.retrieve(client.stripe_subscription_id);
+      const subscriptionItem = subscription.items.data[0];
+      const periodEnd = subscriptionItem?.current_period_end || 0;
+      const endDate = periodEnd ? new Date(periodEnd * 1000).toISOString() : null;
+
+      // Store cancellation state: pending_plan_change='cancel' + end date
+      await supabase
+        .from('clients')
+        .update({
+          pending_plan_change: 'cancel',
+          pending_change_date: endDate,
+        })
+        .eq('id', client.id);
+
+      const formattedEndDate = periodEnd
+        ? new Date(periodEnd * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+        : null;
+
+      return NextResponse.json({
+        success: true,
+        action: 'cancellation-scheduled',
+        endDate,
+        formattedEndDate,
+      });
     }
 
-    // ── Check cancellation status ──
-    if (action === 'status') {
-      const subscription = await stripe.subscriptions.retrieve(client.stripe_subscription_id);
-      return NextResponse.json({
-        cancelAtPeriodEnd: subscription.cancel_at_period_end,
-        status: subscription.status,
-      });
+    // ── Submit cancellation feedback ──
+    if (action === 'submit-feedback') {
+      if (feedback && typeof feedback === 'string' && feedback.trim()) {
+        if (process.env.RESEND_API_KEY) {
+          await resend.emails.send({
+            from: 'presenzia.ai <reports@presenzia.ai>',
+            to: 'hello@presenzia.ai',
+            subject: `📝 Cancellation feedback: ${client.business_name || email}`,
+            html: `<div style="font-family:Inter,sans-serif;max-width:560px;background:#0A0A0A;color:#F5F0E8;padding:40px;">
+              <div style="font-size:18px;font-weight:600;border-bottom:2px solid #cc4444;padding-bottom:12px;margin-bottom:24px;">
+                presenzia<span style="color:#C9A84C;">.ai</span> <span style="color:#888;font-size:12px;">Cancellation feedback</span>
+              </div>
+              <div style="background:#111;border:1px solid #222;padding:20px;">
+                <table style="width:100%;border-collapse:collapse;">
+                  <tr><td style="color:#999;font-size:12px;padding:6px 0;width:100px;">Client</td><td style="color:#F5F0E8;font-size:13px;">${client.business_name || '—'}</td></tr>
+                  <tr><td style="color:#999;font-size:12px;padding:6px 0;">Email</td><td style="color:#F5F0E8;font-size:13px;">${email}</td></tr>
+                  <tr><td style="color:#999;font-size:12px;padding:6px 0;">Plan</td><td style="color:#F5F0E8;font-size:13px;">${PLAN_LABELS[client.plan] || client.plan}</td></tr>
+                </table>
+                <div style="margin-top:16px;padding-top:16px;border-top:1px solid #222;">
+                  <div style="color:#999;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Feedback</div>
+                  <p style="color:#F5F0E8;font-size:14px;line-height:1.7;margin:0;">${feedback.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
+                </div>
+              </div>
+            </div>`,
+          }).catch(err => console.error('Failed to send feedback email:', err));
+        }
+      }
+      return NextResponse.json({ success: true });
     }
 
     // ── Undo cancellation ──
@@ -99,6 +143,10 @@ export async function POST(req: NextRequest) {
       await stripe.subscriptions.update(client.stripe_subscription_id, {
         cancel_at_period_end: false,
       });
+      await supabase
+        .from('clients')
+        .update({ pending_plan_change: null, pending_change_date: null })
+        .eq('id', client.id);
       return NextResponse.json({ success: true, action: 'cancellation-reversed' });
     }
 

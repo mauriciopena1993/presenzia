@@ -20,7 +20,7 @@ export default function HowItWorks() {
     {
       number: '03',
       title: 'You receive your audit',
-      description: 'A clear, beautifully formatted audit lands in your inbox within 48 hours. Your visibility score, competitor gaps, and exact recommendations.',
+      description: 'A clear, beautifully formatted audit lands in your inbox within minutes. Your visibility score, competitor gaps, and exact recommendations.',
       icon: FileText,
     },
     {
@@ -58,7 +58,7 @@ export default function HowItWorks() {
           How presenzia<span style={{ color: '#C9A84C' }}>.ai</span> works
         </h2>
         <p style={{ color: '#AAAAAA', maxWidth: '500px', margin: '0 auto', fontSize: '1rem', lineHeight: 1.7 }}>
-          From signup to your first audit in under 48 hours. No calls required.
+          From signup to your first audit in minutes. No calls required.
         </p>
       </div>
 

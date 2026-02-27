@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { businessName, businessType, location, keywords, website } = body;
+    const { businessName, businessType, description, location, keywords, website } = body;
 
     // Validate required fields
     if (!businessName || !businessType || !location) {
@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
     const config: AuditConfig = {
       businessName,
       businessType,
+      description: description || '',
       location,
       keywords: keywords || [],
       website,

@@ -12,7 +12,8 @@ import type { AuditScore, PromptResult } from '../lib/audit/scorer';
 // ── Config ──────────────────────────────────────────────────
 const config: AuditConfig = {
   businessName: 'Pollen Bakery',
-  businessType: 'Bakery / Cafe',
+  businessType: 'Coffee Shop / Bakery',
+  description: 'Award-winning artisan bakery specialising in sourdough and pastries',
   location: 'Manchester',
   keywords: ['sourdough bakery', 'artisan bread', 'pastries'],
   website: 'https://www.pollenbakery.com',

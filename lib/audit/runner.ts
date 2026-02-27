@@ -10,6 +10,7 @@ import { PromptResult, calculateScore, AuditScore } from './scorer';
 export interface AuditConfig {
   businessName: string;
   businessType: string;
+  description: string;
   location: string;
   keywords: string[];
   website?: string;
@@ -265,7 +266,7 @@ export async function runAudit(
   config: AuditConfig,
   onProgress?: (progress: number, status: string) => void
 ): Promise<{ results: PromptResult[]; score: AuditScore }> {
-  const prompts = buildPrompts(config.businessType, config.location, config.keywords);
+  const prompts = buildPrompts(config.businessType, config.location, config.keywords, config.description);
   const platforms = getAvailablePlatforms();
 
   if (platforms.length === 0) {

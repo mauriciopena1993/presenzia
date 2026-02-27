@@ -235,7 +235,7 @@ export default function Pricing() {
           Simple, transparent pricing
         </h2>
         <p style={{ color: '#AAAAAA', maxWidth: '500px', margin: '0 auto', fontSize: '1rem', lineHeight: 1.7 }}>
-          No setup fees. No long-term contracts. Cancel anytime. Your first audit is delivered within 48 hours of signing up.
+          No setup fees. No long-term contracts. Cancel anytime. Your first audit is delivered within minutes of signing up.
         </p>
       </div>
 

@@ -208,7 +208,7 @@ export default async function BlogPostPage({ params }: Props) {
             Find out where you stand
           </div>
           <p style={{ color: '#F5F0E8', fontSize: '1.05rem', fontWeight: 600, marginBottom: '0.5rem', fontFamily: "var(--font-playfair, 'Playfair Display', serif)" }}>
-            See your AI visibility score in 24 hours
+            See your AI visibility score in minutes
           </p>
           <p style={{ color: '#999', fontSize: '0.875rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
             We test your business across ChatGPT, Claude, Perplexity, and Google AI using the exact prompts real customers type.

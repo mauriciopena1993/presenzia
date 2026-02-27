@@ -5,20 +5,31 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 
 const BUSINESS_TYPES = [
-  'Restaurant / Cafe / Food & Drink',
+  'Restaurant / Cafe',
   'Bar / Pub / Nightclub',
-  'Beauty / Hair Salon / Barbershop',
-  'Gym / Fitness Studio / Yoga',
-  'Wellness / Spa / Aesthetics',
-  'Healthcare / Medical / Dental',
-  'Professional Services (Solicitor, Accountant, Financial Adviser)',
-  'Hotel / Accommodation / Hospitality',
+  'Coffee Shop / Bakery',
+  'Beauty Salon / Barbershop',
+  'Gym / Fitness Studio',
+  'Yoga / Pilates Studio',
+  'Spa / Wellness Centre',
+  'Dental Practice',
+  'Doctor / Medical Practice',
+  'Physiotherapy / Chiropractic',
+  'Therapist / Counsellor',
+  'Solicitor / Law Firm',
+  'Accountant / Bookkeeper',
+  'Financial Adviser',
+  'Estate Agent',
+  'Hotel / B&B / Guesthouse',
   'Retail / Shop / Boutique',
-  'Estate Agent / Property',
   'Veterinary Practice',
-  'Education / Training / Tutoring',
+  'Plumber / Electrician / Tradesperson',
+  'Cleaning Company',
+  'Private Tutor / Education Centre',
   'Wedding Venue / Events',
-  'Consulting / Agency',
+  'Photographer / Videographer',
+  'Marketing / Design Agency',
+  'IT / Software / Tech',
   'Other',
 ];
 
@@ -37,6 +48,7 @@ function OnboardingForm() {
     contactName: '',
     businessName: '',
     businessType: '',
+    description: '',
     location: '',
     website: '',
     keywords: '',
@@ -75,6 +87,16 @@ function OnboardingForm() {
     setError('');
 
     try {
+      // Validate keywords have at least 2 comma-separated terms
+      const keywordList = form.keywords.split(',').map(k => k.trim()).filter(Boolean);
+      if (keywordList.length < 2) {
+        setError('Please add at least 2 keywords separated by commas — this is essential for an accurate audit.');
+        setSubmitting(false);
+        return;
+      }
+
+      const fullWebsite = form.website.trim() ? `https://${form.website.trim()}` : '';
+
       // Save lead for funnel tracking (fire-and-forget, never blocks checkout)
       fetch('/api/leads', {
         method: 'POST',
@@ -85,8 +107,9 @@ function OnboardingForm() {
           contact_name: form.contactName || null,
           business_name: form.businessName,
           business_type: form.businessType,
+          description: form.description,
           location: form.location || null,
-          website: form.website,
+          website: fullWebsite,
           keywords: form.keywords,
         }),
       }).catch(() => {});
@@ -99,8 +122,9 @@ function OnboardingForm() {
           email: form.email,
           business_name: form.businessName,
           business_type: form.businessType,
+          description: form.description,
           location: form.location,
-          website: form.website,
+          website: fullWebsite,
           keywords: form.keywords,
         }),
       });
@@ -234,21 +258,92 @@ function OnboardingForm() {
               </select>
             </div>
 
+            {/* Description */}
+            <div>
+              <label style={labelStyle}>
+                What does your business do? <span style={{ color: '#C9A84C' }}>*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Family-run Italian restaurant specialising in homemade pasta"
+                required
+                value={form.description}
+                onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+                style={inputStyle}
+                maxLength={200}
+              />
+              <div style={hintStyle}>
+                One sentence — this helps us match you against the right competitors
+              </div>
+            </div>
+
+            {/* Keywords */}
+            <div>
+              <label style={labelStyle}>
+                Keywords <span style={{ color: '#C9A84C' }}>*</span>
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Italian restaurant, private dining, wine bar"
+                value={form.keywords}
+                onChange={e => setForm(f => ({ ...f, keywords: e.target.value }))}
+                style={inputStyle}
+              />
+              <div style={hintStyle}>
+                What would a customer search for to find you? Add at least 2, comma-separated
+              </div>
+            </div>
+
             {/* Location */}
             <div>
               <label style={labelStyle}>
-                City / Location <span style={{ color: '#888' }}>(optional)</span>
+                City / Location <span style={{ color: '#C9A84C' }}>*</span>
               </label>
               <input
                 type="text"
                 placeholder="e.g. London, Manchester, Edinburgh"
+                required
                 value={form.location}
                 onChange={e => setForm(f => ({ ...f, location: e.target.value }))}
                 style={inputStyle}
               />
               <div style={hintStyle}>
-                The city or area you primarily serve. Leave blank if you operate entirely online.
+                The city or area your customers are in
               </div>
+            </div>
+
+            {/* Website */}
+            <div>
+              <label style={labelStyle}>Website <span style={{ color: '#888' }}>(optional)</span></label>
+              <div style={{ display: 'flex', alignItems: 'stretch' }}>
+                <div style={{
+                  padding: '0.75rem 0.75rem',
+                  background: '#1A1A1A',
+                  border: '1px solid #2A2A2A',
+                  borderRight: 'none',
+                  color: '#666',
+                  fontSize: '0.9rem',
+                  fontFamily: 'var(--font-inter, Inter, sans-serif)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  userSelect: 'none',
+                  whiteSpace: 'nowrap',
+                }}>https://</div>
+                <input
+                  type="text"
+                  placeholder="www.yourbusiness.co.uk"
+                  value={form.website}
+                  onChange={e => {
+                    let v = e.target.value;
+                    // Strip protocol if user pastes a full URL
+                    v = v.replace(/^https?:\/\//, '');
+                    setForm(f => ({ ...f, website: v }));
+                  }}
+                  style={{ ...inputStyle, borderLeft: 'none' }}
+                />
+              </div>
+              <div style={hintStyle}>Leave blank if your business doesn't have a website</div>
             </div>
 
             {/* Contact Name */}
@@ -261,33 +356,6 @@ function OnboardingForm() {
                 onChange={e => setForm(f => ({ ...f, contactName: e.target.value }))}
                 style={inputStyle}
               />
-            </div>
-
-            {/* Website */}
-            <div>
-              <label style={labelStyle}>Website <span style={{ color: '#888' }}>(optional)</span></label>
-              <input
-                type="url"
-                placeholder="e.g. https://www.yourbusiness.co.uk"
-                value={form.website}
-                onChange={e => setForm(f => ({ ...f, website: e.target.value }))}
-                style={inputStyle}
-              />
-            </div>
-
-            {/* Keywords */}
-            <div>
-              <label style={labelStyle}>Keywords <span style={{ color: '#888' }}>(optional)</span></label>
-              <input
-                type="text"
-                placeholder="e.g. Italian restaurant, private dining, wine bar"
-                value={form.keywords}
-                onChange={e => setForm(f => ({ ...f, keywords: e.target.value }))}
-                style={inputStyle}
-              />
-              <div style={hintStyle}>
-                Terms you want AI to associate with your business, comma-separated
-              </div>
             </div>
 
             {/* Error */}

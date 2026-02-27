@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe';
+import { stripe, planFromPriceId } from '@/lib/stripe';
 import { supabase } from '@/lib/supabase';
 import Stripe from 'stripe';
 import { Resend } from 'resend';
@@ -68,6 +68,56 @@ export async function POST(req: NextRequest) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
         const metadata = session.metadata || {};
+
+        // ── Handle plan upgrade payments ──
+        if (metadata.type === 'plan_upgrade') {
+          const { client_id, to_plan, subscription_id, subscription_item_id, price_id, email: clientEmail, business_name } = metadata;
+
+          if (subscription_id && subscription_item_id && price_id && to_plan) {
+            try {
+              // Update the Stripe subscription to the new plan (no proration — already paid via checkout)
+              await stripe.subscriptions.update(subscription_id, {
+                items: [{ id: subscription_item_id, price: price_id }],
+                proration_behavior: 'none',
+                metadata: { plan: to_plan },
+              });
+
+              // Update DB
+              await supabase
+                .from('clients')
+                .update({
+                  plan: to_plan,
+                  status: 'active',
+                  pending_plan_change: null,
+                  pending_change_date: null,
+                  updated_at: new Date().toISOString(),
+                })
+                .eq('id', client_id);
+
+              console.log(`✅ Upgrade completed: ${clientEmail} → ${to_plan}`);
+
+              // Send confirmation email
+              const { sendPlanChangeEmail } = await import('../client/change-plan/route');
+              sendPlanChangeEmail(clientEmail || '', business_name || '', to_plan, true);
+
+              // Notify admin
+              await notifyAdmin(
+                `⬆️ Upgrade: ${business_name || clientEmail} → ${PLAN_LABELS[to_plan] || to_plan}`,
+                adminCard([
+                  ['Client', business_name || '—'],
+                  ['Email', clientEmail || '—'],
+                  ['New plan', `<span style="color:#C9A84C;font-weight:600;">${PLAN_LABELS[to_plan] || to_plan}</span>`],
+                  ['Payment', `£${((session.amount_total || 0) / 100).toFixed(2)} (prorated)`],
+                ], '#4a9e6a')
+              );
+            } catch (err) {
+              console.error('Failed to process upgrade checkout:', err);
+            }
+          }
+          break;
+        }
+
+        // ── Handle new client signup ──
         const plan = metadata.plan as 'starter' | 'growth' | 'premium';
         const email = session.customer_email || session.customer_details?.email || '';
 
@@ -78,6 +128,7 @@ export async function POST(req: NextRequest) {
 
         const businessName = metadata.business_name || '';
         const businessType = metadata.business_type || '';
+        const description = metadata.description || '';
         const location = metadata.location || '';
         const website = metadata.website || null;
         const keywordsRaw = metadata.keywords || '';
@@ -86,28 +137,48 @@ export async function POST(req: NextRequest) {
           : null;
 
         // Upsert client record
-        const { data: client, error: clientError } = await supabase
+        const clientRecord: Record<string, unknown> = {
+          email,
+          plan,
+          status: 'active',
+          stripe_customer_id: session.customer as string,
+          stripe_subscription_id: session.subscription as string,
+          business_name: businessName || null,
+          business_type: businessType || null,
+          description: description || null,
+          location: location || null,
+          website,
+          keywords,
+          updated_at: new Date().toISOString(),
+        };
+
+        let client: { id: string } | null = null;
+
+        const { data: c1, error: e1 } = await supabase
           .from('clients')
-          .upsert({
-            email,
-            plan,
-            status: 'active',
-            stripe_customer_id: session.customer as string,
-            stripe_subscription_id: session.subscription as string,
-            business_name: businessName || null,
-            business_type: businessType || null,
-            location: location || null,
-            website,
-            keywords,
-            updated_at: new Date().toISOString(),
-          }, { onConflict: 'stripe_customer_id' })
+          .upsert(clientRecord, { onConflict: 'stripe_customer_id' })
           .select('id')
           .single();
 
-        if (clientError || !client) {
-          console.error('Failed to upsert client:', clientError);
-          break;
+        if (e1 || !c1) {
+          // Fallback: description column might not exist yet
+          console.warn('Client upsert failed, retrying without description:', e1?.message);
+          delete clientRecord.description;
+          const { data: c2, error: e2 } = await supabase
+            .from('clients')
+            .upsert(clientRecord, { onConflict: 'stripe_customer_id' })
+            .select('id')
+            .single();
+          if (e2 || !c2) {
+            console.error('Failed to upsert client:', e2);
+            break;
+          }
+          client = c2;
+        } else {
+          client = c1;
         }
+
+        if (!client) break;
 
         console.log(`Client created/updated: ${email} (${plan}) - ${businessName} in ${location} -> ${client.id}`);
 
@@ -163,30 +234,59 @@ export async function POST(req: NextRequest) {
       // ─── SUBSCRIPTION UPGRADED / DOWNGRADED / STATUS CHANGED ─────────────────
       case 'customer.subscription.updated': {
         const subscription = event.data.object as Stripe.Subscription;
-        const newPlan = (subscription.metadata?.plan as string) || '';
         const newStatus = subscription.status;
+
+        // Derive plan from the subscription's current price (most reliable)
+        // Falls back to metadata if price lookup fails
+        const currentPriceId = subscription.items.data[0]?.price?.id || '';
+        const derivedPlan = planFromPriceId(currentPriceId);
+        const metadataPlan = (subscription.metadata?.plan as string) || '';
+        const newPlan = derivedPlan || metadataPlan || '';
 
         const dbStatus = newStatus === 'active' ? 'active'
           : newStatus === 'past_due' ? 'past_due'
           : newStatus === 'canceled' ? 'cancelled'
           : 'active';
 
-        // Look up the client so we have their email
+        // Look up the client so we have their email and pending state
         const { data: client } = await supabase
           .from('clients')
-          .select('email, business_name, plan, status')
+          .select('email, business_name, plan, status, pending_plan_change, pending_change_date')
           .eq('stripe_subscription_id', subscription.id)
           .single();
 
+        // Build update payload
+        const updateData: Record<string, unknown> = {
+          status: dbStatus,
+          updated_at: new Date().toISOString(),
+        };
+
+        if (newPlan) {
+          updateData.plan = newPlan;
+
+          // If the new plan matches a pending change, the change has been applied — clear pending fields
+          if (client?.pending_plan_change && client.pending_plan_change === newPlan) {
+            updateData.pending_plan_change = null;
+            updateData.pending_change_date = null;
+            console.log(`✅ Pending plan change applied: ${client.plan} → ${newPlan}`);
+          }
+        }
+
         const { error } = await supabase
           .from('clients')
-          .update({ status: dbStatus, plan: newPlan || undefined, updated_at: new Date().toISOString() })
+          .update(updateData)
           .eq('stripe_subscription_id', subscription.id);
 
         if (error) {
           console.error('Failed to update subscription:', error);
         } else {
-          console.log(`Subscription updated: ${subscription.id} -> ${dbStatus}`);
+          console.log(`Subscription updated: ${subscription.id} -> ${dbStatus}${newPlan ? ` (plan: ${newPlan})` : ''}`);
+
+          // Update Stripe subscription metadata to keep plan in sync
+          if (derivedPlan && derivedPlan !== metadataPlan) {
+            stripe.subscriptions.update(subscription.id, { metadata: { plan: derivedPlan } })
+              .catch(err => console.error('Failed to sync subscription metadata:', err));
+          }
 
           if (client) {
             const prevPlan = client.plan;
@@ -232,7 +332,12 @@ export async function POST(req: NextRequest) {
 
         const { error } = await supabase
           .from('clients')
-          .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+          .update({
+            status: 'cancelled',
+            pending_plan_change: null,
+            pending_change_date: null,
+            updated_at: new Date().toISOString(),
+          })
           .eq('stripe_subscription_id', subscription.id);
 
         if (error) {

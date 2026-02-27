@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import InteractiveReport from '@/components/InteractiveReport';
 
 interface PlatformScore {
   platform: string;
@@ -24,6 +25,8 @@ interface AuditJob {
   report_path: string | null;
   created_at: string;
   completed_at: string | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  insights_json: any | null;
 }
 
 interface ClientData {
@@ -241,7 +244,9 @@ function CancelFlow({
   onAcceptRetention,
   onConfirmCancel,
   onChangePlan,
+  onSubmitFeedback,
   onClose,
+  cancelEndDate,
 }: {
   plan: string;
   cancelStep: string;
@@ -251,8 +256,13 @@ function CancelFlow({
   onAcceptRetention: () => void;
   onConfirmCancel: () => void;
   onChangePlan: (targetPlan: string) => void;
+  onSubmitFeedback: (feedback: string) => void;
   onClose: () => void;
+  cancelEndDate: string | null;
 }) {
+  const [feedback, setFeedback] = useState('');
+  const [feedbackSent, setFeedbackSent] = useState(false);
+
   const planRank = PLAN_ORDER.indexOf(plan);
   const losses = PLAN_LOSSES[plan] || [];
   const lowerPlans = PLAN_ORDER.filter((_, i) => i < planRank);
@@ -392,12 +402,72 @@ function CancelFlow({
         </>
       )}
 
-      {/* Done states */}
+      {/* Done: Sad to see you go + feedback + end date */}
       {cancelStep === 'done' && (
         <>
-          <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem' }}>Subscription cancelled</div>
-          <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6 }}>
-            Your subscription will end at the close of your current billing period. No new audits will be generated, but you can still log in to view your previous reports. If you change your mind, visit our <a href="/#pricing" style={{ color: '#C9A84C', textDecoration: 'none' }}>pricing page</a> to resubscribe.
+          <div style={{ fontSize: '1.1rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.75rem' }}>We&apos;re sad to see you go</div>
+          <div style={{
+            padding: '1rem',
+            background: 'rgba(204,68,68,0.06)',
+            border: '1px solid rgba(204,68,68,0.2)',
+            marginBottom: '1rem',
+          }}>
+            <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.25rem' }}>
+              {PLAN_LABELS[plan]} plan{cancelEndDate ? `, finishing on ${cancelEndDate}` : ', finishing at the end of your billing cycle'}.
+            </div>
+            <div style={{ fontSize: '0.82rem', color: '#999' }}>
+              No further payments will be made. You&apos;ll keep full access until then.
+            </div>
+          </div>
+
+          {!feedbackSent ? (
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', fontSize: '0.82rem', color: '#AAAAAA', marginBottom: '0.5rem' }}>
+                Would you mind sharing why you&apos;re leaving? Your feedback helps us improve.
+              </label>
+              <textarea
+                value={feedback}
+                onChange={e => setFeedback(e.target.value)}
+                placeholder="What could we have done better?"
+                rows={3}
+                style={{
+                  width: '100%',
+                  background: '#111',
+                  border: '1px solid #2a2a2a',
+                  color: '#F5F0E8',
+                  padding: '0.625rem 0.875rem',
+                  fontSize: '0.85rem',
+                  fontFamily: 'var(--font-inter, Inter, sans-serif)',
+                  resize: 'vertical',
+                  outline: 'none',
+                  marginBottom: '0.5rem',
+                  boxSizing: 'border-box',
+                }}
+              />
+              <button
+                onClick={() => { onSubmitFeedback(feedback); setFeedbackSent(true); }}
+                disabled={!feedback.trim()}
+                style={{
+                  background: feedback.trim() ? '#333' : '#1a1a1a',
+                  color: feedback.trim() ? '#AAAAAA' : '#555',
+                  border: 'none',
+                  padding: '0.4rem 1rem',
+                  fontSize: '0.8rem',
+                  cursor: feedback.trim() ? 'pointer' : 'not-allowed',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Send feedback
+              </button>
+            </div>
+          ) : (
+            <div style={{ padding: '0.75rem', background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.15)', marginBottom: '1rem', fontSize: '0.85rem', color: '#C9A84C' }}>
+              Thank you for your feedback — it genuinely helps us improve.
+            </div>
+          )}
+
+          <p style={{ fontSize: '0.78rem', color: '#666', lineHeight: 1.6, margin: 0 }}>
+            If you change your mind, you can undo the cancellation from your dashboard anytime before the end date, or visit our <a href="/#pricing" style={{ color: '#C9A84C', textDecoration: 'none' }}>pricing page</a> to resubscribe later.
           </p>
         </>
       )}
@@ -431,6 +501,80 @@ function CancelFlow({
           </button>
         </>
       )}
+    </div>
+  );
+}
+
+// ── PendingChangeBanner: prominent top-of-page status bar ──────────
+function PendingChangeBanner({
+  client,
+  onCancelPending,
+  actionLoading,
+}: {
+  client: ClientData;
+  onCancelPending: () => void;
+  actionLoading: boolean;
+}) {
+  if (!client.pending_plan_change) return null;
+
+  const isCancel = client.pending_plan_change === 'cancel';
+  const dateStr = client.pending_change_date
+    ? new Date(client.pending_change_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+    : 'the end of your billing cycle';
+
+  return (
+    <div style={{
+      padding: '0.875rem clamp(1rem, 3vw, 2rem)',
+      background: isCancel
+        ? 'linear-gradient(to right, rgba(204,68,68,0.1), rgba(204,68,68,0.03))'
+        : 'linear-gradient(to right, rgba(201,168,76,0.1), rgba(201,168,76,0.03))',
+      borderBottom: `1px solid ${isCancel ? 'rgba(204,68,68,0.15)' : 'rgba(201,168,76,0.15)'}`,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '1rem',
+      flexWrap: 'wrap',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
+        <div style={{
+          width: '8px',
+          height: '8px',
+          borderRadius: '50%',
+          background: isCancel ? '#cc6666' : '#C9A84C',
+          flexShrink: 0,
+          boxShadow: isCancel ? '0 0 8px rgba(204,102,102,0.4)' : '0 0 8px rgba(201,168,76,0.4)',
+        }} />
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontSize: '0.875rem', color: '#F5F0E8', fontWeight: 600 }}>
+            {isCancel
+              ? 'Your subscription is ending'
+              : `Switching to ${PLAN_LABELS[client.pending_plan_change] || client.pending_plan_change}`}
+          </div>
+          <div style={{ fontSize: '0.78rem', color: '#999', marginTop: '2px' }}>
+            {isCancel
+              ? `Active until ${dateStr} — no further payments will be taken`
+              : `Takes effect on ${dateStr} — you keep your current features until then`}
+          </div>
+        </div>
+      </div>
+      <button
+        onClick={onCancelPending}
+        disabled={actionLoading}
+        style={{
+          background: 'rgba(255,255,255,0.05)',
+          border: `1px solid ${isCancel ? 'rgba(204,68,68,0.3)' : 'rgba(201,168,76,0.3)'}`,
+          color: isCancel ? '#cc8888' : '#C9A84C',
+          padding: '0.45rem 1.25rem',
+          fontSize: '0.8rem',
+          fontWeight: 600,
+          cursor: actionLoading ? 'wait' : 'pointer',
+          fontFamily: 'inherit',
+          whiteSpace: 'nowrap',
+          flexShrink: 0,
+        }}
+      >
+        {actionLoading ? 'Processing...' : isCancel ? 'Undo cancellation' : 'Keep current plan'}
+      </button>
     </div>
   );
 }
@@ -876,8 +1020,18 @@ export default function DashboardPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [retentionEligible, setRetentionEligible] = useState(true);
   const [congratsPlan, setCongratsPlan] = useState<string | null>(null);
+  const [cancelEndDate, setCancelEndDate] = useState<string | null>(null);
 
   useEffect(() => {
+    // Detect post-checkout redirect (?upgraded=plan)
+    const params = new URLSearchParams(window.location.search);
+    const upgradedPlan = params.get('upgraded');
+    if (upgradedPlan && PLAN_LABELS[upgradedPlan]) {
+      setCongratsPlan(upgradedPlan);
+      // Clean up URL
+      window.history.replaceState({}, '', '/dashboard');
+    }
+
     const load = async () => {
       const [meRes, histRes] = await Promise.all([
         fetch('/api/client/me'),
@@ -913,6 +1067,20 @@ export default function DashboardPage() {
   };
 
   const handleChangePlan = async (targetPlan: string) => {
+    // If there's a pending change, ask the user to confirm before proceeding
+    if (client?.pending_plan_change) {
+      const pendingLabel = client.pending_plan_change === 'cancel'
+        ? 'cancel your subscription'
+        : `switch to ${PLAN_LABELS[client.pending_plan_change] || client.pending_plan_change}`;
+      const dateStr = client.pending_change_date
+        ? new Date(client.pending_change_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+        : 'end of your billing cycle';
+      const confirmed = window.confirm(
+        `You currently have a pending change to ${pendingLabel} scheduled for ${dateStr}.\n\nWould you like to cancel that and switch to ${PLAN_LABELS[targetPlan] || targetPlan} instead?`
+      );
+      if (!confirmed) return;
+    }
+
     setActionLoading(true);
     try {
       const res = await fetch('/api/client/change-plan', {
@@ -922,8 +1090,12 @@ export default function DashboardPage() {
       });
       const data = await res.json();
       if (data.success) {
-        if (data.immediate) {
-          // Upgrade — takes effect now
+        if (data.checkoutUrl) {
+          // Upgrade — redirect to Stripe Checkout for prorated payment
+          window.location.href = data.checkoutUrl;
+          return; // Don't clear actionLoading — page is navigating away
+        } else if (data.immediate) {
+          // No-charge upgrade — takes effect now
           setClient(prev => prev ? { ...prev, plan: targetPlan, pending_plan_change: null, pending_change_date: null } : null);
           setCongratsPlan(targetPlan);
         } else {
@@ -999,7 +1171,44 @@ export default function DashboardPage() {
       });
       const data = await res.json();
       if (data.success) {
+        setCancelEndDate(data.formattedEndDate || null);
+        setClient(prev => prev ? { ...prev, pending_plan_change: 'cancel', pending_change_date: data.endDate || null } : null);
         setCancelStep('done');
+      }
+    } catch {
+      alert('Something went wrong. Please contact hello@presenzia.ai');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleSubmitFeedback = async (feedbackText: string) => {
+    if (!feedbackText.trim()) return;
+    try {
+      await fetch('/api/client/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'submit-feedback', feedback: feedbackText }),
+      });
+    } catch {
+      // Silently fail — feedback is non-critical
+    }
+  };
+
+  const handleCancelPending = async () => {
+    setActionLoading(true);
+    try {
+      const res = await fetch('/api/client/change-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'cancel-pending' }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setClient(prev => prev ? { ...prev, pending_plan_change: null, pending_change_date: null } : null);
+        setShowCancel(false);
+      } else {
+        alert(data.error || 'Failed to cancel pending change. Please contact hello@presenzia.ai');
       }
     } catch {
       alert('Something went wrong. Please contact hello@presenzia.ai');
@@ -1038,6 +1247,9 @@ export default function DashboardPage() {
             Sign out
           </button>
         </div>
+
+        {/* Prominent pending-change banner — visible immediately on login */}
+        <PendingChangeBanner client={client} onCancelPending={handleCancelPending} actionLoading={actionLoading} />
 
         <div style={{ maxWidth: '860px', margin: '0 auto', padding: '2.5rem clamp(1rem, 3vw, 2rem) 4rem' }}>
 
@@ -1150,6 +1362,42 @@ export default function DashboardPage() {
                 </div>
               )}
 
+              {/* Pending cancellation banner (Starter) */}
+              {client.pending_plan_change === 'cancel' && (
+                <div style={{
+                  padding: '1rem 1.25rem',
+                  background: 'rgba(204,68,68,0.06)',
+                  border: '1px solid rgba(204,68,68,0.2)',
+                  marginBottom: '1.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '1rem',
+                  flexWrap: 'wrap',
+                }}>
+                  <div style={{ fontSize: '0.85rem', color: '#cc8888' }}>
+                    Your subscription will end on {client.pending_change_date ? new Date(client.pending_change_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'the end of your billing cycle'}. No further payments will be made.
+                  </div>
+                  <button
+                    onClick={handleCancelPending}
+                    disabled={actionLoading}
+                    style={{
+                      background: 'none',
+                      border: '1px solid #444',
+                      color: '#AAAAAA',
+                      padding: '0.4rem 1rem',
+                      fontSize: '0.78rem',
+                      cursor: actionLoading ? 'wait' : 'pointer',
+                      fontFamily: 'inherit',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {actionLoading ? 'Processing...' : 'Stay on Starter'}
+                  </button>
+                </div>
+              )}
+
               {/* Plan options — all 3 plans, current highlighted */}
               <div style={{ marginBottom: '1.25rem' }}>
                 <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Your plan</div>
@@ -1228,7 +1476,9 @@ export default function DashboardPage() {
                       onAcceptRetention={handleAcceptRetention}
                       onConfirmCancel={handleConfirmCancel}
                       onChangePlan={handleChangePlan}
+                      onSubmitFeedback={handleSubmitFeedback}
                       onClose={() => setShowCancel(false)}
+                      cancelEndDate={cancelEndDate}
                     />
                   </div>
                 )}
@@ -1271,6 +1521,9 @@ export default function DashboardPage() {
           Sign out
         </button>
       </div>
+
+      {/* Prominent pending-change banner — visible immediately on login */}
+      {client && <PendingChangeBanner client={client} onCancelPending={handleCancelPending} actionLoading={actionLoading} />}
 
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem clamp(1rem, 3vw, 2rem) 4rem' }}>
 
@@ -1396,77 +1649,26 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div>
-              {/* ── Report header: Score + Business info ── */}
-              <div style={{
-                background: '#0D0D0D',
-                border: '1px solid #1a1a1a',
-                padding: 'clamp(1.5rem, 3vw, 2.5rem)',
-                marginBottom: '1.25rem',
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                  <div style={{ fontSize: '0.7rem', color: '#666', letterSpacing: '0.12em', textTransform: 'uppercase' }}>presenzia.ai · AI Visibility Report</div>
-                  {latestJob.completed_at && (
-                    <div style={{ fontSize: '0.7rem', color: '#666' }}>{fmt(latestJob.completed_at)}</div>
-                  )}
-                </div>
+              {/* Interactive report — replaces static report view */}
+              <InteractiveReport
+                job={latestJob}
+                client={{
+                  business_name: client?.business_name || null,
+                  business_type: client?.business_type || null,
+                  location: client?.location || null,
+                  website: client?.website || null,
+                  plan: client?.plan || 'growth',
+                }}
+                onDownload={handleDownloadReport}
+              />
 
-                <div className="dash-score-header" style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 'clamp(1.5rem, 4vw, 3rem)',
-                  paddingTop: '1.25rem',
-                }}>
-                  {/* Score */}
-                  {latestJob.overall_score !== null && latestJob.grade && (
-                    <div style={{ flexShrink: 0 }}>
-                      <ScoreGauge score={latestJob.overall_score} grade={latestJob.grade} />
-                    </div>
-                  )}
-
-                  {/* Business info + context */}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{
-                      fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
-                      fontSize: 'clamp(1.1rem, 2.5vw, 1.4rem)',
-                      color: '#F5F0E8',
-                      fontWeight: 600,
-                      marginBottom: '0.5rem',
-                    }}>
-                      {client?.business_name || 'Your business'}
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                      {client?.business_type && (
-                        <span style={{ fontSize: '0.7rem', padding: '3px 8px', background: '#111', border: '1px solid #222', color: '#888' }}>
-                          {client.business_type}
-                        </span>
-                      )}
-                      {client?.location && (
-                        <span style={{ fontSize: '0.7rem', padding: '3px 8px', background: '#111', border: '1px solid #222', color: '#888' }}>
-                          {client.location}
-                        </span>
-                      )}
-                      {platforms.length > 0 && (
-                        <span style={{ fontSize: '0.7rem', padding: '3px 8px', background: '#111', border: '1px solid #222', color: '#888' }}>
-                          {platforms.reduce((sum, p) => sum + p.promptsTested, 0)} prompts tested
-                        </span>
-                      )}
-                    </div>
-                    {latestJob.grade && GRADE_CONTEXT[latestJob.grade] && (
-                      <p style={{ color: '#888', fontSize: '0.82rem', lineHeight: 1.6, margin: 0 }}>
-                        {GRADE_CONTEXT[latestJob.grade]}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* ── Score trend graph ── */}
+              {/* Score trend graph */}
               {history.filter(r => r.status === 'completed' && r.overall_score !== null).length >= 2 && (
                 <div style={{
                   background: '#0D0D0D',
                   border: '1px solid #1a1a1a',
                   padding: 'clamp(1rem, 2vw, 1.5rem)',
-                  marginBottom: '1.25rem',
+                  marginTop: '1.25rem',
                 }}>
                   <div style={{
                     fontSize: '0.7rem',
@@ -1481,191 +1683,23 @@ export default function DashboardPage() {
                 </div>
               )}
 
-              {/* ── Platform breakdown — cards grid ── */}
-              {platforms.length > 0 && (
-                <div style={{ marginBottom: '1.25rem' }}>
-                  <div style={{ fontSize: '0.7rem', color: '#666', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem', paddingLeft: '2px' }}>
-                    Platform breakdown
-                  </div>
-                  <div className="dash-platform-grid" style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(min(220px, 100%), 1fr))',
-                    gap: '0.75rem',
-                  }}>
-                    {platforms.map(p => <PlatformCard key={p.platform} platform={p} />)}
-                  </div>
+              {/* Next audit date */}
+              {latestJob.completed_at && (
+                <div style={{
+                  marginTop: '0.75rem',
+                  padding: '0.75rem 1rem',
+                  background: 'rgba(201,168,76,0.04)',
+                  border: '1px solid rgba(201,168,76,0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                }}>
+                  <div style={{ width: '5px', height: '5px', background: '#C9A84C', borderRadius: '50%', flexShrink: 0 }} />
+                  <span style={{ fontSize: '0.78rem', color: '#999' }}>
+                    Next audit: <span style={{ color: '#C9A84C', fontWeight: 600 }}>{getNextAuditDate(latestJob.completed_at)}</span>
+                  </span>
                 </div>
               )}
-
-              {/* ── Two-column: Competitors + Summary | Chat + Account manager ── */}
-              <div className="dash-report-grid" style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '1.25rem',
-              }}>
-                {/* Left: Competitors + Summary + Download */}
-                <div>
-                  {/* Competitors */}
-                  {competitors.length > 0 && (() => {
-                    const maxCount = competitors[0]?.count || 1;
-                    return (
-                      <div style={{ background: '#0D0D0D', border: '1px solid #1a1a1a', padding: '1.25rem', marginBottom: '1.25rem' }}>
-                        <div style={{ fontSize: '0.7rem', color: '#666', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1rem' }}>
-                          Competitors appearing instead of you
-                        </div>
-                        {competitors.slice(0, 6).map((comp, i) => (
-                          <div key={i} style={{ marginBottom: i < Math.min(5, competitors.length - 1) ? '0.75rem' : 0 }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <span style={{ fontSize: '0.7rem', color: '#555', fontWeight: 600, width: '16px' }}>#{i + 1}</span>
-                                <span style={{ fontSize: '0.85rem', color: '#CCCCCC' }}>{comp.name}</span>
-                              </div>
-                              <span style={{ fontSize: '0.7rem', color: '#888' }}>{comp.count} mention{comp.count !== 1 ? 's' : ''}</span>
-                            </div>
-                            <div style={{ height: '2px', background: '#1a1a1a', marginLeft: '24px' }}>
-                              <div style={{
-                                height: '100%',
-                                width: `${Math.round((comp.count / maxCount) * 100)}%`,
-                                background: 'rgba(204,68,68,0.4)',
-                                transition: 'width 0.8s ease',
-                              }} />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    );
-                  })()}
-
-                  {/* Summary */}
-                  {latestJob.summary && (
-                    <div style={{ padding: '1.25rem', background: '#0D0D0D', border: '1px solid #1a1a1a', marginBottom: '1.25rem' }}>
-                      <div style={{ fontSize: '0.7rem', color: '#666', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Audit summary</div>
-                      <p style={{ color: '#AAAAAA', fontSize: '0.85rem', lineHeight: 1.75, margin: 0 }}>{latestJob.summary}</p>
-                    </div>
-                  )}
-
-                  {/* Download + Next audit */}
-                  <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                    {latestJob.report_path && (
-                      <button
-                        onClick={() => handleDownloadReport(latestJob.id)}
-                        style={{
-                          flex: 1,
-                          minWidth: '160px',
-                          padding: '0.7rem 1rem',
-                          background: 'transparent',
-                          border: '1px solid #333',
-                          color: '#AAAAAA',
-                          fontSize: '0.82rem',
-                          cursor: 'pointer',
-                          fontFamily: 'inherit',
-                          textAlign: 'center',
-                          transition: 'all 0.2s',
-                        }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#C9A84C'; (e.currentTarget as HTMLElement).style.color = '#C9A84C'; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#333'; (e.currentTarget as HTMLElement).style.color = '#AAAAAA'; }}
-                      >
-                        ↓ Download full report (PDF)
-                      </button>
-                    )}
-                  </div>
-
-                  {latestJob.completed_at && (
-                    <div style={{
-                      marginTop: '0.75rem',
-                      padding: '0.75rem 1rem',
-                      background: 'rgba(201,168,76,0.04)',
-                      border: '1px solid rgba(201,168,76,0.12)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                    }}>
-                      <div style={{ width: '5px', height: '5px', background: '#C9A84C', borderRadius: '50%', flexShrink: 0 }} />
-                      <span style={{ fontSize: '0.78rem', color: '#999' }}>
-                        Next audit: <span style={{ color: '#C9A84C', fontWeight: 600 }}>{getNextAuditDate(latestJob.completed_at)}</span>
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Right: Chat + Account manager */}
-                <div>
-                  <div style={{ fontSize: '0.7rem', color: '#666', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
-                    Ask about your results
-                  </div>
-                  <ChatPane jobId={latestJob.id} businessName={client?.business_name || ''} />
-
-                  {/* Premium: Account manager + Booking */}
-                  {client?.plan === 'premium' && (
-                    <div style={{ background: '#0D0D0D', border: '1px solid #1a1a1a', padding: '1.25rem', marginTop: '1.25rem' }}>
-                      <div style={{ fontSize: '0.7rem', color: '#9b6bcc', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
-                        Your account manager
-                      </div>
-                      <p style={{ fontSize: '0.82rem', color: '#888', lineHeight: 1.6, marginBottom: '0.75rem' }}>
-                        Have questions between calls? Reach your dedicated account manager directly.
-                      </p>
-                      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                        <a
-                          href={BOOKING_URL}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            display: 'inline-block',
-                            padding: '0.5rem 1rem',
-                            background: '#9b6bcc',
-                            color: '#0A0A0A',
-                            fontSize: '0.8rem',
-                            fontWeight: 600,
-                            textDecoration: 'none',
-                          }}
-                        >
-                          Book strategy call →
-                        </a>
-                        <a
-                          href="mailto:hello@presenzia.ai?subject=Premium%20Support%20Request"
-                          style={{
-                            display: 'inline-block',
-                            padding: '0.5rem 1rem',
-                            background: 'none',
-                            border: '1px solid #444',
-                            color: '#888',
-                            fontSize: '0.8rem',
-                            textDecoration: 'none',
-                          }}
-                        >
-                          Email support
-                        </a>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Growth: Upgrade nudge */}
-                  {client?.plan === 'growth' && (
-                    <div style={{ background: 'rgba(155,107,204,0.04)', border: '1px solid rgba(155,107,204,0.15)', padding: '1rem', marginTop: '1.25rem' }}>
-                      <div style={{ fontSize: '0.82rem', color: '#AAAAAA', lineHeight: 1.6, marginBottom: '0.5rem' }}>
-                        Need expert guidance? <span style={{ color: '#9b6bcc', fontWeight: 500 }}>Premium</span> includes a monthly strategy call and dedicated account manager.
-                      </div>
-                      <button
-                        onClick={() => document.getElementById('plan-options')?.scrollIntoView({ behavior: 'smooth' })}
-                        style={{
-                          background: 'none',
-                          border: '1px solid rgba(155,107,204,0.3)',
-                          color: '#9b6bcc',
-                          padding: '0.4rem 1rem',
-                          fontSize: '0.78rem',
-                          cursor: 'pointer',
-                          fontFamily: 'inherit',
-                          transition: 'all 0.2s',
-                        }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#9b6bcc'; (e.currentTarget as HTMLElement).style.background = 'rgba(155,107,204,0.08)'; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(155,107,204,0.3)'; (e.currentTarget as HTMLElement).style.background = 'none'; }}
-                      >
-                        Learn about Premium →
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
             </div>
           )
         )}
@@ -1743,10 +1777,42 @@ export default function DashboardPage() {
         {/* ─── SUBSCRIPTION MANAGEMENT ─── */}
         {client?.status !== 'cancelled' ? (
         <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid #1a1a1a' }}>
-          {/* Pending downgrade banner */}
+          {/* Pending change banner (downgrade or cancellation) */}
           {client?.pending_plan_change && (
-            <div style={{ padding: '0.75rem 1rem', background: '#1a1500', border: '1px solid #332800', marginBottom: '1.5rem', fontSize: '0.85rem', color: '#C9A84C' }}>
-              Switching to {PLAN_LABELS[client.pending_plan_change] || client.pending_plan_change} on {client.pending_change_date ? new Date(client.pending_change_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'end of billing cycle'}.
+            <div style={{
+              padding: '1rem 1.25rem',
+              background: client.pending_plan_change === 'cancel' ? 'rgba(204,68,68,0.06)' : '#1a1500',
+              border: `1px solid ${client.pending_plan_change === 'cancel' ? 'rgba(204,68,68,0.2)' : '#332800'}`,
+              marginBottom: '1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1rem',
+              flexWrap: 'wrap',
+            }}>
+              <div style={{ fontSize: '0.85rem', color: client.pending_plan_change === 'cancel' ? '#cc8888' : '#C9A84C' }}>
+                {client.pending_plan_change === 'cancel'
+                  ? <>Your subscription will end on {client.pending_change_date ? new Date(client.pending_change_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'the end of your billing cycle'}. No further payments will be made.</>
+                  : <>Switching to {PLAN_LABELS[client.pending_plan_change] || client.pending_plan_change} on {client.pending_change_date ? new Date(client.pending_change_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'end of billing cycle'}.</>
+                }
+              </div>
+              <button
+                onClick={handleCancelPending}
+                disabled={actionLoading}
+                style={{
+                  background: 'none',
+                  border: '1px solid #444',
+                  color: '#AAAAAA',
+                  padding: '0.4rem 1rem',
+                  fontSize: '0.78rem',
+                  cursor: actionLoading ? 'wait' : 'pointer',
+                  fontFamily: 'inherit',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                }}
+              >
+                {actionLoading ? 'Processing...' : client.pending_plan_change === 'cancel' ? `Stay on ${PLAN_LABELS[client.plan] || client.plan}` : 'Cancel this change'}
+              </button>
             </div>
           )}
 
@@ -1836,7 +1902,9 @@ export default function DashboardPage() {
               onAcceptRetention={handleAcceptRetention}
               onConfirmCancel={handleConfirmCancel}
               onChangePlan={handleChangePlan}
+              onSubmitFeedback={handleSubmitFeedback}
               onClose={() => setShowCancel(false)}
+              cancelEndDate={cancelEndDate}
             />
           )}
         </div>

@@ -133,8 +133,7 @@ function SuccessContent() {
         lineHeight: 1.7,
         marginBottom: '3rem',
       }}>
-        Your audit will be delivered by email within <strong style={{ color: '#F5F0E8' }}>48 hours</strong>.
-        Check your inbox for a confirmation shortly.
+        Your audit is already being processed and will be delivered to your inbox <strong style={{ color: '#F5F0E8' }}>within the hour</strong>.
       </p>
 
       <div style={{
@@ -153,7 +152,7 @@ function SuccessContent() {
             'Confirmation email sent to your inbox',
             'AI platforms tested across 100+ prompts',
             'Platform-by-platform breakdown prepared',
-            'Full audit delivered within 48 hours',
+            'Full audit delivered to your email shortly',
           ].map((step, i) => (
             <li key={i} style={{ display: 'flex', gap: '0.75rem', fontSize: '0.875rem', color: '#AAAAAA', alignItems: 'flex-start' }}>
               <span style={{ color: '#C9A84C', flexShrink: 0, fontWeight: 600 }}>{i + 1}.</span>

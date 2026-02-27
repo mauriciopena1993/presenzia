@@ -30,15 +30,31 @@ export async function GET(req: NextRequest) {
 
   if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
-  // Latest completed job
-  const { data: latestJob } = await supabase
-    .from('audit_jobs')
-    .select('id, status, overall_score, grade, summary, platforms_json, competitors_json, report_path, created_at, completed_at')
-    .eq('client_id', client.id)
-    .eq('status', 'completed')
-    .order('completed_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  // Latest completed job (try with insights_json, fall back without)
+  let latestJob = null;
+  {
+    const { data, error: jobErr } = await supabase
+      .from('audit_jobs')
+      .select('id, status, overall_score, grade, summary, platforms_json, competitors_json, report_path, created_at, completed_at, insights_json')
+      .eq('client_id', client.id)
+      .eq('status', 'completed')
+      .order('completed_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (jobErr && !data) {
+      const fallback = await supabase
+        .from('audit_jobs')
+        .select('id, status, overall_score, grade, summary, platforms_json, competitors_json, report_path, created_at, completed_at')
+        .eq('client_id', client.id)
+        .eq('status', 'completed')
+        .order('completed_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      latestJob = fallback.data ? { ...fallback.data, insights_json: null } : null;
+    } else {
+      latestJob = data || null;
+    }
+  }
 
   // Latest in-progress job (to show "audit running" state)
   const { data: pendingJob } = await supabase

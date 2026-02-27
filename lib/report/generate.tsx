@@ -13,6 +13,11 @@ import type { AuditScore, PromptResult } from '../audit/scorer';
 import type { AuditConfig } from '../audit/runner';
 import type { ReportInsights, CategoryBreakdown, DetailedAction, PromptTestResult, ActionStep } from './insights';
 
+/** Turn "Restaurant / Cafe" → "restaurant" */
+function cleanBT(bt: string): string {
+  return bt.split('/')[0].trim().toLowerCase();
+}
+
 // Register fonts — use local TTF files (woff2 is not supported by @react-pdf/renderer)
 Font.register({
   family: 'Inter',
@@ -343,7 +348,7 @@ function getFallbackActions(score: AuditScore, config: AuditConfig): DetailedAct
       why: 'Google Business Profile data directly feeds into Google AI and influences all platforms.',
       steps: [
         `Verify or claim your listing at business.google.com`,
-        `Add a detailed business description mentioning "${config.businessType} in ${config.location}"`,
+        `Add a detailed business description mentioning "${cleanBT(config.businessType)} in ${config.location}"`,
         'Upload 10+ high-quality photos of your products and storefront',
         'Set accurate opening hours for all 7 days',
         'Respond to every existing Google review within 48 hours',
@@ -356,7 +361,7 @@ function getFallbackActions(score: AuditScore, config: AuditConfig): DetailedAct
       title: 'Build Targeted Review Volume',
       why: 'Specific, location-rich reviews carry significantly more weight with AI than generic ratings.',
       steps: [
-        `Ask satisfied customers to mention "${config.businessType.toLowerCase()} in ${config.location}" in reviews`,
+        `Ask satisfied customers to mention "${cleanBT(config.businessType)} in ${config.location}" in reviews`,
         'Text or email a direct Google review link immediately after a positive interaction',
         'Aim for 5-10 new reviews per month across Google and key review sites',
         'Respond to every review. This signals active business presence to AI.',
@@ -370,7 +375,7 @@ function getFallbackActions(score: AuditScore, config: AuditConfig): DetailedAct
     why: 'AI platforms cite websites that provide clear, factual, well-structured information.',
     steps: [
       'Add a dedicated About page stating what you do, where you are, and who you serve',
-      `Create a FAQ answering queries like "best ${config.businessType.toLowerCase()} in ${config.location}"`,
+      `Create a FAQ answering queries like "best ${cleanBT(config.businessType)} in ${config.location}"`,
       'Add Schema.org LocalBusiness structured data markup (JSON-LD)',
       'Ensure your address and phone are in plain text, not images',
     ],
@@ -389,7 +394,7 @@ interface ReportData {
 
 function AuditReport({ config, score, insights, reportDate, jobId }: ReportData) {
   const actions = insights?.actions ?? getFallbackActions(score, config);
-  const topPriorities = actions.slice(0, 2); // Always show first 2 as priorities
+  const allPriorities = actions.slice(0, 5); // Show all actions on page 1
   const mainColor = scoreColor(score.overall);
   const band = scoreBand(score.overall);
   const maxCompCount = score.topCompetitors[0]?.count || 1;
@@ -408,7 +413,7 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
           <View style={s.heroRow}>
             <View style={s.bizBlock}>
               <Text style={s.bizName}>{config.businessName}</Text>
-              <Text style={s.bizMeta}>{config.businessType}</Text>
+              <Text style={s.bizMeta}>{config.description || config.businessType}</Text>
               {config.location ? <Text style={s.bizMeta}>{config.location}</Text> : null}
               {config.website ? <Text style={s.bizMeta}>{config.website}</Text> : null}
               <Text style={s.dateLabel}>Audit date: {reportDate}</Text>
@@ -467,19 +472,29 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
             </Text>
           </View>
 
-          {/* Priority actions preview */}
-          {topPriorities.length > 0 && (
+          {/* Priority actions preview — all actions, top 2 highlighted */}
+          {allPriorities.length > 0 && (
             <View>
               <Text style={s.secTitle}>Your Priority Actions</Text>
-              <Text style={[s.secSub, { marginBottom: 6 }]}>Full details in your Action Plan on page {actionPageNum}.</Text>
-              {topPriorities.map((act, i) => (
-                <View key={i} style={s.prioItem}>
-                  <View style={[s.prioBullet, { backgroundColor: GOLD }]}>
-                    <Text style={s.prioBulletTxt}>{i + 1}</Text>
+              <Text style={[s.secSub, { marginBottom: 6 }]}>Full details in your Action Plan on page {actionPageNum}. Focus on the top 2 first.</Text>
+              {allPriorities.map((act, i) => {
+                const isTopPriority = i < 2;
+                return (
+                  <View key={i} style={s.prioItem}>
+                    <View style={[s.prioBullet, { backgroundColor: isTopPriority ? RED : GOLD }]}>
+                      <Text style={s.prioBulletTxt}>{i + 1}</Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={[s.prioTitle, isTopPriority ? { fontWeight: 700, color: TEXT_PRIMARY } : {}]}>
+                        {act.title}
+                        {isTopPriority && (
+                          <Text style={{ fontSize: 6.5, color: RED, fontWeight: 700, letterSpacing: 0.5 }}> · DO THIS FIRST</Text>
+                        )}
+                      </Text>
+                    </View>
                   </View>
-                  <Text style={s.prioTitle}>{act.title}</Text>
-                </View>
-              ))}
+                );
+              })}
             </View>
           )}
 
@@ -579,7 +594,7 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
 
             <Text style={s.secTitle}>Search Prompts Tested</Text>
             <Text style={s.secSub}>
-              We tested {insights!.totalSearches} searches across {score.platforms.length} AI platforms, simulating how real customers look for {config.businessType.toLowerCase()} businesses in {config.location}. You appeared in {insights!.totalFound} of these ({Math.round((insights!.totalFound / Math.max(insights!.totalSearches, 1)) * 100)}%).
+              We tested {insights!.totalSearches} searches across {score.platforms.length} AI platforms, simulating how real customers look for {cleanBT(config.businessType)} businesses in {config.location}. You appeared in {insights!.totalFound} of these ({Math.round((insights!.totalFound / Math.max(insights!.totalSearches, 1)) * 100)}%).
             </Text>
 
             {/* Table header row — aligned with data rows */}
@@ -711,7 +726,7 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
           <Text style={s.secTitle}>How We Test</Text>
           <View style={s.goldBox}>
             <Text style={s.bodySmall}>
-              We queried {score.platforms.length} AI platforms with {Math.round(score.totalPrompts / score.platforms.length)} prompts each ({score.totalPrompts} total), simulating how real customers search for a {config.businessType.toLowerCase()} in {config.location}. All tests ran in fresh sessions with no browsing history or prior context, representing a neutral baseline. Your score is weighted by each platform&apos;s approximate market share.
+              We queried {score.platforms.length} AI platforms with {Math.round(score.totalPrompts / score.platforms.length)} prompts each ({score.totalPrompts} total), simulating how real customers search for a {cleanBT(config.businessType)} in {config.location}. All tests ran in fresh sessions with no browsing history or prior context, representing a neutral baseline. Your score is weighted by each platform&apos;s approximate market share.
             </Text>
           </View>
 

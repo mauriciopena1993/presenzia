@@ -66,6 +66,7 @@ export async function POST(req: NextRequest) {
     const config: AuditConfig = {
       businessName: client.business_name,
       businessType: client.business_type,
+      description: client.description || '',
       location: client.location,
       keywords: client.keywords || [],
       website: client.website || undefined,
@@ -93,20 +94,27 @@ export async function POST(req: NextRequest) {
       console.error('Failed to upload PDF:', uploadError);
     }
 
-    // Update job with results
-    await supabase
+    // Update job with results (try with insights_json, fall back without)
+    const jobUpdate: Record<string, unknown> = {
+      status: 'completed',
+      overall_score: score.overall,
+      grade: score.grade,
+      summary: score.summary,
+      platforms_json: score.platforms,
+      competitors_json: score.topCompetitors,
+      report_path: uploadError ? null : reportFileName,
+      completed_at: new Date().toISOString(),
+      insights_json: insights,
+    };
+    const { error: updateErr } = await supabase
       .from('audit_jobs')
-      .update({
-        status: 'completed',
-        overall_score: score.overall,
-        grade: score.grade,
-        summary: score.summary,
-        platforms_json: score.platforms,
-        competitors_json: score.topCompetitors,
-        report_path: uploadError ? null : reportFileName,
-        completed_at: new Date().toISOString(),
-      })
+      .update(jobUpdate)
       .eq('id', jobId);
+    if (updateErr) {
+      console.warn('insights_json column may not exist, retrying without:', updateErr.message);
+      delete jobUpdate.insights_json;
+      await supabase.from('audit_jobs').update(jobUpdate).eq('id', jobId);
+    }
 
     console.log(`✅ Audit complete for ${config.businessName}: ${score.overall}/100 (${score.grade})`);
 

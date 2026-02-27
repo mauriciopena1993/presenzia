@@ -22,7 +22,7 @@ All plans are monthly subscriptions. Cancel any time.
 UK small and medium-sized businesses: restaurants, cafes, bars, pubs, gyms, fitness studios, hair salons, beauty salons, spas, dental practices, veterinary practices, solicitors, accountants, estate agents, hotels, boutique shops, wedding venues — any local business that relies on customers finding them.
 
 ## Common questions
-- Reports are delivered by email as a PDF attachment within 24 hours of signup, then monthly after that
+- Reports are delivered by email as a PDF attachment within minutes of signup, then monthly after that
 - The audit takes 60–120 seconds to run across all platforms
 - We test using real customer search prompts, not just the business name
 - Results are specific to the business's location and industry
