@@ -14,7 +14,7 @@ const faqs = [
   },
   {
     q: 'What do I actually receive?',
-    a: 'Within minutes of signing up, your audit begins running automatically. You\'ll receive your full report by email shortly after — usually within the hour. It includes your overall AI Visibility Score (0–100), a platform-by-platform breakdown, a list of competitors that are currently appearing in your place, and specific, actionable recommendations to improve your visibility. Growth and Premium clients also get access to an online dashboard where they can track progress over time.',
+    a: 'Within minutes of signing up, your audit begins running automatically. You\'ll receive your full report by email shortly after — usually within minutes. It includes your overall AI Visibility Score (0–100), a platform-by-platform breakdown, a list of competitors that are currently appearing in your place, and specific, actionable recommendations to improve your visibility. Growth and Premium clients also get access to an online dashboard where they can track progress over time.',
   },
   {
     q: 'How is this different from traditional SEO?',

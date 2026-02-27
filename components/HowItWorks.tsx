@@ -26,7 +26,7 @@ export default function HowItWorks() {
     {
       number: '04',
       title: 'We fix it and track it',
-      description: 'On Growth and Premium plans, we provide monthly follow-up audits so you can see your score improve over time.',
+      description: 'Growth and Premium plans include weekly or daily dashboard updates, so you can track your score improving over time.',
       icon: TrendingUp,
     },
   ];

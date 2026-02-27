@@ -1,86 +1,93 @@
 # Presenzia.ai — Project Context
 
 ## What It Is
-A B2B SaaS that audits how visible a local business is in AI search engines (ChatGPT, Claude, Perplexity, Google AI). Clients pay a subscription and get a scored report showing where they appear (or don't) when people ask AI chatbots for business recommendations.
+A B2B SaaS that audits how visible a local UK business is in AI search engines (ChatGPT, Claude, Perplexity, Google AI). Clients pay a monthly subscription and get a scored report showing where they appear (or don't) when people ask AI chatbots for business recommendations.
 
 ## Tech Stack
 - **Framework:** Next.js 16 + React 19 + TypeScript
-- **Styling:** Tailwind CSS v4
-- **Payments:** Stripe (subscription billing)
-- **Database:** Supabase (configured, not yet wired up)
+- **Styling:** Inline styles (no Tailwind)
+- **Payments:** Stripe (subscription billing, plan changes, cancellation schedules)
+- **Database:** Supabase (PostgreSQL — clients, audit_jobs tables)
 - **Email:** Resend
 - **PDF Reports:** @react-pdf/renderer
-- **Animations:** Framer Motion
+- **AI Audit Engine:** OpenAI, Anthropic, Perplexity, Google AI (Gemini)
+- **Hosting:** Vercel (auto-deploy from main)
 
 ## Project Structure
 ```
 app/
-  page.tsx              — Landing page (Navbar, Hero, HowItWorks, SampleReport, Pricing, Testimonials, Footer)
+  page.tsx                — Landing page (Navbar, Hero, HowItWorks, SampleReport, Pricing, Testimonials, FAQ, Footer)
+  about/page.tsx          — About page
+  blog/[slug]/page.tsx    — Blog post pages
+  terms/page.tsx          — Terms of Service
+  privacy/page.tsx        — Privacy Policy
+  success/page.tsx        — Post-payment success page
+  onboarding/page.tsx     — Business details collection after payment
+  dashboard/
+    page.tsx              — Client dashboard (reports, score trends, plan management, AI chat, cancellation flow)
+    login/page.tsx        — Client login (OTP-based)
+    rate/page.tsx         — Audit rating page
+  admin/page.tsx          — Admin dashboard
   api/
-    audit/route.ts      — POST: runs audit, returns score + competitor data
-    checkout/route.ts   — POST: creates Stripe checkout session
-    webhook/route.ts    — POST: handles Stripe webhook events
-  checkout/             — Checkout flow pages
-  success/page.tsx      — Post-payment success page
-components/             — All landing page sections (Navbar, Hero, HowItWorks, SampleReport, Pricing, Testimonials, Footer)
+    audit/route.ts        — POST: runs audit engine
+    process-audit/route.ts — Background runner: runs audit, generates PDF, uploads, emails
+    checkout/route.ts     — POST: creates Stripe checkout session
+    webhook/route.ts      — POST: handles Stripe webhook events
+    verify-session/       — Validates Stripe session_id
+    chat/route.ts         — AI audit assistant (Growth/Premium)
+    report/route.ts       — PDF download endpoint
+    client/
+      change-plan/route.ts — Plan upgrades/downgrades via Stripe
+      cancel/route.ts      — Cancellation flow (confirm, retention offer, feedback)
+      send-otp/route.ts    — Client OTP login
+    auth/                  — Admin auth (OTP-based)
+    admin/                 — Admin API routes
+components/
+  Navbar.tsx, Hero.tsx, HowItWorks.tsx, SampleReport.tsx,
+  Pricing.tsx, Testimonials.tsx, FAQ.tsx, Footer.tsx,
+  AmbientBackground.tsx (hidden on /dashboard routes)
 lib/
-  stripe.ts             — Stripe client + PLANS config (Starter £149, Growth £299, Premium £599)
+  stripe.ts               — Stripe client + PLANS config
+  supabase.ts             — Supabase service-role client + types
+  client-auth.ts          — Client session/OTP helpers
+  admin-auth.ts           — Admin session/OTP helpers
+  blog-posts.ts           — Blog content data
   audit/
-    runner.ts           — Queries ChatGPT, Claude, Perplexity, Google AI with prompts; detects mentions + competitors
-    scorer.ts           — Calculates 0-100 visibility score + A-F grade per platform and overall
-    prompts.ts          — Builds prompt list from business type/location/keywords
+    runner.ts             — Queries 4 AI platforms concurrently
+    scorer.ts             — Calculates 0-100 score + A-F grade
+    prompts.ts            — Builds prompt list from business config
   report/
-    generate.tsx        — PDF report generation
+    generate.tsx          — PDF report generation (react-pdf)
+    insights.ts           — AI-generated action plan insights
+scripts/
+  setup-stripe.ts         — One-time Stripe product/price creation
+supabase/
+  migrations/             — SQL migration files
 ```
 
 ## Pricing Plans
-| Plan     | Price  | Cadence                        |
-|----------|--------|--------------------------------|
-| Starter  | £149   | Monthly audit                  |
-| Growth   | £299   | Weekly audits + dashboard      |
-| Premium  | £599   | Full service + strategy calls  |
+| Plan    | Price | What's included                                                                        |
+|---------|-------|----------------------------------------------------------------------------------------|
+| Starter | £99/mo  | Monthly AI visibility audit (4 platforms), PDF report by email                       |
+| Growth  | £199/mo | Everything in Starter + online dashboard (weekly updates), AI assistant, competitor deep-dive, priority support |
+| Premium | £599/mo | Everything in Growth + daily dashboard updates, dedicated account manager, monthly 1:1 strategy call, custom prompt testing & benchmarking |
 
-## Env Vars Needed (.env.local)
-- `STRIPE_SECRET_KEY`
-- `STRIPE_PRICE_STARTER`, `STRIPE_PRICE_GROWTH`, `STRIPE_PRICE_PREMIUM`
-- `STRIPE_WEBHOOK_SECRET`
+**Key distinction:** All plans get a monthly audit. Growth/Premium additionally get dashboard updates at weekly/daily frequency.
+
+## Env Vars (.env.local)
+- `STRIPE_SECRET_KEY`, `STRIPE_PRICE_STARTER`, `STRIPE_PRICE_GROWTH`, `STRIPE_PRICE_PREMIUM`, `STRIPE_WEBHOOK_SECRET`
 - `NEXT_PUBLIC_APP_URL`
-- `OPENAI_API_KEY`
-- `ANTHROPIC_API_KEY`
-- `PERPLEXITY_API_KEY` (optional, falls back to OpenAI)
-- `GOOGLE_AI_API_KEY` (optional, falls back to OpenAI)
-- Supabase vars (to be added)
+- `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `PERPLEXITY_API_KEY`, `GOOGLE_AI_API_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_URL`
+- `RESEND_API_KEY`
+- `INTERNAL_API_SECRET`
 
-## Env Vars to add to .env.local
-- `SUPABASE_SERVICE_ROLE_KEY` — Supabase dashboard → Settings → API
-- `NEXT_PUBLIC_SUPABASE_URL` — Supabase dashboard → Settings → API
-- `RESEND_API_KEY` — resend.com
-- `INTERNAL_API_SECRET` — any random string: `openssl rand -hex 32`
-- Run `scripts/setup-stripe.ts` to create Stripe products and get STRIPE_PRICE_* IDs
+## Supabase
+- **Project ref:** yocrheqdmlgibwhyuyeq
+- **Tables:** clients, audit_jobs
+- **Storage bucket:** reports (private)
+- **Migrations:** 001–005 all executed
 
-## Supabase Setup (one-time)
-1. Run `supabase/migrations/001_initial_schema.sql` in Supabase SQL editor
-2. Create a storage bucket named `reports` (Storage → New bucket, set to private)
-
-## Current Status / What's Done
-- [x] Landing page (fonts, CTAs, mobile nav all fixed)
-- [x] Audit engine (4 AI platforms run concurrently, scores results)
-- [x] Stripe checkout + fully implemented webhook (saves client, queues audit, handles renewals/cancellations)
-- [x] PDF report generation (lib/report/generate.tsx)
-- [x] Supabase schema: clients + audit_jobs tables
-- [x] lib/supabase.ts — server-side service role client
-- [x] /api/process-audit — background runner: runs audit, uploads PDF, emails via Resend
-- [x] /api/report — PDF download endpoint
-- [x] /api/verify-session — validates Stripe session_id on success page
-- [x] /api/audit — protected with INTERNAL_API_SECRET
-- [x] scripts/setup-stripe.ts — creates Stripe products + prices
-
-## TODOs / What's Left
-- [ ] Run Supabase migration in SQL editor
-- [ ] Create Supabase 'reports' storage bucket
-- [ ] Run setup-stripe.ts → add price IDs to .env.local
-- [ ] Add missing env vars to .env.local (see above)
-- [ ] Onboarding flow: after payment, collect business_name/business_type/location/keywords (webhook queues job but won't run audit until these are set)
-- [ ] Client dashboard (/dashboard route + Supabase Auth)
-- [ ] Privacy Policy + Terms of Service pages (required for UK GDPR)
-- [ ] vercel.json: set maxDuration=300 for /api/process-audit (requires Vercel Pro)
+## Vercel
+- **Project:** mauriciopena1993-1720s-projects/presenzia
+- **Auto-deploy:** pushes to `main` trigger production deployment

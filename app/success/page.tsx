@@ -133,7 +133,7 @@ function SuccessContent() {
         lineHeight: 1.7,
         marginBottom: '3rem',
       }}>
-        Your audit is already being processed and will be delivered to your inbox <strong style={{ color: '#F5F0E8' }}>within the hour</strong>.
+        Your audit is already being processed and will be delivered to your inbox <strong style={{ color: '#F5F0E8' }}>within minutes</strong>.
       </p>
 
       <div style={{

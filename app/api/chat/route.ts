@@ -14,7 +14,7 @@ Every customer gets a monthly AI visibility audit with:
 ## Plans and pricing
 - **Starter** — £99/month: monthly AI visibility audit delivered by email (PDF), 4 AI platforms tested
 - **Growth** — £199/month: everything in Starter plus live dashboard with weekly updates, AI audit assistant, competitor deep-dive, priority support
-- **Premium** — £599/month: everything in Growth plus daily dashboard updates, dedicated account manager, monthly 1:1 strategy call
+- **Premium** — £599/month: everything in Growth plus daily dashboard updates, dedicated account manager, monthly 1:1 strategy call, custom prompt testing & benchmarking
 
 All plans are monthly subscriptions. Cancel any time.
 

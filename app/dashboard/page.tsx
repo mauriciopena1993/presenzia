@@ -89,7 +89,7 @@ const PLAN_PRICES: Record<string, string> = {
 const PLAN_FEATURES: Record<string, string[]> = {
   starter: ['Monthly AI visibility audit', 'Delivered by email (report)'],
   growth: ['Everything in Starter', 'Online client dashboard (weekly updates)', 'AI audit assistant', 'Competitor deep-dive', 'Priority email support'],
-  premium: ['Everything in Growth', 'Daily dashboard updates', 'Dedicated account manager', 'Monthly 1:1 strategy call', 'Custom prompt testing'],
+  premium: ['Everything in Growth', 'Daily dashboard updates', 'Dedicated account manager', 'Monthly 1:1 strategy call', 'Custom prompt testing & benchmarking'],
 };
 
 const PLAN_ORDER = ['starter', 'growth', 'premium'];

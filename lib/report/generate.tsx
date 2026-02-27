@@ -758,7 +758,7 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
           <View style={{ padding: 12, backgroundColor: DARK, borderColor: GOLD, borderWidth: 1, marginBottom: 12 }}>
             <Text style={{ fontSize: 9, fontWeight: 700, color: GOLD, marginBottom: 4 }}>Don&apos;t want to wait another month?</Text>
             <Text style={{ fontSize: 7.5, color: '#CCCCCC', lineHeight: 1.6, marginBottom: 4 }}>
-              Upgrade to Growth for weekly audits, an online dashboard with trend analysis, competitor monitoring, and priority support. Still within your first 30 days? You only pay the difference.
+              Upgrade to Growth for an online dashboard with weekly updates, trend analysis, competitor deep-dive, and priority support. Still within your first 30 days? You only pay the difference.
             </Text>
             <Text style={{ fontSize: 7.5, color: GOLD, fontWeight: 600 }}>
               Upgrade at{' '}

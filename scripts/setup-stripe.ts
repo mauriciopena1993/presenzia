@@ -20,23 +20,23 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 const PRODUCTS = [
   {
     name: 'Presenzia Starter',
-    description: 'Monthly AI search audit across 4 platforms. Visibility score + PDF report delivered by email.',
+    description: 'Monthly AI visibility audit across 4 platforms. Visibility score + PDF report delivered by email.',
     envKey: 'STRIPE_PRICE_STARTER',
-    amount: 14900, // £149.00 in pence
+    amount: 9900, // £99.00 in pence
     interval: 'month' as const,
     metadata: { plan: 'starter' },
   },
   {
     name: 'Presenzia Growth',
-    description: 'Weekly AI search audits across all 4 platforms. PDF report + client dashboard + competitor analysis.',
+    description: 'Monthly AI visibility audit + online dashboard with weekly updates, AI audit assistant, competitor deep-dive, and priority support.',
     envKey: 'STRIPE_PRICE_GROWTH',
-    amount: 29900, // £299.00 in pence
+    amount: 19900, // £199.00 in pence
     interval: 'month' as const,
     metadata: { plan: 'growth' },
   },
   {
     name: 'Presenzia Premium',
-    description: 'Full service: weekly audits, monthly 1:1 strategy calls, custom action plan, dedicated account manager.',
+    description: 'Full service: daily dashboard updates, dedicated account manager, monthly 1:1 strategy call, custom prompt testing & benchmarking.',
     envKey: 'STRIPE_PRICE_PREMIUM',
     amount: 59900, // £599.00 in pence
     interval: 'month' as const,
