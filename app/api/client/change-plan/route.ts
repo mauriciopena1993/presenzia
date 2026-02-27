@@ -162,7 +162,11 @@ export async function POST(req: NextRequest) {
       });
     } else {
       // Release any subscription schedule (downgrade)
-      await cancelPendingSchedule(client.stripe_subscription_id);
+      const sub = await stripe.subscriptions.retrieve(client.stripe_subscription_id);
+      if (sub.schedule) {
+        const schedId = typeof sub.schedule === 'string' ? sub.schedule : sub.schedule.id;
+        try { await stripe.subscriptionSchedules.release(schedId); } catch (e) { console.error('Release failed:', e); }
+      }
     }
 
     await supabase
@@ -197,15 +201,25 @@ export async function POST(req: NextRequest) {
   const isUpgrade = targetRank > currentRank;
 
   try {
-    const subscription = await stripe.subscriptions.retrieve(client.stripe_subscription_id);
-    const subscriptionItem = subscription.items.data[0];
+    let subscription = await stripe.subscriptions.retrieve(client.stripe_subscription_id);
+    let subscriptionItem = subscription.items.data[0];
     if (!subscriptionItem) {
       return NextResponse.json({ error: 'No subscription item found' }, { status: 400 });
     }
 
-    // Clear any existing pending downgrade schedule first
-    if (client.pending_plan_change && client.pending_plan_change !== 'cancel') {
-      await cancelPendingSchedule(client.stripe_subscription_id);
+    // Always release any existing subscription schedule (from previous downgrade)
+    if (subscription.schedule) {
+      const scheduleId = typeof subscription.schedule === 'string'
+        ? subscription.schedule
+        : subscription.schedule.id;
+      try {
+        await stripe.subscriptionSchedules.release(scheduleId);
+        // Re-retrieve subscription after releasing schedule
+        subscription = await stripe.subscriptions.retrieve(client.stripe_subscription_id);
+        subscriptionItem = subscription.items.data[0]!;
+      } catch (err) {
+        console.error('Failed to release existing schedule:', err);
+      }
     }
 
     // Undo any pending Stripe cancellation
@@ -216,12 +230,10 @@ export async function POST(req: NextRequest) {
     }
 
     // Clear pending state in DB
-    if (client.pending_plan_change) {
-      await supabase
-        .from('clients')
-        .update({ pending_plan_change: null, pending_change_date: null })
-        .eq('id', client.id);
-    }
+    await supabase
+      .from('clients')
+      .update({ pending_plan_change: null, pending_change_date: null })
+      .eq('id', client.id);
 
     const plan = PLANS[targetPlan as PlanKey];
 

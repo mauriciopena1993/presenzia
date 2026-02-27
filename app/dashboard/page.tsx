@@ -505,6 +505,113 @@ function CancelFlow({
   );
 }
 
+// ── PlanConfirmModal: "Are you sure?" dialog before plan changes ────
+function PlanConfirmModal({
+  currentPlan,
+  targetPlan,
+  pendingChange,
+  pendingDate,
+  onConfirm,
+  onCancel,
+}: {
+  currentPlan: string;
+  targetPlan: string;
+  pendingChange: string | null;
+  pendingDate: string | null;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  const isUpgrade = PLAN_ORDER.indexOf(targetPlan) > PLAN_ORDER.indexOf(currentPlan);
+  const targetLabel = PLAN_LABELS[targetPlan] || targetPlan;
+  const currentLabel = PLAN_LABELS[currentPlan] || currentPlan;
+  const targetFeatures = PLAN_FEATURES[targetPlan] || [];
+
+  // What you lose by downgrading
+  const lostFeatures: string[] = [];
+  if (!isUpgrade) {
+    const currentFeats = PLAN_FEATURES[currentPlan] || [];
+    const targetFeats = PLAN_FEATURES[targetPlan] || [];
+    currentFeats.forEach(f => {
+      if (!f.startsWith('Everything in') && !targetFeats.includes(f)) lostFeatures.push(f);
+    });
+  }
+
+  // Pending change info
+  const hasPending = !!pendingChange;
+  const pendingLabel = pendingChange === 'cancel'
+    ? 'cancellation'
+    : `downgrade to ${PLAN_LABELS[pendingChange || ''] || pendingChange}`;
+  const dateStr = pendingDate
+    ? new Date(pendingDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+    : 'end of your billing cycle';
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+      <div style={{ background: '#111', border: '1px solid #2a2a2a', maxWidth: '480px', width: '100%', padding: '2rem' }}>
+        <h3 style={{ margin: '0 0 0.75rem', fontSize: '1.1rem', color: '#F5F0E8' }}>
+          {isUpgrade ? `Upgrade to ${targetLabel}?` : `Switch to ${targetLabel}?`}
+        </h3>
+
+        {hasPending && (
+          <div style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.3)', padding: '0.75rem 1rem', marginBottom: '1rem', fontSize: '0.8rem', color: '#C9A84C', lineHeight: 1.6 }}>
+            You currently have a pending {pendingLabel} scheduled for {dateStr}. Proceeding will cancel that and {isUpgrade ? 'upgrade' : 'switch'} to {targetLabel} instead.
+          </div>
+        )}
+
+        {isUpgrade ? (
+          <>
+            <p style={{ fontSize: '0.85rem', color: '#999', margin: '0 0 0.75rem', lineHeight: 1.6 }}>
+              You&apos;ll be charged the prorated difference for the rest of your billing cycle. From the next cycle, you&apos;ll pay {PLAN_PRICES[targetPlan]}/mo.
+            </p>
+            <div style={{ fontSize: '0.8rem', color: '#888', marginBottom: '1rem' }}>
+              <div style={{ color: '#666', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.4rem' }}>What you&apos;ll get</div>
+              {targetFeatures.map((f, i) => (
+                <div key={i} style={{ padding: '2px 0' }}>
+                  <span style={{ color: '#4a9e6a', marginRight: '6px' }}>+</span>{f}
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <>
+            <p style={{ fontSize: '0.85rem', color: '#999', margin: '0 0 0.75rem', lineHeight: 1.6 }}>
+              The change will take effect at the end of your billing cycle. You&apos;ll keep full {currentLabel} access until then.
+            </p>
+            {lostFeatures.length > 0 && (
+              <div style={{ fontSize: '0.8rem', color: '#888', marginBottom: '1rem' }}>
+                <div style={{ color: '#666', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.4rem' }}>What you&apos;ll lose</div>
+                {lostFeatures.map((f, i) => (
+                  <div key={i} style={{ padding: '2px 0' }}>
+                    <span style={{ color: '#cc4444', marginRight: '6px' }}>−</span>{f}
+                  </div>
+                ))}
+              </div>
+            )}
+            <p style={{ fontSize: '0.8rem', color: '#888', marginBottom: '1rem' }}>
+              Your new price: <strong style={{ color: '#F5F0E8' }}>{PLAN_PRICES[targetPlan]}/mo</strong> (currently {PLAN_PRICES[currentPlan]}/mo)
+            </p>
+          </>
+        )}
+
+        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+          <button
+            onClick={onCancel}
+            style={{ flex: 1, padding: '0.6rem', background: 'transparent', border: '1px solid #333', color: '#999', fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'inherit' }}
+          >
+            Never mind
+          </button>
+          <button
+            onClick={onConfirm}
+            style={{ flex: 1, padding: '0.6rem', background: isUpgrade ? (targetPlan === 'premium' ? '#9b6bcc' : '#C9A84C') : '#C9A84C', color: '#0A0A0A', border: 'none', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
+          >
+            {isUpgrade ? `Upgrade to ${targetLabel}` : `Switch to ${targetLabel}`}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── PendingChangeBanner: prominent top-of-page status bar ──────────
 function PendingChangeBanner({
   client,
@@ -1021,6 +1128,7 @@ export default function DashboardPage() {
   const [retentionEligible, setRetentionEligible] = useState(true);
   const [congratsPlan, setCongratsPlan] = useState<string | null>(null);
   const [cancelEndDate, setCancelEndDate] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<string | null>(null);
 
   useEffect(() => {
     // Detect post-checkout redirect (?upgraded=plan)
@@ -1066,21 +1174,14 @@ export default function DashboardPage() {
     window.open(`/api/client/download?jobId=${jobId}`, '_blank');
   };
 
-  const handleChangePlan = async (targetPlan: string) => {
-    // If there's a pending change, ask the user to confirm before proceeding
-    if (client?.pending_plan_change) {
-      const pendingLabel = client.pending_plan_change === 'cancel'
-        ? 'cancel your subscription'
-        : `switch to ${PLAN_LABELS[client.pending_plan_change] || client.pending_plan_change}`;
-      const dateStr = client.pending_change_date
-        ? new Date(client.pending_change_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
-        : 'end of your billing cycle';
-      const confirmed = window.confirm(
-        `You currently have a pending change to ${pendingLabel} scheduled for ${dateStr}.\n\nWould you like to cancel that and switch to ${PLAN_LABELS[targetPlan] || targetPlan} instead?`
-      );
-      if (!confirmed) return;
-    }
+  // Step 1: Show confirmation dialog
+  const handleChangePlan = (targetPlan: string) => {
+    setConfirmTarget(targetPlan);
+  };
 
+  // Step 2: Execute the plan change after confirmation
+  const executeChangePlan = async (targetPlan: string) => {
+    setConfirmTarget(null);
     setActionLoading(true);
     try {
       const res = await fetch('/api/client/change-plan', {
@@ -1232,6 +1333,17 @@ export default function DashboardPage() {
       <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'var(--font-inter, Inter, sans-serif)', color: '#F5F0E8' }}>
         {/* Congratulations overlay */}
         {congratsPlan && <CongratsBanner plan={congratsPlan} onClose={handleCongratsClose} />}
+        {/* Plan change confirmation modal */}
+        {confirmTarget && client && (
+          <PlanConfirmModal
+            currentPlan={client.plan}
+            targetPlan={confirmTarget}
+            pendingChange={client.pending_plan_change || null}
+            pendingDate={client.pending_change_date || null}
+            onConfirm={() => executeChangePlan(confirmTarget)}
+            onCancel={() => setConfirmTarget(null)}
+          />
+        )}
         {/* Nav */}
         <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1rem clamp(1rem, 3vw, 2rem)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: '#0A0A0A', zIndex: 50, gap: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(0.5rem, 2vw, 1.5rem)', minWidth: 0 }}>
@@ -1498,6 +1610,17 @@ export default function DashboardPage() {
     <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'var(--font-inter, Inter, sans-serif)', color: '#F5F0E8' }}>
       {/* Congratulations overlay */}
       {congratsPlan && <CongratsBanner plan={congratsPlan} onClose={handleCongratsClose} />}
+      {/* Plan change confirmation modal */}
+      {confirmTarget && client && (
+        <PlanConfirmModal
+          currentPlan={client.plan}
+          targetPlan={confirmTarget}
+          pendingChange={client.pending_plan_change || null}
+          pendingDate={client.pending_change_date || null}
+          onConfirm={() => executeChangePlan(confirmTarget)}
+          onCancel={() => setConfirmTarget(null)}
+        />
+      )}
 
       {/* Nav */}
       <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1rem clamp(1rem, 3vw, 2rem)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: '#0A0A0A', zIndex: 50, gap: '0.75rem' }}>
