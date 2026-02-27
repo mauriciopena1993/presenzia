@@ -25,7 +25,7 @@ const faqSchema = {
       name: 'How does presenzia.ai actually test my visibility?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'We run hundreds of real customer search prompts across four major AI platforms: ChatGPT, Claude, Perplexity, and Google AI. Prompts include queries like "best [business type] in [your city]", "[service] near me", and specific use-case questions relevant to your industry. We record whether your business is mentioned, where it appears, and which competitors are being recommended instead.',
+        text: 'We run 80+ real customer search prompts across four major AI platforms: ChatGPT, Claude, Perplexity, and Google AI. Prompts include queries like "best [business type] in [your city]", "[service] near me", and specific use-case questions relevant to your industry. We record whether your business is mentioned, where it appears, and which competitors are being recommended instead.',
       },
     },
     {

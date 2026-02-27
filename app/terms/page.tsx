@@ -88,7 +88,7 @@ export default function TermsPage() {
         <div style={sectionStyle}>
           <h2 style={headingStyle}>4. Audit Delivery</h2>
           <p style={textStyle}>
-            We aim to deliver your first audit within one hour of your subscription being activated
+            We aim to deliver your first audit within 15 minutes of your subscription being activated
             and your business details being provided. Subsequent audits are delivered on your subscription cycle.
             Delivery times are estimates and may vary due to factors outside our control.
           </p>

@@ -14,7 +14,7 @@ export default function HowItWorks() {
     {
       number: '02',
       title: 'We run the audit',
-      description: 'Our engine tests hundreds of prompts across ChatGPT, Claude, Perplexity, and Google AI. We record exactly where you appear, where you don\'t, and who does instead.',
+      description: 'Our engine tests 80+ prompts across ChatGPT, Claude, Perplexity, and Google AI. We record exactly where you appear, where you don\'t, and who does instead.',
       icon: Cpu,
     },
     {

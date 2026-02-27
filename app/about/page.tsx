@@ -64,7 +64,7 @@ export default function AboutPage() {
         </p>
 
         <p style={{ color: '#AAAAAA', fontSize: '1.05rem', lineHeight: 1.8, marginBottom: '1.5rem' }}>
-          We built presenzia to give you that answer. Every month, we test hundreds of real prompts across four
+          We built presenzia to give you that answer. Every month, we test 80+ real prompts across four
           major AI platforms and measure exactly how visible your business is. You get a scored audit, a breakdown
           by platform, a list of competitors being recommended instead of you, and clear steps to improve.
         </p>
