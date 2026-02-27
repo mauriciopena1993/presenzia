@@ -125,7 +125,7 @@ export default function Hero() {
         {[
           { stat: '94%', label: 'of UK SMEs not found on ChatGPT' },
           { stat: '4 AIs', label: 'audited per business' },
-          { stat: 'Minutes', label: 'to your first audit' },
+          { stat: '<15 min', label: 'to your first audit' },
         ].map((item) => (
           <div key={item.stat} style={{ textAlign: 'center' }}>
             <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.75rem', color: '#C9A84C', fontWeight: 600 }}>{item.stat}</div>

@@ -1725,7 +1725,7 @@ export default function DashboardPage() {
         {pendingJob && (
           <div style={{ padding: '0.875rem 1.25rem', background: '#0d0d00', border: '1px solid #2a2000', color: '#C9A84C', fontSize: '0.875rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div style={{ width: '8px', height: '8px', background: '#C9A84C', borderRadius: '50%', flexShrink: 0 }} />
-            Your AI visibility audit is running — results will appear here within a few minutes.
+            Your AI visibility audit is running — results will appear here within 15 minutes.
           </div>
         )}
 
@@ -1767,7 +1767,7 @@ export default function DashboardPage() {
               <p style={{ color: '#999', fontSize: '0.9rem', maxWidth: '400px', margin: '0 auto', lineHeight: 1.7 }}>
                 {pendingJob
                   ? 'Your AI visibility audit is processing. Results will appear here automatically.'
-                  : 'Your first audit will be ready shortly. Check back in a few minutes or look for an email from us.'}
+                  : 'Your first audit will be ready shortly. Check back in 15 minutes or look for an email from us.'}
               </p>
             </div>
           ) : (
