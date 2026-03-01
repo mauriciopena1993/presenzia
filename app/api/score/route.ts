@@ -1,45 +1,89 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
-// Free score prompts — 10 prompts, 2 platforms (ChatGPT + Claude)
-const FREE_SCORE_PROMPTS = [
-  "Who is the best {specialty} in {city}?",
-  "Can you recommend a {specialty} near {city}?",
-  "I need a financial advisor in {city}. Who do you suggest?",
-  "What are the top-rated {specialty} firms in {city}?",
-  "I'm looking for an independent financial advisor in {city} for {specialty_context}. Any recommendations?",
-  "Who should I speak to about {specialty_context} in {city}?",
-  "Can you recommend a trusted financial planner in {city}?",
-  "What financial advisory firms are well-regarded in {city}?",
-  "I need help with {specialty_context}. Which advisors in {city} are best?",
-  "Recommend a chartered financial planner in {city}",
+// ── Prompt templates ──
+
+// Location-based prompts (used for local, multi, regional)
+const LOCATION_PROMPTS = [
+  "Who is the best {specialty} in {location}?",
+  "Can you recommend a {specialty} near {location}?",
+  "I need a financial advisor in {location}. Who do you suggest?",
+  "What are the top-rated {specialty} firms in {location}?",
+  "I'm looking for an independent financial advisor in {location} for {specialty_context}. Any recommendations?",
+  "Who should I speak to about {specialty_context} in {location}?",
+  "Can you recommend a trusted financial planner in {location}?",
+  "What financial advisory firms are well-regarded in {location}?",
+  "I need help with {specialty_context}. Which advisors in {location} are best?",
+  "Recommend a chartered financial planner in {location}",
 ];
 
-// Additional prompts when target client type is provided
+// National/online prompts (no location)
+const NATIONAL_PROMPTS = [
+  "Who is the best {specialty} in the UK?",
+  "Can you recommend a {specialty} that works with clients remotely?",
+  "What are the top-rated online {specialty} firms in the UK?",
+  "I'm looking for an independent financial advisor for {specialty_context}. Any recommendations?",
+  "Who should I speak to about {specialty_context} in the UK?",
+  "Can you recommend a trusted UK financial planner that works online?",
+  "What are the best UK financial advisory firms for {specialty_context}?",
+  "I need help with {specialty_context}. Which UK advisors are best?",
+  "Recommend a chartered financial planner in the UK",
+  "Which UK wealth managers offer the best online service?",
+];
+
+// Target client type prompts
 const TARGET_CLIENT_PROMPTS: Record<string, string[]> = {
   'High-net-worth individuals (£250k+)': [
-    "Which wealth managers in {city} specialise in high-net-worth clients?",
-    "I have a substantial portfolio and need a financial advisor in {city}. Who do you recommend?",
+    "Which wealth managers in {location} specialise in high-net-worth clients?",
+    "I have a substantial portfolio and need a financial advisor in {location}. Who do you recommend?",
   ],
   'Retirees & pre-retirees': [
-    "Who is the best pension transfer specialist in {city}?",
-    "I'm approaching retirement and need financial advice in {city}. Any recommendations?",
+    "Who is the best pension transfer specialist in {location}?",
+    "I'm approaching retirement and need financial advice in {location}. Any recommendations?",
   ],
   'Business owners & entrepreneurs': [
-    "Which financial advisors in {city} work with business owners?",
-    "I need corporate financial planning advice in {city}. Who do you suggest?",
+    "Which financial advisors in {location} work with business owners?",
+    "I need corporate financial planning advice in {location}. Who do you suggest?",
   ],
   'Professionals (doctors, lawyers, etc.)': [
-    "Which financial advisors in {city} specialise in advising professionals?",
-    "I'm a professional looking for financial planning in {city}. Any recommendations?",
+    "Which financial advisors in {location} specialise in advising professionals?",
+    "I'm a professional looking for financial planning in {location}. Any recommendations?",
   ],
   'Families & estate planning': [
-    "Who offers the best estate planning advice in {city}?",
-    "I need help with inheritance tax planning in {city}. Which advisors do you recommend?",
+    "Who offers the best estate planning advice in {location}?",
+    "I need help with inheritance tax planning in {location}. Which advisors do you recommend?",
   ],
   'Expats & international clients': [
-    "Which financial advisors in {city} work with expats and international clients?",
-    "I need cross-border financial advice from an advisor based in {city}. Suggestions?",
+    "Which financial advisors in {location} work with expats and international clients?",
+    "I need cross-border financial advice from an advisor based in {location}. Suggestions?",
+  ],
+};
+
+// National versions of target client prompts
+const TARGET_CLIENT_PROMPTS_NATIONAL: Record<string, string[]> = {
+  'High-net-worth individuals (£250k+)': [
+    "Which UK wealth managers specialise in high-net-worth clients?",
+    "I have a substantial portfolio and need a UK financial advisor. Who do you recommend?",
+  ],
+  'Retirees & pre-retirees': [
+    "Who is the best pension transfer specialist in the UK?",
+    "I'm approaching retirement in the UK. Which financial advisor do you recommend?",
+  ],
+  'Business owners & entrepreneurs': [
+    "Which UK financial advisors work best with business owners?",
+    "I need corporate financial planning advice in the UK. Who do you suggest?",
+  ],
+  'Professionals (doctors, lawyers, etc.)': [
+    "Which UK financial advisors specialise in advising professionals like doctors and lawyers?",
+    "I'm a professional looking for UK financial planning. Any recommendations?",
+  ],
+  'Families & estate planning': [
+    "Who offers the best estate planning advice in the UK?",
+    "I need help with inheritance tax planning in the UK. Which advisors do you recommend?",
+  ],
+  'Expats & international clients': [
+    "Which UK financial advisors work with expats and international clients?",
+    "I need cross-border financial advice from a UK-based advisor. Suggestions?",
   ],
 };
 
@@ -52,34 +96,152 @@ const SPECIALTY_CONTEXT: Record<string, string> = {
   'Mortgage & Protection': 'getting a mortgage and life insurance',
   'Investment Management': 'investing a significant sum',
   'Corporate Financial Advisory': 'financial advice for my business',
+  'General Financial Advisory': 'financial planning and advice',
 };
 
-function buildFreeScorePrompts(city: string, specialty: string, targetClient?: string): Array<{ id: string; text: string; weight: number }> {
-  const specialtyContext = SPECIALTY_CONTEXT[specialty] || 'financial planning';
-  const specialtyLabel = specialty.toLowerCase().includes('financial') ? specialty.toLowerCase() : `${specialty.toLowerCase()} advisor`;
+interface PromptItem {
+  id: string;
+  text: string;
+  weight: number;
+}
 
-  const basePrompts = FREE_SCORE_PROMPTS.map((template, i) => ({
-    id: `free_${i}`,
-    text: template
-      .replace(/{city}/g, city)
-      .replace(/{specialty}/g, specialtyLabel)
-      .replace(/{specialty_context}/g, specialtyContext),
-    weight: 10 - i,
-  }));
+function buildPrompts(
+  coverageType: string,
+  locations: string[],
+  specialties: string[],
+  targetClient?: string,
+): PromptItem[] {
+  const primarySpecialty = specialties[0] || 'Financial Planning';
+  const specialtyContext = SPECIALTY_CONTEXT[primarySpecialty] || 'financial planning';
+  const specialtyLabel = primarySpecialty.toLowerCase().includes('financial')
+    ? primarySpecialty.toLowerCase()
+    : `${primarySpecialty.toLowerCase()} advisor`;
 
-  // Add target client prompts if provided (up to 2 extra)
-  if (targetClient && TARGET_CLIENT_PROMPTS[targetClient]) {
-    const extras = TARGET_CLIENT_PROMPTS[targetClient];
-    extras.forEach((template, i) => {
-      basePrompts.push({
-        id: `target_${i}`,
-        text: template.replace(/{city}/g, city),
-        weight: 8 - i,
+  const prompts: PromptItem[] = [];
+  let promptIndex = 0;
+
+  if (coverageType === 'national') {
+    // National/online: use UK-wide prompts
+    for (const template of NATIONAL_PROMPTS) {
+      prompts.push({
+        id: `nat_${promptIndex}`,
+        text: template
+          .replace(/{specialty}/g, specialtyLabel)
+          .replace(/{specialty_context}/g, specialtyContext),
+        weight: 10 - promptIndex,
       });
-    });
+      promptIndex++;
+    }
+
+    // Add target client prompts (national versions)
+    if (targetClient && TARGET_CLIENT_PROMPTS_NATIONAL[targetClient]) {
+      for (const template of TARGET_CLIENT_PROMPTS_NATIONAL[targetClient]) {
+        prompts.push({
+          id: `target_nat_${promptIndex}`,
+          text: template,
+          weight: 8,
+        });
+        promptIndex++;
+      }
+    }
+  } else {
+    // Local, multi, or regional: use location-based prompts
+    // For multi-location: distribute prompts across locations (max 3 locations)
+    const testLocations = locations.slice(0, 3);
+
+    if (testLocations.length === 1) {
+      // Single location: use all prompts for that location
+      const location = testLocations[0];
+      for (const template of LOCATION_PROMPTS) {
+        prompts.push({
+          id: `loc_${promptIndex}`,
+          text: template
+            .replace(/{location}/g, location)
+            .replace(/{specialty}/g, specialtyLabel)
+            .replace(/{specialty_context}/g, specialtyContext),
+          weight: 10 - promptIndex,
+        });
+        promptIndex++;
+      }
+
+      // Target client prompts
+      if (targetClient && TARGET_CLIENT_PROMPTS[targetClient]) {
+        for (const template of TARGET_CLIENT_PROMPTS[targetClient]) {
+          prompts.push({
+            id: `target_${promptIndex}`,
+            text: template.replace(/{location}/g, location),
+            weight: 8,
+          });
+          promptIndex++;
+        }
+      }
+    } else {
+      // Multi-location: split prompts across locations
+      const promptsPerLocation = Math.ceil(LOCATION_PROMPTS.length / testLocations.length);
+
+      for (let li = 0; li < testLocations.length; li++) {
+        const location = testLocations[li];
+        const startIdx = li * promptsPerLocation;
+        const endIdx = Math.min(startIdx + promptsPerLocation, LOCATION_PROMPTS.length);
+        const locationTemplates = LOCATION_PROMPTS.slice(startIdx, endIdx);
+
+        // Always include the most important prompt for each location
+        if (startIdx > 0) {
+          prompts.push({
+            id: `loc_${promptIndex}`,
+            text: LOCATION_PROMPTS[0]
+              .replace(/{location}/g, location)
+              .replace(/{specialty}/g, specialtyLabel)
+              .replace(/{specialty_context}/g, specialtyContext),
+            weight: 10,
+          });
+          promptIndex++;
+        }
+
+        for (const template of locationTemplates) {
+          prompts.push({
+            id: `loc_${promptIndex}`,
+            text: template
+              .replace(/{location}/g, location)
+              .replace(/{specialty}/g, specialtyLabel)
+              .replace(/{specialty_context}/g, specialtyContext),
+            weight: 9 - li,
+          });
+          promptIndex++;
+        }
+      }
+
+      // Add 1 target client prompt for primary location
+      if (targetClient && TARGET_CLIENT_PROMPTS[targetClient]) {
+        const template = TARGET_CLIENT_PROMPTS[targetClient][0];
+        if (template) {
+          prompts.push({
+            id: `target_${promptIndex}`,
+            text: template.replace(/{location}/g, testLocations[0]),
+            weight: 8,
+          });
+          promptIndex++;
+        }
+      }
+    }
+
+    // If firm has multiple specialties, add a prompt for each additional specialty
+    for (let si = 1; si < Math.min(specialties.length, 3); si++) {
+      const addlSpecialty = specialties[si];
+      const addlLabel = addlSpecialty.toLowerCase().includes('financial')
+        ? addlSpecialty.toLowerCase()
+        : `${addlSpecialty.toLowerCase()} advisor`;
+      const loc = testLocations[0];
+      prompts.push({
+        id: `spec_${promptIndex}`,
+        text: `Who is the best ${addlLabel} in ${loc}?`,
+        weight: 7,
+      });
+      promptIndex++;
+    }
   }
 
-  return basePrompts;
+  return prompts;
 }
 
 // Query ChatGPT
@@ -125,26 +287,35 @@ async function queryClaude(prompt: string): Promise<string> {
   return data.content[0]?.text || '';
 }
 
-function checkMention(response: string, firmName: string): { mentioned: boolean; position: 'first' | 'prominent' | 'mentioned' | null } {
+function checkMention(response: string, firmName: string, website?: string): { mentioned: boolean; position: 'first' | 'prominent' | 'mentioned' | null } {
   const responseLower = response.toLowerCase();
   const firmLower = firmName.toLowerCase();
 
-  if (!responseLower.includes(firmLower)) {
-    // Check partial match (firm name words)
-    const firmWords = firmLower.split(' ').filter(w => w.length > 3);
-    const matchCount = firmWords.filter(w => responseLower.includes(w)).length;
-    if (matchCount >= 2 && firmWords.length >= 2) {
-      return { mentioned: true, position: 'mentioned' };
-    }
-    return { mentioned: false, position: null };
+  // Check for firm name match
+  if (responseLower.includes(firmLower)) {
+    const index = responseLower.indexOf(firmLower);
+    const firstThird = response.length / 3;
+    if (index < firstThird) return { mentioned: true, position: 'first' };
+    if (index < firstThird * 2) return { mentioned: true, position: 'prominent' };
+    return { mentioned: true, position: 'mentioned' };
   }
 
-  const index = responseLower.indexOf(firmLower);
-  const firstThird = response.length / 3;
+  // Check partial match (firm name words)
+  const firmWords = firmLower.split(' ').filter(w => w.length > 3);
+  const matchCount = firmWords.filter(w => responseLower.includes(w)).length;
+  if (matchCount >= 2 && firmWords.length >= 2) {
+    return { mentioned: true, position: 'mentioned' };
+  }
 
-  if (index < firstThird) return { mentioned: true, position: 'first' };
-  if (index < firstThird * 2) return { mentioned: true, position: 'prominent' };
-  return { mentioned: true, position: 'mentioned' };
+  // Check for website domain mention
+  if (website) {
+    const domain = website.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0].toLowerCase();
+    if (domain && responseLower.includes(domain)) {
+      return { mentioned: true, position: 'mentioned' };
+    }
+  }
+
+  return { mentioned: false, position: null };
 }
 
 function extractCompetitors(response: string, firmName: string): string[] {
@@ -157,7 +328,6 @@ function extractCompetitors(response: string, firmName: string): string[] {
       found.add(name);
     }
   }
-  // Also try numbered/bold patterns
   const patterns = [
     /\d+\.\s+\*\*(.+?)\*\*/g,
     /\*\*([A-Z][^*]{3,60})\*\*/g,
@@ -184,41 +354,60 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Support both old (postcode) and new (city) API formats
     const firmName = body.firmName;
-    const specialty = body.specialty;
+    const coverageType = body.coverageType || 'local'; // local, multi, regional, national
+    const locationsRaw = body.locations || body.city || '';
+    const specialties: string[] = body.specialties || (body.specialty ? [body.specialty] : []);
     const targetClient = body.targetClient;
     const website = body.website;
+    const firmDescription = body.firmDescription;
+    const additionalContext = body.additionalContext;
+    const postcode = body.postcode || ''; // backwards compat
 
-    // Accept city directly, or fall back to postcode lookup for backwards compat
-    let city = body.city || '';
-    const postcode = body.postcode || '';
-
-    if (!firmName || !specialty) {
-      return NextResponse.json({ error: 'Firm name and specialty are required' }, { status: 400 });
+    if (!firmName) {
+      return NextResponse.json({ error: 'Firm name is required' }, { status: 400 });
+    }
+    if (specialties.length === 0) {
+      return NextResponse.json({ error: 'At least one specialty is required' }, { status: 400 });
     }
 
-    if (!city && !postcode) {
-      return NextResponse.json({ error: 'City or location is required' }, { status: 400 });
-    }
+    // Parse locations
+    let locations: string[] = [];
+    let displayCity = '';
 
-    // If city not provided but postcode is, look up city from postcode (backwards compat)
-    if (!city && postcode) {
+    if (coverageType === 'national') {
+      displayCity = 'UK-wide';
+    } else if (postcode && !locationsRaw) {
+      // Backwards compat: postcode → city lookup
       try {
         const pcRes = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(postcode.trim())}`);
         if (pcRes.ok) {
           const pcData = await pcRes.json();
           if (pcData.result) {
-            city = pcData.result.admin_district || pcData.result.parliamentary_constituency || postcode;
+            const city = pcData.result.admin_district || pcData.result.parliamentary_constituency || postcode;
+            locations = [city];
+            displayCity = city;
           }
         }
       } catch {
-        city = postcode;
+        locations = [postcode];
+        displayCity = postcode;
       }
+    } else {
+      // Parse comma-separated locations
+      locations = locationsRaw
+        .split(',')
+        .map((l: string) => l.trim())
+        .filter((l: string) => l.length > 0);
+      displayCity = locations.join(', ');
     }
 
-    // Build prompts using city directly
-    const prompts = buildFreeScorePrompts(city, specialty, targetClient);
+    if (coverageType !== 'national' && locations.length === 0) {
+      return NextResponse.json({ error: 'Location is required' }, { status: 400 });
+    }
+
+    // Build prompts
+    const prompts = buildPrompts(coverageType, locations, specialties, targetClient);
 
     // Run prompts across ChatGPT + Claude in parallel
     const platforms: Array<{ name: string; querier: (p: string) => Promise<string>; weight: number }> = [];
@@ -241,13 +430,12 @@ export async function POST(req: NextRequest) {
 
     const allResults: PromptResultItem[] = [];
 
-    // Run each platform's prompts sequentially within platform, platforms in parallel
     await Promise.all(
       platforms.map(async (platform) => {
         for (const prompt of prompts) {
           try {
             const response = await platform.querier(prompt.text);
-            const mention = checkMention(response, firmName);
+            const mention = checkMention(response, firmName, website);
             const competitors = extractCompetitors(response, firmName);
             allResults.push({
               platform: platform.name,
@@ -270,7 +458,6 @@ export async function POST(req: NextRequest) {
               response: '',
             });
           }
-          // Rate limit delay
           await new Promise(resolve => setTimeout(resolve, 100));
         }
       })
@@ -329,9 +516,9 @@ export async function POST(req: NextRequest) {
     try {
       await supabase.from('free_scores').insert({
         firm_name: firmName,
-        postcode: postcode.trim() || city.trim(), // Use city if no postcode provided
-        city,
-        specialty,
+        postcode: postcode.trim() || locations[0] || 'national',
+        city: displayCity,
+        specialty: specialties[0],
         score,
         grade,
         top_competitor_name: topCompetitor?.name || null,
@@ -348,8 +535,13 @@ export async function POST(req: NextRequest) {
           platformBreakdown,
           mentionsCount,
           totalPrompts,
+          coverageType,
+          locations,
+          specialties,
           targetClient: targetClient || null,
           website: website || null,
+          firmDescription: firmDescription || null,
+          additionalContext: additionalContext || null,
         },
         utm_source: null,
         utm_medium: null,
@@ -357,7 +549,6 @@ export async function POST(req: NextRequest) {
       });
     } catch (dbErr) {
       console.error('Failed to store free score:', dbErr);
-      // Don't fail the request — still return results
     }
 
     return NextResponse.json({
@@ -368,7 +559,7 @@ export async function POST(req: NextRequest) {
       totalPrompts,
       topCompetitor,
       platformBreakdown,
-      city,
+      city: displayCity,
     });
   } catch (error) {
     console.error('Score API error:', error);

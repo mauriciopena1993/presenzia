@@ -12,6 +12,7 @@ const SPECIALTIES = [
   'Mortgage & Protection',
   'Investment Management',
   'Corporate Financial Advisory',
+  'General Financial Advisory',
 ];
 
 const TARGET_CLIENTS = [
@@ -22,6 +23,13 @@ const TARGET_CLIENTS = [
   'Families & estate planning',
   'Expats & international clients',
   'General / all client types',
+];
+
+const COVERAGE_TYPES = [
+  { value: 'local', label: 'Local', desc: 'Primarily serve one city or town' },
+  { value: 'multi', label: 'Multi-location', desc: 'Offices or clients in several cities' },
+  { value: 'regional', label: 'Regional', desc: 'Serve a wider area (e.g. South East, North West)' },
+  { value: 'national', label: 'National / Online', desc: 'Serve clients across the UK' },
 ];
 
 interface ScoreResult {
@@ -63,10 +71,13 @@ function getActionItems(score: number, specialty: string): Array<{ title: string
 export default function ScorePage() {
   const [step, setStep] = useState<Step>('form');
   const [firmName, setFirmName] = useState('');
-  const [city, setCity] = useState('');
-  const [specialty, setSpecialty] = useState('');
+  const [coverageType, setCoverageType] = useState('');
+  const [locations, setLocations] = useState('');
+  const [specialties, setSpecialties] = useState<string[]>([]);
   const [targetClient, setTargetClient] = useState('');
   const [website, setWebsite] = useState('');
+  const [firmDescription, setFirmDescription] = useState('');
+  const [additionalContext, setAdditionalContext] = useState('');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [result, setResult] = useState<ScoreResult | null>(null);
@@ -87,13 +98,11 @@ export default function ScorePage() {
   useEffect(() => {
     if (step !== 'loading') return;
 
-    // Progress through stages with timing
     const timings = [0, 2000, 4000, 6000, 7500];
     const timers = timings.map((delay, i) =>
       setTimeout(() => setLoadingStage(i), delay)
     );
 
-    // Progress bar
     const interval = setInterval(() => {
       setLoadingPercent(prev => {
         if (prev >= 95 && !resultReady.current) return 95;
@@ -102,7 +111,6 @@ export default function ScorePage() {
       });
     }, 80);
 
-    // Minimum display time: 8 seconds
     const minTimer = setTimeout(() => {
       minTimeReached.current = true;
       if (resultReady.current) {
@@ -121,6 +129,17 @@ export default function ScorePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Validate location for non-national coverage
+    if (coverageType !== 'national' && !locations.trim()) {
+      setError('Please enter the city, cities, or region you serve.');
+      return;
+    }
+    if (specialties.length === 0) {
+      setError('Please select at least one specialty.');
+      return;
+    }
+
     resultReady.current = false;
     minTimeReached.current = false;
     setLoadingStage(0);
@@ -133,10 +152,14 @@ export default function ScorePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           firmName,
-          city,
-          specialty,
+          coverageType,
+          locations: locations.trim() || undefined,
+          specialties,
+          specialty: specialties[0], // backwards compat — primary specialty
           targetClient,
           website: website.trim() || undefined,
+          firmDescription: firmDescription.trim() || undefined,
+          additionalContext: additionalContext.trim() || undefined,
         }),
       });
 
@@ -204,6 +227,27 @@ export default function ScorePage() {
     marginTop: '0.35rem',
   };
 
+  // Location field label/placeholder/hint based on coverage type
+  const locationConfig: Record<string, { label: string; placeholder: string; hint: string }> = {
+    local: {
+      label: 'Which city or town?',
+      placeholder: 'e.g. Guildford, Bath, Edinburgh',
+      hint: 'We\'ll test AI searches specifically for this area',
+    },
+    multi: {
+      label: 'Which cities?',
+      placeholder: 'e.g. London, Manchester, Birmingham',
+      hint: 'Comma-separated — we\'ll test AI searches across each location',
+    },
+    regional: {
+      label: 'Which region or area?',
+      placeholder: 'e.g. South East England, Greater London, Yorkshire',
+      hint: 'We\'ll test regional AI search terms for this area',
+    },
+  };
+
+  const locConfig = locationConfig[coverageType] || locationConfig.local;
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -220,7 +264,7 @@ export default function ScorePage() {
         <Link href="/" style={{ color: '#999', fontSize: '0.85rem', textDecoration: 'none' }}>Back to home</Link>
       </div>
 
-      <div style={{ maxWidth: '520px', margin: '0 auto', padding: '3rem 1.5rem' }}>
+      <div style={{ maxWidth: '560px', margin: '0 auto', padding: '3rem 1.5rem' }}>
 
         {/* STEP 1: FORM */}
         {step === 'form' && (
@@ -233,12 +277,13 @@ export default function ScorePage() {
                 How visible is your firm to AI?
               </h1>
               <p style={{ color: '#AAAAAA', fontSize: '0.95rem', lineHeight: 1.7 }}>
-                We test real AI search prompts across ChatGPT and Claude to see if your firm gets recommended. Takes about 60 seconds.
+                We test real AI search prompts across ChatGPT and Claude to see if your firm gets recommended. The more you tell us, the more accurate your score.
               </p>
             </div>
 
             <form onSubmit={handleSubmit}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+
                 {/* Firm Name */}
                 <div>
                   <label style={labelStyle}>Firm name <span style={{ color: '#C9A84C' }}>*</span></label>
@@ -250,59 +295,12 @@ export default function ScorePage() {
                     onChange={e => setFirmName(e.target.value)}
                     style={inputStyle}
                   />
-                  <div style={hintStyle}>Your firm name exactly as it appears on your website</div>
-                </div>
-
-                {/* City / Area */}
-                <div>
-                  <label style={labelStyle}>City or area you serve <span style={{ color: '#C9A84C' }}>*</span></label>
-                  <input
-                    type="text"
-                    placeholder="e.g. London, Manchester, Surrey"
-                    required
-                    value={city}
-                    onChange={e => setCity(e.target.value)}
-                    style={inputStyle}
-                  />
-                  <div style={hintStyle}>The main area your clients are in — we&apos;ll test AI searches for this location</div>
-                </div>
-
-                {/* Specialty */}
-                <div>
-                  <label style={labelStyle}>Primary specialty <span style={{ color: '#C9A84C' }}>*</span></label>
-                  <select
-                    required
-                    value={specialty}
-                    onChange={e => setSpecialty(e.target.value)}
-                    style={{ ...inputStyle, cursor: 'pointer', appearance: 'none' }}
-                  >
-                    <option value="" disabled>Select your focus area</option>
-                    {SPECIALTIES.map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Target Client */}
-                <div>
-                  <label style={labelStyle}>Target client type <span style={{ color: '#C9A84C' }}>*</span></label>
-                  <select
-                    required
-                    value={targetClient}
-                    onChange={e => setTargetClient(e.target.value)}
-                    style={{ ...inputStyle, cursor: 'pointer', appearance: 'none' }}
-                  >
-                    <option value="" disabled>Who do you primarily work with?</option>
-                    {TARGET_CLIENTS.map(c => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                  <div style={hintStyle}>This helps us test the prompts your ideal clients would actually search</div>
+                  <div style={hintStyle}>Exactly as it appears on your website — this is what we search for</div>
                 </div>
 
                 {/* Website */}
                 <div>
-                  <label style={labelStyle}>Website <span style={{ color: '#888' }}>(recommended)</span></label>
+                  <label style={labelStyle}>Website <span style={{ color: '#C9A84C' }}>*</span></label>
                   <div style={{ display: 'flex', alignItems: 'stretch' }}>
                     <div style={{
                       padding: '0.85rem 0.75rem',
@@ -320,6 +318,7 @@ export default function ScorePage() {
                     <input
                       type="text"
                       placeholder="www.yourfirm.co.uk"
+                      required
                       value={website}
                       onChange={e => {
                         let v = e.target.value;
@@ -329,7 +328,155 @@ export default function ScorePage() {
                       style={{ ...inputStyle, borderLeft: 'none' }}
                     />
                   </div>
-                  <div style={hintStyle}>Helps us check if AI models reference your website content</div>
+                  <div style={hintStyle}>We check if AI models are referencing your website content</div>
+                </div>
+
+                {/* Coverage Type */}
+                <div>
+                  <label style={labelStyle}>Client reach <span style={{ color: '#C9A84C' }}>*</span></label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                    {COVERAGE_TYPES.map(ct => (
+                      <button
+                        key={ct.value}
+                        type="button"
+                        onClick={() => setCoverageType(ct.value)}
+                        style={{
+                          padding: '0.75rem 0.75rem',
+                          background: coverageType === ct.value ? 'rgba(201,168,76,0.12)' : '#111',
+                          border: coverageType === ct.value ? '1px solid rgba(201,168,76,0.5)' : '1px solid #2A2A2A',
+                          color: coverageType === ct.value ? '#C9A84C' : '#999',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          fontFamily: 'var(--font-inter, Inter, sans-serif)',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        <div style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.15rem' }}>{ct.label}</div>
+                        <div style={{ fontSize: '0.7rem', color: coverageType === ct.value ? 'rgba(201,168,76,0.7)' : '#555', lineHeight: 1.3 }}>{ct.desc}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Location (conditional — not shown for national) */}
+                {coverageType && coverageType !== 'national' && (
+                  <div>
+                    <label style={labelStyle}>{locConfig.label} <span style={{ color: '#C9A84C' }}>*</span></label>
+                    <input
+                      type="text"
+                      placeholder={locConfig.placeholder}
+                      required
+                      value={locations}
+                      onChange={e => setLocations(e.target.value)}
+                      style={inputStyle}
+                    />
+                    <div style={hintStyle}>{locConfig.hint}</div>
+                  </div>
+                )}
+
+                {/* Specialties (multi-select) */}
+                <div>
+                  <label style={labelStyle}>Specialties <span style={{ color: '#C9A84C' }}>*</span></label>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                    {SPECIALTIES.map(s => {
+                      const isSelected = specialties.includes(s);
+                      return (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => {
+                            setSpecialties(prev =>
+                              isSelected
+                                ? prev.filter(x => x !== s)
+                                : [...prev, s]
+                            );
+                          }}
+                          style={{
+                            padding: '0.45rem 0.85rem',
+                            background: isSelected ? 'rgba(201,168,76,0.15)' : '#111',
+                            border: isSelected ? '1px solid rgba(201,168,76,0.5)' : '1px solid #2A2A2A',
+                            color: isSelected ? '#C9A84C' : '#999',
+                            fontSize: '0.8rem',
+                            cursor: 'pointer',
+                            fontFamily: 'var(--font-inter, Inter, sans-serif)',
+                            transition: 'all 0.15s ease',
+                          }}
+                        >
+                          {isSelected ? '✓ ' : ''}{s}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div style={hintStyle}>Select all that apply — we&apos;ll test AI searches for each</div>
+                </div>
+
+                {/* Target Client */}
+                <div>
+                  <label style={labelStyle}>Target client type <span style={{ color: '#C9A84C' }}>*</span></label>
+                  <select
+                    required
+                    value={targetClient}
+                    onChange={e => setTargetClient(e.target.value)}
+                    style={{ ...inputStyle, cursor: 'pointer', appearance: 'none' }}
+                  >
+                    <option value="" disabled>Who do you primarily work with?</option>
+                    {TARGET_CLIENTS.map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <div style={hintStyle}>Helps us test the prompts your ideal clients would actually search</div>
+                </div>
+
+                {/* Firm Description / USP */}
+                <div>
+                  <label style={labelStyle}>What makes your firm stand out? <span style={{ color: '#888' }}>(recommended)</span></label>
+                  <textarea
+                    placeholder="e.g. Boutique Chartered firm specialising in pension transfers for NHS doctors. 25 years experience, fee-based only, DFM capabilities in-house."
+                    value={firmDescription}
+                    onChange={e => setFirmDescription(e.target.value)}
+                    maxLength={500}
+                    rows={3}
+                    style={{
+                      ...inputStyle,
+                      resize: 'vertical',
+                      minHeight: '80px',
+                    }}
+                  />
+                  <div style={hintStyle}>
+                    Your specialisms, qualifications, years of experience, what sets you apart — the more detail, the more refined our prompts
+                  </div>
+                </div>
+
+                {/* Additional Context */}
+                <div>
+                  <label style={labelStyle}>Anything else we should know? <span style={{ color: '#888' }}>(optional)</span></label>
+                  <textarea
+                    placeholder="e.g. We recently rebranded from 'Smith & Partners'. We have strong presence on VouchedFor. Our main competitor is Sterling Financial."
+                    value={additionalContext}
+                    onChange={e => setAdditionalContext(e.target.value)}
+                    maxLength={500}
+                    rows={2}
+                    style={{
+                      ...inputStyle,
+                      resize: 'vertical',
+                      minHeight: '60px',
+                    }}
+                  />
+                  <div style={hintStyle}>
+                    Anything not on your website — previous names, known competitors, relevant context
+                  </div>
+                </div>
+
+                {/* Value reinforcement */}
+                <div style={{
+                  padding: '0.85rem 1rem',
+                  background: 'rgba(201,168,76,0.06)',
+                  border: '1px solid rgba(201,168,76,0.15)',
+                  fontSize: '0.78rem',
+                  color: '#999',
+                  lineHeight: 1.6,
+                }}>
+                  <span style={{ color: '#C9A84C', fontWeight: 600 }}>The more detail you share</span>, the more refined our AI search prompts, the more accurate your score, and the better our strategic recommendations will be.
                 </div>
 
                 {error && (
@@ -340,17 +487,19 @@ export default function ScorePage() {
 
                 <button
                   type="submit"
+                  disabled={!coverageType}
                   style={{
                     width: '100%',
                     padding: '1rem',
-                    background: '#C9A84C',
+                    background: !coverageType ? '#5a4a1e' : '#C9A84C',
                     color: '#0A0A0A',
                     fontWeight: 700,
                     fontSize: '1rem',
                     border: 'none',
-                    cursor: 'pointer',
+                    cursor: !coverageType ? 'not-allowed' : 'pointer',
                     letterSpacing: '0.02em',
                     marginTop: '0.5rem',
+                    transition: 'background 0.2s',
                   }}
                 >
                   Get my score →
@@ -359,8 +508,8 @@ export default function ScorePage() {
             </form>
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginTop: '1.5rem', fontSize: '0.8rem', color: '#666' }}>
-              <span>✓ Free</span>
-              <span>✓ 60 seconds</span>
+              <span>✓ Completely free</span>
+              <span>✓ Real AI data</span>
               <span>✓ No credit card</span>
             </div>
           </div>
@@ -399,7 +548,6 @@ export default function ScorePage() {
               })}
             </div>
 
-            {/* Progress bar */}
             <div style={{ height: '4px', background: '#1A1A1A', width: '100%', overflow: 'hidden' }}>
               <div style={{
                 height: '100%',
@@ -493,7 +641,6 @@ export default function ScorePage() {
                 Your AI Visibility Score
               </div>
 
-              {/* Score circle */}
               <div style={{
                 width: '140px',
                 height: '140px',
@@ -580,7 +727,7 @@ export default function ScorePage() {
               ))}
             </div>
 
-            {/* Enhanced blurred preview — rich content with real data */}
+            {/* Enhanced blurred preview */}
             <div style={{
               position: 'relative',
               background: '#111',
@@ -588,7 +735,6 @@ export default function ScorePage() {
               marginBottom: '1.5rem',
               overflow: 'hidden',
             }}>
-              {/* Visible header for competitor section */}
               <div style={{ padding: '1.25rem 1.5rem 0' }}>
                 <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#E74C3C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
                   Full Competitor Analysis
@@ -601,17 +747,15 @@ export default function ScorePage() {
                 )}
               </div>
 
-              {/* Blurred competitor rows */}
               <div style={{ padding: '0 1.5rem', filter: 'blur(5px)', pointerEvents: 'none', userSelect: 'none' }}>
-                {['Another Financial Planning Co.', 'Regional Wealth Partners', 'City Investment Advisors'].map((name, i) => (
+                {['Another Financial Planning Co.', 'Regional Wealth Partners', 'City Investment Advisors'].map((n, i) => (
                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #1A1A1A' }}>
-                    <span style={{ color: '#F5F0E8', fontSize: '0.85rem' }}>{i + 2}. {name}</span>
+                    <span style={{ color: '#F5F0E8', fontSize: '0.85rem' }}>{i + 2}. {n}</span>
                     <span style={{ color: '#E67E22', fontSize: '0.8rem', fontWeight: 600 }}>{Math.max(1, (result.topCompetitor?.count || 5) - (i + 1) * 2)} mentions</span>
                   </div>
                 ))}
               </div>
 
-              {/* Action plan section - visible headings, blurred descriptions */}
               <div style={{ padding: '1rem 1.5rem 0' }}>
                 <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
                   Personalised Action Plan
@@ -619,7 +763,7 @@ export default function ScorePage() {
               </div>
 
               <div style={{ padding: '0 1.5rem' }}>
-                {getActionItems(result.score, specialty).map((item, i) => (
+                {getActionItems(result.score, specialties[0] || 'Financial Planning').map((item, i) => (
                   <div key={i} style={{ padding: '0.5rem 0', borderBottom: '1px solid #1A1A1A' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
                       <span style={{
@@ -640,7 +784,6 @@ export default function ScorePage() {
                 ))}
               </div>
 
-              {/* Platform deep-dive - visible platform names, blurred details */}
               <div style={{ padding: '1rem 1.5rem 0' }}>
                 <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
                   Platform Deep-Dive
@@ -667,7 +810,6 @@ export default function ScorePage() {
                 ))}
               </div>
 
-              {/* Overlay CTA */}
               <div style={{
                 position: 'absolute',
                 bottom: 0,
