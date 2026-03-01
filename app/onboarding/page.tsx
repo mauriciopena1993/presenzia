@@ -60,7 +60,7 @@ function OnboardingForm() {
         </h1>
         <p style={{ color: '#AAAAAA', marginBottom: '2rem' }}>
           Please select a plan from our{' '}
-          <Link href="/#pricing" style={{ color: '#C9A84C' }}>pricing page</Link>.
+          <Link href="/pricing" style={{ color: '#C9A84C' }}>pricing page</Link>.
         </p>
         <Link href="/" style={{ color: '#888', textDecoration: 'none' }}>Back to home</Link>
       </div>

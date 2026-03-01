@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 // Free score prompts — 10 prompts, 2 platforms (ChatGPT + Claude)
 const FREE_SCORE_PROMPTS = [
   "Who is the best {specialty} in {city}?",
-  "Can you recommend a {specialty} near {postcode_area}?",
+  "Can you recommend a {specialty} near {city}?",
   "I need a financial advisor in {city}. Who do you suggest?",
   "What are the top-rated {specialty} firms in {city}?",
   "I'm looking for an independent financial advisor in {city} for {specialty_context}. Any recommendations?",
@@ -12,8 +12,36 @@ const FREE_SCORE_PROMPTS = [
   "Can you recommend a trusted financial planner in {city}?",
   "What financial advisory firms are well-regarded in {city}?",
   "I need help with {specialty_context}. Which advisors in {city} are best?",
-  "Recommend a chartered financial planner near {postcode_area}",
+  "Recommend a chartered financial planner in {city}",
 ];
+
+// Additional prompts when target client type is provided
+const TARGET_CLIENT_PROMPTS: Record<string, string[]> = {
+  'High-net-worth individuals (£250k+)': [
+    "Which wealth managers in {city} specialise in high-net-worth clients?",
+    "I have a substantial portfolio and need a financial advisor in {city}. Who do you recommend?",
+  ],
+  'Retirees & pre-retirees': [
+    "Who is the best pension transfer specialist in {city}?",
+    "I'm approaching retirement and need financial advice in {city}. Any recommendations?",
+  ],
+  'Business owners & entrepreneurs': [
+    "Which financial advisors in {city} work with business owners?",
+    "I need corporate financial planning advice in {city}. Who do you suggest?",
+  ],
+  'Professionals (doctors, lawyers, etc.)': [
+    "Which financial advisors in {city} specialise in advising professionals?",
+    "I'm a professional looking for financial planning in {city}. Any recommendations?",
+  ],
+  'Families & estate planning': [
+    "Who offers the best estate planning advice in {city}?",
+    "I need help with inheritance tax planning in {city}. Which advisors do you recommend?",
+  ],
+  'Expats & international clients': [
+    "Which financial advisors in {city} work with expats and international clients?",
+    "I need cross-border financial advice from an advisor based in {city}. Suggestions?",
+  ],
+};
 
 const SPECIALTY_CONTEXT: Record<string, string> = {
   'Wealth Management': 'managing a large investment portfolio',
@@ -26,19 +54,32 @@ const SPECIALTY_CONTEXT: Record<string, string> = {
   'Corporate Financial Advisory': 'financial advice for my business',
 };
 
-function buildFreeScorePrompts(city: string, postcodeArea: string, specialty: string): Array<{ id: string; text: string; weight: number }> {
+function buildFreeScorePrompts(city: string, specialty: string, targetClient?: string): Array<{ id: string; text: string; weight: number }> {
   const specialtyContext = SPECIALTY_CONTEXT[specialty] || 'financial planning';
   const specialtyLabel = specialty.toLowerCase().includes('financial') ? specialty.toLowerCase() : `${specialty.toLowerCase()} advisor`;
 
-  return FREE_SCORE_PROMPTS.map((template, i) => ({
+  const basePrompts = FREE_SCORE_PROMPTS.map((template, i) => ({
     id: `free_${i}`,
     text: template
       .replace(/{city}/g, city)
-      .replace(/{postcode_area}/g, postcodeArea)
       .replace(/{specialty}/g, specialtyLabel)
       .replace(/{specialty_context}/g, specialtyContext),
-    weight: 10 - i, // Higher weight for earlier prompts
+    weight: 10 - i,
   }));
+
+  // Add target client prompts if provided (up to 2 extra)
+  if (targetClient && TARGET_CLIENT_PROMPTS[targetClient]) {
+    const extras = TARGET_CLIENT_PROMPTS[targetClient];
+    extras.forEach((template, i) => {
+      basePrompts.push({
+        id: `target_${i}`,
+        text: template.replace(/{city}/g, city),
+        weight: 8 - i,
+      });
+    });
+  }
+
+  return basePrompts;
 }
 
 // Query ChatGPT
@@ -107,7 +148,6 @@ function checkMention(response: string, firmName: string): { mentioned: boolean;
 }
 
 function extractCompetitors(response: string, firmName: string): string[] {
-  const competitors: string[] = [];
   const firmPattern = /(?:[A-Z][a-z]+(?:\s+(?:&\s+)?[A-Z][a-z]+)*)\s+(?:Financial|Wealth|Advisory|Planning|Advisors|Partners|Capital|Associates|Consulting|Management)/g;
   const found = new Set<string>();
   let match;
@@ -142,35 +182,43 @@ function generateShareId(): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const { firmName, postcode, specialty } = await req.json();
+    const body = await req.json();
 
-    if (!firmName || !postcode || !specialty) {
-      return NextResponse.json({ error: 'Firm name, postcode, and specialty are required' }, { status: 400 });
+    // Support both old (postcode) and new (city) API formats
+    const firmName = body.firmName;
+    const specialty = body.specialty;
+    const targetClient = body.targetClient;
+    const website = body.website;
+
+    // Accept city directly, or fall back to postcode lookup for backwards compat
+    let city = body.city || '';
+    const postcode = body.postcode || '';
+
+    if (!firmName || !specialty) {
+      return NextResponse.json({ error: 'Firm name and specialty are required' }, { status: 400 });
     }
 
-    // Look up postcode to get city
-    let city = '';
-    let postcodeArea = postcode.split(' ')[0] || postcode.substring(0, Math.min(4, postcode.length));
-    try {
-      const pcRes = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(postcode.trim())}`);
-      if (pcRes.ok) {
-        const pcData = await pcRes.json();
-        if (pcData.result) {
-          city = pcData.result.admin_district || pcData.result.parliamentary_constituency || '';
-          postcodeArea = pcData.result.outcode || postcodeArea;
+    if (!city && !postcode) {
+      return NextResponse.json({ error: 'City or location is required' }, { status: 400 });
+    }
+
+    // If city not provided but postcode is, look up city from postcode (backwards compat)
+    if (!city && postcode) {
+      try {
+        const pcRes = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(postcode.trim())}`);
+        if (pcRes.ok) {
+          const pcData = await pcRes.json();
+          if (pcData.result) {
+            city = pcData.result.admin_district || pcData.result.parliamentary_constituency || postcode;
+          }
         }
+      } catch {
+        city = postcode;
       }
-    } catch {
-      // Fallback: use postcode area as location
     }
 
-    if (!city) {
-      // Fallback: ask user's postcode prefix as area
-      city = postcodeArea;
-    }
-
-    // Build prompts
-    const prompts = buildFreeScorePrompts(city, postcodeArea, specialty);
+    // Build prompts using city directly
+    const prompts = buildFreeScorePrompts(city, specialty, targetClient);
 
     // Run prompts across ChatGPT + Claude in parallel
     const platforms: Array<{ name: string; querier: (p: string) => Promise<string>; weight: number }> = [];
@@ -281,7 +329,7 @@ export async function POST(req: NextRequest) {
     try {
       await supabase.from('free_scores').insert({
         firm_name: firmName,
-        postcode: postcode.trim(),
+        postcode: postcode.trim() || city.trim(), // Use city if no postcode provided
         city,
         specialty,
         score,
@@ -300,6 +348,8 @@ export async function POST(req: NextRequest) {
           platformBreakdown,
           mentionsCount,
           totalPrompts,
+          targetClient: targetClient || null,
+          website: website || null,
         },
         utm_source: null,
         utm_medium: null,

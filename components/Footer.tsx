@@ -35,7 +35,7 @@ export default function Footer() {
             {[
               { label: 'How it works', href: '/#how-it-works' },
               { label: 'Sample audit', href: '/#sample-report' },
-              { label: 'Pricing', href: '/#pricing' },
+              { label: 'Pricing', href: '/pricing' },
               { label: 'Blog', href: '/blog' },
             ].map(({ label, href }) => (
               <div key={label} style={{ marginBottom: '0.75rem' }}>

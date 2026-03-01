@@ -124,7 +124,7 @@ export default function SharedScorePage() {
             marginBottom: '1.5rem',
           }}>
             <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#E74C3C', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-              ⚠ Top Competitor
+              Top Competitor
             </div>
             <p style={{ color: '#F5F0E8', fontSize: '0.9rem', lineHeight: 1.7, margin: 0 }}>
               <strong>&quot;{data.topCompetitor.name}&quot;</strong> appeared in{' '}
@@ -134,38 +134,105 @@ export default function SharedScorePage() {
         )}
 
         {/* Platform breakdown */}
-        <div style={{ padding: '1.25rem', background: '#111', border: '1px solid #1A1A1A', marginBottom: '2rem' }}>
+        <div style={{ padding: '1.25rem', background: '#111', border: '1px solid #1A1A1A', marginBottom: '1.5rem' }}>
           <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
             Platform Breakdown
           </div>
           {data.platformBreakdown.map(p => (
-            <div key={p.platform} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid #1A1A1A' }}>
+            <div key={p.platform} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #1A1A1A' }}>
               <span style={{ color: '#F5F0E8', fontSize: '0.9rem' }}>{p.platform}</span>
-              <span style={{ color: p.mentioned > 0 ? '#27AE60' : '#E74C3C', fontSize: '0.9rem', fontWeight: 600 }}>
-                {p.mentioned}/{p.tested}
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ width: '80px', height: '4px', background: '#1A1A1A', borderRadius: '2px', overflow: 'hidden' }}>
+                  <div style={{
+                    height: '100%',
+                    width: `${(p.mentioned / p.tested) * 100}%`,
+                    background: p.mentioned > 0 ? '#27AE60' : '#E74C3C',
+                    borderRadius: '2px',
+                  }} />
+                </div>
+                <span style={{ color: p.mentioned > 0 ? '#27AE60' : '#E74C3C', fontSize: '0.9rem', fontWeight: 600, minWidth: '60px', textAlign: 'right' }}>
+                  {p.mentioned}/{p.tested}
+                </span>
+              </div>
             </div>
           ))}
         </div>
 
-        {/* CTA */}
+        {/* Blurred preview section — shows what the full audit includes */}
+        <div style={{
+          position: 'relative',
+          background: '#111',
+          border: '1px solid #1A1A1A',
+          marginBottom: '1.5rem',
+          overflow: 'hidden',
+        }}>
+          <div style={{ padding: '1.25rem 1.5rem 0' }}>
+            <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+              What&apos;s in the full audit
+            </div>
+          </div>
+
+          <div style={{ padding: '0 1.5rem', filter: 'blur(5px)', pointerEvents: 'none', userSelect: 'none' }}>
+            {[
+              { label: 'Full competitor analysis', detail: '5+ competitors ranked and compared' },
+              { label: 'Personalised action plan', detail: '7 prioritised steps for your firm' },
+              { label: 'Platform-by-platform breakdown', detail: 'ChatGPT, Claude, Perplexity, Google AI' },
+              { label: 'Specific search prompts tested', detail: '120+ prompts with results' },
+              { label: 'Implementation guides', detail: 'Step-by-step instructions for each action' },
+            ].map((item, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #1A1A1A' }}>
+                <span style={{ color: '#F5F0E8', fontSize: '0.85rem' }}>{item.label}</span>
+                <span style={{ color: '#888', fontSize: '0.75rem' }}>{item.detail}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Overlay */}
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            background: 'linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.9) 60%, rgba(10,10,10,0.98) 100%)',
+            padding: '3rem 1.5rem 1.5rem',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}>
+            <p style={{ color: '#F5F0E8', fontSize: '0.9rem', textAlign: 'center', fontWeight: 600, marginBottom: '0.25rem' }}>
+              Want to see the full breakdown?
+            </p>
+            <p style={{ color: '#999', fontSize: '0.8rem', textAlign: 'center', lineHeight: 1.5 }}>
+              120+ prompts, competitor analysis, and a personalised action plan
+            </p>
+          </div>
+        </div>
+
+        {/* CTAs */}
         <div style={{ textAlign: 'center' }}>
-          <p style={{ color: '#AAAAAA', fontSize: '0.9rem', marginBottom: '1rem' }}>
-            Want to see YOUR firm&apos;s AI visibility score?
+          <p style={{ color: '#AAAAAA', fontSize: '0.9rem', marginBottom: '1rem', lineHeight: 1.7 }}>
+            Want to see <strong style={{ color: '#F5F0E8' }}>your</strong> firm&apos;s AI visibility score?
           </p>
           <Link
             href="/score"
             style={{
-              display: 'inline-block',
+              display: 'block',
+              width: '100%',
               padding: '1rem 2rem',
               background: '#C9A84C',
               color: '#0A0A0A',
               fontWeight: 700,
               fontSize: '1rem',
               textDecoration: 'none',
+              textAlign: 'center',
+              boxSizing: 'border-box',
+              marginBottom: '0.75rem',
             }}
           >
             Get my free score →
+          </Link>
+          <Link href="/pricing" style={{ color: '#888', fontSize: '0.8rem', textDecoration: 'none' }}>
+            Or see audit plans →
           </Link>
         </div>
       </div>

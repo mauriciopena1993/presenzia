@@ -14,6 +14,16 @@ const SPECIALTIES = [
   'Corporate Financial Advisory',
 ];
 
+const TARGET_CLIENTS = [
+  'High-net-worth individuals (£250k+)',
+  'Retirees & pre-retirees',
+  'Business owners & entrepreneurs',
+  'Professionals (doctors, lawyers, etc.)',
+  'Families & estate planning',
+  'Expats & international clients',
+  'General / all client types',
+];
+
 interface ScoreResult {
   id: string;
   score: number;
@@ -35,11 +45,28 @@ function scoreColor(score: number): string {
   return '#2ECC71';
 }
 
+function getActionItems(score: number, specialty: string): Array<{ title: string; priority: string }> {
+  const items: Array<{ title: string; priority: string }> = [];
+
+  if (score < 50) {
+    items.push({ title: 'Add FinancialService schema markup to your website', priority: 'Critical' });
+    items.push({ title: 'Optimise Google Business Profile with detailed service descriptions', priority: 'Critical' });
+  }
+  items.push({ title: `Publish thought leadership content on ${specialty.toLowerCase()}`, priority: 'High' });
+  items.push({ title: 'Build citation authority across VouchedFor, Unbiased & FTAdviser', priority: 'High' });
+  items.push({ title: 'Create comprehensive FAQ page answering common client questions', priority: 'Medium' });
+  items.push({ title: 'Implement systematic review generation strategy', priority: 'Medium' });
+
+  return items.slice(0, 6);
+}
+
 export default function ScorePage() {
   const [step, setStep] = useState<Step>('form');
   const [firmName, setFirmName] = useState('');
-  const [postcode, setPostcode] = useState('');
+  const [city, setCity] = useState('');
   const [specialty, setSpecialty] = useState('');
+  const [targetClient, setTargetClient] = useState('');
+  const [website, setWebsite] = useState('');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [result, setResult] = useState<ScoreResult | null>(null);
@@ -104,7 +131,13 @@ export default function ScorePage() {
       const res = await fetch('/api/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ firmName, postcode, specialty }),
+        body: JSON.stringify({
+          firmName,
+          city,
+          specialty,
+          targetClient,
+          website: website.trim() || undefined,
+        }),
       });
 
       if (!res.ok) {
@@ -165,6 +198,12 @@ export default function ScorePage() {
     marginBottom: '0.5rem',
   };
 
+  const hintStyle: React.CSSProperties = {
+    fontSize: '0.75rem',
+    color: '#666',
+    marginTop: '0.35rem',
+  };
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -178,12 +217,12 @@ export default function ScorePage() {
         <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', color: '#F5F0E8', textDecoration: 'none' }}>
           presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
         </Link>
-        <Link href="/" style={{ color: '#999', fontSize: '0.85rem', textDecoration: 'none' }}>← Back to home</Link>
+        <Link href="/" style={{ color: '#999', fontSize: '0.85rem', textDecoration: 'none' }}>Back to home</Link>
       </div>
 
       <div style={{ maxWidth: '520px', margin: '0 auto', padding: '3rem 1.5rem' }}>
 
-        {/* ── STEP 1: FORM ── */}
+        {/* STEP 1: FORM */}
         {step === 'form' && (
           <div>
             <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
@@ -194,12 +233,13 @@ export default function ScorePage() {
                 How visible is your firm to AI?
               </h1>
               <p style={{ color: '#AAAAAA', fontSize: '0.95rem', lineHeight: 1.7 }}>
-                Get your free AI visibility score in 60 seconds. No signup required.
+                We test real AI search prompts across ChatGPT and Claude to see if your firm gets recommended. Takes about 60 seconds.
               </p>
             </div>
 
             <form onSubmit={handleSubmit}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                {/* Firm Name */}
                 <div>
                   <label style={labelStyle}>Firm name <span style={{ color: '#C9A84C' }}>*</span></label>
                   <input
@@ -210,23 +250,26 @@ export default function ScorePage() {
                     onChange={e => setFirmName(e.target.value)}
                     style={inputStyle}
                   />
+                  <div style={hintStyle}>Your firm name exactly as it appears on your website</div>
                 </div>
 
+                {/* City / Area */}
                 <div>
-                  <label style={labelStyle}>Postcode <span style={{ color: '#C9A84C' }}>*</span></label>
+                  <label style={labelStyle}>City or area you serve <span style={{ color: '#C9A84C' }}>*</span></label>
                   <input
                     type="text"
-                    placeholder="e.g. GU1 4QR"
+                    placeholder="e.g. London, Manchester, Surrey"
                     required
-                    value={postcode}
-                    onChange={e => setPostcode(e.target.value)}
+                    value={city}
+                    onChange={e => setCity(e.target.value)}
                     style={inputStyle}
-                    maxLength={8}
                   />
+                  <div style={hintStyle}>The main area your clients are in — we&apos;ll test AI searches for this location</div>
                 </div>
 
+                {/* Specialty */}
                 <div>
-                  <label style={labelStyle}>Specialty <span style={{ color: '#C9A84C' }}>*</span></label>
+                  <label style={labelStyle}>Primary specialty <span style={{ color: '#C9A84C' }}>*</span></label>
                   <select
                     required
                     value={specialty}
@@ -238,6 +281,55 @@ export default function ScorePage() {
                       <option key={s} value={s}>{s}</option>
                     ))}
                   </select>
+                </div>
+
+                {/* Target Client */}
+                <div>
+                  <label style={labelStyle}>Target client type <span style={{ color: '#C9A84C' }}>*</span></label>
+                  <select
+                    required
+                    value={targetClient}
+                    onChange={e => setTargetClient(e.target.value)}
+                    style={{ ...inputStyle, cursor: 'pointer', appearance: 'none' }}
+                  >
+                    <option value="" disabled>Who do you primarily work with?</option>
+                    {TARGET_CLIENTS.map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <div style={hintStyle}>This helps us test the prompts your ideal clients would actually search</div>
+                </div>
+
+                {/* Website */}
+                <div>
+                  <label style={labelStyle}>Website <span style={{ color: '#888' }}>(recommended)</span></label>
+                  <div style={{ display: 'flex', alignItems: 'stretch' }}>
+                    <div style={{
+                      padding: '0.85rem 0.75rem',
+                      background: '#1A1A1A',
+                      border: '1px solid #2A2A2A',
+                      borderRight: 'none',
+                      color: '#666',
+                      fontSize: '0.95rem',
+                      fontFamily: 'var(--font-inter, Inter, sans-serif)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      userSelect: 'none',
+                      whiteSpace: 'nowrap',
+                    }}>https://</div>
+                    <input
+                      type="text"
+                      placeholder="www.yourfirm.co.uk"
+                      value={website}
+                      onChange={e => {
+                        let v = e.target.value;
+                        v = v.replace(/^https?:\/\//, '');
+                        setWebsite(v);
+                      }}
+                      style={{ ...inputStyle, borderLeft: 'none' }}
+                    />
+                  </div>
+                  <div style={hintStyle}>Helps us check if AI models reference your website content</div>
                 </div>
 
                 {error && (
@@ -274,7 +366,7 @@ export default function ScorePage() {
           </div>
         )}
 
-        {/* ── STEP 2: LOADING ── */}
+        {/* STEP 2: LOADING */}
         {step === 'loading' && (
           <div style={{ textAlign: 'center' }}>
             <h2 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.5rem', fontWeight: 600, marginBottom: '2rem' }}>
@@ -322,7 +414,7 @@ export default function ScorePage() {
           </div>
         )}
 
-        {/* ── STEP 3: EMAIL GATE ── */}
+        {/* STEP 3: EMAIL GATE */}
         {step === 'email' && (
           <div style={{ textAlign: 'center' }}>
             <div style={{
@@ -393,7 +485,7 @@ export default function ScorePage() {
           </div>
         )}
 
-        {/* ── STEP 4: RESULTS ── */}
+        {/* STEP 4: RESULTS */}
         {step === 'results' && result && (
           <div>
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
@@ -434,7 +526,8 @@ export default function ScorePage() {
               </div>
 
               <p style={{ color: '#AAAAAA', fontSize: '0.9rem', lineHeight: 1.7 }}>
-                Your firm was found in <strong style={{ color: '#F5F0E8' }}>{result.mentionsCount} of {result.totalPrompts}</strong> AI searches.
+                Your firm was found in <strong style={{ color: '#F5F0E8' }}>{result.mentionsCount} of {result.totalPrompts}</strong> AI searches
+                {result.city ? ` for ${result.city}` : ''}.
               </p>
             </div>
 
@@ -447,7 +540,7 @@ export default function ScorePage() {
                 marginBottom: '1.5rem',
               }}>
                 <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#E74C3C', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-                  ⚠ Your Top Competitor
+                  Your Top Competitor
                 </div>
                 <p style={{ color: '#F5F0E8', fontSize: '0.9rem', lineHeight: 1.7, margin: 0 }}>
                   <strong>&quot;{result.topCompetitor.name}&quot;</strong> appeared in{' '}
@@ -470,47 +563,127 @@ export default function ScorePage() {
               {result.platformBreakdown.map(p => (
                 <div key={p.platform} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #1A1A1A' }}>
                   <span style={{ color: '#F5F0E8', fontSize: '0.9rem' }}>{p.platform}</span>
-                  <span style={{ color: p.mentioned > 0 ? '#27AE60' : '#E74C3C', fontSize: '0.9rem', fontWeight: 600 }}>
-                    {p.mentioned}/{p.tested} prompts
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div style={{ width: '80px', height: '4px', background: '#1A1A1A', borderRadius: '2px', overflow: 'hidden' }}>
+                      <div style={{
+                        height: '100%',
+                        width: `${(p.mentioned / p.tested) * 100}%`,
+                        background: p.mentioned > 0 ? '#27AE60' : '#E74C3C',
+                        borderRadius: '2px',
+                      }} />
+                    </div>
+                    <span style={{ color: p.mentioned > 0 ? '#27AE60' : '#E74C3C', fontSize: '0.9rem', fontWeight: 600, minWidth: '60px', textAlign: 'right' }}>
+                      {p.mentioned}/{p.tested} found
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
 
-            {/* Blurred preview */}
+            {/* Enhanced blurred preview — rich content with real data */}
             <div style={{
               position: 'relative',
-              padding: '1.5rem',
               background: '#111',
               border: '1px solid #1A1A1A',
               marginBottom: '1.5rem',
               overflow: 'hidden',
             }}>
-              <div style={{ filter: 'blur(4px)', pointerEvents: 'none', userSelect: 'none' }}>
-                <div style={{ fontSize: '0.75rem', color: '#666', marginBottom: '0.5rem' }}>FULL PLATFORM BREAKDOWN</div>
-                <div style={{ height: '8px', background: '#1A1A1A', width: '80%', marginBottom: '0.5rem' }} />
-                <div style={{ height: '8px', background: '#1A1A1A', width: '65%', marginBottom: '0.5rem' }} />
-                <div style={{ height: '8px', background: '#1A1A1A', width: '90%', marginBottom: '1rem' }} />
-                <div style={{ fontSize: '0.75rem', color: '#666', marginBottom: '0.5rem' }}>COMPETITOR ANALYSIS</div>
-                <div style={{ height: '8px', background: '#1A1A1A', width: '70%', marginBottom: '0.5rem' }} />
-                <div style={{ height: '8px', background: '#1A1A1A', width: '55%', marginBottom: '0.5rem' }} />
-                <div style={{ height: '8px', background: '#1A1A1A', width: '85%', marginBottom: '1rem' }} />
-                <div style={{ fontSize: '0.75rem', color: '#666', marginBottom: '0.5rem' }}>PERSONALISED ACTION PLAN</div>
-                <div style={{ height: '8px', background: '#1A1A1A', width: '75%', marginBottom: '0.5rem' }} />
-                <div style={{ height: '8px', background: '#1A1A1A', width: '60%', marginBottom: '0.5rem' }} />
+              {/* Visible header for competitor section */}
+              <div style={{ padding: '1.25rem 1.5rem 0' }}>
+                <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#E74C3C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+                  Full Competitor Analysis
+                </div>
+                {result.topCompetitor && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #1A1A1A' }}>
+                    <span style={{ color: '#F5F0E8', fontSize: '0.85rem' }}>1. {result.topCompetitor.name}</span>
+                    <span style={{ color: '#E74C3C', fontSize: '0.8rem', fontWeight: 600 }}>{result.topCompetitor.count} mentions</span>
+                  </div>
+                )}
               </div>
+
+              {/* Blurred competitor rows */}
+              <div style={{ padding: '0 1.5rem', filter: 'blur(5px)', pointerEvents: 'none', userSelect: 'none' }}>
+                {['Another Financial Planning Co.', 'Regional Wealth Partners', 'City Investment Advisors'].map((name, i) => (
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #1A1A1A' }}>
+                    <span style={{ color: '#F5F0E8', fontSize: '0.85rem' }}>{i + 2}. {name}</span>
+                    <span style={{ color: '#E67E22', fontSize: '0.8rem', fontWeight: 600 }}>{Math.max(1, (result.topCompetitor?.count || 5) - (i + 1) * 2)} mentions</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Action plan section - visible headings, blurred descriptions */}
+              <div style={{ padding: '1rem 1.5rem 0' }}>
+                <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+                  Personalised Action Plan
+                </div>
+              </div>
+
+              <div style={{ padding: '0 1.5rem' }}>
+                {getActionItems(result.score, specialty).map((item, i) => (
+                  <div key={i} style={{ padding: '0.5rem 0', borderBottom: '1px solid #1A1A1A' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                      <span style={{
+                        fontSize: '0.6rem',
+                        fontWeight: 700,
+                        color: item.priority === 'Critical' ? '#E74C3C' : item.priority === 'High' ? '#C9A84C' : '#888',
+                        letterSpacing: '0.06em',
+                        textTransform: 'uppercase',
+                      }}>{item.priority}</span>
+                      <span style={{ color: '#F5F0E8', fontSize: '0.8rem', fontWeight: 500 }}>{item.title}</span>
+                    </div>
+                    <div style={{ filter: 'blur(5px)', pointerEvents: 'none', userSelect: 'none' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#888', lineHeight: 1.5 }}>
+                        Detailed step-by-step implementation guide with specific recommendations for your firm based on analysis of your current web presence and competitor strategies...
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Platform deep-dive - visible platform names, blurred details */}
+              <div style={{ padding: '1rem 1.5rem 0' }}>
+                <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+                  Platform Deep-Dive
+                </div>
+              </div>
+              <div style={{ padding: '0 1.5rem 1rem' }}>
+                {result.platformBreakdown.map((p, i) => (
+                  <div key={i} style={{ padding: '0.4rem 0', borderBottom: '1px solid #1A1A1A' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+                      <span style={{ color: '#F5F0E8', fontSize: '0.8rem' }}>{p.platform}</span>
+                      <span style={{ color: p.mentioned > 0 ? '#27AE60' : '#E74C3C', fontSize: '0.75rem', fontWeight: 600 }}>
+                        {p.mentioned}/{p.tested}
+                      </span>
+                    </div>
+                    <div style={{ filter: 'blur(5px)', pointerEvents: 'none', userSelect: 'none' }}>
+                      <div style={{ height: '6px', background: '#1A1A1A', borderRadius: '3px', marginBottom: '0.25rem', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${(p.mentioned / p.tested) * 100 || 5}%`, background: p.mentioned > 0 ? '#27AE60' : '#E74C3C', borderRadius: '3px' }} />
+                      </div>
+                      <div style={{ fontSize: '0.7rem', color: '#666' }}>
+                        3 specific recommendations for improving your {p.platform} visibility
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Overlay CTA */}
               <div style={{
                 position: 'absolute',
-                inset: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background: 'linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.85) 40%, rgba(10,10,10,0.97) 100%)',
+                padding: '4rem 1.5rem 1.5rem',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'center',
-                background: 'rgba(10,10,10,0.6)',
-                backdropFilter: 'blur(2px)',
               }}>
-                <p style={{ color: '#AAAAAA', fontSize: '0.85rem', textAlign: 'center', maxWidth: '280px', lineHeight: 1.7, marginBottom: '0.5rem' }}>
-                  Full platform breakdown, competitor analysis, and personalised action plan available in your full AI Visibility Audit.
+                <p style={{ color: '#F5F0E8', fontSize: '0.95rem', textAlign: 'center', fontWeight: 600, marginBottom: '0.5rem', lineHeight: 1.5 }}>
+                  Your full audit unlocks everything above
+                </p>
+                <p style={{ color: '#999', fontSize: '0.8rem', textAlign: 'center', marginBottom: '0.25rem', lineHeight: 1.5 }}>
+                  Competitor deep-dive, actionable step-by-step plan, platform-specific recommendations, and priority roadmap
                 </p>
               </div>
             </div>
@@ -530,12 +703,18 @@ export default function ScorePage() {
                 textDecoration: 'none',
                 textAlign: 'center',
                 letterSpacing: '0.02em',
-                marginBottom: '1rem',
+                marginBottom: '0.75rem',
                 boxSizing: 'border-box',
               }}
             >
               Get my full audit — £297 →
             </Link>
+
+            <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+              <Link href="/pricing" style={{ color: '#888', fontSize: '0.8rem', textDecoration: 'none' }}>
+                Or see all plans →
+              </Link>
+            </div>
 
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
               <button

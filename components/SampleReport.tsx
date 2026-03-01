@@ -762,7 +762,7 @@ export default function SampleReport() {
               You&apos;re viewing selected highlights. The full audit includes all 120 search results, complete competitor analysis, detailed implementation guides, and a priority-ordered roadmap.
             </p>
             <a
-              href="/#pricing"
+              href="/score"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -776,7 +776,7 @@ export default function SampleReport() {
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.gap = '0.75rem'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.gap = '0.5rem'; }}
             >
-              Get your AI Visibility Audit <ArrowRight size={15} />
+              Get your free visibility score <ArrowRight size={15} />
             </a>
           </div>
         </div>
