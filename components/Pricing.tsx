@@ -235,7 +235,7 @@ export default function Pricing() {
           Invest less than the value of one client
         </h2>
         <p style={{ color: '#AAAAAA', maxWidth: '560px', margin: '0 auto', fontSize: '1rem', lineHeight: 1.7 }}>
-          A single new high-net-worth client is worth \u00A310,000\u201350,000+ in lifetime fees. Every tier pays for itself with one client acquisition.
+          A single new high-net-worth client is worth £10,000–350,000+ in lifetime fees. Every tier pays for itself with one client acquisition.
         </p>
       </div>
 
