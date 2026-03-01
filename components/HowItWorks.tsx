@@ -1,5 +1,3 @@
-'use client';
-
 import { ClipboardList, Cpu, FileText, TrendingUp } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -69,15 +67,12 @@ export default function HowItWorks() {
         gap: '0',
       }}>
         {steps.map((step) => (
-          <div key={step.number} style={{
+          <div key={step.number} className="hiw-step" style={{
             padding: '2.5rem',
             background: 'rgba(10,10,10,0.6)',
             position: 'relative',
             transition: 'background 0.3s',
-          }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(15,15,15,0.7)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(10,10,10,0.6)'; }}
-          >
+          }}>
             <step.icon size={24} strokeWidth={1.5} style={{ color: '#C9A84C', marginBottom: '1rem', display: 'block' }} />
             <div style={{
               fontFamily: "'Playfair Display', serif",
@@ -104,6 +99,10 @@ export default function HowItWorks() {
           </div>
         ))}
       </div>
+
+      <style>{`
+        .hiw-step:hover { background: rgba(15,15,15,0.7) !important; }
+      `}</style>
     </section>
   );
 }

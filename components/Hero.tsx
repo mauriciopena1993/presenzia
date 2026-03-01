@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 
 export default function Hero() {
@@ -70,7 +68,7 @@ export default function Hero() {
 
       {/* CTA Buttons */}
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '3.5rem' }}>
-        <Link href="/score" style={{
+        <Link href="/score" className="hero-cta-primary" style={{
           padding: '0.875rem 2rem',
           background: '#C9A84C',
           color: '#0A0A0A',
@@ -82,12 +80,10 @@ export default function Hero() {
           display: 'inline-flex',
           alignItems: 'center',
           gap: '0.5rem',
-        }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#E8C96A'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#C9A84C'; }}>
+        }}>
           Get my free visibility score →
         </Link>
-        <Link href="#sample-report" style={{
+        <Link href="#sample-report" className="hero-cta-secondary" style={{
           padding: '0.875rem 2rem',
           background: 'transparent',
           color: '#CCCCCC',
@@ -96,17 +92,7 @@ export default function Hero() {
           textDecoration: 'none',
           border: '1px solid #555555',
           transition: 'all 0.2s',
-        }}
-          onMouseEnter={e => {
-            const el = e.currentTarget as HTMLElement;
-            el.style.borderColor = '#C9A84C';
-            el.style.color = '#F5F0E8';
-          }}
-          onMouseLeave={e => {
-            const el = e.currentTarget as HTMLElement;
-            el.style.borderColor = '#555555';
-            el.style.color = '#CCCCCC';
-          }}>
+        }}>
           See a sample IFA audit
         </Link>
       </div>
@@ -153,6 +139,8 @@ export default function Hero() {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.4; }
         }
+        .hero-cta-primary:hover { background: #E8C96A !important; }
+        .hero-cta-secondary:hover { border-color: #C9A84C !important; color: #F5F0E8 !important; }
       `}</style>
     </section>
   );

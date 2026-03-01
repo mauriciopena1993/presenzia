@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 
 export default function Footer() {
@@ -8,6 +6,12 @@ export default function Footer() {
       padding: '4rem 2rem 2rem',
       background: 'rgba(10,10,10,0.88)',
     }}>
+      <style>{`
+        .footer-link { color: #888888; font-size: 0.85rem; text-decoration: none; transition: color 0.2s; }
+        .footer-link:hover { color: #F5F0E8; }
+        .footer-cta { transition: background 0.2s; }
+        .footer-cta:hover { background: #E8C96A !important; }
+      `}</style>
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
         <div style={{
           display: 'grid',
@@ -39,9 +43,7 @@ export default function Footer() {
               { label: 'Blog', href: '/blog' },
             ].map(({ label, href }) => (
               <div key={label} style={{ marginBottom: '0.75rem' }}>
-                <Link href={href} style={{ color: '#888888', fontSize: '0.85rem', textDecoration: 'none', transition: 'color 0.2s' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#F5F0E8'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#888888'; }}>
+                <Link href={href} className="footer-link">
                   {label}
                 </Link>
               </div>
@@ -58,9 +60,7 @@ export default function Footer() {
               { label: 'Terms of service', href: '/terms' },
             ].map(({ label, href }) => (
               <div key={label} style={{ marginBottom: '0.75rem' }}>
-                <Link href={href} style={{ color: '#888888', fontSize: '0.85rem', textDecoration: 'none', transition: 'color 0.2s' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#F5F0E8'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#888888'; }}>
+                <Link href={href} className="footer-link">
                   {label}
                 </Link>
               </div>
@@ -73,7 +73,7 @@ export default function Footer() {
             <p style={{ color: '#888888', fontSize: '0.825rem', lineHeight: 1.7, marginBottom: '1.25rem' }}>
               Find out where you rank. Then climb.
             </p>
-            <Link href="/score" style={{
+            <Link href="/score" className="footer-cta" style={{
               display: 'inline-block',
               padding: '0.75rem 1.5rem',
               background: '#C9A84C',
@@ -81,10 +81,7 @@ export default function Footer() {
               fontSize: '0.825rem',
               fontWeight: 600,
               textDecoration: 'none',
-              transition: 'background 0.2s',
-            }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#E8C96A'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#C9A84C'; }}>
+            }}>
               Get my free score →
             </Link>
           </div>

@@ -1,5 +1,3 @@
-'use client';
-
 import { Globe, Cpu, BarChart3, TrendingUp } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -92,6 +90,8 @@ export default function About() {
           @media (min-width: 601px) and (max-width: 860px) {
             .about-grid { grid-template-columns: repeat(2, 1fr) !important; }
           }
+          .about-card { transition: background 0.3s; }
+          .about-card:hover { background: #0F0F0F !important; }
         `}</style>
         <div
           className="about-grid"
@@ -106,16 +106,10 @@ export default function About() {
           {values.map((item) => (
             <div
               key={item.label}
+              className="about-card"
               style={{
                 padding: '2.25rem 2rem',
                 background: '#0A0A0A',
-                transition: 'background 0.3s',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = '#0F0F0F';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = '#0A0A0A';
               }}
             >
               <item.icon

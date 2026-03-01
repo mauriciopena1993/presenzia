@@ -1,8 +1,7 @@
-'use client';
-
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+import { supabase } from '@/lib/supabase';
 
 interface ScoreData {
   id: string;
@@ -26,40 +25,71 @@ function scoreColor(score: number): string {
   return '#2ECC71';
 }
 
-export default function SharedScorePage() {
-  const params = useParams();
-  const id = params.id as string;
-  const [data, setData] = useState<ScoreData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+async function getScoreData(id: string): Promise<ScoreData | null> {
+  const { data, error } = await supabase
+    .from('free_scores')
+    .select('*')
+    .eq('share_id', id)
+    .single();
 
-  useEffect(() => {
-    if (!id) return;
-    fetch(`/api/score/${id}`)
-      .then(res => {
-        if (!res.ok) throw new Error('Score not found');
-        return res.json();
-      })
-      .then(setData)
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false));
-  }, [id]);
+  if (error || !data) return null;
 
-  if (loading) {
-    return (
-      <div style={{ minHeight: '100vh', background: '#0A0A0A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ color: '#C9A84C', fontSize: '0.875rem', letterSpacing: '0.1em' }}>Loading...</div>
-      </div>
-    );
+  return {
+    id: data.share_id,
+    firmName: data.firm_name,
+    city: data.city,
+    specialty: data.specialty,
+    score: data.score,
+    grade: data.grade,
+    topCompetitor: data.top_competitor_name ? {
+      name: data.top_competitor_name,
+      count: data.top_competitor_count,
+    } : null,
+    mentionsCount: data.results_json?.mentionsCount || 0,
+    totalPrompts: data.results_json?.totalPrompts || 0,
+    platformBreakdown: data.results_json?.platformBreakdown || [],
+    hasEmail: !!data.email,
+  };
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const data = await getScoreData(id);
+
+  if (!data) {
+    return { title: 'Score not found | presenzia.ai' };
   }
 
-  if (error || !data) {
-    return (
-      <div style={{ minHeight: '100vh', background: '#0A0A0A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem' }}>
-        <div style={{ color: '#E74C3C', fontSize: '1rem' }}>Score not found</div>
-        <Link href="/score" style={{ color: '#C9A84C', textDecoration: 'none' }}>Get your own score →</Link>
-      </div>
-    );
+  const title = `${data.firmName} scored ${data.score}/100 on AI Visibility | presenzia.ai`;
+  const description = `${data.firmName} in ${data.city} was found in ${data.mentionsCount} of ${data.totalPrompts} AI searches. Grade: ${data.grade}. See how your firm compares.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+    },
+  };
+}
+
+export const revalidate = 3600; // Revalidate every hour
+
+export default async function SharedScorePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const data = await getScoreData(id);
+
+  if (!data) {
+    notFound();
   }
 
   return (
@@ -78,7 +108,7 @@ export default function SharedScorePage() {
           </div>
 
           <h1 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', fontWeight: 600, marginBottom: '1.5rem', color: '#AAAAAA' }}>
-            {data.firmName} · {data.city}
+            {data.firmName} &middot; {data.city}
           </h1>
 
           <div style={{
@@ -158,7 +188,7 @@ export default function SharedScorePage() {
           ))}
         </div>
 
-        {/* Blurred preview section — shows what the full audit includes */}
+        {/* Blurred preview section */}
         <div style={{
           position: 'relative',
           background: '#111',
