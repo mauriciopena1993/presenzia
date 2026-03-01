@@ -60,10 +60,10 @@ interface ChatMessage {
 }
 
 const PLATFORM_TOOLTIPS: Record<string, string> = {
-  'ChatGPT': 'Used by 200M+ people daily. When someone asks ChatGPT to recommend a business like yours, this score shows how often you appear.',
-  'Claude': 'Anthropic\'s AI assistant, growing rapidly in professional use. A high score here means Claude is recommending your business.',
-  'Perplexity': 'An AI-powered search engine replacing Google for many users. High visibility here drives direct, high-intent traffic to your business.',
-  'Google AI': 'Google\'s AI Overview appears at the top of search results. Critical for local discovery — this is the highest-impact platform.',
+  'ChatGPT': 'Used by 200M+ people daily. When someone asks ChatGPT to recommend a financial advisor, this score shows how often your firm appears.',
+  'Claude': 'Anthropic\'s AI assistant, growing rapidly in professional use. A high score here means Claude is recommending your firm.',
+  'Perplexity': 'An AI-powered search engine replacing Google for many users. High visibility here drives direct, high-intent traffic to your firm.',
+  'Google AI': 'Google\'s AI Overview appears at the top of search results. Critical for discovery — this is the highest-impact platform.',
 };
 
 const GRADE_COLORS: Record<string, string> = {
@@ -75,40 +75,44 @@ const GRADE_COLORS: Record<string, string> = {
 };
 
 const PLAN_LABELS: Record<string, string> = {
-  starter: 'Starter',
-  growth: 'Growth',
+  audit: 'AI Visibility Audit',
+  starter: 'Starter', // legacy
+  growth: 'Growth Retainer',
   premium: 'Premium',
 };
 
 const PLAN_PRICES: Record<string, string> = {
-  starter: '£99',
-  growth: '£199',
-  premium: '£599',
+  audit: '£297',
+  starter: '£99', // legacy
+  growth: '£697',
+  premium: '£1,997',
 };
 
 const PLAN_FEATURES: Record<string, string[]> = {
-  starter: ['Monthly AI visibility audit', 'Delivered by email (report)'],
-  growth: ['Everything in Starter', 'Online client dashboard (weekly updates)', 'AI audit assistant', 'Competitor deep-dive', 'Priority email support'],
-  premium: ['Everything in Growth', 'Daily dashboard updates', 'Dedicated account manager', 'Monthly 1:1 strategy call', 'Custom prompt testing & benchmarking'],
+  audit: ['One-off AI visibility audit', '120 wealth-specific prompts tested', 'Scored PDF report with action plan'],
+  starter: ['Monthly AI visibility audit', 'Delivered by email (report)'], // legacy
+  growth: ['Everything in Audit', 'Monthly re-audits', 'Online dashboard (weekly updates)', 'AI audit assistant', 'Quarterly strategy calls', 'Competitor deep-dive', 'Priority email support'],
+  premium: ['Everything in Growth', 'Daily dashboard updates', 'Dedicated account manager', 'Monthly 1:1 strategy calls', 'Territory exclusivity', 'Done-for-you content recommendations', 'Custom prompt testing & industry benchmarking'],
 };
 
-const PLAN_ORDER = ['starter', 'growth', 'premium'];
+const PLAN_ORDER = ['audit', 'growth', 'premium'];
 
 const PLAN_LOSSES: Record<string, string[]> = {
-  starter: ['Monthly AI visibility audits', 'Email reports with action plans', 'Score tracking over time'],
-  growth: ['Online dashboard with weekly updates', 'AI audit assistant', 'Competitor deep-dive analysis', 'Priority email support'],
-  premium: ['Daily dashboard updates', 'Dedicated account manager', 'Monthly 1:1 strategy call', 'Custom prompt testing', 'Industry benchmarking'],
+  audit: ['AI visibility audit report', 'Score tracking', 'Action plan recommendations'],
+  starter: ['Monthly AI visibility audits', 'Email reports with action plans', 'Score tracking over time'], // legacy
+  growth: ['Monthly re-audits', 'Online dashboard with weekly updates', 'AI audit assistant', 'Quarterly strategy calls', 'Competitor deep-dive analysis', 'Priority email support'],
+  premium: ['Daily dashboard updates', 'Dedicated account manager', 'Monthly 1:1 strategy calls', 'Territory exclusivity', 'Done-for-you content', 'Custom prompt testing', 'Industry benchmarking'],
 };
 
 // Premium strategy call booking link — replace with Calendly/Cal.com URL when ready
 const BOOKING_URL = 'https://calendly.com/presenzia/strategy-call';
 
 const GRADE_CONTEXT: Record<string, string> = {
-  'A': 'Excellent — AI assistants are actively recommending your business. Keep monitoring to maintain your position.',
+  'A': 'Excellent — AI assistants are actively recommending your firm. Keep monitoring to maintain your position.',
   'B': 'Good visibility with room to grow. A few targeted improvements could push you into the top tier.',
   'C': 'Moderate presence. You appear on some platforms but competitors are being recommended more often.',
   'D': 'Low visibility. Most AI searches in your category are recommending competitors instead of you.',
-  'F': 'Not visible. AI assistants are not currently recommending your business. Immediate action needed.',
+  'F': 'Not visible. AI assistants are not currently recommending your firm. Immediate action needed.',
 };
 
 function scoreColor(score: number) {
@@ -994,7 +998,7 @@ function PlatformCard({ platform }: { platform: PlatformScore }) {
 function ChatPane({ jobId, businessName }: { jobId: string; businessName: string }) {
   const [messages, setMessages] = useState<ChatMessage[]>([{
     role: 'assistant',
-    content: `Hi! I can help you understand your AI visibility results for ${businessName || 'your business'} and suggest specific improvements. What would you like to know?`,
+    content: `Hi! I can help you understand your AI visibility results for ${businessName || 'your firm'} and suggest specific improvements. What would you like to know?`,
   }]);
   const [input, setInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
@@ -1326,8 +1330,8 @@ export default function DashboardPage() {
     );
   }
 
-  // Starter plan: limited portal — report downloads + upsell
-  if (client?.plan === 'starter') {
+  // Audit/Starter plan: limited portal — report downloads + upsell
+  if (client?.plan === 'starter' || client?.plan === 'audit') {
     const completedReports = history.filter(r => r.status === 'completed');
     return (
       <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'var(--font-inter, Inter, sans-serif)', color: '#F5F0E8' }}>
@@ -1516,7 +1520,7 @@ export default function DashboardPage() {
 
                 <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                   {PLAN_ORDER.map(plan => {
-                    const isCurrent = plan === 'starter';
+                    const isCurrent = plan === (client?.plan || 'audit');
                     const accentColor = plan === 'premium' ? '#9b6bcc' : '#C9A84C';
                     return (
                       <div key={plan} style={{

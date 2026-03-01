@@ -8,7 +8,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 const ADMIN_EMAIL = 'hello@presenzia.ai';
 const FROM_EMAIL = 'presenzia.ai <reports@presenzia.ai>';
-const PLAN_LABELS: Record<string, string> = { starter: 'Starter', growth: 'Growth', premium: 'Premium' };
+const PLAN_LABELS: Record<string, string> = { audit: 'AI Visibility Audit', starter: 'Starter', growth: 'Growth Retainer', premium: 'Premium' };
 
 async function notifyAdmin(subject: string, html: string) {
   if (!process.env.RESEND_API_KEY) {
@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
         }
 
         // ── Handle new client signup ──
-        const plan = metadata.plan as 'starter' | 'growth' | 'premium';
+        const plan = metadata.plan as 'audit' | 'starter' | 'growth' | 'premium';
         const email = session.customer_email || session.customer_details?.email || '';
 
         if (!email || !plan) {

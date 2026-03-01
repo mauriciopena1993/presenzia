@@ -2,16 +2,14 @@
  * Prompt templates for AI visibility auditing.
  * These are the exact prompts we test across ChatGPT, Claude, Perplexity, Google AI.
  *
- * The system builds SPECIFIC prompts for each business using their description,
- * keywords, and business type — not generic category queries.
+ * The system builds SPECIFIC prompts for each firm using their description,
+ * keywords/specialties, and firm type.
  *
- * Example: A "Family-run Italian restaurant specialising in homemade pasta" in
- * "Clapham" should generate prompts like:
- *   - "Best Italian restaurant in Clapham"
- *   - "Where can I get homemade pasta in Clapham?"
- *   - "Recommend a family restaurant in Clapham"
- * NOT:
- *   - "Best Restaurant / Cafe / Food & Drink in Clapham" (useless)
+ * Example: A "Chartered Financial Planner" specialising in "retirement planning
+ * and pension transfers" in "Guildford" should generate prompts like:
+ *   - "Best financial advisor in Guildford"
+ *   - "Pension transfer specialist near Guildford"
+ *   - "Who should I speak to about retirement planning in Guildford?"
  */
 
 export interface PromptTemplate {
@@ -22,39 +20,35 @@ export interface PromptTemplate {
 }
 
 /**
- * Derives a short, natural search term from the business type dropdown.
- * "Solicitor / Law Firm" → "solicitor"
- * "Restaurant / Cafe" → "restaurant"
- * "Plumber / Electrician / Tradesperson" → "plumber"
- * Takes only the first option before the slash as the primary type.
+ * Derives a natural search term from the firm type.
+ * "Independent Financial Advisor (IFA)" → "financial advisor"
+ * "Chartered Financial Planner" → "financial planner"
+ * "Wealth Management Firm" → "wealth manager"
  */
-function deriveSearchTerm(businessType: string): string {
-  const primary = businessType.split('/')[0].trim().toLowerCase();
-  // Remove any parenthetical content
-  return primary.replace(/\(.*?\)/g, '').trim();
-}
+function deriveSearchTerm(firmType: string): string {
+  const typeMap: Record<string, string> = {
+    'independent financial advisor (ifa)': 'financial advisor',
+    'chartered financial planner': 'financial planner',
+    'wealth management firm': 'wealth manager',
+    'discretionary fund manager': 'investment manager',
+    'financial planning practice': 'financial planner',
+    'multi-advisor ifa network': 'financial advisor',
+    'restricted financial advisor': 'financial advisor',
+    'retirement specialist': 'retirement advisor',
+    'estate & inheritance planning': 'inheritance tax advisor',
+    'corporate financial advisor': 'financial advisor',
+  };
 
-/**
- * Extracts meaningful descriptors from the business description.
- * "Family-run Italian restaurant specialising in homemade pasta"
- * → ["Italian restaurant", "family-run", "homemade pasta"]
- */
-function extractDescriptors(description: string, businessType: string): string[] {
-  if (!description) return [];
+  const key = firmType.toLowerCase().trim();
+  if (typeMap[key]) return typeMap[key];
 
-  const desc = description.trim();
-  const descriptors: string[] = [];
-
-  // The full description itself is a great search phrase if short enough
-  if (desc.length <= 60) {
-    descriptors.push(desc.toLowerCase());
-  }
-
-  return descriptors;
+  // Fallback: extract primary term
+  const primary = firmType.split('/')[0].trim().toLowerCase();
+  return primary.replace(/\(.*?\)/g, '').trim() || 'financial advisor';
 }
 
 export function buildPrompts(
-  businessType: string,
+  firmType: string,
   location: string,
   keywords: string[],
   description?: string
@@ -62,7 +56,7 @@ export function buildPrompts(
   const prompts: Array<{ promptId: string; text: string; weight: number }> = [];
   const seen = new Set<string>();
 
-  const searchTerm = deriveSearchTerm(businessType);
+  const searchTerm = deriveSearchTerm(firmType);
   const loc = location || 'the UK';
 
   function add(id: string, text: string, weight: number) {
@@ -72,57 +66,78 @@ export function buildPrompts(
     prompts.push({ promptId: id, text, weight });
   }
 
-  // ── 1. KEYWORD-BASED PROMPTS (highest value — these are what customers actually search) ──
-  // Keywords like "Italian restaurant", "homemade pasta", "private dining"
+  // ── 1. CORE DISCOVERY PROMPTS (highest value) ──
+  add('core_best',      `What is the best ${searchTerm} in ${loc}?`, 10);
+  add('core_rec',       `Can you recommend a ${searchTerm} near ${loc}?`, 10);
+  add('core_top',       `Who are the top-rated ${searchTerm}s in ${loc}?`, 9);
+  add('core_suggest',   `I need a ${searchTerm} in ${loc}. Who should I use?`, 9);
+  add('core_ifa',       `Can you recommend an independent financial advisor in ${loc}?`, 9);
+  add('core_fa_best',   `Best financial advisor in ${loc}`, 10);
+  add('core_planner',   `Recommend a financial planner near ${loc}`, 8);
+  add('core_wealth',    `Best wealth management firm in ${loc}`, 8);
+
+  // ── 2. KEYWORD/SPECIALTY PROMPTS (what clients actually search) ──
   for (let i = 0; i < Math.min(keywords.length, 5); i++) {
     const kw = keywords[i];
-    add(`kw_rec_${i}`,  `What is the best ${kw} in ${loc}?`, 10);
-    add(`kw_find_${i}`, `Recommend a good ${kw} near ${loc}`, 9);
-    add(`kw_top_${i}`,  `Top rated ${kw} in ${loc}`, 8);
+    add(`kw_rec_${i}`,   `What is the best ${kw} in ${loc}?`, 10);
+    add(`kw_find_${i}`,  `Can you recommend a ${kw} near ${loc}?`, 9);
+    add(`kw_need_${i}`,  `I need help with ${kw} in ${loc}. Who should I speak to?`, 9);
+    add(`kw_spec_${i}`,  `${kw} specialist in ${loc}`, 8);
 
     if (i < 3) {
-      add(`kw_trust_${i}`,  `Most trusted ${kw} in ${loc}`, 7);
-      add(`kw_where_${i}`,  `Where can I find ${kw} in ${loc}?`, 7);
+      add(`kw_trust_${i}`, `Most trusted ${kw} in ${loc}`, 7);
+      add(`kw_top_${i}`,   `Top ${kw} firms in ${loc}`, 7);
     }
   }
 
-  // ── 2. DESCRIPTION-BASED PROMPTS (high value — uses their actual business description) ──
+  // ── 3. SERVICE-SPECIFIC PROMPTS (IFA-focused scenarios) ──
+  add('svc_pension',    `Who should I speak to about pension transfers in ${loc}?`, 9);
+  add('svc_iht',        `I need inheritance tax planning advice in ${loc}`, 8);
+  add('svc_retire',     `Best retirement planning advisor in ${loc}`, 9);
+  add('svc_invest',     `Where can I get investment advice in ${loc}?`, 8);
+  add('svc_drawdown',   `Pension drawdown specialist near ${loc}`, 7);
+  add('svc_hnw',        `Financial advisor for high-net-worth clients in ${loc}`, 8);
+  add('svc_sipp',       `SIPP specialist in ${loc}`, 7);
+  add('svc_db',         `Defined benefit pension transfer advisor in ${loc}`, 8);
+
+  // ── 4. DESCRIPTION-BASED PROMPTS ──
   if (description && description.trim()) {
     const desc = description.trim();
-    // Use the description to build natural-sounding prompts
-    add('desc_rec',    `Recommend a ${desc} in ${loc}`, 9);
-    add('desc_find',   `Where can I find a ${desc} in ${loc}?`, 8);
-    add('desc_best',   `Best ${desc} in ${loc}`, 9);
+    if (desc.length <= 80) {
+      add('desc_rec',  `Recommend a ${desc} in ${loc}`, 9);
+      add('desc_best', `Best ${desc} in ${loc}`, 8);
+    }
+    add('desc_find',   `I'm looking for a ${searchTerm} specialising in ${desc.substring(0, 60)} near ${loc}`, 8);
   }
 
-  // ── 3. PRIMARY BUSINESS TYPE PROMPTS (good baseline) ──
-  add('type_best',     `What is the best ${searchTerm} in ${loc}?`, 8);
-  add('type_rec',      `Recommend a good ${searchTerm} near ${loc}`, 8);
-  add('type_top',      `Who is the top ${searchTerm} in ${loc}?`, 7);
-  add('type_suggest',  `Can you suggest a reliable ${searchTerm} in ${loc}?`, 7);
-  add('type_need',     `I need a ${searchTerm} in ${loc}, who should I use?`, 7);
+  // ── 5. COMPARISON & ALTERNATIVE PROMPTS ──
+  add('cmp_leading',    `Who are the leading financial advisory firms in ${loc}?`, 6);
+  add('cmp_compare',    `Compare the best ${searchTerm}s in ${loc}`, 6);
+  add('cmp_options',    `What are my options for financial advice in ${loc}?`, 6);
+  add('cmp_vs_sj',      `Is St. James's Place the best option for financial advice in ${loc} or are there better alternatives?`, 7);
 
-  // ── 4. COMPARISON & DISCOVERY PROMPTS ──
-  add('cmp_leading',   `Who are the leading ${searchTerm}s in ${loc}?`, 6);
-  add('cmp_compare',   `Compare the best ${searchTerm} options in ${loc}`, 6);
-  add('cmp_options',   `What are my options for a ${searchTerm} in ${loc}?`, 5);
+  // ── 6. LOCAL TRUST & REVIEW PROMPTS ──
+  add('loc_find',       `Find me a ${searchTerm} in ${loc}`, 7);
+  add('loc_local',      `Local ${searchTerm} recommendations in ${loc}`, 6);
+  add('loc_highly',     `Highly recommended ${searchTerm} in ${loc}`, 7);
+  add('rev_reviews',    `Which ${searchTerm} in ${loc} has the best client reviews?`, 6);
+  add('rev_trusted',    `Most trusted financial advisor in ${loc}`, 7);
+  add('rev_vouched',    `Best rated financial advisor on VouchedFor near ${loc}`, 6);
 
-  // ── 5. LOCAL & TRUST PROMPTS ──
-  add('loc_find',      `Find me a ${searchTerm} in ${loc}`, 7);
-  add('loc_local',     `Local ${searchTerm} in ${loc} recommendations`, 6);
-  add('loc_highly',    `Highly recommended ${searchTerm} in ${loc}`, 7);
-  add('rev_reviews',   `Which ${searchTerm} in ${loc} has the best reviews?`, 6);
-  add('rev_trusted',   `Most trusted ${searchTerm} in ${loc}`, 7);
+  // ── 7. SITUATIONAL PROMPTS ──
+  add('sit_moving',     `I'm moving to ${loc} and need a financial advisor. Who do you recommend?`, 7);
+  add('sit_lump',       `I've received a large inheritance and need financial advice in ${loc}`, 7);
+  add('sit_business',   `Financial advisor for business owners in ${loc}`, 7);
+  add('sit_couple',     `Best financial advisor for couples planning retirement in ${loc}`, 7);
 
-  // ── 6. CROSS-KEYWORD COMBINATION PROMPTS (if multiple keywords) ──
+  // ── 8. CROSS-KEYWORD COMBINATIONS ──
   if (keywords.length >= 2) {
-    // Combine first two keywords for more specific queries
-    add('combo_1', `Best ${keywords[0]} and ${keywords[1]} in ${loc}`, 7);
-    add('combo_2', `${keywords[0]} with ${keywords[1]} in ${loc}`, 6);
+    add('combo_1', `Best ${keywords[0]} and ${keywords[1]} advisor in ${loc}`, 7);
+    add('combo_2', `${searchTerm} specialising in ${keywords[0]} and ${keywords[1]} in ${loc}`, 6);
   }
 
-  // Sort by weight (highest first) and limit to 20
+  // Sort by weight (highest first) and limit to 30 prompts per platform
   return prompts
     .sort((a, b) => b.weight - a.weight)
-    .slice(0, 20);
+    .slice(0, 30);
 }

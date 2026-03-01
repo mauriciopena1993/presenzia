@@ -75,7 +75,7 @@ export default function PrivacyPage() {
           <p style={textStyle}>We collect the following personal data:</p>
           <ul style={{ ...textStyle, paddingLeft: '1.5rem' }}>
             <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Contact information:</strong> Your email address, provided when you purchase a plan or contact us.</li>
-            <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Business information:</strong> Your business name, type, location, keywords, and website URL, used to run your AI visibility audit.</li>
+            <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Firm information:</strong> Your firm name, type, location, specialties, and website URL, used to run your AI visibility audit.</li>
             <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Payment information:</strong> Billing details processed securely by Stripe. We do not store card numbers.</li>
             <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Usage data:</strong> Anonymised analytics data about how you use our website.</li>
           </ul>
@@ -109,7 +109,7 @@ export default function PrivacyPage() {
             <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Stripe</strong>: payment processing (see Stripe&apos;s privacy policy at stripe.com)</li>
             <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Supabase</strong>: secure data storage (EU-based servers)</li>
             <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Resend</strong>: email delivery</li>
-            <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>OpenAI / Anthropic</strong>: AI platforms used to run visibility audits (your business name and type are submitted as query context)</li>
+            <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>OpenAI / Anthropic</strong>: AI platforms used to run visibility audits (your firm name and type are submitted as query context)</li>
             <li style={{ marginBottom: '0.4rem' }}><strong style={{ color: '#F5F0E8' }}>Vercel</strong>: website hosting</li>
           </ul>
           <p style={textStyle}>We do not sell your personal data to third parties.</p>

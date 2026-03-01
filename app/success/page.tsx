@@ -9,12 +9,13 @@ type VerifyState = 'loading' | 'verified' | 'invalid';
 function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
-  const plan = searchParams.get('plan') || 'starter';
+  const plan = searchParams.get('plan') || 'audit';
   const [state, setState] = useState<VerifyState>('loading');
 
   const planNames: Record<string, string> = {
-    starter: 'Starter',
-    growth: 'Growth',
+    audit: 'AI Visibility Audit',
+    starter: 'Starter', // legacy
+    growth: 'Growth Retainer',
     premium: 'Premium',
   };
 
@@ -122,8 +123,8 @@ function SuccessContent() {
         lineHeight: 1.7,
         marginBottom: '1rem',
       }}>
-        You&apos;re on the <strong style={{ color: '#F5F0E8' }}>{planNames[plan] || 'Starter'}</strong> plan.
-        We&apos;re now testing how AI platforms respond to queries about your business across 80+ prompts.
+        You&apos;re on the <strong style={{ color: '#F5F0E8' }}>{planNames[plan] || 'AI Visibility Audit'}</strong> plan.
+        We&apos;re now testing how AI platforms respond to queries about your firm across 120+ wealth-specific prompts.
       </p>
 
       <p style={{
@@ -150,7 +151,7 @@ function SuccessContent() {
         <ul style={{ listStyle: 'none', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '0.6rem', padding: 0, margin: 0 }}>
           {[
             'Confirmation email sent to your inbox',
-            'AI platforms tested across 80+ prompts',
+            'AI platforms tested across 120+ wealth-specific prompts',
             'Platform-by-platform breakdown prepared',
             'Full audit delivered to your email shortly',
           ].map((step, i) => (

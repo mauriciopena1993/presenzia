@@ -7,26 +7,26 @@ export default function HowItWorks() {
   const steps: { number: string; title: string; description: string; icon: LucideIcon }[] = [
     {
       number: '01',
-      title: 'You tell us about your business',
-      description: 'Share your business type, location, and the keywords your customers use. Takes 5 minutes.',
+      title: 'Tell us about your firm',
+      description: 'Share your firm name, location, and specialty. Takes under a minute — no signup required for your free score.',
       icon: ClipboardList,
     },
     {
       number: '02',
       title: 'We run the audit',
-      description: 'Our engine tests 80+ prompts across ChatGPT, Claude, Perplexity, and Google AI. We record exactly where you appear, where you don\'t, and who does instead.',
+      description: 'Our engine tests 100+ wealth-specific prompts across ChatGPT, Claude, Perplexity, and Google AI. We record exactly where your firm appears, where it doesn\'t, and which competitors are being recommended instead.',
       icon: Cpu,
     },
     {
       number: '03',
-      title: 'You receive your audit',
-      description: 'A clear, beautifully formatted audit lands in your inbox within 15 minutes. Your visibility score, competitor gaps, and exact recommendations.',
+      title: 'You receive your results',
+      description: 'A clear, detailed audit with your visibility score, competitor analysis, and personalised action plan. Full audits include platform-by-platform breakdowns and implementation guides.',
       icon: FileText,
     },
     {
       number: '04',
       title: 'Track, improve, repeat',
-      description: 'Every plan includes monthly follow-up audits so you can track your progress. Growth adds an online dashboard with weekly updates and an AI assistant. Premium upgrades to daily insights with a dedicated strategist.',
+      description: 'Growth retainer clients get monthly re-audits, a live dashboard, and quarterly strategy calls. Premium adds daily monitoring, a dedicated strategist, and done-for-you content.',
       icon: TrendingUp,
     },
   ];
@@ -58,7 +58,7 @@ export default function HowItWorks() {
           How presenzia<span style={{ color: '#C9A84C' }}>.ai</span> works
         </h2>
         <p style={{ color: '#AAAAAA', maxWidth: '500px', margin: '0 auto', fontSize: '1rem', lineHeight: 1.7 }}>
-          From signup to your first audit in under 15 minutes. No calls required.
+          From your free score to a full AI visibility strategy — built exclusively for UK wealth managers and IFAs.
         </p>
       </div>
 
@@ -68,7 +68,7 @@ export default function HowItWorks() {
         gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
         gap: '0',
       }}>
-        {steps.map((step, i) => (
+        {steps.map((step) => (
           <div key={step.number} style={{
             padding: '2.5rem',
             background: 'rgba(10,10,10,0.6)',

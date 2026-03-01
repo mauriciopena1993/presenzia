@@ -7,7 +7,7 @@ import { Resend } from 'resend';
 const RETENTION_COOLDOWN_MS = 90 * 24 * 60 * 60 * 1000; // ~3 months in ms
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const PLAN_LABELS: Record<string, string> = { starter: 'Starter', growth: 'Growth', premium: 'Premium' };
+const PLAN_LABELS: Record<string, string> = { audit: 'AI Visibility Audit', starter: 'Starter', growth: 'Growth Retainer', premium: 'Premium' };
 
 function isRetentionOfferEligible(lastOfferAt: string | null): boolean {
   if (!lastOfferAt) return true;

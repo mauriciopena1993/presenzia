@@ -6,38 +6,49 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const PLAN_RANK: Record<string, number> = { starter: 1, growth: 2, premium: 3 };
+const PLAN_RANK: Record<string, number> = { audit: 1, starter: 1, growth: 2, premium: 3 };
 
 const PLAN_LABELS: Record<string, string> = {
-  starter: 'Starter',
-  growth: 'Growth',
+  audit: 'AI Visibility Audit',
+  starter: 'Starter', // legacy
+  growth: 'Growth Retainer',
   premium: 'Premium',
 };
 
 const PLAN_PRICES: Record<string, string> = {
-  starter: '£99/month',
-  growth: '£199/month',
-  premium: '£599/month',
+  audit: '£297 one-off',
+  starter: '£99/month', // legacy
+  growth: '£697/month',
+  premium: '£1,997/month',
 };
 
 const PLAN_FEATURES: Record<string, string[]> = {
-  starter: [
+  audit: [
+    '120 wealth-specific prompts tested',
+    '4 AI platforms audited',
+    'Scored PDF report with action plan',
+  ],
+  starter: [ // legacy
     'Monthly AI visibility audit',
     'Delivered by email (PDF report)',
   ],
   growth: [
-    'Online client dashboard with weekly updates',
+    'Monthly re-audits with 120 prompts',
+    'Online dashboard with weekly updates',
     'AI audit assistant — ask anything about your results',
+    'Quarterly strategy calls',
     'Competitor deep-dive analysis',
     'Priority email support',
   ],
   premium: [
-    'Online client dashboard with daily updates',
+    'Monthly re-audits with 120 prompts',
+    'Online dashboard with daily updates',
     'AI audit assistant — ask anything about your results',
     'Dedicated account manager',
-    'Monthly 1:1 strategy call',
-    'Custom prompt testing & benchmarking',
-    'Competitor deep-dive analysis',
+    'Monthly 1:1 strategy calls',
+    'Territory exclusivity in your area',
+    'Done-for-you content recommendations',
+    'Custom prompt testing & industry benchmarking',
   ],
 };
 

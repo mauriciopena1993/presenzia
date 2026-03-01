@@ -19,9 +19,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "presenzia.ai | AI Search Visibility Audits for UK Businesses",
-  description: "Find out if AI search engines recommend your business. Monthly audits across ChatGPT, Claude, Perplexity and Google AI with scored audits and actionable fixes.",
-  keywords: "AI search visibility, AI SEO, ChatGPT business listing, AI search audit, UK business AI, presenzia, AI recommendations, local business AI visibility",
+  title: "presenzia.ai | AI Search Visibility for UK Wealth Managers & IFAs",
+  description: "Is your firm invisible to AI search? We audit how ChatGPT, Claude, Perplexity and Google AI see your financial advisory firm. 100+ wealth-specific prompts tested.",
+  keywords: "AI search visibility, IFA AI visibility, financial advisor ChatGPT, wealth manager AI search, AI audit financial advisors, presenzia, AI recommendations IFA",
   metadataBase: new URL("https://presenzia.ai"),
   alternates: {
     canonical: "/",
@@ -30,8 +30,8 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "presenzia.ai | AI Search Visibility Audits for UK Businesses",
-    description: "Find out if AI search engines recommend your business. Monthly audits across ChatGPT, Claude, Perplexity and Google AI.",
+    title: "presenzia.ai | AI Search Visibility for UK Wealth Managers & IFAs",
+    description: "Is your firm invisible to AI search? We audit how ChatGPT, Claude, Perplexity and Google AI see your financial advisory firm.",
     url: "https://presenzia.ai",
     siteName: "presenzia.ai",
     type: "website",
@@ -41,14 +41,14 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "presenzia.ai - AI Search Visibility Audits for UK Businesses",
+        alt: "presenzia.ai - AI Search Visibility for UK Wealth Managers & IFAs",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "presenzia.ai | AI Search Visibility for UK Businesses",
-    description: "Find out if AI search engines recommend your business.",
+    title: "presenzia.ai | AI Search Visibility for UK Wealth Managers & IFAs",
+    description: "Is your firm invisible to AI search? We audit how AI platforms see your financial advisory firm.",
     images: ["/og-image.png"],
   },
   robots: {
@@ -100,7 +100,7 @@ export default function RootLayout({
               name: "presenzia.ai",
               legalName: "Ketzal LTD",
               url: "https://presenzia.ai",
-              description: "AI search visibility auditing service for UK businesses. We audit how AI platforms like ChatGPT, Claude, Perplexity and Google AI see your business.",
+              description: "AI search visibility for UK wealth managers and financial advisors. We audit how AI platforms like ChatGPT, Claude, Perplexity and Google AI see your firm.",
               foundingDate: "2026",
               email: "hello@presenzia.ai",
               address: {
@@ -112,8 +112,8 @@ export default function RootLayout({
               offers: {
                 "@type": "AggregateOffer",
                 priceCurrency: "GBP",
-                lowPrice: "99",
-                highPrice: "599",
+                lowPrice: "297",
+                highPrice: "1997",
                 offerCount: "3",
               },
             }),

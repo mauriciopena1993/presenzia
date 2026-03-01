@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'About | presenzia.ai',
-  description: 'presenzia.ai audits how AI search engines see your business. Built by Ketzal LTD in London for UK businesses navigating the shift to AI-powered search.',
+  description: 'presenzia.ai audits how AI search engines see your firm. Built by Ketzal LTD in London for UK wealth managers and financial advisors navigating the shift to AI-powered search.',
   alternates: {
     canonical: '/about',
   },
@@ -25,7 +25,7 @@ export default function AboutPage() {
           Our story
         </div>
         <h1 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: 'clamp(2rem, 4vw, 2.75rem)', color: '#F5F0E8', fontWeight: 600, marginBottom: '2rem', lineHeight: 1.2 }}>
-          Your customers are searching differently now. We help you keep up.
+          Your clients are searching differently now. We help you keep up.
         </h1>
 
         <div style={{
@@ -54,24 +54,24 @@ export default function AboutPage() {
 
         <p style={{ color: '#AAAAAA', fontSize: '1.05rem', lineHeight: 1.8, marginBottom: '1.5rem' }}>
           Something changed in 2024. Millions of people stopped typing into Google and started asking ChatGPT,
-          Claude, and Perplexity for recommendations instead. &ldquo;Find me a good Italian restaurant in Manchester.&rdquo;
-          &ldquo;Best accountant near me.&rdquo; &ldquo;Which dental practice should I go to in Bristol?&rdquo;
+          Claude, and Perplexity for recommendations instead. &ldquo;Who is the best financial advisor in my area?&rdquo;
+          &ldquo;Pension transfer specialist near me.&rdquo; &ldquo;Can you recommend a wealth manager in Surrey?&rdquo;
         </p>
 
         <p style={{ color: '#AAAAAA', fontSize: '1.05rem', lineHeight: 1.8, marginBottom: '1.5rem' }}>
-          The problem? Most businesses have no idea whether AI mentions them or not. You could be spending thousands on
-          traditional SEO while being completely absent from the fastest-growing search channel in the country.
+          The problem? Most IFA firms have no idea whether AI mentions them or not. You could be spending thousands on
+          Google Ads and VouchedFor listings while being completely absent from the fastest-growing discovery channel in the country.
         </p>
 
         <p style={{ color: '#AAAAAA', fontSize: '1.05rem', lineHeight: 1.8, marginBottom: '1.5rem' }}>
-          We built presenzia to give you that answer. Every month, we test 80+ real prompts across four
-          major AI platforms and measure exactly how visible your business is. You get a scored audit, a breakdown
-          by platform, a list of competitors being recommended instead of you, and clear steps to improve.
+          We built presenzia to give wealth managers and financial advisors that answer. We test over 100 wealth-specific prompts across four
+          major AI platforms and measure exactly how visible your firm is. You get a scored audit, a breakdown
+          by platform, a list of competitors being recommended instead of you, and a prioritised action plan to fix it.
         </p>
 
         <p style={{ color: '#AAAAAA', fontSize: '1.05rem', lineHeight: 1.8, marginBottom: '1.5rem' }}>
-          No jargon, no fluff, no long-term contracts. Just a clear picture of where you stand in AI search,
-          delivered to your inbox every month.
+          No jargon, no fluff, no long-term contracts. Just a clear picture of where your firm stands in AI search
+          and exactly what to do about it.
         </p>
 
         <div style={{
@@ -85,7 +85,7 @@ export default function AboutPage() {
           </div>
           <p style={{ color: '#AAAAAA', fontSize: '0.95rem', lineHeight: 1.7, margin: 0 }}>
             presenzia.ai is a trading name of Ketzal LTD (Company No. 14570156), based in London.
-            We work exclusively with UK businesses. Questions? Reach us at{' '}
+            We&apos;re a focused team building the tools that UK financial advisory firms need to stay ahead of the AI search revolution. Questions? Reach us at{' '}
             <a href="mailto:hello@presenzia.ai" style={{ color: '#C9A84C', textDecoration: 'none' }}>hello@presenzia.ai</a>.
           </p>
         </div>

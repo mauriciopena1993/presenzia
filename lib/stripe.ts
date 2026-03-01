@@ -9,23 +9,29 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 });
 
 export const PLANS = {
+  audit: {
+    name: 'AI Visibility Audit',
+    price: '£297',
+    priceId: process.env.STRIPE_PRICE_AUDIT || process.env.STRIPE_PRICE_STARTER!,
+    description: '120 wealth-specific prompts across 4 AI platforms',
+  },
   starter: {
     name: 'Starter',
     price: '£99',
     priceId: process.env.STRIPE_PRICE_STARTER!,
-    description: 'Monthly AI visibility audit',
+    description: 'Monthly AI visibility audit (legacy)',
   },
   growth: {
-    name: 'Growth',
-    price: '£199',
+    name: 'Growth Retainer',
+    price: '£697',
     priceId: process.env.STRIPE_PRICE_GROWTH!,
-    description: 'Client dashboard + weekly updates',
+    description: 'Monthly re-audits + dashboard + quarterly strategy calls',
   },
   premium: {
     name: 'Premium',
-    price: '£599',
+    price: '£1,997',
     priceId: process.env.STRIPE_PRICE_PREMIUM!,
-    description: 'Daily updates + account manager + monthly call',
+    description: 'Dedicated strategist + territory exclusivity + done-for-you content',
   },
 } as const;
 

@@ -12,7 +12,7 @@ const values: { icon: LucideIcon; label: string; description: string }[] = [
   {
     icon: Globe,
     label: 'UK Focused',
-    description: 'Built specifically for UK businesses and the nuances of local search.',
+    description: 'Built specifically for UK wealth managers and IFAs.',
   },
   {
     icon: BarChart3,
@@ -65,7 +65,7 @@ export default function About() {
               marginBottom: '1.5rem',
             }}
           >
-            Built for the businesses AI overlooks
+            Built for the firms AI overlooks
           </h2>
           <p
             style={{
@@ -76,10 +76,11 @@ export default function About() {
               margin: '0 auto',
             }}
           >
-            AI search is replacing the way customers find businesses. When someone asks ChatGPT
-            for the best restaurant nearby or asks Claude to recommend a solicitor, most local
-            businesses are completely invisible. Presenzia was built to change that — giving every
-            business the clarity and data they need to show up where it matters most.
+            AI search is replacing the way clients find financial advisors. When a high-net-worth
+            individual asks ChatGPT for a wealth manager or asks Claude to recommend a pension
+            transfer specialist, most IFA firms are completely invisible. Presenzia was built to
+            change that — giving every financial advisory firm the clarity and data they need to
+            show up where it matters most.
           </p>
         </div>
 

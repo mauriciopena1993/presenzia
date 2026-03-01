@@ -58,9 +58,9 @@ ${competitors.length > 0 ? `\n- Top competitors appearing instead: ${competitors
     }
   }
 
-  const systemPrompt = `You are an AI visibility expert helping ${client.business_name || 'this business'} understand their presenzia.ai audit results and improve their AI presence.
+  const systemPrompt = `You are an AI visibility expert helping ${client.business_name || 'this firm'} understand their presenzia.ai audit results and improve their AI presence.
 
-Business: ${client.business_name || 'Unknown'} (${client.business_type || 'small business'}, ${client.location || 'UK'})
+Firm: ${client.business_name || 'Unknown'} (${client.business_type || 'financial advisory'}, ${client.location || 'UK'})
 Plan: ${client.plan}
 ${reportContext}
 

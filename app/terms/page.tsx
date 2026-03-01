@@ -52,9 +52,9 @@ export default function TermsPage() {
         <div style={sectionStyle}>
           <h2 style={headingStyle}>1. Our Service</h2>
           <p style={textStyle}>
-            presenzia.ai provides AI search visibility auditing services for UK businesses. We query major AI platforms
+            presenzia.ai provides AI search visibility auditing services for UK wealth managers and financial advisors. We query major AI platforms
             (including ChatGPT, Claude, Perplexity, and Google AI) to assess how often and how prominently your
-            business appears in AI-generated recommendations, and deliver a scored audit with actionable insights.
+            firm appears in AI-generated recommendations, and deliver a scored audit with actionable insights.
           </p>
         </div>
 
@@ -78,7 +78,7 @@ export default function TermsPage() {
           <h2 style={headingStyle}>3. Your Responsibilities</h2>
           <p style={textStyle}>You agree to:</p>
           <ul style={{ ...textStyle, paddingLeft: '1.5rem' }}>
-            <li style={{ marginBottom: '0.4rem' }}>Provide accurate information about your business for audit purposes</li>
+            <li style={{ marginBottom: '0.4rem' }}>Provide accurate information about your firm for audit purposes</li>
             <li style={{ marginBottom: '0.4rem' }}>Use our reports for your own business purposes only</li>
             <li style={{ marginBottom: '0.4rem' }}>Not reproduce, resell, or distribute our reports without permission</li>
             <li style={{ marginBottom: '0.4rem' }}>Maintain the confidentiality of your account credentials</li>
@@ -88,8 +88,8 @@ export default function TermsPage() {
         <div style={sectionStyle}>
           <h2 style={headingStyle}>4. Audit Delivery</h2>
           <p style={textStyle}>
-            We aim to deliver your first audit within 15 minutes of your subscription being activated
-            and your business details being provided. Subsequent audits are delivered on your subscription cycle.
+            We aim to deliver your first audit within 15 minutes of your purchase being completed
+            and your firm details being provided. Subsequent audits (for retainer clients) are delivered on your subscription cycle.
             Delivery times are estimates and may vary due to factors outside our control.
           </p>
         </div>

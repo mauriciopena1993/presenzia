@@ -41,7 +41,8 @@ interface Lead {
 }
 
 const PLAN_COLORS: Record<string, string> = {
-  starter: '#3a7d44',
+  audit: '#3a7d44',
+  starter: '#3a7d44', // legacy
   growth: '#1a6fa8',
   premium: '#9b6b00',
 };

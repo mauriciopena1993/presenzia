@@ -211,7 +211,7 @@ export default async function BlogPostPage({ params }: Props) {
             See your AI visibility score in under 15 minutes
           </p>
           <p style={{ color: '#999', fontSize: '0.875rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-            We test your business across ChatGPT, Claude, Perplexity, and Google AI using the exact prompts real customers type.
+            We test your firm across ChatGPT, Claude, Perplexity, and Google AI using 120+ wealth-specific prompts that real clients type.
           </p>
           <Link href="/#pricing" style={{ display: 'inline-block', padding: '0.75rem 1.75rem', background: '#C9A84C', color: '#0A0A0A', fontWeight: 700, fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em' }}>
             See plans →

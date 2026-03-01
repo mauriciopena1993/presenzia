@@ -178,7 +178,7 @@ function buildActions(
     let gbpContext = '';
     if (googleAI) {
       if (googleAI.promptsMentioned === 0) {
-        gbpContext = `Google AI did not find your business in any of the ${googleAI.promptsTested} searches we tested. This strongly suggests your Google Business Profile is either unclaimed, incomplete, or not optimised for your category.`;
+        gbpContext = `Google AI did not find your firm in any of the ${googleAI.promptsTested} searches we tested. This strongly suggests your Google Business Profile is either unclaimed, incomplete, or not optimised for your category.`;
       } else {
         gbpContext = `Google AI only recommended you in ${googleAI.promptsMentioned} of ${googleAI.promptsTested} searches. Your profile likely needs more detail to compete with the ${topCompetitors.length} competitor${topCompetitors.length !== 1 ? 's' : ''} we found.`;
       }
@@ -194,9 +194,9 @@ function buildActions(
         {
           text: `Go to business.google.com and claim or verify your listing for "${config.businessName}".`,
           substeps: [
-            'Sign in with your business Google account (or create one)',
-            'Search for your business name — if it appears, click "Claim this business"',
-            'If not listed, click "Add your business" and follow the verification steps',
+            'Sign in with your firm Google account (or create one)',
+            'Search for your firm name — if it appears, click "Claim this business"',
+            'If not listed, click "Add your firm" and follow the verification steps',
             'Google will send a verification postcard or offer phone/email verification',
           ],
         },
@@ -264,6 +264,20 @@ function buildActions(
       });
     }
 
+    // Financial advisory / IFA / wealth management types
+    if (businessTypeMatches(bt, ['financial', 'ifa', 'wealth', 'investment', 'planner', 'advisor', 'adviser', 'chartered', 'pension', 'retirement'])) {
+      directorySteps.push({
+        text: 'Claim these critical financial advisory directories:',
+        substeps: [
+          'VouchedFor -vouchedfor.co.uk (top trust signal for UK IFAs — heavily cited by AI)',
+          'Unbiased -unbiased.co.uk (leading financial advisor directory — frequently referenced by ChatGPT)',
+          'FTAdviser -ftadviser.com (trade publication presence signals authority)',
+          'FCA Register -register.fca.org.uk (ensure your listing is complete and current)',
+          'PFS Directory -thepfs.org (Personal Finance Society membership listing)',
+        ],
+      });
+    }
+
     // Professional / legal / accounting types
     if (businessTypeMatches(bt, ['professional', 'legal', 'solicitor', 'lawyer', 'accounting', 'accountant', 'consulting', 'consultant', 'agency'])) {
       directorySteps.push({
@@ -287,13 +301,13 @@ function buildActions(
     }
 
     directorySteps.push(
-      'Claim your free Trustpilot business account at business.trustpilot.com — Trustpilot is one of the highest-authority review sources for AI platforms.',
+      'Claim your free Trustpilot firm account at business.trustpilot.com — Trustpilot is one of the highest-authority review sources for AI platforms.',
       {
         text: 'Ensure your NAP (Name, Address, Phone) is identical across every single listing.',
         substeps: [
-          'Use the exact same business name spelling, including "Ltd" or "Limited"',
+          'Use the exact same firm name spelling, including "Ltd" or "Limited"',
           'Use the same phone number format everywhere (e.g. 0161 xxx xxxx, not +44 161)',
-          'Use the same address format — AI cross-references these to verify your business',
+          'Use the same address format — AI cross-references these to verify your firm',
         ],
       },
     );
@@ -313,7 +327,7 @@ function buildActions(
   if (topCompetitors.length > 0 && overall < 70) {
     const topComp = topCompetitors[0];
     const runner = topCompetitors.length > 1 ? topCompetitors[1] : null;
-    const compContext = `${topComp.name} was cited ${topComp.count} time${topComp.count !== 1 ? 's' : ''} in searches where you were absent.${runner ? ` ${runner.name} appeared ${runner.count} time${runner.count !== 1 ? 's' : ''}.` : ''} When customers ask AI for a ${bt} in ${config.location}, they are currently being directed to your competitors instead of you.`;
+    const compContext = `${topComp.name} was cited ${topComp.count} time${topComp.count !== 1 ? 's' : ''} in searches where you were absent.${runner ? ` ${runner.name} appeared ${runner.count} time${runner.count !== 1 ? 's' : ''}.` : ''} When clients ask AI for a ${bt} in ${config.location}, they are currently being directed to your competitors instead of you.`;
     actions.push({
       priority: 'HIGH',
       phase: 1,
@@ -360,7 +374,7 @@ function buildActions(
       why: 'Specific, location-rich reviews carry significantly more weight with AI than generic star ratings.',
       steps: [
         {
-          text: `Ask satisfied customers to write detailed reviews that mention your specific services and "${config.location}".`,
+          text: `Ask satisfied clients to write detailed reviews that mention your specific services and "${config.location}".`,
           substeps: [
             `Suggest phrasing like: "the best ${bt} in ${config.location}" or "highly recommend for [specific service] in ${config.location}"`,
             'Reviews that mention specific services and your location carry 3-5x more weight with AI than generic "great service" reviews',
@@ -385,7 +399,7 @@ function buildActions(
   const svcStats = getCategoryFoundRate(results, 'svc');
   const contentContext = svcStats.tested > 0
     ? `You appeared in ${svcStats.pct}% of service-specific searches (${svcStats.found}/${svcStats.tested}). Structured website content directly affects how AI understands and recommends your services.`
-    : `AI platforms are not finding your business in service-related searches. Structured, keyword-rich website content would help all platforms identify and recommend you.`;
+    : `AI platforms are not finding your firm in service-related searches. Structured, keyword-rich website content would help all platforms identify and recommend you.`;
   actions.push({
     priority: overall < 40 ? 'HIGH' : 'MEDIUM',
     phase: 2,
@@ -396,13 +410,13 @@ function buildActions(
     steps: [
       `Create or update your About page: clearly state who you are, what you do, and your service area. Include "${config.businessName} is a ${bt} based in ${config.location}" as an opening line.`,
       {
-        text: `Add a FAQ page answering the exact questions customers ask AI.`,
+        text: `Add a FAQ page answering the exact questions clients ask AI.`,
         substeps: [
           `"What is the best ${bt} in ${config.location}?" — answer with what makes you stand out`,
           `"How much does a ${bt} cost in ${config.location}?" — provide price ranges or starting prices`,
         ],
       },
-      `Add Schema.org LocalBusiness structured data (JSON-LD) to your homepage. Free generator: technicalseo.com/tools/schema-markup-generator`,
+      `Add Schema.org FinancialService structured data (JSON-LD) to your homepage — include your firm name, FCA number, services offered, and areas covered`,
       `Ensure your address, phone, and email appear as selectable plain text on every page — not embedded in images.`,
       `Publish at least 1-2 blog posts per month demonstrating expertise: guides, case studies, and tips related to ${bt}in ${config.location}.`,
     ],
@@ -423,7 +437,7 @@ function buildActions(
       timeline: 'Ongoing',
       title: `Optimise for ${weakest.platform}`,
       context: platContext,
-      why: `Improving your ${weakest.platform} presence will increase your overall visibility and reach customers who prefer this platform.`,
+      why: `Improving your ${weakest.platform} presence will increase your overall visibility and reach clients who prefer this platform.`,
       steps: platformSteps,
     });
 
@@ -479,7 +493,7 @@ function getPlatformSpecificSteps(
         ],
       },
       'Ensure your website loads in under 2 seconds. Perplexity favours fast, accessible sites.',
-      'Add Schema.org LocalBusiness structured data markup to your homepage.',
+      'Add Schema.org FinancialService structured data markup to your homepage.',
       `Make sure your site has a clear, crawlable page for "${cleanBusinessType(config.businessType)} in ${config.location}" with plain-text contact details.`,
       'Check your robots.txt file — make sure it does not block PerplexityBot or Bingbot.',
     ];
@@ -491,7 +505,7 @@ function getPlatformSpecificSteps(
       {
         text: 'Aim for mentions in high-authority sources that ChatGPT frequently cites:',
         substeps: [
-          'Local press (Manchester Evening News, TimeOut, etc.) — pitch a story about your business',
+          'Local press (Manchester Evening News, TimeOut, etc.) — pitch a story about your firm',
           'Industry publications and trade bodies relevant to your sector',
           'Wikipedia (if notable enough) — or ensure existing Wikipedia references to your area mention you',
         ],
@@ -504,7 +518,7 @@ function getPlatformSpecificSteps(
 
   if (name === 'Claude') {
     return [
-      'Ensure your business is present on established, well-known directories — Claude prioritises authoritative web sources.',
+      'Ensure your firm is present on established, well-known directories — Claude prioritises authoritative web sources.',
       'Maintain consistent NAP (Name, Address, Phone) data across every platform and listing.',
       'Build a comprehensive website with clear service descriptions, an About page, and structured data.',
       `Add detailed content covering your services in ${config.location}. Specificity helps Claude identify relevant businesses.`,
@@ -522,7 +536,7 @@ function getPlatformSpecificSteps(
           'Add 10+ photos and update them monthly',
         ],
       },
-      'Add Schema.org structured data to your website: LocalBusiness, Service, and Review markup.',
+      'Add Schema.org structured data to your website: FinancialService, Service, and Review markup.',
       'Verify your site in Google Search Console (search.google.com/search-console) — fix any indexing errors.',
       'Build Google review volume. Both the number of reviews and how recent they are matter for Google AI.',
       `Optimise your site content for queries like "best ${cleanBusinessType(config.businessType)} in ${config.location}".`,
@@ -531,10 +545,10 @@ function getPlatformSpecificSteps(
 
   // Fallback for any unknown platform
   return [
-    'Ensure your business is listed on all major directories with consistent information.',
+    'Ensure your firm is listed on all major directories with consistent information.',
     'Build review volume across multiple platforms.',
     'Add structured data markup to your website.',
-    `Create content that clearly associates your business with "${cleanBusinessType(config.businessType)}" and "${config.location}".`,
+    `Create content that clearly associates your firm with "${cleanBusinessType(config.businessType)}" and "${config.location}".`,
   ];
 }
 

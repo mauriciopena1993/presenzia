@@ -5,40 +5,32 @@ import { Plus } from 'lucide-react';
 
 const faqs = [
   {
-    q: 'What is AI search visibility, and why does it matter?',
-    a: 'When someone asks ChatGPT, Claude, Perplexity, or Google\'s AI to recommend a business like yours (a restaurant, a gym, a solicitor), the AI generates a response from its training data and real-time knowledge. If your business isn\'t being recommended, you\'re invisible to a growing segment of customers who never get as far as a Google search. AI search visibility measures how often and how prominently your business appears in these AI-generated recommendations.',
+    q: 'What is AI search visibility, and why does it matter for IFAs?',
+    a: 'When potential clients ask ChatGPT, Claude, Perplexity, or Google AI to recommend a financial advisor, AI generates a response based on its training data and web knowledge. Firms with strong AI visibility appear in these recommendations. Firms without it are invisible to a rapidly growing discovery channel. With over 15 million UK adults now using AI assistants regularly, this is becoming as important as Google rankings.',
   },
   {
-    q: 'How does presenzia.ai actually test my visibility?',
-    a: 'We run 80+ real customer search prompts across four major AI platforms: ChatGPT, Claude, Perplexity, and Google AI. Prompts include queries like "best [business type] in [your city]", "[service] near me", and specific use-case questions relevant to your industry. We record whether your business is mentioned, where it appears, and which competitors are being recommended instead. This gives you a clear, scored picture of your AI presence.',
-  },
-  {
-    q: 'What do I actually receive?',
-    a: 'Your audit begins running automatically the moment you sign up. You\'ll receive your full report by email within 15 minutes. It includes your overall AI Visibility Score (0–100), a platform-by-platform breakdown, a list of competitors that are currently appearing in your place, and specific, actionable recommendations to improve your visibility. Growth and Premium clients also get access to an online dashboard where they can track progress over time.',
+    q: 'How does presenzia.ai test my visibility?',
+    a: 'We run 100+ carefully crafted search prompts across four major AI platforms \u2014 ChatGPT, Claude, Perplexity, and Google AI. These prompts mirror what real clients actually ask: \u201Cbest financial advisor in [your city]\u201D, \u201Cpension transfer specialist near me\u201D, \u201Cwho should I speak to about inheritance tax planning\u201D. We record every response, noting where your firm appears, where it doesn\u2019t, and which competitors are being recommended instead.',
   },
   {
     q: 'How is this different from traditional SEO?',
-    a: 'Traditional SEO focuses on ranking in Google\'s blue-link search results. AI visibility is about appearing in AI-generated answers, which increasingly sit above those results or replace them entirely. The factors that drive it are different: structured content, authoritative mentions, clear business descriptions, and consistent signals across directories. Our audits tell you exactly what to focus on.',
+    a: 'Traditional SEO optimises your website for Google\u2019s search index. AI search visibility is fundamentally different \u2014 AI models don\u2019t just crawl your website, they synthesise information from across the web to form opinions about which firms to recommend. The signals that matter are different: authoritative content, consistent citations across platforms, structured data, and thought leadership. A firm can rank #1 on Google and still be invisible to ChatGPT.',
   },
   {
-    q: 'I\'m a small local business. Is this relevant to me?',
-    a: 'Especially so. Local searches like "best Italian in Shoreditch", "top-rated salon in Bristol", or "accountant near me" are exactly the type of queries AI assistants handle most. Local businesses are often the least represented in AI outputs, which creates a real opportunity for those who act early. If a competitor is appearing and you\'re not, you\'re losing customers you don\'t even know about.',
+    q: 'I already use VouchedFor / Unbiased / Google Ads. Do I still need this?',
+    a: 'Yes \u2014 those platforms optimise for their own directories and for traditional search. AI search is a separate channel entirely. In fact, having strong directory listings can help your AI visibility, but only if the right signals are in place. Our audit shows you exactly where the gaps are and what to do about them.',
   },
   {
-    q: 'Is this right for my business?',
-    a: 'If customers could find you by asking AI something like "best [your service] in [your area]", then yes. We work with restaurants, salons, gyms, dental practices, solicitors, accountants, and many more. Online-only businesses are welcome too. If people search for what you do, AI visibility matters.',
+    q: 'How quickly will I see results?',
+    a: 'Some quick wins \u2014 like updating your website\u2019s structured data and optimising your content for AI readability \u2014 can show results within 2\u20134 weeks. More substantial improvements, like building citation authority and publishing thought leadership content, typically take 2\u20133 months to fully register across AI platforms. Your monthly re-audits track every change.',
   },
   {
-    q: 'How quickly will I see results if I follow the recommendations?',
-    a: 'AI models update their knowledge bases on different schedules. Some changes, like improving your Google Business Profile or getting mentions in local press, can show results within 4–8 weeks. Others, like building topical authority through content, take longer. Our monthly (or weekly, on Growth) audits let you track progress as you implement changes.',
+    q: 'Is my data secure?',
+    a: 'Absolutely. We don\u2019t access any of your client data. We only test publicly available AI search results using your firm name and location. All data is stored securely and never shared with third parties.',
   },
   {
-    q: 'Can I cancel at any time?',
-    a: 'Yes. All plans are monthly subscriptions with no long-term contract. You can cancel with 30 days\' notice at any time. Your audits and dashboard access remain available until the end of your billing period.',
-  },
-  {
-    q: 'How do I get in touch?',
-    a: 'Email us at hello@presenzia.ai and we typically reply within a few hours during business days. You can also find answers to most questions right here.',
+    q: 'Can I cancel anytime?',
+    a: 'Yes. All plans are monthly with 30 days\u2019 notice. No long-term contracts, no cancellation fees.',
   },
 ];
 

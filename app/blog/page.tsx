@@ -4,12 +4,12 @@ import type { Metadata } from 'next';
 import { BLOG_POSTS } from '@/lib/blog-posts';
 
 export const metadata: Metadata = {
-  title: 'Blog | presenzia.ai — AI Search Visibility for UK Businesses',
-  description: 'Practical guides on AI search visibility, how ChatGPT recommends local businesses, and how UK small businesses can improve their presence in AI results.',
+  title: 'Blog | presenzia.ai — AI Search Visibility for UK Wealth Managers & IFAs',
+  description: 'Insights on AI search visibility for financial advisors — how ChatGPT, Claude and Perplexity recommend wealth managers, and how UK IFAs can improve their AI presence.',
   alternates: { canonical: '/blog' },
   openGraph: {
-    title: 'Blog | presenzia.ai — AI Search Visibility for UK Businesses',
-    description: 'Practical guides on AI search visibility, how ChatGPT recommends local businesses, and how UK small businesses can improve their presence in AI results.',
+    title: 'Blog | presenzia.ai — AI Search Visibility for UK Wealth Managers & IFAs',
+    description: 'Insights on AI search visibility for financial advisors — how ChatGPT, Claude and Perplexity recommend wealth managers, and how UK IFAs can improve their AI presence.',
     url: 'https://presenzia.ai/blog',
     type: 'website',
   },
@@ -37,10 +37,10 @@ export default function BlogPage() {
             Insights
           </div>
           <h1 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: 'clamp(2rem, 4vw, 2.75rem)', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.75rem', lineHeight: 1.2 }}>
-            AI Visibility for UK Small Businesses
+            AI Visibility for UK Wealth Managers
           </h1>
           <p style={{ color: '#AAAAAA', fontSize: '1rem', lineHeight: 1.7 }}>
-            Practical guides on how AI recommends local businesses, and what you can do about it.
+            Insights on how AI platforms recommend financial advisors, and what your firm can do about it.
           </p>
         </div>
 

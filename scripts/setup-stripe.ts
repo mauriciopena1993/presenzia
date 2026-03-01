@@ -1,6 +1,9 @@
 /**
- * One-time Stripe setup script.
- * Creates the 3 subscription products and prices for presenzia.ai.
+ * Stripe setup script for presenzia.ai IFA vertical.
+ * Creates the 3 products and prices:
+ *   - AI Visibility Audit (£297 one-off)
+ *   - Growth Retainer (£697/month)
+ *   - Premium (£1,997/month)
  *
  * Usage:
  *   npx ts-node --project tsconfig.json scripts/setup-stripe.ts
@@ -17,35 +20,47 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-01-28.clover',
 });
 
-const PRODUCTS = [
+interface ProductConfig {
+  name: string;
+  description: string;
+  envKey: string;
+  amount: number;
+  recurring: boolean;
+  interval?: 'month';
+  metadata: { plan: string };
+}
+
+const PRODUCTS: ProductConfig[] = [
   {
-    name: 'Presenzia Starter',
-    description: 'Monthly AI visibility audit across 4 platforms. Visibility score + PDF report delivered by email.',
-    envKey: 'STRIPE_PRICE_STARTER',
-    amount: 9900, // £99.00 in pence
-    interval: 'month' as const,
-    metadata: { plan: 'starter' },
+    name: 'AI Visibility Audit',
+    description: 'One-off AI visibility audit: 120 wealth-specific prompts across 4 AI platforms. Scored PDF report with action plan.',
+    envKey: 'STRIPE_PRICE_AUDIT',
+    amount: 29700, // £297.00 in pence
+    recurring: false,
+    metadata: { plan: 'audit' },
   },
   {
-    name: 'Presenzia Growth',
-    description: 'Monthly AI visibility audit + online dashboard with weekly updates, AI audit assistant, competitor deep-dive, and priority support.',
+    name: 'Growth Retainer',
+    description: 'Monthly AI visibility retainer for IFAs: monthly re-audits, live dashboard with weekly updates, quarterly strategy calls, competitor deep-dive, priority support.',
     envKey: 'STRIPE_PRICE_GROWTH',
-    amount: 19900, // £199.00 in pence
-    interval: 'month' as const,
+    amount: 69700, // £697.00 in pence
+    recurring: true,
+    interval: 'month',
     metadata: { plan: 'growth' },
   },
   {
-    name: 'Presenzia Premium',
-    description: 'Full service: daily dashboard updates, dedicated account manager, monthly 1:1 strategy call, custom prompt testing & benchmarking.',
+    name: 'Premium',
+    description: 'Full-service AI visibility for wealth managers: dedicated account manager, monthly 1:1 strategy calls, territory exclusivity, done-for-you content recommendations, daily dashboard updates.',
     envKey: 'STRIPE_PRICE_PREMIUM',
-    amount: 59900, // £599.00 in pence
-    interval: 'month' as const,
+    amount: 199700, // £1,997.00 in pence
+    recurring: true,
+    interval: 'month',
     metadata: { plan: 'premium' },
   },
 ];
 
 async function main() {
-  console.log('Creating Stripe products and prices for presenzia.ai...\n');
+  console.log('Creating Stripe products and prices for presenzia.ai (IFA vertical)...\n');
 
   const results: Record<string, string> = {};
 
@@ -59,18 +74,24 @@ async function main() {
 
     console.log(`✓ Product created: ${product.name} (${stripeProduct.id})`);
 
-    // Create the recurring price
-    const price = await stripe.prices.create({
+    // Create the price (one-off or recurring)
+    const priceParams: Stripe.PriceCreateParams = {
       product: stripeProduct.id,
       currency: 'gbp',
       unit_amount: product.amount,
-      recurring: {
-        interval: product.interval,
-      },
       metadata: product.metadata,
-    });
+    };
 
-    console.log(`  Price: £${(product.amount / 100).toFixed(2)}/month → ${price.id}`);
+    if (product.recurring && product.interval) {
+      priceParams.recurring = { interval: product.interval };
+    }
+
+    const price = await stripe.prices.create(priceParams);
+
+    const priceLabel = product.recurring
+      ? `£${(product.amount / 100).toFixed(2)}/month`
+      : `£${(product.amount / 100).toFixed(2)} one-off`;
+    console.log(`  Price: ${priceLabel} → ${price.id}`);
     results[product.envKey] = price.id;
   }
 

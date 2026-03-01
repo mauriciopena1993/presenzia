@@ -21,7 +21,7 @@ export default function Footer() {
               presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
             </div>
             <p style={{ color: '#888888', fontSize: '0.825rem', lineHeight: 1.7, maxWidth: '220px' }}>
-              AI search visibility audits for UK businesses. Know where you stand. Fix what&apos;s broken.
+              AI search visibility for UK wealth managers and financial advisors. Know where you stand. Fix what&apos;s broken.
             </p>
             <div style={{ marginTop: '1.5rem', fontSize: '0.75rem', color: '#999999', lineHeight: 1.6 }}>
               Trading name of Ketzal LTD<br />
@@ -73,7 +73,7 @@ export default function Footer() {
             <p style={{ color: '#888888', fontSize: '0.825rem', lineHeight: 1.7, marginBottom: '1.25rem' }}>
               Find out where you rank. Then climb.
             </p>
-            <Link href="/#pricing" style={{
+            <Link href="/score" style={{
               display: 'inline-block',
               padding: '0.75rem 1.5rem',
               background: '#C9A84C',
@@ -85,7 +85,7 @@ export default function Footer() {
             }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#E8C96A'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#C9A84C'; }}>
-              Get my audit →
+              Get my free score →
             </Link>
           </div>
         </div>

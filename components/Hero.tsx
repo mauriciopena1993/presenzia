@@ -30,7 +30,7 @@ export default function Hero() {
         textTransform: 'uppercase',
       }}>
         <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#C9A84C', display: 'inline-block', animation: 'pulse 2s infinite' }} />
-        AI Search Visibility Audit
+        AI Visibility for Wealth Managers
       </div>
 
       {/* Headline */}
@@ -44,7 +44,7 @@ export default function Hero() {
         marginBottom: '1.5rem',
         letterSpacing: '-0.02em',
       }}>
-        Is your business{' '}
+        Is your firm{' '}
         <span style={{
           background: 'linear-gradient(135deg, #C9A84C 0%, #E8C96A 50%, #C9A84C 100%)',
           WebkitBackgroundClip: 'text',
@@ -60,17 +60,17 @@ export default function Hero() {
       <p style={{
         fontSize: 'clamp(1rem, 2vw, 1.2rem)',
         color: '#AAAAAA',
-        maxWidth: '580px',
+        maxWidth: '620px',
         marginBottom: '2.5rem',
         lineHeight: 1.75,
         fontWeight: 300,
       }}>
-        When your customers ask ChatGPT, Claude or Google AI to recommend a business like yours, do you appear? Most businesses don&apos;t. We audit your AI presence and fix it.
+        When a high-net-worth client asks ChatGPT or Claude to recommend a financial advisor in your area, does your firm appear? Most don&apos;t. We fix that.
       </p>
 
       {/* CTA Buttons */}
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '3.5rem' }}>
-        <Link href="#pricing" style={{
+        <Link href="/score" style={{
           padding: '0.875rem 2rem',
           background: '#C9A84C',
           color: '#0A0A0A',
@@ -85,7 +85,7 @@ export default function Hero() {
         }}
           onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#E8C96A'; }}
           onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#C9A84C'; }}>
-          Get my visibility score →
+          Get my free visibility score →
         </Link>
         <Link href="#sample-report" style={{
           padding: '0.875rem 2rem',
@@ -107,7 +107,7 @@ export default function Hero() {
             el.style.borderColor = '#555555';
             el.style.color = '#CCCCCC';
           }}>
-          See sample audit
+          See a sample IFA audit
         </Link>
       </div>
 
@@ -123,9 +123,9 @@ export default function Hero() {
         maxWidth: '720px',
       }}>
         {[
-          { stat: '94%', label: 'of UK SMEs not found on ChatGPT' },
-          { stat: '80+', label: 'prompts tested across 4 AIs' },
-          { stat: '<15 min', label: 'to your first audit' },
+          { stat: '94%', label: 'of UK IFA firms not found on ChatGPT' },
+          { stat: '100+', label: 'wealth-specific prompts tested' },
+          { stat: '4', label: 'AI platforms audited' },
         ].map((item) => (
           <div key={item.stat} style={{ textAlign: 'center' }}>
             <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.75rem', color: '#C9A84C', fontWeight: 600 }}>{item.stat}</div>

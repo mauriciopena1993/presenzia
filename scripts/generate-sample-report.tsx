@@ -422,7 +422,7 @@ const score: AuditScore = {
     { name: 'Ole & Steen', count: 2 },
   ],
   summary:
-    'Your AI visibility score of 42/100 indicates significant gaps. You appear on Google AI (55%) but are largely missing from Claude (25%). Trove is your most frequently cited competitor, appearing in 14 AI responses where Pollen Bakery was absent. There is substantial room for improvement, particularly on Perplexity and Claude, where your business is rarely mentioned despite being a well-known Manchester bakery.',
+    'Your AI visibility score of 42/100 indicates significant gaps. You appear on Google AI (55%) but are largely missing from Claude (25%). Trove is your most frequently cited competitor, appearing in 14 AI responses where Pollen Bakery was absent. There is substantial room for improvement, particularly on Perplexity and Claude, where your firm is rarely mentioned despite being a well-known Manchester bakery.',
 };
 
 // ── Generate report ─────────────────────────────────────────

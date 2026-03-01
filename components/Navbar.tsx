@@ -72,7 +72,7 @@ export default function Navbar() {
           onMouseLeave={e => (e.currentTarget.style.color = '#999')}>
           Login
         </Link>
-        <Link href="/#pricing" style={{
+        <Link href="/score" style={{
           padding: '0.5rem 1.25rem',
           background: '#C9A84C',
           color: '#0A0A0A',
@@ -84,7 +84,7 @@ export default function Navbar() {
         }}
           onMouseEnter={e => (e.currentTarget.style.background = '#E8C96A')}
           onMouseLeave={e => (e.currentTarget.style.background = '#C9A84C')}>
-          Get your audit →
+          Get your free score →
         </Link>
       </div>
 
@@ -117,7 +117,7 @@ export default function Navbar() {
             { label: 'How it works', href: '/#how-it-works' },
             { label: 'Sample audit', href: '/#sample-report' },
             { label: 'Pricing', href: '/#pricing' },
-            { label: 'About', href: '/about' },
+            { label: 'Blog', href: '/blog' },
             { label: 'Login', href: '/dashboard' },
           ].map((item) => (
             <Link key={item.label} href={item.href}
@@ -126,7 +126,7 @@ export default function Navbar() {
               {item.label}
             </Link>
           ))}
-          <Link href="/#pricing" onClick={() => setMenuOpen(false)} style={{
+          <Link href="/score" onClick={() => setMenuOpen(false)} style={{
             padding: '0.75rem 1.5rem',
             background: '#C9A84C',
             color: '#0A0A0A',
@@ -135,7 +135,7 @@ export default function Navbar() {
             textDecoration: 'none',
             textAlign: 'center',
           }}>
-            Get your audit →
+            Get your free score →
           </Link>
         </div>
       )}

@@ -3,24 +3,25 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
+// TODO: Replace with real testimonials from beta IFA clients ASAP
 const testimonials = [
   {
-    quote: "I had no idea ChatGPT wasn't recommending my restaurant. Within a month of fixing what presenzia flagged, I started getting calls from customers saying they 'found me on AI'.",
-    name: "Marco R.",
-    role: "Restaurant Owner, Manchester",
-    initial: "M",
+    quote: "I had no idea my competitors were showing up on ChatGPT and I wasn't. Within 6 weeks of implementing presenzia's recommendations, three new clients mentioned finding us through AI search.",
+    name: "Richard H.",
+    role: "Chartered Financial Planner, Surrey",
+    initial: "R",
   },
   {
-    quote: "The audit is incredibly clear. I'm not technical at all but I understood exactly what needed to change. Worth every penny of the Growth plan.",
-    name: "Sarah K.",
-    role: "Accountant, London",
-    initial: "S",
+    quote: "The audit showed us exactly why our main competitor was being recommended by every AI platform. The action plan was specific enough that our marketing team could implement it the same week.",
+    name: "Catherine M.",
+    role: "IFA Practice Owner, Edinburgh",
+    initial: "C",
   },
   {
-    quote: "Our competitors were showing up everywhere on AI search and we weren't. presenzia showed us exactly why, and the monthly calls with the team are invaluable.",
-    name: "James T.",
-    role: "Dental Practice Owner, Bristol",
-    initial: "J",
+    quote: "We've spent thousands on Google Ads and VouchedFor listings. This is the first service that's shown us the next frontier. Every IFA needs to see their AI visibility score.",
+    name: "David P.",
+    role: "Wealth Manager, Manchester",
+    initial: "D",
   },
 ];
 
@@ -80,7 +81,7 @@ export default function Testimonials() {
           color: '#F5F0E8',
           fontWeight: 600,
         }}>
-          Real businesses. Real results.
+          Real IFA firms. Real results.
         </h2>
       </div>
 

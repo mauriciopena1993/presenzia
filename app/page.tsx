@@ -14,26 +14,18 @@ const faqSchema = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'What is AI search visibility, and why does it matter?',
+      name: 'What is AI search visibility, and why does it matter for IFAs?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "When someone asks ChatGPT, Claude, Perplexity, or Google's AI to recommend a business like yours, the AI generates a response from its training data and real-time knowledge. If your business isn't being recommended, you're invisible to a growing segment of customers who never get as far as a Google search. AI search visibility measures how often and how prominently your business appears in these AI-generated recommendations.",
+        text: "When potential clients ask ChatGPT, Claude, Perplexity, or Google AI to recommend a financial advisor, AI generates a response based on its training data and web knowledge. Firms with strong AI visibility appear in these recommendations. Firms without it are invisible to a rapidly growing discovery channel. With over 15 million UK adults now using AI assistants regularly, this is becoming as important as Google rankings.",
       },
     },
     {
       '@type': 'Question',
-      name: 'How does presenzia.ai actually test my visibility?',
+      name: 'How does presenzia.ai test my visibility?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'We run 80+ real customer search prompts across four major AI platforms: ChatGPT, Claude, Perplexity, and Google AI. Prompts include queries like "best [business type] in [your city]", "[service] near me", and specific use-case questions relevant to your industry. We record whether your business is mentioned, where it appears, and which competitors are being recommended instead.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'What do I actually receive?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: "Your audit begins running automatically the moment you sign up. You'll receive your full report by email within 15 minutes. It includes your overall AI Visibility Score (0–100), a platform-by-platform breakdown, a list of competitors that are currently appearing in your place, and specific, actionable recommendations to improve your visibility. Growth and Premium clients also get access to an online dashboard.",
+        text: "We run 100+ carefully crafted search prompts across four major AI platforms \u2014 ChatGPT, Claude, Perplexity, and Google AI. These prompts mirror what real clients actually ask: 'best financial advisor in [your city]', 'pension transfer specialist near me', 'who should I speak to about inheritance tax planning'. We record every response, noting where your firm appears, where it doesn't, and which competitors are being recommended instead.",
       },
     },
     {
@@ -41,31 +33,31 @@ const faqSchema = {
       name: 'How is this different from traditional SEO?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "Traditional SEO focuses on ranking in Google's blue-link search results. AI visibility is about appearing in AI-generated answers, which increasingly sit above those results or replace them entirely. The factors that drive it are different: structured content, authoritative mentions, clear business descriptions, and consistent signals across directories.",
+        text: "Traditional SEO optimises your website for Google's search index. AI search visibility is fundamentally different \u2014 AI models don't just crawl your website, they synthesise information from across the web to form opinions about which firms to recommend. The signals that matter are different: authoritative content, consistent citations across platforms, structured data, and thought leadership. A firm can rank #1 on Google and still be invisible to ChatGPT.",
       },
     },
     {
       '@type': 'Question',
-      name: "I'm a small local business. Is this relevant to me?",
+      name: 'I already use VouchedFor / Unbiased / Google Ads. Do I still need this?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Especially so. Local searches like "best Italian in Shoreditch", "top-rated salon in Bristol", or "accountant near me" are exactly the type of queries AI assistants are used for most. Local businesses are often the least represented in AI outputs, which creates a real opportunity for those who act early.',
+        text: "Yes \u2014 those platforms optimise for their own directories and for traditional search. AI search is a separate channel entirely. In fact, having strong directory listings can help your AI visibility, but only if the right signals are in place. Our audit shows you exactly where the gaps are and what to do about them.",
       },
     },
     {
       '@type': 'Question',
-      name: 'Is this right for my business?',
+      name: 'How quickly will I see results?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'If customers could find you by asking AI something like "best [your service] in [your area]", then yes. We work with restaurants, salons, gyms, dental practices, solicitors, accountants, and many more. Online-only businesses are welcome too.',
+        text: "Some quick wins \u2014 like updating your website's structured data and optimising your content for AI readability \u2014 can show results within 2\u20134 weeks. More substantial improvements, like building citation authority and publishing thought leadership content, typically take 2\u20133 months to fully register across AI platforms. Your monthly re-audits track every change.",
       },
     },
     {
       '@type': 'Question',
-      name: 'Can I cancel at any time?',
+      name: 'Can I cancel anytime?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "Yes. All plans are monthly subscriptions with no long-term contract. You can cancel with 30 days' notice at any time. Your audits and dashboard access remain available until the end of your billing period.",
+        text: "Yes. All plans are monthly with 30 days' notice. No long-term contracts, no cancellation fees.",
       },
     },
   ],

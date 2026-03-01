@@ -60,7 +60,7 @@ function ScoreCard() {
             }}>GRADE F</span>
           </div>
           <p style={{ color: TXT2, fontSize: '0.75rem', lineHeight: 1.6, margin: '0 0 0.6rem' }}>
-            Found in only 7 of 80 AI searches across 4 platforms. Your business is nearly invisible to AI-powered search — most potential customers asking AI for your services will never see your name.
+            Found in only 7 of 120 AI searches across 4 platforms. Your firm is nearly invisible to AI-powered search — most prospective clients asking AI for a financial advisor will never see your name.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <TrendingDown size={12} style={{ color: RED }} />
@@ -79,7 +79,7 @@ function ScoreCard() {
         flexWrap: 'wrap',
       }}>
         {[
-          { value: '80', label: 'Searches tested' },
+          { value: '120', label: 'Searches tested' },
           { value: '7', label: 'Times found', warn: true },
           { value: '4', label: 'Platforms audited' },
           { value: '6', label: 'Competitors ahead', warn: true },
@@ -149,7 +149,7 @@ function ScoreCard() {
         <div>
           <div style={{ fontSize: '0.7rem', fontWeight: 700, color: RED, marginBottom: '0.2rem' }}>Critical Finding</div>
           <div style={{ fontSize: '0.68rem', color: TXT2, lineHeight: 1.5 }}>
-            ChatGPT (35% market share) returns zero mentions of your business across all 20 search queries. This single platform gap costs you the largest audience segment.
+            ChatGPT (35% market share) returns zero mentions of your firm across all 30 search queries. This single platform gap costs you the largest audience segment.
           </div>
         </div>
       </div>
@@ -167,41 +167,41 @@ function PlatformCard() {
       weight: '35%',
       status: 'Not mentioned',
       statusColor: RED,
-      topCompetitor: 'Harrison & Co appeared in 14/20',
-      detail: 'Zero presence. GPT relies on structured web data — your site lacks schema markup and structured FAQ content.',
+      topCompetitor: 'Sterling Financial Planning appeared in 22/30',
+      detail: 'Zero presence. GPT relies on structured web data — your site lacks FinancialService schema markup and structured FAQ content.',
     },
     {
       name: 'Perplexity',
       score: 55,
-      mentions: '5/20',
+      mentions: '5/30',
       found: true,
       weight: '20%',
       status: 'Partially visible',
       statusColor: AMBER,
-      topCompetitor: 'Harrison & Co appeared in 18/20',
-      detail: 'Your Google Business listing drives these mentions. But you only appear for brand-name queries, not generic category searches.',
+      topCompetitor: 'Sterling Financial Planning appeared in 26/30',
+      detail: 'Your VouchedFor listing drives these mentions. But you only appear for brand-name queries, not generic searches like "best IFA in Surrey".',
     },
     {
       name: 'Google AI Overview',
       score: 15,
-      mentions: '2/20',
+      mentions: '2/30',
       found: false,
       weight: '30%',
       status: 'Rarely mentioned',
       statusColor: RED,
-      topCompetitor: 'Belmont Legal appeared in 11/20',
-      detail: 'AI Overviews pull from top organic results. You rank page 2+ for most commercial law queries in Manchester.',
+      topCompetitor: 'Meridian Wealth Advisors appeared in 18/30',
+      detail: 'AI Overviews pull from top organic results. You rank page 2+ for most wealth management queries in your area.',
     },
     {
       name: 'Claude',
       score: 0,
-      mentions: '0/20',
+      mentions: '0/30',
       found: false,
       weight: '15%',
       status: 'Not mentioned',
       statusColor: RED,
-      topCompetitor: 'Belmont Legal appeared in 9/20',
-      detail: 'Claude prioritises authoritative content. Publishing case studies and thought leadership would help significantly.',
+      topCompetitor: 'Meridian Wealth Advisors appeared in 14/30',
+      detail: 'Claude prioritises authoritative content. Publishing thought leadership on pension transfers and tax planning would help significantly.',
     },
   ];
 
@@ -270,12 +270,12 @@ function PlatformCard() {
 
 function PromptsCard() {
   const prompts = [
-    { prompt: '\u201CBest solicitors in Manchester for commercial law\u201D', found: false, platform: 'ChatGPT', position: '\u2014', competitor: 'Harrison & Co (1st), Belmont Legal (2nd)', category: 'Discovery' },
-    { prompt: '\u201CRecommend a reliable law firm in Manchester\u201D', found: true, platform: 'Perplexity', position: '4th', competitor: 'Harrison & Co (1st)', category: 'Recommendation' },
-    { prompt: '\u201CTop-rated solicitors near Manchester city centre\u201D', found: false, platform: 'Claude', position: '\u2014', competitor: 'Belmont Legal (1st), JW Partners (2nd)', category: 'Discovery' },
-    { prompt: '\u201CCommercial lease solicitor Manchester reviews\u201D', found: true, platform: 'Perplexity', position: '3rd', competitor: 'Harrison & Co (1st)', category: 'Comparison' },
-    { prompt: '\u201CWho is the best business solicitor in Manchester?\u201D', found: false, platform: 'Google AI', position: '\u2014', competitor: 'Harrison & Co (1st), Price & Kelley (2nd)', category: 'Recommendation' },
-    { prompt: '\u201CManchester law firms for startup legal advice\u201D', found: false, platform: 'ChatGPT', position: '\u2014', competitor: 'JW Partners (1st), Belmont Legal (3rd)', category: 'Discovery' },
+    { prompt: '\u201CBest financial advisor in Guildford\u201D', found: false, platform: 'ChatGPT', position: '\u2014', competitor: 'Sterling Financial Planning (1st), Meridian Wealth (2nd)', category: 'Direct' },
+    { prompt: '\u201CRecommend a pension transfer specialist near GU1\u201D', found: true, platform: 'Perplexity', position: '4th', competitor: 'Sterling Financial Planning (1st)', category: 'Specialty' },
+    { prompt: '\u201CWho should I speak to about inheritance tax planning in Surrey?\u201D', found: false, platform: 'Claude', position: '\u2014', competitor: 'Meridian Wealth (1st), Oakwood Financial (2nd)', category: 'Problem' },
+    { prompt: '\u201CIFA for high-net-worth individuals in Surrey\u201D', found: true, platform: 'Perplexity', position: '3rd', competitor: 'Sterling Financial Planning (1st)', category: 'Specialty' },
+    { prompt: '\u201CWho is the best wealth manager in Guildford?\u201D', found: false, platform: 'Google AI', position: '\u2014', competitor: 'Sterling Financial Planning (1st), Oakwood Financial (2nd)', category: 'Direct' },
+    { prompt: '\u201CI\u2019ve inherited \u00A3500k and need financial advice in Surrey\u201D', found: false, platform: 'ChatGPT', position: '\u2014', competitor: 'Oakwood Financial (1st), Meridian Wealth (3rd)', category: 'Problem' },
   ];
 
   return (
@@ -285,7 +285,7 @@ function PromptsCard() {
         <Search size={14} style={{ color: GOLD }} />
       </div>
       <div style={{ fontSize: '0.65rem', color: MUTED, marginBottom: '1rem', lineHeight: 1.5 }}>
-        We tested 80 real search prompts your customers might use. Here are 6 key results — the full audit includes all 80.
+        We tested 120 wealth-specific search prompts real clients might use. Here are 6 key results — the full audit includes all 120.
       </div>
 
       {/* Column headers */}
@@ -352,7 +352,7 @@ function PromptsCard() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Target size={12} style={{ color: GOLD }} />
           <span style={{ fontSize: '0.68rem', color: TXT2 }}>
-            Showing <span style={{ fontWeight: 700 }}>6</span> of <span style={{ fontWeight: 700 }}>80</span> prompts tested
+            Showing <span style={{ fontWeight: 700 }}>6</span> of <span style={{ fontWeight: 700 }}>120</span> prompts tested
           </span>
         </div>
         <span style={{ fontSize: '0.65rem', color: RED, fontWeight: 600 }}>
@@ -372,9 +372,9 @@ function ActionPlanCard() {
       labelColor: RED,
       timeframe: 'Week 1–2',
       items: [
-        { title: 'Update your Google Business Profile at business.google.com', impact: 'High', desc: 'Your profile is missing a business description and has only 2 photos. Add a 150+ word description mentioning "commercial solicitors Manchester", upload 10 professional photos (office, team, signage), and reply to all 14 existing Google reviews.' },
-        { title: 'Add FAQ schema markup to smithandco.co.uk/services', impact: 'High', desc: 'ChatGPT found you 0/20 times. Adding structured FAQ data (JSON-LD) to your services page lets GPT extract answers directly. Harrison & Co does this — that\u2019s why they appear 14/20.' },
-        { title: 'Claim your profile on legal500.com and trustpilot.com', impact: 'Medium', desc: 'Perplexity cited Legal 500 as a source in 8 of 20 responses. Your firm isn\u2019t listed. Belmont Legal has 47 Trustpilot reviews — Claude cited them in 9/20 searches because of it.' },
+        { title: 'Add FinancialService schema markup to your website', impact: 'High', desc: 'Implement structured data (JSON-LD) using the FinancialService schema type. Include firm name, address, services offered, FCA number, and qualifications. Sterling Financial Planning does this — that\u2019s why they appear in 22/30 ChatGPT searches.' },
+        { title: 'Optimise your Google Business Profile', impact: 'High', desc: 'Your profile is missing a detailed description and has only 3 reviews. Add a 200+ word description mentioning "financial advisor Guildford", upload professional team photos, and request reviews from satisfied clients. Aim for 20+ reviews.' },
+        { title: 'Ensure consistent listings on VouchedFor, Unbiased & FTAdviser', impact: 'Medium', desc: 'Perplexity cited VouchedFor as a source in 12 of 30 responses. Meridian Wealth has 38 VouchedFor reviews — Claude cited them in 14/30 searches because of review authority.' },
       ],
     },
     {
@@ -384,8 +384,8 @@ function ActionPlanCard() {
       labelColor: AMBER,
       timeframe: 'Week 3–6',
       items: [
-        { title: 'Pitch a quote to manchestereveningnews.co.uk about commercial lease trends', impact: 'High', desc: 'Harrison & Co were cited by 3 of 4 AI platforms largely because MEN quoted them in a Jan 2026 article. Contact their business desk at business@men-news.co.uk — one article can shift your visibility within weeks.' },
-        { title: 'Publish a 2,000-word guide: "Commercial Lease Law in Manchester: What Businesses Need to Know"', impact: 'High', desc: 'Claude and ChatGPT favour long-form, authoritative content. Your site has no pages over 400 words. Harrison & Co\u2019s guide on the same topic is 2,800 words and cited by both platforms.' },
+        { title: 'Publish a thought leadership article on pension transfers in Surrey', impact: 'High', desc: 'Sterling Financial Planning were cited by 3 of 4 AI platforms partly because FTAdviser quoted them in a recent article. Getting featured in trade publications can shift your visibility within weeks.' },
+        { title: 'Create a comprehensive FAQ page covering common client questions', impact: 'High', desc: 'Claude and Perplexity favour content that directly answers questions. Your site has no FAQ page. Publish detailed answers covering fees, investment philosophy, pension transfer process, and inheritance tax planning.' },
       ],
     },
     {
@@ -395,8 +395,8 @@ function ActionPlanCard() {
       labelColor: GREEN,
       timeframe: 'Ongoing',
       items: [
-        { title: 'Ask 5 recent clients to leave reviews on Google and Trustpilot this week', impact: 'Medium', desc: 'You have 14 Google reviews (avg 4.2\u2605). Belmont Legal has 47 (avg 4.7\u2605). AI platforms weight review volume and recency — aim for 30+ reviews within 3 months. Send clients a direct link to your Google review page.' },
-        { title: 'Post a monthly blog on smithandco.co.uk covering local business law updates', impact: 'Medium', desc: 'Your last blog post is from 2023. AI models deprioritise stale websites. A 600+ word monthly post on topics like "new leasehold reform" or "Manchester business rates update" signals ongoing authority.' },
+        { title: 'Build review presence on VouchedFor and Google', impact: 'Medium', desc: 'You have 3 Google reviews (avg 4.5\u2605). Meridian Wealth has 38 VouchedFor reviews (avg 4.8\u2605). AI platforms weight review volume and recency — aim for 20+ reviews within 3 months. Implement a systematic review request process.' },
+        { title: 'Publish monthly thought leadership on your website blog', impact: 'Medium', desc: 'Your last blog post is from 2024. AI models deprioritise stale websites. A 600+ word monthly article on topics like "pension transfer considerations" or "inheritance tax planning strategies" signals ongoing authority.' },
       ],
     },
   ];
@@ -542,7 +542,7 @@ export default function SampleReport() {
             See what&apos;s inside your audit
           </h2>
           <p style={{ color: '#AAAAAA', fontSize: '0.95rem', lineHeight: 1.8, maxWidth: '600px', margin: '0 auto' }}>
-            Selected sections from a real AI Visibility Audit. Every data point comes from actual AI search queries tested against a live business. Scores are weighted by platform market share.
+            Selected sections from a real AI Visibility Audit for a UK wealth management firm. Every data point comes from actual AI search queries. Scores are weighted by platform market share.
           </p>
         </div>
 
@@ -612,7 +612,7 @@ export default function SampleReport() {
               letterSpacing: '0.15em',
               textTransform: 'uppercase',
             }}>
-              Preview of Starter Audit
+              Preview of AI Visibility Audit
             </span>
           </div>
 
@@ -638,7 +638,7 @@ export default function SampleReport() {
               lineHeight: 1.25,
               marginTop: '0.15rem',
             }}>
-              Smith and Co Solicitors
+              Hartfield Wealth Management
             </div>
             <div style={{ fontSize: '0.6rem', color: '#888', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: '0.2rem' }}>
               AI Visibility Audit &middot; February 2026
@@ -759,7 +759,7 @@ export default function SampleReport() {
             borderTop: `1px solid ${BORDER}`,
           }}>
             <p style={{ fontSize: '0.7rem', color: MUTED, marginBottom: '0.6rem', lineHeight: 1.6, margin: '0 0 0.6rem' }}>
-              You&apos;re viewing selected highlights. The full audit includes all 80 search results, complete competitor analysis, detailed implementation guides, and a priority-ordered roadmap.
+              You&apos;re viewing selected highlights. The full audit includes all 120 search results, complete competitor analysis, detailed implementation guides, and a priority-ordered roadmap.
             </p>
             <a
               href="/#pricing"

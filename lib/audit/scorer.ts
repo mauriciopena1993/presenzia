@@ -148,14 +148,14 @@ function generateSummary(
     p.score < (worst?.score ?? 101) ? p : worst, platforms[0]);
 
   if (score < 20) {
-    return `Your business has very low AI visibility (${score}/100). You are essentially invisible to AI search engines. ${competitors[0] ? `Competitors like ${competitors[0].name} are being recommended instead of you.` : ''} Immediate action is needed.`;
+    return `Your firm has very low AI visibility (${score}/100). You are essentially invisible to AI search. ${competitors[0] ? `Competitors like ${competitors[0].name} are being recommended instead of you.` : ''} Immediate action is needed.`;
   } else if (score < 40) {
     return `Your AI visibility score of ${score}/100 indicates significant gaps. You appear on ${bestPlatform?.platform} (${bestPlatform?.score}%) but are largely missing from ${worstPlatform?.platform} (${worstPlatform?.score}%). There is substantial room for improvement.`;
   } else if (score < 60) {
-    return `A score of ${score}/100 shows moderate AI visibility. You have a presence on some platforms but inconsistently. Strengthening your content strategy could significantly improve your score.`;
+    return `A score of ${score}/100 shows moderate AI visibility. You have a presence on some platforms but inconsistently. Strengthening your content and directory strategy could significantly improve your score.`;
   } else if (score < 80) {
-    return `Good AI visibility at ${score}/100. Your business is being recommended across most platforms. Focus on improving your ${worstPlatform?.platform} presence (${worstPlatform?.score}%) to reach the top tier.`;
+    return `Good AI visibility at ${score}/100. Your firm is being recommended across most platforms. Focus on improving your ${worstPlatform?.platform} presence (${worstPlatform?.score}%) to reach the top tier.`;
   } else {
-    return `Excellent AI visibility at ${score}/100. Your business is consistently being recommended across AI platforms. Continue your content strategy to maintain this position.`;
+    return `Excellent AI visibility at ${score}/100. Your firm is consistently being recommended across AI platforms. Continue your content strategy to maintain this position.`;
   }
 }

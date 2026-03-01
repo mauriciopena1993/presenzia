@@ -4,50 +4,36 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 
-const BUSINESS_TYPES = [
-  'Restaurant / Cafe',
-  'Bar / Pub / Nightclub',
-  'Coffee Shop / Bakery',
-  'Beauty Salon / Barbershop',
-  'Gym / Fitness Studio',
-  'Yoga / Pilates Studio',
-  'Spa / Wellness Centre',
-  'Dental Practice',
-  'Doctor / Medical Practice',
-  'Physiotherapy / Chiropractic',
-  'Therapist / Counsellor',
-  'Solicitor / Law Firm',
-  'Accountant / Bookkeeper',
-  'Financial Adviser',
-  'Estate Agent',
-  'Hotel / B&B / Guesthouse',
-  'Retail / Shop / Boutique',
-  'Veterinary Practice',
-  'Plumber / Electrician / Tradesperson',
-  'Cleaning Company',
-  'Private Tutor / Education Centre',
-  'Wedding Venue / Events',
-  'Photographer / Videographer',
-  'Marketing / Design Agency',
-  'IT / Software / Tech',
+const FIRM_TYPES = [
+  'Independent Financial Advisor (IFA)',
+  'Chartered Financial Planner',
+  'Wealth Management Firm',
+  'Discretionary Fund Manager',
+  'Financial Planning Practice',
+  'Multi-Advisor IFA Network',
+  'Restricted Financial Advisor',
+  'Retirement Specialist',
+  'Estate & Inheritance Planning',
+  'Corporate Financial Advisor',
   'Other',
 ];
 
 const planNames: Record<string, string> = {
-  starter: 'Starter',
-  growth: 'Growth',
+  audit: 'AI Visibility Audit',
+  starter: 'Starter', // legacy fallback
+  growth: 'Growth Retainer',
   premium: 'Premium',
 };
 
 function OnboardingForm() {
   const searchParams = useSearchParams();
-  const plan = searchParams.get('plan') || 'starter';
+  const plan = searchParams.get('plan') || 'audit';
 
   const [form, setForm] = useState({
     email: '',
     contactName: '',
     businessName: '',
-    businessType: '',
+    firmType: '',
     description: '',
     location: '',
     website: '',
@@ -106,7 +92,7 @@ function OnboardingForm() {
           email: form.email,
           contact_name: form.contactName || null,
           business_name: form.businessName,
-          business_type: form.businessType,
+          business_type: form.firmType,
           description: form.description,
           location: form.location || null,
           website: fullWebsite,
@@ -121,7 +107,7 @@ function OnboardingForm() {
           plan,
           email: form.email,
           business_name: form.businessName,
-          business_type: form.businessType,
+          business_type: form.firmType,
           description: form.description,
           location: form.location,
           website: fullWebsite,
@@ -198,10 +184,10 @@ function OnboardingForm() {
             marginBottom: '1rem',
             lineHeight: 1.2,
           }}>
-            Tell us about your business
+            Tell us about your firm
           </h1>
           <p style={{ color: '#AAAAAA', fontSize: '0.95rem', lineHeight: 1.7, maxWidth: '460px', margin: '0 auto' }}>
-            We need a few details to run your AI visibility audit. Takes about 30 seconds, then you'll proceed to payment.
+            We need a few details to run your AI visibility audit. Takes about 30 seconds, then you&apos;ll proceed to payment.
           </p>
         </div>
 
@@ -216,23 +202,23 @@ function OnboardingForm() {
               </label>
               <input
                 type="email"
-                placeholder="e.g. jane@yourbusiness.co.uk"
+                placeholder="e.g. jane@yourfirm.co.uk"
                 required
                 value={form.email}
                 onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                 style={inputStyle}
               />
-              <div style={hintStyle}>We'll send your audit here</div>
+              <div style={hintStyle}>We&apos;ll send your audit here</div>
             </div>
 
-            {/* Business Name */}
+            {/* Firm Name */}
             <div>
               <label style={labelStyle}>
-                Business name <span style={{ color: '#C9A84C' }}>*</span>
+                Firm name <span style={{ color: '#C9A84C' }}>*</span>
               </label>
               <input
                 type="text"
-                placeholder="e.g. The Oak Brasserie"
+                placeholder="e.g. Hartfield Wealth Management"
                 required
                 value={form.businessName}
                 onChange={e => setForm(f => ({ ...f, businessName: e.target.value }))}
@@ -240,19 +226,19 @@ function OnboardingForm() {
               />
             </div>
 
-            {/* Business Type */}
+            {/* Firm Type */}
             <div>
               <label style={labelStyle}>
-                Business type <span style={{ color: '#C9A84C' }}>*</span>
+                Firm type <span style={{ color: '#C9A84C' }}>*</span>
               </label>
               <select
                 required
-                value={form.businessType}
-                onChange={e => setForm(f => ({ ...f, businessType: e.target.value }))}
+                value={form.firmType}
+                onChange={e => setForm(f => ({ ...f, firmType: e.target.value }))}
                 style={{ ...inputStyle, cursor: 'pointer', appearance: 'none' }}
               >
-                <option value="" disabled>Select your business type...</option>
-                {BUSINESS_TYPES.map(type => (
+                <option value="" disabled>Select your firm type...</option>
+                {FIRM_TYPES.map(type => (
                   <option key={type} value={type}>{type}</option>
                 ))}
               </select>
@@ -261,11 +247,11 @@ function OnboardingForm() {
             {/* Description */}
             <div>
               <label style={labelStyle}>
-                What does your business do? <span style={{ color: '#C9A84C' }}>*</span>
+                What does your firm specialise in? <span style={{ color: '#C9A84C' }}>*</span>
               </label>
               <input
                 type="text"
-                placeholder="e.g. Family-run Italian restaurant specialising in homemade pasta"
+                placeholder="e.g. Retirement planning and pension transfers for clients with £250k+"
                 required
                 value={form.description}
                 onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
@@ -280,18 +266,18 @@ function OnboardingForm() {
             {/* Keywords */}
             <div>
               <label style={labelStyle}>
-                Keywords <span style={{ color: '#C9A84C' }}>*</span>
+                Specialties / Keywords <span style={{ color: '#C9A84C' }}>*</span>
               </label>
               <input
                 type="text"
                 required
-                placeholder="e.g. Italian restaurant, private dining, wine bar"
+                placeholder="e.g. pension transfer, inheritance tax, wealth management"
                 value={form.keywords}
                 onChange={e => setForm(f => ({ ...f, keywords: e.target.value }))}
                 style={inputStyle}
               />
               <div style={hintStyle}>
-                What would a customer search for to find you? Add at least 2, comma-separated
+                What would a prospective client search for to find your firm? Add at least 2, comma-separated
               </div>
             </div>
 
@@ -309,7 +295,7 @@ function OnboardingForm() {
                 style={inputStyle}
               />
               <div style={hintStyle}>
-                The city or area your customers are in
+                The city or area your clients are in
               </div>
             </div>
 
@@ -332,7 +318,7 @@ function OnboardingForm() {
                 }}>https://</div>
                 <input
                   type="text"
-                  placeholder="www.yourbusiness.co.uk"
+                  placeholder="www.yourfirm.co.uk"
                   value={form.website}
                   onChange={e => {
                     let v = e.target.value;
@@ -343,7 +329,7 @@ function OnboardingForm() {
                   style={{ ...inputStyle, borderLeft: 'none' }}
                 />
               </div>
-              <div style={hintStyle}>Leave blank if your business doesn't have a website</div>
+              <div style={hintStyle}>Leave blank if your firm doesn&apos;t have a website</div>
             </div>
 
             {/* Contact Name */}

@@ -5,53 +5,53 @@ import { Check, ChevronDown } from 'lucide-react';
 
 const plans = [
   {
-    key: 'starter',
-    name: 'Starter',
-    price: '£99',
-    period: '/month',
-    description: 'See exactly where your business stands across AI search — delivered to your inbox every month.',
+    key: 'audit',
+    name: 'AI Visibility Audit',
+    price: '\u00A3297',
+    period: 'one-off',
+    description: 'See exactly where your firm stands \u2014 and what to fix.',
     features: [
-      'Monthly AI visibility audit',
-      '4 AI platforms tested',
+      '120 wealth-specific prompts tested',
+      '4 AI platforms (ChatGPT, Claude, Perplexity, Google AI)',
       'Visibility score & grade',
-      'Competitor analysis',
-      'Personalised action plan',
-      'Delivered by email (report)',
+      'Full competitor analysis',
+      'Personalised action plan with prioritised recommendations',
+      'Professional PDF report, delivered within 15 minutes',
     ],
-    cta: 'Get started',
+    cta: 'Get my audit',
     highlighted: false,
   },
   {
     key: 'growth',
-    name: 'Growth',
-    price: '£199',
+    name: 'Growth Retainer',
+    price: '\u00A3697',
     period: '/month',
-    description: 'Your monthly audit plus an online dashboard and AI tools to actively improve your visibility.',
+    description: 'Ongoing monitoring, recommendations, and measurable improvement.',
     features: [
-      'Everything in Starter',
-      'Online client dashboard',
-      'Weekly dashboard updates',
-      'AI audit assistant',
-      'Competitor deep-dive',
-      'Priority support',
+      'Everything in the Audit, plus:',
+      'Monthly re-audit with score tracking & trends',
+      'Online client dashboard (updated weekly)',
+      'Real-time competitor monitoring & alerts',
+      'AI audit assistant & content recommendations',
+      'Quarterly 30-minute strategy call',
     ],
-    cta: 'Get started',
+    cta: 'Start growing',
     highlighted: true,
     badge: 'Most popular',
   },
   {
     key: 'premium',
     name: 'Premium',
-    price: '£599',
+    price: '\u00A31,997',
     period: '/month',
-    description: 'The full service — expert guidance, daily insights, and a dedicated strategist in your corner.',
+    description: 'We do the work. You get the clients.',
     features: [
-      'Everything in Growth',
-      'Daily dashboard updates',
-      'Dedicated account manager',
-      'Monthly 1:1 strategy call',
-      'Custom prompt testing',
-      'Industry benchmarking',
+      'Everything in Growth, plus:',
+      'Dedicated account strategist',
+      '4 AI-optimised articles written & published monthly',
+      'Monthly 60-minute strategy call',
+      'Exclusive territory protection \u2014 one firm per area',
+      'Daily visibility monitoring with real-time alerts',
     ],
     cta: 'Book a call',
     highlighted: false,
@@ -70,16 +70,16 @@ interface ComparisonRow {
 }
 
 const comparisonRows: ComparisonRow[] = [
-  { feature: 'Monthly AI visibility audit (4 platforms)',  starter: true,  growth: true,     premium: true },
+  { feature: '120 wealth-specific prompts tested',         starter: true,  growth: true,     premium: true },
   { feature: 'Visibility score, grade & action plan',      starter: true,  growth: true,     premium: true },
-  { feature: 'Competitor analysis',                        starter: 'Basic', growth: 'Deep-dive', premium: 'Deep-dive' },
-  { feature: 'Delivery format',                            starter: 'Report',  growth: 'Report + Online Dashboard', premium: 'Report + Online Dashboard' },
-  { feature: 'Dashboard update frequency',                 starter: '—',   growth: 'Weekly', premium: 'Daily' },
+  { feature: 'Competitor analysis',                        starter: true,  growth: 'Deep-dive + alerts', premium: 'Deep-dive + alerts' },
+  { feature: 'PDF audit report',                           starter: true,  growth: true,     premium: true },
+  { feature: 'Monthly re-audits',                          starter: false, growth: true,     premium: true },
+  { feature: 'Online client dashboard',                    starter: false, growth: 'Weekly', premium: 'Daily' },
   { feature: 'AI audit assistant',                         starter: false, growth: true,     premium: true },
-  { feature: 'Priority support',                           starter: false, growth: true,     premium: true },
-  { feature: 'Dedicated account manager',                  starter: false, growth: false,    premium: true },
-  { feature: 'Monthly 1:1 strategy call',                  starter: false, growth: false,    premium: true },
-  { feature: 'Custom prompt testing & benchmarking',       starter: false, growth: false,    premium: true },
+  { feature: 'Strategy calls',                             starter: false, growth: 'Quarterly 30m', premium: 'Monthly 60m' },
+  { feature: 'Done-for-you content (4 articles/month)',    starter: false, growth: false,    premium: true },
+  { feature: 'Exclusive territory protection',             starter: false, growth: false,    premium: true },
 ];
 
 /* ── Render helper for table cells ── */
@@ -232,10 +232,10 @@ export default function Pricing() {
           fontWeight: 600,
           marginBottom: '1rem',
         }}>
-          Simple, transparent pricing
+          Invest less than the value of one client
         </h2>
-        <p style={{ color: '#AAAAAA', maxWidth: '500px', margin: '0 auto', fontSize: '1rem', lineHeight: 1.7 }}>
-          No setup fees. No long-term contracts. Cancel anytime. Your first audit is delivered within 15 minutes of signing up.
+        <p style={{ color: '#AAAAAA', maxWidth: '560px', margin: '0 auto', fontSize: '1rem', lineHeight: 1.7 }}>
+          A single new high-net-worth client is worth \u00A310,000\u201350,000+ in lifetime fees. Every tier pays for itself with one client acquisition.
         </p>
       </div>
 
@@ -312,7 +312,7 @@ export default function Pricing() {
       </div>
 
       <p style={{ textAlign: 'center', color: '#999999', fontSize: '0.8rem', marginTop: '2rem' }}>
-        All plans include VAT. Billed monthly. Cancel anytime with 30 days notice.
+        All prices exclude VAT. Retainers billed monthly. Cancel anytime with 30 days notice.
       </p>
 
       {/* ── Compare plans toggle ── */}
@@ -373,7 +373,7 @@ export default function Pricing() {
             fontFamily: 'var(--font-inter, Inter, sans-serif)',
           }}>
             <div style={{ fontSize: '0.65rem', color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 500 }}>Feature</div>
-            {(['Starter', 'Growth', 'Premium'] as const).map((name) => (
+            {(['Audit', 'Growth', 'Premium'] as const).map((name) => (
               <div key={name} style={{
                 textAlign: 'center',
                 fontSize: '0.65rem',
@@ -424,7 +424,7 @@ export default function Pricing() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
                 {([
-                  { label: 'Starter', value: row.starter },
+                  { label: 'Audit', value: row.starter },
                   { label: 'Growth', value: row.growth },
                   { label: 'Premium', value: row.premium },
                 ] as const).map(({ label, value }, colIdx) => (

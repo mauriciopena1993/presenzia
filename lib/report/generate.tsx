@@ -66,10 +66,10 @@ function scoreBandSubtitle(score: number): string {
 }
 
 function scoreBandContext(score: number): string {
-  if (score >= 70) return 'Your business is consistently recommended by AI assistants. You have strong visibility across the platforms that matter most to customers.';
-  if (score >= 45) return 'Your business appears in some AI searches, but inconsistently. You are missing a significant share of potential recommendations to competitors.';
-  if (score >= 25) return 'Your business has limited AI visibility. Competitors are being recommended in most searches where you should appear. The good news: this is fixable.';
-  return 'Your business is not being recommended by AI assistants. Potential customers asking AI for options in your category are not finding you. They are finding your competitors instead.';
+  if (score >= 70) return 'Your firm is consistently recommended by AI assistants. You have strong visibility across the platforms that matter most to prospective clients.';
+  if (score >= 45) return 'Your firm appears in some AI searches, but inconsistently. You are missing a significant share of potential recommendations to competitors.';
+  if (score >= 25) return 'Your firm has limited AI visibility. Competitors are being recommended in most searches where you should appear. The good news: this is fixable.';
+  return 'Your firm is not being recommended by AI assistants. Prospective clients asking AI for recommendations in your category are not finding you. They are finding your competitors instead.';
 }
 
 const PLATFORM_ORDER = ['ChatGPT', 'Google AI', 'Perplexity', 'Claude'];
@@ -348,7 +348,7 @@ function getFallbackActions(score: AuditScore, config: AuditConfig): DetailedAct
       why: 'Google Business Profile data directly feeds into Google AI and influences all platforms.',
       steps: [
         `Verify or claim your listing at business.google.com`,
-        `Add a detailed business description mentioning "${cleanBT(config.businessType)} in ${config.location}"`,
+        `Add a detailed firm description mentioning "${cleanBT(config.businessType)} in ${config.location}"`,
         'Upload 10+ high-quality photos of your products and storefront',
         'Set accurate opening hours for all 7 days',
         'Respond to every existing Google review within 48 hours',
@@ -361,10 +361,10 @@ function getFallbackActions(score: AuditScore, config: AuditConfig): DetailedAct
       title: 'Build Targeted Review Volume',
       why: 'Specific, location-rich reviews carry significantly more weight with AI than generic ratings.',
       steps: [
-        `Ask satisfied customers to mention "${cleanBT(config.businessType)} in ${config.location}" in reviews`,
+        `Ask satisfied clients to mention "${cleanBT(config.businessType)} in ${config.location}" in reviews`,
         'Text or email a direct Google review link immediately after a positive interaction',
         'Aim for 5-10 new reviews per month across Google and key review sites',
-        'Respond to every review. This signals active business presence to AI.',
+        'Respond to every review. This signals active firm presence to AI.',
       ],
     });
   }
@@ -562,7 +562,7 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
                 </View>
               ))}
               <Text style={{ fontSize: 6.5, color: TEXT_MUTED, marginTop: 6, lineHeight: 1.5 }}>
-                Note: Competitor data is sourced directly from AI responses. Some businesses shown may have changed status or closed. This audit reflects what AI currently tells potential customers, not verified trading status.
+                Note: Competitor data is sourced directly from AI responses. Some businesses shown may have changed status or closed. This audit reflects what AI currently tells prospective clients, not verified trading status.
               </Text>
             </View>
           )}
@@ -594,7 +594,7 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
 
             <Text style={s.secTitle}>Search Prompts Tested</Text>
             <Text style={s.secSub}>
-              We tested {insights!.totalSearches} searches across {score.platforms.length} AI platforms, simulating how real customers look for {cleanBT(config.businessType)} businesses in {config.location}. You appeared in {insights!.totalFound} of these ({Math.round((insights!.totalFound / Math.max(insights!.totalSearches, 1)) * 100)}%).
+              We tested {insights!.totalSearches} searches across {score.platforms.length} AI platforms, simulating how real clients look for {cleanBT(config.businessType)} firms in {config.location}. You appeared in {insights!.totalFound} of these ({Math.round((insights!.totalFound / Math.max(insights!.totalSearches, 1)) * 100)}%).
             </Text>
 
             {/* Table header row — aligned with data rows */}
@@ -726,7 +726,7 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
           <Text style={s.secTitle}>How We Test</Text>
           <View style={s.goldBox}>
             <Text style={s.bodySmall}>
-              We queried {score.platforms.length} AI platforms with {Math.round(score.totalPrompts / score.platforms.length)} prompts each ({score.totalPrompts} total), simulating how real customers search for a {cleanBT(config.businessType)} in {config.location}. All tests ran in fresh sessions with no browsing history or prior context, representing a neutral baseline. Your score is weighted by each platform&apos;s approximate market share.
+              We queried {score.platforms.length} AI platforms with {Math.round(score.totalPrompts / score.platforms.length)} prompts each ({score.totalPrompts} total), simulating how real clients search for a {cleanBT(config.businessType)} in {config.location}. All tests ran in fresh sessions with no browsing history or prior context, representing a neutral baseline. Your score is weighted by each platform&apos;s approximate market share.
             </Text>
           </View>
 

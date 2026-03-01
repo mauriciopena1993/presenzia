@@ -106,10 +106,10 @@ function scoreBand(score: number) {
 }
 
 function scoreBandContext(score: number) {
-  if (score >= 70) return 'Your business is consistently recommended by AI assistants. You have strong visibility across the platforms that matter most.';
+  if (score >= 70) return 'Your firm is consistently recommended by AI assistants. You have strong visibility across the platforms that matter most.';
   if (score >= 45) return 'You appear in some AI searches, but inconsistently. You\'re missing a significant share of potential recommendations to competitors.';
-  if (score >= 25) return 'Your business has limited AI visibility. Competitors are being recommended more often. The good news: this is fixable.';
-  return 'AI assistants are not currently recommending your business. Customers searching for options in your category are finding your competitors instead.';
+  if (score >= 25) return 'Your firm has limited AI visibility. Competitors are being recommended more often. The good news: this is fixable.';
+  return 'AI assistants are not currently recommending your firm. Prospective clients searching for recommendations in your category are finding your competitors instead.';
 }
 
 function fmt(date: string) {
