@@ -237,7 +237,7 @@ export default function ScorePage() {
     multi: {
       label: 'Which cities?',
       placeholder: 'e.g. London, Manchester, Birmingham',
-      hint: 'Comma-separated — we\'ll test AI searches across each location',
+      hint: 'Comma-separated. We\'ll test AI searches across each location',
     },
     regional: {
       label: 'Which region or area?',
@@ -295,7 +295,7 @@ export default function ScorePage() {
                     onChange={e => setFirmName(e.target.value)}
                     style={inputStyle}
                   />
-                  <div style={hintStyle}>Exactly as it appears on your website — this is what we search for</div>
+                  <div style={hintStyle}>Exactly as it appears on your website. This is what we search for</div>
                 </div>
 
                 {/* Website */}
@@ -407,7 +407,7 @@ export default function ScorePage() {
                       );
                     })}
                   </div>
-                  <div style={hintStyle}>Select all that apply — we&apos;ll test AI searches for each</div>
+                  <div style={hintStyle}>Select all that apply. We&apos;ll test AI searches for each</div>
                 </div>
 
                 {/* Target Client */}
@@ -443,7 +443,7 @@ export default function ScorePage() {
                     }}
                   />
                   <div style={hintStyle}>
-                    Your specialisms, qualifications, years of experience, what sets you apart — the more detail, the more refined our prompts
+                    Your specialisms, qualifications, years of experience, what sets you apart. The more detail, the more refined our prompts
                   </div>
                 </div>
 
@@ -463,7 +463,7 @@ export default function ScorePage() {
                     }}
                   />
                   <div style={hintStyle}>
-                    Anything not on your website — previous names, known competitors, relevant context
+                    Anything not on your website: previous names, known competitors, relevant context
                   </div>
                 </div>
 
@@ -849,7 +849,7 @@ export default function ScorePage() {
                 boxSizing: 'border-box',
               }}
             >
-              Get my full audit — £297 →
+              Get my full audit for £297 →
             </Link>
 
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>

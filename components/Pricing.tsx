@@ -9,13 +9,13 @@ const plans = [
     name: 'AI Visibility Audit',
     price: '\u00A3297',
     period: 'one-off',
-    description: 'See exactly where your firm stands \u2014 and what to fix.',
+    description: 'See exactly where your firm stands, and what to fix.',
     features: [
-      '120 wealth-specific prompts tested',
+      '120+ wealth-specific prompts tested',
       '4 AI platforms (ChatGPT, Claude, Perplexity, Google AI)',
-      'Visibility score & grade',
+      'Visibility score, grade & personalised action plan',
       'Full competitor analysis',
-      'Personalised action plan with prioritised recommendations',
+      'Prioritised recommendations by impact',
       'Professional PDF report, delivered within 15 minutes',
     ],
     cta: 'Get my audit',
@@ -29,10 +29,10 @@ const plans = [
     description: 'Ongoing monitoring, recommendations, and measurable improvement.',
     features: [
       'Everything in the Audit, plus:',
-      'Monthly re-audit with score tracking & trends',
+      'Monthly re-audits with score tracking and trends',
       'Online client dashboard (updated weekly)',
-      'Real-time competitor monitoring & alerts',
-      'AI audit assistant & content recommendations',
+      'Competitor deep-dive with real-time alerts',
+      'AI audit assistant and content recommendations',
       'Quarterly 30-minute strategy call',
     ],
     cta: 'Start growing',
@@ -50,10 +50,10 @@ const plans = [
       'Dedicated account strategist',
       '4 AI-optimised articles written & published monthly',
       'Monthly 60-minute strategy call',
-      'Exclusive territory protection \u2014 one firm per area',
+      'Exclusive territory protection (one firm per area)',
       'Daily visibility monitoring with real-time alerts',
     ],
-    cta: 'Book a call',
+    cta: 'Book a discovery call',
     highlighted: false,
   },
 ];
@@ -70,14 +70,16 @@ interface ComparisonRow {
 }
 
 const comparisonRows: ComparisonRow[] = [
-  { feature: '120 wealth-specific prompts tested',         starter: true,  growth: true,     premium: true },
+  { feature: '120+ wealth-specific prompts tested',        starter: true,  growth: true,     premium: true },
+  { feature: '4 AI platforms tested',                      starter: true,  growth: true,     premium: true },
   { feature: 'Visibility score, grade & action plan',      starter: true,  growth: true,     premium: true },
   { feature: 'Competitor analysis',                        starter: true,  growth: 'Deep-dive + alerts', premium: 'Deep-dive + alerts' },
   { feature: 'PDF audit report',                           starter: true,  growth: true,     premium: true },
-  { feature: 'Monthly re-audits',                          starter: false, growth: true,     premium: true },
-  { feature: 'Online client dashboard',                    starter: false, growth: 'Weekly', premium: 'Daily' },
+  { feature: 'Monthly re-audits with trend tracking',      starter: false, growth: true,     premium: true },
+  { feature: 'Online client dashboard',                    starter: false, growth: 'Weekly updates', premium: 'Daily updates' },
   { feature: 'AI audit assistant',                         starter: false, growth: true,     premium: true },
   { feature: 'Strategy calls',                             starter: false, growth: 'Quarterly 30m', premium: 'Monthly 60m' },
+  { feature: 'Dedicated account strategist',               starter: false, growth: false,    premium: true },
   { feature: 'Done-for-you content (4 articles/month)',    starter: false, growth: false,    premium: true },
   { feature: 'Exclusive territory protection',             starter: false, growth: false,    premium: true },
 ];
@@ -183,20 +185,15 @@ function PlanCard({ plan, premiumMailto, handleClick }: {
         {plan.cta} →
       </button>
       {plan.key === 'premium' && (
-        <a
-          href={premiumMailto}
-          style={{
-            display: 'block',
-            textAlign: 'center',
-            marginTop: '0.75rem',
-            fontSize: '0.85rem',
-            color: '#C9A84C',
-            textDecoration: 'underline',
-            textUnderlineOffset: '3px',
-          }}
-        >
-          or book a discovery call
-        </a>
+        <p style={{
+          textAlign: 'center',
+          marginTop: '0.75rem',
+          fontSize: '0.78rem',
+          color: '#888',
+          lineHeight: 1.5,
+        }}>
+          15-minute call to discuss your firm&apos;s needs
+        </p>
       )}
     </div>
   );
@@ -212,7 +209,7 @@ export default function Pricing() {
     window.location.href = `/onboarding?plan=${planKey}`;
   };
 
-  const premiumMailto = `mailto:hello@presenzia.ai?subject=Premium%20Plan%20%E2%80%94%20Discovery%20Call%20Request&body=Hi%2C%0A%0AI%20would%20like%20to%20request%20more%20information%20about%20the%20Premium%20plan%20at%20presenzia.ai.%0A%0AName%20of%20company%3A%20%0AName%3A%20%0A%0AKind%20regards%2C`;
+  const premiumMailto = `mailto:hello@presenzia.ai?subject=Premium%20Plan%20-%20Discovery%20Call%20Request&body=Hi%2C%0A%0AI%20would%20like%20to%20request%20more%20information%20about%20the%20Premium%20plan%20at%20presenzia.ai.%0A%0AName%20of%20company%3A%20%0AName%3A%20%0A%0AKind%20regards%2C`;
 
   return (
     <section id="pricing" style={{

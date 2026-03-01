@@ -7,7 +7,7 @@ const values: { icon: LucideIcon; label: string; description: string }[] = [
   {
     icon: Cpu,
     label: '4 AI Platforms',
-    description: 'We test across ChatGPT, Claude, Perplexity & Google AI — the engines shaping discovery.',
+    description: 'We test across ChatGPT, Claude, Perplexity and Google AI. The platforms shaping how clients discover advisors.',
   },
   {
     icon: Globe,
@@ -79,7 +79,7 @@ export default function About() {
             AI search is replacing the way clients find financial advisors. When a high-net-worth
             individual asks ChatGPT for a wealth manager or asks Claude to recommend a pension
             transfer specialist, most IFA firms are completely invisible. Presenzia was built to
-            change that — giving every financial advisory firm the clarity and data they need to
+            change that, giving every financial advisory firm the clarity and data they need to
             show up where it matters most.
           </p>
         </div>

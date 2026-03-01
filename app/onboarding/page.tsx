@@ -76,7 +76,7 @@ function OnboardingForm() {
       // Validate keywords have at least 2 comma-separated terms
       const keywordList = form.keywords.split(',').map(k => k.trim()).filter(Boolean);
       if (keywordList.length < 2) {
-        setError('Please add at least 2 keywords separated by commas — this is essential for an accurate audit.');
+        setError('Please add at least 2 keywords separated by commas. This is essential for an accurate audit.');
         setSubmitting(false);
         return;
       }
@@ -259,7 +259,7 @@ function OnboardingForm() {
                 maxLength={200}
               />
               <div style={hintStyle}>
-                One sentence — this helps us match you against the right competitors
+                One sentence. This helps us match you against the right competitors
               </div>
             </div>
 

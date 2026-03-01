@@ -10,7 +10,7 @@ interface Message {
 
 const INITIAL_MESSAGE: Message = {
   role: 'assistant',
-  content: 'Hi! I can answer questions about presenzia.ai — what we do, how audits work, or which plan might suit you. What would you like to know?',
+  content: 'Hi! I can answer questions about presenzia.ai: what we do, how audits work, or which plan might suit you. What would you like to know?',
 };
 
 export default function ChatWidget() {

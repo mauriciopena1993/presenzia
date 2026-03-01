@@ -78,7 +78,7 @@ export default function SharedScorePage() {
           </div>
 
           <h1 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', fontWeight: 600, marginBottom: '1.5rem', color: '#AAAAAA' }}>
-            {data.firmName} — {data.city}
+            {data.firmName} · {data.city}
           </h1>
 
           <div style={{

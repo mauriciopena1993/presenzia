@@ -8,7 +8,7 @@ export default function HowItWorks() {
     {
       number: '01',
       title: 'Tell us about your firm',
-      description: 'Share your firm name, location, and specialty. Takes under a minute — no signup required for your free score.',
+      description: 'Share your firm name, location, and specialty. Takes under a minute. No signup required for your free score.',
       icon: ClipboardList,
     },
     {
@@ -58,7 +58,7 @@ export default function HowItWorks() {
           How presenzia<span style={{ color: '#C9A84C' }}>.ai</span> works
         </h2>
         <p style={{ color: '#AAAAAA', maxWidth: '500px', margin: '0 auto', fontSize: '1rem', lineHeight: 1.7 }}>
-          From your free score to a full AI visibility strategy — built exclusively for UK wealth managers and IFAs.
+          From your free score to a full AI visibility strategy, built exclusively for UK wealth managers and IFAs.
         </p>
       </div>
 

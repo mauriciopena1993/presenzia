@@ -60,7 +60,7 @@ function ScoreCard() {
             }}>GRADE F</span>
           </div>
           <p style={{ color: TXT2, fontSize: '0.75rem', lineHeight: 1.6, margin: '0 0 0.6rem' }}>
-            Found in only 7 of 120 AI searches across 4 platforms. Your firm is nearly invisible to AI-powered search — most prospective clients asking AI for a financial advisor will never see your name.
+            Found in only 7 of 120 AI searches across 4 platforms. Your firm is nearly invisible to AI-powered search. Most prospective clients asking AI for a financial advisor will never see your name.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <TrendingDown size={12} style={{ color: RED }} />
@@ -168,7 +168,7 @@ function PlatformCard() {
       status: 'Not mentioned',
       statusColor: RED,
       topCompetitor: 'Sterling Financial Planning appeared in 22/30',
-      detail: 'Zero presence. GPT relies on structured web data — your site lacks FinancialService schema markup and structured FAQ content.',
+      detail: 'Zero presence. GPT relies on structured web data, and your site lacks FinancialService schema markup and structured FAQ content.',
     },
     {
       name: 'Perplexity',
@@ -285,7 +285,7 @@ function PromptsCard() {
         <Search size={14} style={{ color: GOLD }} />
       </div>
       <div style={{ fontSize: '0.65rem', color: MUTED, marginBottom: '1rem', lineHeight: 1.5 }}>
-        We tested 120 wealth-specific search prompts real clients might use. Here are 6 key results — the full audit includes all 120.
+        We tested 120 wealth-specific search prompts real clients might use. Here are 6 key results. The full audit includes all 120.
       </div>
 
       {/* Column headers */}
@@ -356,7 +356,7 @@ function PromptsCard() {
           </span>
         </div>
         <span style={{ fontSize: '0.65rem', color: RED, fontWeight: 600 }}>
-          91.25% of searches — not found
+          91.25% of searches: not found
         </span>
       </div>
     </div>
@@ -372,9 +372,9 @@ function ActionPlanCard() {
       labelColor: RED,
       timeframe: 'Week 1–2',
       items: [
-        { title: 'Add FinancialService schema markup to your website', impact: 'High', desc: 'Implement structured data (JSON-LD) using the FinancialService schema type. Include firm name, address, services offered, FCA number, and qualifications. Sterling Financial Planning does this — that\u2019s why they appear in 22/30 ChatGPT searches.' },
+        { title: 'Add FinancialService schema markup to your website', impact: 'High', desc: 'Implement structured data (JSON-LD) using the FinancialService schema type. Include firm name, address, services offered, FCA number, and qualifications. Sterling Financial Planning already does this, which is why they appear in 22/30 ChatGPT searches.' },
         { title: 'Optimise your Google Business Profile', impact: 'High', desc: 'Your profile is missing a detailed description and has only 3 reviews. Add a 200+ word description mentioning "financial advisor Guildford", upload professional team photos, and request reviews from satisfied clients. Aim for 20+ reviews.' },
-        { title: 'Ensure consistent listings on VouchedFor, Unbiased & FTAdviser', impact: 'Medium', desc: 'Perplexity cited VouchedFor as a source in 12 of 30 responses. Meridian Wealth has 38 VouchedFor reviews — Claude cited them in 14/30 searches because of review authority.' },
+        { title: 'Ensure consistent listings on VouchedFor, Unbiased & FTAdviser', impact: 'Medium', desc: 'Perplexity cited VouchedFor as a source in 12 of 30 responses. Meridian Wealth has 38 VouchedFor reviews, and Claude cited them in 14/30 searches because of review authority.' },
       ],
     },
     {
@@ -395,7 +395,7 @@ function ActionPlanCard() {
       labelColor: GREEN,
       timeframe: 'Ongoing',
       items: [
-        { title: 'Build review presence on VouchedFor and Google', impact: 'Medium', desc: 'You have 3 Google reviews (avg 4.5\u2605). Meridian Wealth has 38 VouchedFor reviews (avg 4.8\u2605). AI platforms weight review volume and recency — aim for 20+ reviews within 3 months. Implement a systematic review request process.' },
+        { title: 'Build review presence on VouchedFor and Google', impact: 'Medium', desc: 'You have 3 Google reviews (avg 4.5\u2605). Meridian Wealth has 38 VouchedFor reviews (avg 4.8\u2605). AI platforms weight review volume and recency. Aim for 20+ reviews within 3 months. Implement a systematic review request process.' },
         { title: 'Publish monthly thought leadership on your website blog', impact: 'Medium', desc: 'Your last blog post is from 2024. AI models deprioritise stale websites. A 600+ word monthly article on topics like "pension transfer considerations" or "inheritance tax planning strategies" signals ongoing authority.' },
       ],
     },
