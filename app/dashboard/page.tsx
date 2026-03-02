@@ -1589,14 +1589,16 @@ export default function DashboardPage() {
                         Report date: <span style={{ color: '#F5F0E8', fontWeight: 500 }}>{fmt(latestJob.completed_at)}</span>
                       </span>
                     </div>
-                    {isGrowthOrAbove && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <div style={{ width: '5px', height: '5px', background: TIER_COLORS[client?.plan || 'audit'], borderRadius: '50%', flexShrink: 0, animation: 'pulse 2s infinite' }} />
-                        <span style={{ fontSize: '0.78rem', color: '#999' }}>
-                          Next update: <span style={{ color: TIER_COLORS[client?.plan || 'audit'], fontWeight: 600 }}>{getNextAuditDate(latestJob.completed_at, client?.plan)}</span>
-                        </span>
-                      </div>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <div style={{ width: '5px', height: '5px', background: TIER_COLORS[client?.plan || 'audit'], borderRadius: '50%', flexShrink: 0, animation: isGrowthOrAbove ? 'pulse 2s infinite' : 'none' }} />
+                      <span style={{ fontSize: '0.78rem', color: '#999' }}>
+                        {isGrowthOrAbove ? (
+                          <>Next audit: <span style={{ color: TIER_COLORS[client?.plan || 'audit'], fontWeight: 600 }}>{getNextAuditDate(latestJob.completed_at, client?.plan)}</span></>
+                        ) : (
+                          <>Next audit: <Link href="/pricing" style={{ color: TIER_COLORS[client?.plan || 'audit'], fontWeight: 600, textDecoration: 'none' }}>Upgrade for recurring audits →</Link></>
+                        )}
+                      </span>
+                    </div>
                   </div>
                   <span style={{
                     fontSize: '0.6rem',
@@ -1665,23 +1667,6 @@ export default function DashboardPage() {
                 </div>
               )}
 
-              {/* Next audit date — Growth/Premium only */}
-              {isGrowthOrAbove && latestJob.completed_at && (
-                <div style={{
-                  marginTop: '0.75rem',
-                  padding: '0.75rem 1rem',
-                  background: `${TIER_COLORS[client?.plan || 'audit']}0A`,
-                  border: `1px solid ${TIER_COLORS[client?.plan || 'audit']}20`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                }}>
-                  <div style={{ width: '5px', height: '5px', background: TIER_COLORS[client?.plan || 'audit'], borderRadius: '50%', flexShrink: 0 }} />
-                  <span style={{ fontSize: '0.78rem', color: '#999' }}>
-                    Next audit: <span style={{ color: TIER_COLORS[client?.plan || 'audit'], fontWeight: 600 }}>{getNextAuditDate(latestJob.completed_at, client?.plan)}</span>
-                  </span>
-                </div>
-              )}
 
               {/* Audit tier: re-purchase + upsell options */}
               {isAuditTier && client?.status !== 'cancelled' && (
