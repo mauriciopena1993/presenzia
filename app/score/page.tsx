@@ -68,24 +68,55 @@ function getActionItems(score: number, specialty: string): Array<{ title: string
   return items.slice(0, 6);
 }
 
+const STORAGE_KEY = 'presenzia_score_state';
+
+function saveState(state: Record<string, unknown>) {
+  try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+}
+
+function loadState(): Record<string, unknown> | null {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
 export default function ScorePage() {
-  const [step, setStep] = useState<Step>('form');
-  const [firmName, setFirmName] = useState('');
-  const [coverageType, setCoverageType] = useState('');
-  const [locations, setLocations] = useState('');
-  const [specialties, setSpecialties] = useState<string[]>([]);
-  const [targetClient, setTargetClient] = useState('');
-  const [website, setWebsite] = useState('');
-  const [firmDescription, setFirmDescription] = useState('');
-  const [additionalContext, setAdditionalContext] = useState('');
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [result, setResult] = useState<ScoreResult | null>(null);
+  const saved = useRef(loadState());
+  const [step, setStep] = useState<Step>(() => {
+    const s = saved.current;
+    if (!s) return 'form';
+    // Restore to results if they had results, to email if score was ready, otherwise form
+    if (s.step === 'results' && s.result) return 'results';
+    if ((s.step === 'email' || s.step === 'results') && s.result) return 'email';
+    return 'form';
+  });
+  const [firmName, setFirmName] = useState(() => (saved.current?.firmName as string) || '');
+  const [coverageType, setCoverageType] = useState(() => (saved.current?.coverageType as string) || '');
+  const [locations, setLocations] = useState(() => (saved.current?.locations as string) || '');
+  const [specialties, setSpecialties] = useState<string[]>(() => (saved.current?.specialties as string[]) || []);
+  const [targetClient, setTargetClient] = useState(() => (saved.current?.targetClient as string) || '');
+  const [website, setWebsite] = useState(() => (saved.current?.website as string) || '');
+  const [firmDescription, setFirmDescription] = useState(() => (saved.current?.firmDescription as string) || '');
+  const [additionalContext, setAdditionalContext] = useState(() => (saved.current?.additionalContext as string) || '');
+  const [email, setEmail] = useState(() => (saved.current?.email as string) || '');
+  const [name, setName] = useState(() => (saved.current?.name as string) || '');
+  const [result, setResult] = useState<ScoreResult | null>(() => (saved.current?.result as ScoreResult) || null);
   const [error, setError] = useState('');
   const [loadingStage, setLoadingStage] = useState(0);
   const [loadingPercent, setLoadingPercent] = useState(0);
   const resultReady = useRef(false);
   const minTimeReached = useRef(false);
+
+  // Persist state to sessionStorage on meaningful changes
+  useEffect(() => {
+    if (step === 'loading') return; // don't save transient loading state
+    saveState({
+      step, firmName, coverageType, locations, specialties,
+      targetClient, website, firmDescription, additionalContext,
+      email, name, result,
+    });
+  }, [step, firmName, coverageType, locations, specialties, targetClient, website, firmDescription, additionalContext, email, name, result]);
 
   const loadingStages = [
     { label: 'Connecting to ChatGPT...', status: 'in_progress' },
@@ -97,13 +128,15 @@ export default function ScorePage() {
     { label: 'Connecting to Google AI...', status: 'queued' },
     { label: 'Testing Google AI prompts...', status: 'queued' },
     { label: 'Analysing competitor mentions...', status: 'queued' },
+    { label: 'Building your action plan & strategy...', status: 'queued' },
     { label: 'Calculating your visibility score...', status: 'queued' },
+    { label: 'Compiling your results...', status: 'queued' },
   ];
 
   useEffect(() => {
     if (step !== 'loading') return;
 
-    const timings = [0, 1500, 3000, 4500, 6000, 7500, 9000, 10500, 12500, 14000];
+    const timings = [0, 1500, 3000, 4500, 6000, 7500, 9000, 10500, 12500, 14000, 15500, 17000];
     const timers = timings.map((delay, i) =>
       setTimeout(() => setLoadingStage(i), delay)
     );
@@ -114,7 +147,7 @@ export default function ScorePage() {
         if (prev >= 100) return 100;
         return prev + 1;
       });
-    }, 160);
+    }, 185);
 
     const minTimer = setTimeout(() => {
       minTimeReached.current = true;
@@ -122,7 +155,7 @@ export default function ScorePage() {
         setLoadingPercent(100);
         setTimeout(() => setStep('email'), 400);
       }
-    }, 16000);
+    }, 18500);
 
     return () => {
       timers.forEach(clearTimeout);
@@ -848,7 +881,7 @@ export default function ScorePage() {
             </Link>
 
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-              <Link href="/pricing" style={{ color: '#888', fontSize: '0.8rem', textDecoration: 'none' }}>
+              <Link href="/pricing" target="_blank" style={{ color: '#888', fontSize: '0.8rem', textDecoration: 'none' }}>
                 Or see all plans →
               </Link>
             </div>
