@@ -1163,6 +1163,7 @@ export default function DashboardPage() {
   const [cancelEndDate, setCancelEndDate] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showReauditChoice, setShowReauditChoice] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
@@ -1595,7 +1596,7 @@ export default function DashboardPage() {
                         {isGrowthOrAbove ? (
                           <>Next audit: <span style={{ color: TIER_COLORS[client?.plan || 'audit'], fontWeight: 600 }}>{getNextAuditDate(latestJob.completed_at, client?.plan)}</span></>
                         ) : (
-                          <>Next audit: <Link href="/pricing" style={{ color: TIER_COLORS[client?.plan || 'audit'], fontWeight: 600, textDecoration: 'none' }}>Upgrade for recurring audits →</Link></>
+                          <>Next audit: <button onClick={() => setShowReauditChoice(v => !v)} style={{ background: 'none', border: 'none', padding: 0, color: TIER_COLORS[client?.plan || 'audit'], fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px' }}>Run another audit →</button></>
                         )}
                       </span>
                     </div>
@@ -1612,6 +1613,88 @@ export default function DashboardPage() {
                   }}>
                     {getUpdateFrequencyLabel(client?.plan)}
                   </span>
+                </div>
+              )}
+
+              {/* Re-audit choice — audit tier only, toggled from report date bar */}
+              {showReauditChoice && isAuditTier && client && (
+                <div style={{
+                  padding: '1.25rem 1.5rem',
+                  background: '#0D0D0D',
+                  border: '1px solid rgba(201,168,76,0.2)',
+                  marginBottom: '1.25rem',
+                  display: 'flex',
+                  gap: '1rem',
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                }}>
+                  <div style={{ flex: 1, minWidth: '200px' }}>
+                    <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.35rem' }}>
+                      Ready for a fresh audit?
+                    </div>
+                    <p style={{ fontSize: '0.8rem', color: '#999', margin: 0, lineHeight: 1.5 }}>
+                      Your AI visibility changes over time. Get updated results or upgrade for automatic recurring audits.
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    <button
+                      onClick={async () => {
+                        setActionLoading(true);
+                        try {
+                          const res = await fetch('/api/checkout', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              plan: 'audit',
+                              email: client.email,
+                              business_name: client.business_name || '',
+                              business_type: client.business_type || '',
+                              location: client.location || '',
+                              website: client.website || '',
+                            }),
+                          });
+                          const data = await res.json();
+                          if (data.url) window.location.href = data.url;
+                          else alert('Something went wrong. Please contact hello@presenzia.ai');
+                        } catch {
+                          alert('Something went wrong. Please contact hello@presenzia.ai');
+                        } finally {
+                          setActionLoading(false);
+                        }
+                      }}
+                      disabled={actionLoading}
+                      style={{
+                        padding: '0.5rem 1.25rem',
+                        background: 'transparent',
+                        color: '#C9A84C',
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        border: '1px solid rgba(201,168,76,0.4)',
+                        cursor: actionLoading ? 'wait' : 'pointer',
+                        fontFamily: 'inherit',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {actionLoading ? 'Processing...' : 'Buy another audit — £297'}
+                    </button>
+                    <button
+                      onClick={() => handleChangePlan('growth')}
+                      disabled={actionLoading}
+                      style={{
+                        padding: '0.5rem 1.25rem',
+                        background: '#5BA88C',
+                        color: '#0A0A0A',
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        border: 'none',
+                        cursor: actionLoading ? 'wait' : 'pointer',
+                        fontFamily: 'inherit',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      Upgrade to Growth — £697/mo →
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -1909,7 +1992,7 @@ export default function DashboardPage() {
                           textTransform: 'uppercase',
                           padding: '3px 10px',
                         }}>
-                          Your plan
+                          {(plan === 'audit' || plan === 'starter') ? 'Last purchased' : 'Your plan'}
                         </div>
                       )}
                       <div style={{ marginBottom: '0.5rem' }}>
@@ -1933,9 +2016,42 @@ export default function DashboardPage() {
                         ))}
                       </ul>
                       {isCurrent ? (
-                        <div style={{ padding: '0.5rem 1.25rem', fontSize: '0.8rem', fontWeight: 600, textAlign: 'center', color: tierColor, border: `1px solid ${tierColor}30`, background: `${tierColor}08` }}>
-                          Current plan
-                        </div>
+                        (plan === 'audit' || plan === 'starter') ? (
+                          <button
+                            onClick={async () => {
+                              setActionLoading(true);
+                              try {
+                                const res = await fetch('/api/checkout', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({
+                                    plan: 'audit',
+                                    email: client.email,
+                                    business_name: client.business_name || '',
+                                    business_type: client.business_type || '',
+                                    location: client.location || '',
+                                    website: client.website || '',
+                                  }),
+                                });
+                                const data = await res.json();
+                                if (data.url) window.location.href = data.url;
+                                else alert('Something went wrong. Please contact hello@presenzia.ai');
+                              } catch {
+                                alert('Something went wrong. Please contact hello@presenzia.ai');
+                              } finally {
+                                setActionLoading(false);
+                              }
+                            }}
+                            disabled={actionLoading}
+                            style={{ background: tierColor, color: '#0A0A0A', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', width: '100%' }}
+                          >
+                            {actionLoading ? 'Processing...' : 'Run another audit →'}
+                          </button>
+                        ) : (
+                          <div style={{ padding: '0.5rem 1.25rem', fontSize: '0.8rem', fontWeight: 600, textAlign: 'center', color: tierColor, border: `1px solid ${tierColor}30`, background: `${tierColor}08` }}>
+                            Current plan
+                          </div>
+                        )
                       ) : isUpgrade ? (
                         <button
                           onClick={() => handleChangePlan(plan)}
