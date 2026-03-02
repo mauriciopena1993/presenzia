@@ -1167,12 +1167,10 @@ export default function DashboardPage() {
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
-    // Detect post-checkout redirect (?upgraded=plan)
     const params = new URLSearchParams(window.location.search);
     const upgradedPlan = params.get('upgraded');
-    if (upgradedPlan && PLAN_LABELS[upgradedPlan]) {
-      setCongratsPlan(upgradedPlan);
-      // Clean up URL
+    // Clean up URL immediately — don't show ?upgraded= on reload
+    if (upgradedPlan) {
       window.history.replaceState({}, '', '/dashboard');
     }
 
@@ -1195,6 +1193,12 @@ export default function DashboardPage() {
       setPendingJob(meData.pendingJob || null);
       setHistory(histData.reports || []);
       setLoading(false);
+
+      // Only show congrats if the plan in the DB actually matches the upgrade
+      // (webhook must have processed the payment first)
+      if (upgradedPlan && PLAN_LABELS[upgradedPlan] && meData.client?.plan === upgradedPlan) {
+        setCongratsPlan(upgradedPlan);
+      }
     };
 
     load();
@@ -1959,126 +1963,149 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* Plan options — always visible, all 3 plans, current highlighted with tier color */}
+          {/* Plan options */}
           {client && (
             <div id="plan-options" style={{ marginBottom: '2rem' }}>
-              <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Your plan</div>
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                {PLAN_ORDER.map(plan => {
-                  const isCurrent = plan === client.plan || (plan === 'audit' && client.plan === 'starter');
-                  const isUpgrade = PLAN_ORDER.indexOf(plan) > PLAN_ORDER.indexOf(client.plan);
-                  const tierColor = TIER_COLORS[plan] || '#C9A84C';
-                  return (
-                    <div key={plan} style={{
-                      flex: 1,
-                      minWidth: 'min(260px, 100%)',
-                      padding: '1.25rem',
-                      background: isCurrent ? `${tierColor}08` : '#0A0A0A',
-                      borderTop: isCurrent ? `3px solid ${tierColor}` : '3px solid transparent',
-                      border: isCurrent ? `1px solid ${tierColor}40` : '1px solid #1a1a1a',
-                      borderTopWidth: '3px',
-                      position: 'relative',
-                    }}>
-                      {isCurrent && (
-                        <div style={{
-                          position: 'absolute',
-                          top: '-1px',
-                          right: '1rem',
-                          background: tierColor,
-                          color: '#0A0A0A',
-                          fontSize: '0.6rem',
-                          fontWeight: 700,
-                          letterSpacing: '0.1em',
-                          textTransform: 'uppercase',
-                          padding: '3px 10px',
+              {/* Audit tier: show subscription plans to upgrade to */}
+              {isAuditTier ? (
+                <>
+                  <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Subscription plans</div>
+                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                    {['growth', 'premium'].map(plan => {
+                      const tierColor = TIER_COLORS[plan] || '#C9A84C';
+                      return (
+                        <div key={plan} style={{
+                          flex: 1,
+                          minWidth: 'min(280px, 100%)',
+                          padding: '1.25rem',
+                          background: '#0A0A0A',
+                          border: '1px solid #1a1a1a',
+                          borderTop: `3px solid ${tierColor}`,
                         }}>
-                          {(plan === 'audit' || plan === 'starter') ? 'Last purchased' : 'Your plan'}
-                        </div>
-                      )}
-                      <div style={{ marginBottom: '0.5rem' }}>
-                        <div style={{ fontSize: '0.95rem', color: isCurrent ? '#F5F0E8' : '#AAAAAA', fontWeight: 600 }}>
-                          {PLAN_LABELS[plan]}
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem', marginTop: '0.25rem' }}>
-                          <span style={{ fontSize: '1.5rem', fontWeight: 700, color: isCurrent ? tierColor : '#888', fontFamily: "var(--font-playfair, 'Playfair Display', serif)" }}>
-                            {PLAN_PRICES[plan]}
-                          </span>
-                          <span style={{ fontSize: '0.75rem', color: '#666' }}>
-                            {PLAN_PRICE_SUFFIX[plan]}
-                          </span>
-                        </div>
-                      </div>
-                      <ul style={{ margin: '0.75rem 0 1.25rem', padding: '0 0 0 1rem', fontSize: '0.8rem', color: isCurrent ? '#BBBBBB' : '#888', lineHeight: 1.7 }}>
-                        {PLAN_FEATURES[plan]?.map((f, i) => (
-                          <li key={i} style={{ marginBottom: '2px' }}>
-                            <span style={{ color: isCurrent ? tierColor : '#555', marginRight: '2px' }}></span>{f}
-                          </li>
-                        ))}
-                      </ul>
-                      {isCurrent ? (
-                        (plan === 'audit' || plan === 'starter') ? (
-                          <button
-                            onClick={async () => {
-                              setActionLoading(true);
-                              try {
-                                const res = await fetch('/api/checkout', {
-                                  method: 'POST',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({
-                                    plan: 'audit',
-                                    email: client.email,
-                                    business_name: client.business_name || '',
-                                    business_type: client.business_type || '',
-                                    location: client.location || '',
-                                    website: client.website || '',
-                                  }),
-                                });
-                                const data = await res.json();
-                                if (data.url) window.location.href = data.url;
-                                else alert('Something went wrong. Please contact hello@presenzia.ai');
-                              } catch {
-                                alert('Something went wrong. Please contact hello@presenzia.ai');
-                              } finally {
-                                setActionLoading(false);
-                              }
-                            }}
-                            disabled={actionLoading}
-                            style={{ background: tierColor, color: '#0A0A0A', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', width: '100%' }}
-                          >
-                            {actionLoading ? 'Processing...' : 'Run another audit →'}
-                          </button>
-                        ) : (
-                          <div style={{ padding: '0.5rem 1.25rem', fontSize: '0.8rem', fontWeight: 600, textAlign: 'center', color: tierColor, border: `1px solid ${tierColor}30`, background: `${tierColor}08` }}>
-                            Current plan
+                          <div style={{ marginBottom: '0.5rem' }}>
+                            <div style={{ fontSize: '0.95rem', color: '#AAAAAA', fontWeight: 600 }}>
+                              {PLAN_LABELS[plan]}
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem', marginTop: '0.25rem' }}>
+                              <span style={{ fontSize: '1.5rem', fontWeight: 700, color: '#888', fontFamily: "var(--font-playfair, 'Playfair Display', serif)" }}>
+                                {PLAN_PRICES[plan]}
+                              </span>
+                              <span style={{ fontSize: '0.75rem', color: '#666' }}>
+                                {PLAN_PRICE_SUFFIX[plan]}
+                              </span>
+                            </div>
                           </div>
-                        )
-                      ) : isUpgrade ? (
-                        <button
-                          onClick={() => handleChangePlan(plan)}
-                          disabled={actionLoading}
-                          style={{ background: tierColor, color: '#0A0A0A', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', width: '100%' }}
-                        >
-                          {actionLoading ? 'Processing...' : `Upgrade to ${PLAN_LABELS[plan]} →`}
-                        </button>
-                      ) : (
-                        <>
+                          <ul style={{ margin: '0.75rem 0 1.25rem', padding: '0 0 0 1rem', fontSize: '0.8rem', color: '#888', lineHeight: 1.7 }}>
+                            {PLAN_FEATURES[plan]?.map((f, i) => (
+                              <li key={i} style={{ marginBottom: '2px' }}>
+                                <span style={{ color: '#555', marginRight: '2px' }}></span>{f}
+                              </li>
+                            ))}
+                          </ul>
                           <button
                             onClick={() => handleChangePlan(plan)}
                             disabled={actionLoading}
-                            style={{ background: 'transparent', color: '#888', border: '1px solid #333', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 500, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', width: '100%' }}
+                            style={{ background: tierColor, color: '#0A0A0A', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', width: '100%' }}
                           >
-                            {actionLoading ? 'Processing...' : `Downgrade to ${PLAN_LABELS[plan]}`}
+                            {actionLoading ? 'Processing...' : `Upgrade to ${PLAN_LABELS[plan]} →`}
                           </button>
-                          <p style={{ fontSize: '0.7rem', color: '#555', marginTop: '4px', textAlign: 'center' }}>Takes effect at end of billing cycle</p>
-                        </>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-              <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.5rem' }}>
-                Upgrades are instant — you only pay the difference. Downgrades take effect at the end of your billing cycle.
-              </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.75rem' }}>
+                    Subscriptions include automatic recurring audits and an always-up-to-date dashboard.
+                  </p>
+                </>
+              ) : (
+                <>
+                  {/* Growth/Premium: show all 3 plan cards with current highlighted */}
+                  <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Your plan</div>
+                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                    {['growth', 'premium'].map(plan => {
+                      const isCurrent = plan === client.plan;
+                      const isUpgrade = PLAN_ORDER.indexOf(plan) > PLAN_ORDER.indexOf(client.plan);
+                      const tierColor = TIER_COLORS[plan] || '#C9A84C';
+                      return (
+                        <div key={plan} style={{
+                          flex: 1,
+                          minWidth: 'min(280px, 100%)',
+                          padding: '1.25rem',
+                          background: isCurrent ? `${tierColor}08` : '#0A0A0A',
+                          borderTop: isCurrent ? `3px solid ${tierColor}` : '3px solid transparent',
+                          border: isCurrent ? `1px solid ${tierColor}40` : '1px solid #1a1a1a',
+                          borderTopWidth: '3px',
+                          position: 'relative',
+                        }}>
+                          {isCurrent && (
+                            <div style={{
+                              position: 'absolute',
+                              top: '-1px',
+                              right: '1rem',
+                              background: tierColor,
+                              color: '#0A0A0A',
+                              fontSize: '0.6rem',
+                              fontWeight: 700,
+                              letterSpacing: '0.1em',
+                              textTransform: 'uppercase',
+                              padding: '3px 10px',
+                            }}>
+                              Your plan
+                            </div>
+                          )}
+                          <div style={{ marginBottom: '0.5rem' }}>
+                            <div style={{ fontSize: '0.95rem', color: isCurrent ? '#F5F0E8' : '#AAAAAA', fontWeight: 600 }}>
+                              {PLAN_LABELS[plan]}
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem', marginTop: '0.25rem' }}>
+                              <span style={{ fontSize: '1.5rem', fontWeight: 700, color: isCurrent ? tierColor : '#888', fontFamily: "var(--font-playfair, 'Playfair Display', serif)" }}>
+                                {PLAN_PRICES[plan]}
+                              </span>
+                              <span style={{ fontSize: '0.75rem', color: '#666' }}>
+                                {PLAN_PRICE_SUFFIX[plan]}
+                              </span>
+                            </div>
+                          </div>
+                          <ul style={{ margin: '0.75rem 0 1.25rem', padding: '0 0 0 1rem', fontSize: '0.8rem', color: isCurrent ? '#BBBBBB' : '#888', lineHeight: 1.7 }}>
+                            {PLAN_FEATURES[plan]?.map((f, i) => (
+                              <li key={i} style={{ marginBottom: '2px' }}>
+                                <span style={{ color: isCurrent ? tierColor : '#555', marginRight: '2px' }}></span>{f}
+                              </li>
+                            ))}
+                          </ul>
+                          {isCurrent ? (
+                            <div style={{ padding: '0.5rem 1.25rem', fontSize: '0.8rem', fontWeight: 600, textAlign: 'center', color: tierColor, border: `1px solid ${tierColor}30`, background: `${tierColor}08` }}>
+                              Current plan
+                            </div>
+                          ) : isUpgrade ? (
+                            <button
+                              onClick={() => handleChangePlan(plan)}
+                              disabled={actionLoading}
+                              style={{ background: tierColor, color: '#0A0A0A', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', width: '100%' }}
+                            >
+                              {actionLoading ? 'Processing...' : `Upgrade to ${PLAN_LABELS[plan]} →`}
+                            </button>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => handleChangePlan(plan)}
+                                disabled={actionLoading}
+                                style={{ background: 'transparent', color: '#888', border: '1px solid #333', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 500, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', width: '100%' }}
+                              >
+                                {actionLoading ? 'Processing...' : `Downgrade to ${PLAN_LABELS[plan]}`}
+                              </button>
+                              <p style={{ fontSize: '0.7rem', color: '#555', marginTop: '4px', textAlign: 'center' }}>Takes effect at end of billing cycle</p>
+                            </>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.5rem' }}>
+                    Upgrades are instant — you only pay the difference. Downgrades take effect at the end of your billing cycle.
+                  </p>
+                </>
+              )}
             </div>
           )}
 

@@ -88,9 +88,9 @@ export async function POST(req: NextRequest) {
     .eq('email', email)
     .single();
 
-  // Always return ok to avoid email enumeration
-  if (!client || client.status !== 'active') {
-    return NextResponse.json({ ok: true, type: 'client' });
+  // No account found — tell the user so they can sign up
+  if (!client) {
+    return NextResponse.json({ error: 'no_account' }, { status: 404 });
   }
 
   // Reuse existing valid challenge if same email (so resend doesn't invalidate first code)

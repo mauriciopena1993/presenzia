@@ -264,6 +264,7 @@ export async function POST(req: NextRequest) {
       const prorationAmount = Math.max(preview.amount_due, 0);
 
       if (prorationAmount > 0) {
+        // Charge required — go through Stripe Checkout
         const session = await stripe.checkout.sessions.create({
           customer: client.stripe_customer_id,
           mode: 'payment',
@@ -314,12 +315,15 @@ export async function POST(req: NextRequest) {
           immediate: false,
         });
       } else {
-        // No extra charge needed — apply immediately
+        // No extra charge — apply upgrade immediately via Stripe
+        // (still goes through Stripe subscription update, not just DB)
         await stripe.subscriptions.update(client.stripe_subscription_id, {
           items: [{ id: subscriptionItem.id, price: plan.priceId }],
           proration_behavior: 'none',
           metadata: { plan: targetPlan },
         });
+        // DB update happens via customer.subscription.updated webhook
+        // but we also update here to avoid delay for the user
         await supabase
           .from('clients')
           .update({ plan: targetPlan, pending_plan_change: null, pending_change_date: null, status: 'active' })

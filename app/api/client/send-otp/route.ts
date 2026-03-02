@@ -13,16 +13,16 @@ export async function POST(req: NextRequest) {
 
   const normalizedEmail = email.trim().toLowerCase();
 
-  // Check client exists with active subscription
+  // Check client exists
   const { data: client } = await supabase
     .from('clients')
     .select('id, status, business_name')
     .eq('email', normalizedEmail)
     .single();
 
-  // Always return ok to avoid leaking whether an email is registered
-  if (!client || client.status !== 'active') {
-    return NextResponse.json({ ok: true });
+  // If client doesn't exist, tell them — no security risk for B2B audit tool
+  if (!client) {
+    return NextResponse.json({ error: 'no_account', message: 'No account found with this email. Get your free AI visibility score to get started.' }, { status: 404 });
   }
 
   // If a valid challenge already exists for this email, reuse it (resend same code).

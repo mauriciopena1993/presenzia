@@ -45,6 +45,10 @@ export default function LoginPage() {
 
       const data = await res.json();
       if (!res.ok) {
+        if (data.error === 'no_account') {
+          setError('No account found with this email.');
+          return;
+        }
         setError('Something went wrong. Please try again.');
         return;
       }
@@ -181,6 +185,13 @@ export default function LoginPage() {
               {error && (
                 <div style={{ padding: '0.75rem 1rem', background: '#1a0a0a', border: '1px solid #5a1a1a', color: '#ff8888', fontSize: '0.875rem' }}>
                   {error}
+                  {error.includes('No account') && (
+                    <div style={{ marginTop: '0.5rem' }}>
+                      <Link href="/score" style={{ color: '#C9A84C', textDecoration: 'none', fontWeight: 600 }}>
+                        Get your free AI visibility score →
+                      </Link>
+                    </div>
+                  )}
                 </div>
               )}
 
