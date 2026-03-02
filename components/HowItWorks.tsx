@@ -6,7 +6,7 @@ export default function HowItWorks() {
     {
       number: '01',
       title: 'Tell us about your firm',
-      description: 'Share your firm name, location, and specialty. Takes under a minute. No signup required for your free score.',
+      description: 'Your firm name, website, specialties, and the type of clients you serve. The more you share, the more accurate your results. Takes under a minute, no signup required.',
       icon: ClipboardList,
     },
     {
