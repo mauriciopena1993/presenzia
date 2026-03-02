@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+// ── System prompt for all AI platforms ──
+const SYSTEM_PROMPT =
+  'You are a UK financial services expert. When asked about financial advisors, wealth managers, or financial planners, always respond with a numbered list of specific, real companies or firms by name. Name at least 5-8 specific firms that actually exist. Include well-known national firms and relevant local/regional firms. Be concrete and specific — never give generic advice without naming real firms. If you are unsure about a specific area, name the most prominent UK-wide firms you know.';
+
 // ── Prompt templates ──
 
 // Location-based prompts (used for local, multi, regional)
@@ -244,7 +248,8 @@ function buildPrompts(
   return prompts;
 }
 
-// Query ChatGPT
+// ── AI Platform Queriers ──
+
 async function queryChatGPT(prompt: string): Promise<string> {
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -255,10 +260,10 @@ async function queryChatGPT(prompt: string): Promise<string> {
     body: JSON.stringify({
       model: 'gpt-4o-mini',
       messages: [
-        { role: 'system', content: 'You are a helpful assistant. When asked about financial advisors or wealth managers, provide specific recommendations with firm names if you know any.' },
+        { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: prompt },
       ],
-      max_tokens: 500,
+      max_tokens: 800,
       temperature: 0.3,
     }),
   });
@@ -267,7 +272,6 @@ async function queryChatGPT(prompt: string): Promise<string> {
   return data.choices[0]?.message?.content || '';
 }
 
-// Query Claude
 async function queryClaude(prompt: string): Promise<string> {
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -278,7 +282,8 @@ async function queryClaude(prompt: string): Promise<string> {
     },
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 500,
+      system: SYSTEM_PROMPT,
+      max_tokens: 800,
       messages: [{ role: 'user', content: prompt }],
     }),
   });
@@ -287,30 +292,131 @@ async function queryClaude(prompt: string): Promise<string> {
   return data.content[0]?.text || '';
 }
 
+async function queryPerplexity(prompt: string): Promise<string> {
+  const response = await fetch('https://api.perplexity.ai/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: 'sonar',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 800,
+    }),
+  });
+  if (!response.ok) throw new Error(`Perplexity error: ${response.statusText}`);
+  const data = await response.json();
+  return data.choices[0]?.message?.content || '';
+}
+
+async function queryGoogleAI(prompt: string): Promise<string> {
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GOOGLE_AI_API_KEY}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: `${SYSTEM_PROMPT}\n\n${prompt}` }] }],
+        generationConfig: { maxOutputTokens: 800, temperature: 0.3 },
+      }),
+    }
+  );
+  if (!response.ok) throw new Error(`Google AI error: ${response.statusText}`);
+  const data = await response.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+}
+
+// ── Mention Detection ──
+
+// Strip common suffixes from firm names to improve matching
+function cleanFirmName(name: string): string {
+  return name
+    .replace(/\.(com|co\.uk|ai|org|net|io)$/i, '')
+    .replace(/\b(ltd|limited|llp|plc|group|inc|corp)\b/gi, '')
+    .replace(/\s+&\s+co\b/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Extract domain name (without TLD) from a website URL
+function extractDomainName(website: string): string {
+  const domain = website
+    .replace(/^https?:\/\//, '')
+    .replace(/^www\./, '')
+    .split('/')[0]
+    .toLowerCase();
+  // Remove TLD: "coutts.com" → "coutts", "novawm.co.uk" → "novawm"
+  return domain.replace(/\.(com|co\.uk|org\.uk|ai|org|net|io|uk)$/i, '').trim();
+}
+
+function getPosition(index: number, totalLength: number): 'first' | 'prominent' | 'mentioned' {
+  const firstThird = totalLength / 3;
+  if (index < firstThird) return 'first';
+  if (index < firstThird * 2) return 'prominent';
+  return 'mentioned';
+}
+
 function checkMention(response: string, firmName: string, website?: string): { mentioned: boolean; position: 'first' | 'prominent' | 'mentioned' | null } {
   const responseLower = response.toLowerCase();
-  const firmLower = firmName.toLowerCase();
+  const cleaned = cleanFirmName(firmName).toLowerCase();
 
-  // Check for firm name match
-  if (responseLower.includes(firmLower)) {
+  // 1. Exact match on cleaned firm name
+  if (cleaned && responseLower.includes(cleaned)) {
+    const index = responseLower.indexOf(cleaned);
+    return { mentioned: true, position: getPosition(index, response.length) };
+  }
+
+  // 2. Original firm name (in case cleaning removed too much)
+  const firmLower = firmName.toLowerCase().trim();
+  if (firmLower !== cleaned && responseLower.includes(firmLower)) {
     const index = responseLower.indexOf(firmLower);
-    const firstThird = response.length / 3;
-    if (index < firstThird) return { mentioned: true, position: 'first' };
-    if (index < firstThird * 2) return { mentioned: true, position: 'prominent' };
-    return { mentioned: true, position: 'mentioned' };
+    return { mentioned: true, position: getPosition(index, response.length) };
   }
 
-  // Check partial match (firm name words)
-  const firmWords = firmLower.split(' ').filter(w => w.length > 3);
-  const matchCount = firmWords.filter(w => responseLower.includes(w)).length;
-  if (matchCount >= 2 && firmWords.length >= 2) {
-    return { mentioned: true, position: 'mentioned' };
+  // 3. Word-boundary match for each significant word (≥ 4 chars) from the cleaned name
+  const cleanedWords = cleaned.split(/\s+/).filter(w => w.length >= 4);
+  for (const word of cleanedWords) {
+    try {
+      const regex = new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+      const match = regex.exec(response);
+      if (match) {
+        return { mentioned: true, position: getPosition(match.index, response.length) };
+      }
+    } catch {
+      // Regex failed — fall through to next check
+    }
   }
 
-  // Check for website domain mention
+  // 4. Partial match: 2+ significant words from name found in response
+  if (cleanedWords.length >= 2) {
+    const matchCount = cleanedWords.filter(w => responseLower.includes(w)).length;
+    if (matchCount >= 2) {
+      return { mentioned: true, position: 'mentioned' };
+    }
+  }
+
+  // 5. Domain name (without TLD) word-boundary match
   if (website) {
-    const domain = website.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0].toLowerCase();
-    if (domain && responseLower.includes(domain)) {
+    const domainName = extractDomainName(website);
+    if (domainName && domainName.length >= 3) {
+      try {
+        const regex = new RegExp(`\\b${domainName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+        const match = regex.exec(response);
+        if (match) {
+          return { mentioned: true, position: getPosition(match.index, response.length) };
+        }
+      } catch {
+        // Fallback: simple includes
+        if (responseLower.includes(domainName)) {
+          return { mentioned: true, position: 'mentioned' };
+        }
+      }
+    }
+
+    // Also check for full domain mention (e.g. "coutts.com")
+    const fullDomain = website.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0].toLowerCase();
+    if (fullDomain && responseLower.includes(fullDomain)) {
       return { mentioned: true, position: 'mentioned' };
     }
   }
@@ -409,10 +515,20 @@ export async function POST(req: NextRequest) {
     // Build prompts
     const prompts = buildPrompts(coverageType, locations, specialties, targetClient);
 
-    // Run prompts across ChatGPT + Claude in parallel
+    // Run prompts across all available AI platforms in parallel
     const platforms: Array<{ name: string; querier: (p: string) => Promise<string>; weight: number }> = [];
-    if (process.env.OPENAI_API_KEY) platforms.push({ name: 'ChatGPT', querier: queryChatGPT, weight: 0.6 });
-    if (process.env.ANTHROPIC_API_KEY) platforms.push({ name: 'Claude', querier: queryClaude, weight: 0.4 });
+    if (process.env.OPENAI_API_KEY)     platforms.push({ name: 'ChatGPT',    querier: queryChatGPT,    weight: 0.35 });
+    if (process.env.ANTHROPIC_API_KEY)  platforms.push({ name: 'Claude',      querier: queryClaude,     weight: 0.15 });
+    if (process.env.PERPLEXITY_API_KEY) platforms.push({ name: 'Perplexity',  querier: queryPerplexity,  weight: 0.20 });
+    if (process.env.GOOGLE_AI_API_KEY)  platforms.push({ name: 'Google AI',   querier: queryGoogleAI,   weight: 0.30 });
+
+    // If only 2 platforms, rebalance weights
+    if (platforms.length === 2) {
+      const hasGPT = platforms.find(p => p.name === 'ChatGPT');
+      const hasClaude = platforms.find(p => p.name === 'Claude');
+      if (hasGPT) hasGPT.weight = 0.6;
+      if (hasClaude) hasClaude.weight = 0.4;
+    }
 
     if (platforms.length === 0) {
       return NextResponse.json({ error: 'AI platforms not configured' }, { status: 500 });
@@ -466,10 +582,11 @@ export async function POST(req: NextRequest) {
     // Calculate score
     let totalPoints = 0;
     let maxPoints = 0;
-    const platformWeights: Record<string, number> = { ChatGPT: 0.6, Claude: 0.4 };
+    const platformWeightMap: Record<string, number> = {};
+    for (const p of platforms) platformWeightMap[p.name] = p.weight;
 
     for (const result of allResults) {
-      const weight = platformWeights[result.platform] || 0.5;
+      const weight = platformWeightMap[result.platform] || 0.25;
       maxPoints += weight * 10;
 
       if (result.mentioned) {

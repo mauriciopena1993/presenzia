@@ -2,7 +2,9 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect, useRef } from 'react';
+
+const SCORE_STORAGE_KEY = 'presenzia_score_state';
 
 const FIRM_TYPES = [
   'Independent Financial Advisor (IFA)',
@@ -25,9 +27,34 @@ const planNames: Record<string, string> = {
   premium: 'Premium',
 };
 
+interface ScoreState {
+  firmName?: string;
+  website?: string;
+  locations?: string;
+  coverageType?: string;
+  specialties?: string[];
+  email?: string;
+  name?: string;
+  firmDescription?: string;
+  additionalContext?: string;
+  targetClient?: string;
+}
+
+function loadScoreState(): ScoreState | null {
+  try {
+    const raw = sessionStorage.getItem(SCORE_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
 function OnboardingForm() {
   const searchParams = useSearchParams();
   const plan = searchParams.get('plan') || 'audit';
+  const scoreState = useRef<ScoreState | null>(null);
+  const autoSubmitted = useRef(false);
+
+  // Load score state on mount (client-side only)
+  const [loaded, setLoaded] = useState(false);
 
   const [form, setForm] = useState({
     email: '',
@@ -41,6 +68,124 @@ function OnboardingForm() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  // On mount: read sessionStorage and pre-fill / auto-submit
+  useEffect(() => {
+    const saved = loadScoreState();
+    scoreState.current = saved;
+
+    if (saved) {
+      const keywords = (saved.specialties || []).join(', ');
+      // Infer firm type from specialties if possible
+      let inferredFirmType = 'Other';
+      const specs = saved.specialties || [];
+      if (specs.includes('Wealth Management')) inferredFirmType = 'Wealth Management Firm';
+      else if (specs.includes('Financial Planning')) inferredFirmType = 'Chartered Financial Planner';
+      else if (specs.includes('Retirement & Pensions')) inferredFirmType = 'Retirement Specialist';
+      else if (specs.includes('Inheritance & Estate Planning')) inferredFirmType = 'Estate & Inheritance Planning';
+      else if (specs.includes('Investment Management')) inferredFirmType = 'Discretionary Fund Manager';
+      else if (specs.includes('Corporate Financial Advisory')) inferredFirmType = 'Corporate Financial Advisor';
+
+      const preFilled = {
+        email: saved.email || '',
+        contactName: saved.name || '',
+        businessName: saved.firmName || '',
+        firmType: inferredFirmType,
+        description: saved.firmDescription || '',
+        location: saved.locations || '',
+        website: saved.website || '',
+        keywords,
+      };
+      setForm(preFilled);
+
+      // Check if we have enough to auto-submit
+      const keywordList = keywords.split(',').map(k => k.trim()).filter(Boolean);
+      const canAutoSubmit =
+        preFilled.businessName &&
+        preFilled.email &&
+        preFilled.location &&
+        keywordList.length >= 2;
+
+      if (canAutoSubmit && !autoSubmitted.current) {
+        autoSubmitted.current = true;
+        setSubmitting(true);
+        // Auto-submit after a brief render so user sees "Redirecting..."
+        setTimeout(() => doSubmit(preFilled), 100);
+        return;
+      }
+    }
+
+    setLoaded(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const doSubmit = async (formData: typeof form) => {
+    setSubmitting(true);
+    setError('');
+
+    try {
+      const keywordList = formData.keywords.split(',').map(k => k.trim()).filter(Boolean);
+      if (keywordList.length < 2) {
+        setError('Please add at least 2 keywords separated by commas. This is essential for an accurate audit.');
+        setSubmitting(false);
+        setLoaded(true);
+        return;
+      }
+
+      const fullWebsite = formData.website.trim() ? `https://${formData.website.trim()}` : '';
+
+      // Save lead for funnel tracking (fire-and-forget, never blocks checkout)
+      fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan,
+          email: formData.email,
+          contact_name: formData.contactName || null,
+          business_name: formData.businessName,
+          business_type: formData.firmType,
+          description: formData.description,
+          location: formData.location || null,
+          website: fullWebsite,
+          keywords: formData.keywords,
+        }),
+      }).catch(() => {});
+
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan,
+          email: formData.email,
+          business_name: formData.businessName,
+          business_type: formData.firmType,
+          description: formData.description,
+          location: formData.location,
+          website: fullWebsite,
+          keywords: formData.keywords,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setError(data.error || 'Something went wrong. Please try again or email hello@presenzia.ai');
+        setSubmitting(false);
+        setLoaded(true);
+      }
+    } catch {
+      setError('Network error. Please try again.');
+      setSubmitting(false);
+      setLoaded(true);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await doSubmit(form);
+  };
 
   if (!plan || !planNames[plan]) {
     return (
@@ -67,67 +212,57 @@ function OnboardingForm() {
     );
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setError('');
+  // Show redirecting screen while auto-submitting
+  if (submitting && !loaded) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: '#0A0A0A',
+        fontFamily: 'var(--font-inter, Inter, sans-serif)',
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
+        {/* Nav */}
+        <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1.25rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', color: '#F5F0E8', textDecoration: 'none' }}>
+            presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
+          </Link>
+        </div>
 
-    try {
-      // Validate keywords have at least 2 comma-separated terms
-      const keywordList = form.keywords.split(',').map(k => k.trim()).filter(Boolean);
-      if (keywordList.length < 2) {
-        setError('Please add at least 2 keywords separated by commas. This is essential for an accurate audit.');
-        setSubmitting(false);
-        return;
-      }
-
-      const fullWebsite = form.website.trim() ? `https://${form.website.trim()}` : '';
-
-      // Save lead for funnel tracking (fire-and-forget, never blocks checkout)
-      fetch('/api/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          plan,
-          email: form.email,
-          contact_name: form.contactName || null,
-          business_name: form.businessName,
-          business_type: form.firmType,
-          description: form.description,
-          location: form.location || null,
-          website: fullWebsite,
-          keywords: form.keywords,
-        }),
-      }).catch(() => {});
-
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          plan,
-          email: form.email,
-          business_name: form.businessName,
-          business_type: form.firmType,
-          description: form.description,
-          location: form.location,
-          website: fullWebsite,
-          keywords: form.keywords,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        setError(data.error || 'Something went wrong. Please try again or email hello@presenzia.ai');
-        setSubmitting(false);
-      }
-    } catch {
-      setError('Network error. Please try again.');
-      setSubmitting(false);
-    }
-  };
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+          <div style={{ textAlign: 'center', maxWidth: '400px' }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              border: '3px solid #1A1A1A',
+              borderTopColor: '#C9A84C',
+              animation: 'spin 1s linear infinite',
+              margin: '0 auto 1.5rem',
+            }} />
+            <h2 style={{
+              fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
+              fontSize: '1.5rem',
+              color: '#F5F0E8',
+              fontWeight: 600,
+              marginBottom: '0.75rem',
+            }}>
+              Redirecting to payment...
+            </h2>
+            <p style={{ color: '#999', fontSize: '0.9rem', lineHeight: 1.6 }}>
+              We already have your firm details from your free score. Taking you straight to checkout.
+            </p>
+            {error && (
+              <div style={{ padding: '0.75rem 1rem', background: '#1a0a0a', border: '1px solid #5a1a1a', color: '#ff8888', fontSize: '0.875rem', marginTop: '1rem' }}>
+                {error}
+              </div>
+            )}
+          </div>
+        </div>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
