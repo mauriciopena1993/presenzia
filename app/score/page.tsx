@@ -883,6 +883,26 @@ export default function ScorePage() {
           </div>
         )}
       </div>
+
+      {/* Footer */}
+      <footer style={{
+        borderTop: '1px solid #1A1A1A',
+        padding: '2rem 1.5rem',
+        maxWidth: '520px',
+        margin: '0 auto',
+        textAlign: 'center',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+          <Link href="/about" style={{ color: '#666', fontSize: '0.78rem', textDecoration: 'none' }}>About</Link>
+          <Link href="/pricing" style={{ color: '#666', fontSize: '0.78rem', textDecoration: 'none' }}>Pricing</Link>
+          <Link href="/privacy" style={{ color: '#666', fontSize: '0.78rem', textDecoration: 'none' }}>Privacy</Link>
+          <Link href="/terms" style={{ color: '#666', fontSize: '0.78rem', textDecoration: 'none' }}>Terms</Link>
+          <a href="mailto:hello@presenzia.ai" style={{ color: '#666', fontSize: '0.78rem', textDecoration: 'none' }}>Contact</a>
+        </div>
+        <div style={{ fontSize: '0.72rem', color: '#444', lineHeight: 1.6 }}>
+          © 2026 Ketzal LTD t/a presenzia.ai · Company No. 14570156 · London, UK
+        </div>
+      </footer>
     </div>
   );
 }
