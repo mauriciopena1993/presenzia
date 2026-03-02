@@ -76,7 +76,7 @@ const GRADE_COLORS: Record<string, string> = {
 
 const PLAN_LABELS: Record<string, string> = {
   audit: 'Full AI Audit',
-  starter: 'Starter', // legacy
+  starter: 'Full AI Audit', // legacy alias
   growth: 'Growth Retainer',
   premium: 'Premium',
 };
@@ -89,10 +89,10 @@ const PLAN_PRICES: Record<string, string> = {
 };
 
 const PLAN_PRICE_SUFFIX: Record<string, string> = {
-  audit: 'one-off',
-  starter: '/mo',
-  growth: '/mo',
-  premium: '/mo',
+  audit: 'one-time payment',
+  starter: 'one-time payment',
+  growth: 'per month',
+  premium: 'per month',
 };
 
 const TIER_COLORS: Record<string, string> = {
