@@ -37,6 +37,7 @@ export default function Footer() {
           <div>
             <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>Services</div>
             {[
+              { label: 'Free AI visibility score', href: '/score' },
               { label: 'How it works', href: '/#how-it-works' },
               { label: 'Sample audit', href: '/#sample-report' },
               { label: 'Pricing', href: '/pricing' },
@@ -58,6 +59,7 @@ export default function Footer() {
               { label: 'Contact', href: 'mailto:hello@presenzia.ai' },
               { label: 'Privacy policy', href: '/privacy' },
               { label: 'Terms of service', href: '/terms' },
+              { label: 'Email preferences', href: '/email-preferences' },
             ].map(({ label, href }) => (
               <div key={label} style={{ marginBottom: '0.75rem' }}>
                 <Link href={href} className="footer-link">

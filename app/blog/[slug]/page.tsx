@@ -208,14 +208,19 @@ export default async function BlogPostPage({ params }: Props) {
             Find out where you stand
           </div>
           <p style={{ color: '#F5F0E8', fontSize: '1.05rem', fontWeight: 600, marginBottom: '0.5rem', fontFamily: "var(--font-playfair, 'Playfair Display', serif)" }}>
-            See your AI visibility score in under 15 minutes
+            Check your AI visibility score — free, in 60 seconds
           </p>
           <p style={{ color: '#999', fontSize: '0.875rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-            We test your firm across ChatGPT, Claude, Perplexity, and Google AI using 120+ wealth-specific prompts that real clients type.
+            See how ChatGPT, Claude, Perplexity, and Google AI rank your firm right now. No signup required.
           </p>
-          <Link href="/#pricing" style={{ display: 'inline-block', padding: '0.75rem 1.75rem', background: '#C9A84C', color: '#0A0A0A', fontWeight: 700, fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em' }}>
-            See plans →
-          </Link>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            <Link href="/score" style={{ display: 'inline-block', padding: '0.75rem 1.75rem', background: '#C9A84C', color: '#0A0A0A', fontWeight: 700, fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em' }}>
+              Get my free score →
+            </Link>
+            <Link href="/pricing" style={{ color: '#C9A84C', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500 }}>
+              View full audit plans
+            </Link>
+          </div>
         </div>
       </article>
     </div>

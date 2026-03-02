@@ -6,9 +6,10 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+import { FROM_EMAIL } from '@/lib/email/templates';
+
 const ADMIN_EMAIL = 'hello@presenzia.ai';
-const FROM_EMAIL = 'presenzia.ai <reports@presenzia.ai>';
-const PLAN_LABELS: Record<string, string> = { audit: 'AI Visibility Audit', starter: 'Starter', growth: 'Growth Retainer', premium: 'Premium' };
+const PLAN_LABELS: Record<string, string> = { audit: 'Full AI Audit & Action Plan', starter: 'Starter', growth: 'Growth Retainer', premium: 'Premium' };
 
 async function notifyAdmin(subject: string, html: string) {
   if (!process.env.RESEND_API_KEY) {

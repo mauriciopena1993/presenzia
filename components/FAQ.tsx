@@ -7,7 +7,7 @@ const faqs = [
   },
   {
     q: 'How does presenzia.ai test my visibility?',
-    a: 'We run 100+ carefully crafted search prompts across four major AI platforms: ChatGPT, Claude, Perplexity, and Google AI. These prompts mirror what real clients actually ask: \u201Cbest financial advisor in [your city]\u201D, \u201Cpension transfer specialist near me\u201D, \u201Cwho should I speak to about inheritance tax planning\u201D. We record every response, noting where your firm appears, where it doesn\u2019t, and which competitors are being recommended instead.',
+    a: 'We run 100+ carefully crafted search prompts across four major AI platforms: ChatGPT, Claude, Perplexity, and Google AI. These prompts mirror what real clients actually ask: \u201Cbest financial advisor in [your city]\u201D, \u201Cpension transfer specialist near me\u201D, \u201Cwho should I speak to about inheritance tax planning\u201D. We record every response, noting where your firm appears, where it doesn\u2019t, and which competitors are being recommended instead. Results are delivered via your online dashboard and a downloadable PDF report.',
   },
   {
     q: 'How is this different from traditional SEO?',

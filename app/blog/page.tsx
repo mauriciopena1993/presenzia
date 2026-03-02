@@ -12,6 +12,13 @@ export const metadata: Metadata = {
     description: 'Insights on AI search visibility for financial advisors — how ChatGPT, Claude and Perplexity recommend wealth managers, and how UK IFAs can improve their AI presence.',
     url: 'https://presenzia.ai/blog',
     type: 'website',
+    images: ['/og-image.png'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Blog | presenzia.ai — AI Visibility Insights',
+    description: 'Insights on AI search visibility for financial advisors — how AI recommends wealth managers and how to improve your presence.',
+    images: ['/og-image.png'],
   },
 };
 
@@ -95,6 +102,27 @@ export default function BlogPage() {
               </div>
             </Link>
           ))}
+        </div>
+
+        {/* Flywheel CTA */}
+        <div style={{ marginTop: '4rem', padding: '2.5rem', background: '#111', border: '1px solid #2a2a2a', textAlign: 'center' }}>
+          <div style={{ fontSize: '0.75rem', letterSpacing: '0.12em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+            Free tool
+          </div>
+          <p style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", color: '#F5F0E8', fontSize: '1.2rem', fontWeight: 600, marginBottom: '0.5rem' }}>
+            How visible is your firm to AI right now?
+          </p>
+          <p style={{ color: '#999', fontSize: '0.875rem', lineHeight: 1.7, marginBottom: '1.5rem', maxWidth: '480px', margin: '0 auto 1.5rem' }}>
+            Get a free instant score across ChatGPT, Claude, Perplexity, and Google AI. Takes 60 seconds, no signup required.
+          </p>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
+            <Link href="/score" style={{ display: 'inline-block', padding: '0.75rem 1.75rem', background: '#C9A84C', color: '#0A0A0A', fontWeight: 700, fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em' }}>
+              Get my free score →
+            </Link>
+            <Link href="/pricing" style={{ color: '#C9A84C', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500 }}>
+              View full audit plans
+            </Link>
+          </div>
         </div>
       </div>
     </div>

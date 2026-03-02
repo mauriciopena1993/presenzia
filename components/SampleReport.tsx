@@ -598,7 +598,7 @@ export default function SampleReport() {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          {/* "Preview of Starter Audit" label */}
+          {/* "Preview of AI Visibility Audit" label */}
           <div style={{
             background: `${GOLD}12`,
             borderBottom: `1px solid ${GOLD}30`,

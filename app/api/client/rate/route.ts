@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { verifySessionToken, SESSION_COOKIE } from '@/lib/client-auth';
+import { Resend } from 'resend';
+import {
+  FROM_EMAIL,
+  adminDissatisfiedAlert,
+} from '@/lib/email/templates';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /**
  * GET /api/client/rate?jobId=...
@@ -47,6 +54,10 @@ export async function GET(req: NextRequest) {
  * POST /api/client/rate
  * Body: { jobId: string, rating: number (1-5), comment?: string }
  * Upserts a rating for the given audit job.
+ *
+ * Side effects:
+ * - 1-3★: Flags client as dissatisfied, suppresses marketing, sends personal outreach email
+ * - 4-5★: Ensures marketing is NOT suppressed (in case they were previously flagged)
  */
 export async function POST(req: NextRequest) {
   const token = req.cookies.get(SESSION_COOKIE)?.value;
@@ -69,7 +80,7 @@ export async function POST(req: NextRequest) {
 
   const { data: client } = await supabase
     .from('clients')
-    .select('id')
+    .select('id, business_name')
     .eq('email', email)
     .single();
 
@@ -103,6 +114,50 @@ export async function POST(req: NextRequest) {
   if (error) {
     console.error('Rating upsert error:', error);
     return NextResponse.json({ error: 'Failed to save rating' }, { status: 500 });
+  }
+
+  // ── Post-rating actions ──────────────────────────────────────────────
+  const businessName = client.business_name || '';
+
+  if (rating <= 3) {
+    // DISSATISFIED: Suppress marketing + send personal outreach + alert admin
+    // Update client to suppress marketing (gracefully handle missing column)
+    await supabase
+      .from('clients')
+      .update({ marketing_suppressed: true, updated_at: new Date().toISOString() })
+      .eq('id', client.id)
+      .then(({ error: updateErr }) => {
+        if (updateErr) {
+          console.warn('Could not set marketing_suppressed (column may not exist):', updateErr.message);
+        }
+      });
+
+    // Outreach email to the client is sent 24h later by the campaign cron
+    // Alert admin immediately so they can follow up
+    if (process.env.RESEND_API_KEY) {
+      const adminAlert = adminDissatisfiedAlert(email, businessName, rating, comment?.trim() || null);
+      resend.emails.send({
+        from: FROM_EMAIL,
+        to: 'hello@presenzia.ai',
+        subject: adminAlert.subject,
+        html: adminAlert.html,
+      }).catch(err => console.error('Failed to send admin dissatisfied alert:', err));
+    }
+
+    console.log(`⚠️ Dissatisfied client flagged: ${businessName || email} (${rating}★) — marketing suppressed`);
+
+  } else if (rating >= 4) {
+    // HAPPY: Ensure marketing is NOT suppressed
+    await supabase
+      .from('clients')
+      .update({ marketing_suppressed: false, updated_at: new Date().toISOString() })
+      .eq('id', client.id)
+      .then(({ error: updateErr }) => {
+        if (updateErr) {
+          // Column may not exist yet — that's OK
+          console.warn('Could not clear marketing_suppressed:', updateErr.message);
+        }
+      });
   }
 
   return NextResponse.json({ rating: upserted });

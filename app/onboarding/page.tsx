@@ -19,7 +19,7 @@ const FIRM_TYPES = [
 ];
 
 const planNames: Record<string, string> = {
-  audit: 'AI Visibility Audit',
+  audit: 'Full AI Audit & Action Plan',
   starter: 'Starter', // legacy fallback
   growth: 'Growth Retainer',
   premium: 'Premium',

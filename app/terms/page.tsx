@@ -5,6 +5,17 @@ export const metadata: Metadata = {
   title: 'Terms of Service | presenzia.ai',
   description: 'Terms and conditions for using presenzia.ai services.',
   alternates: { canonical: '/terms' },
+  openGraph: {
+    title: 'Terms of Service | presenzia.ai',
+    description: 'Terms and conditions for using presenzia.ai services.',
+    url: 'https://presenzia.ai/terms',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Terms of Service | presenzia.ai',
+    description: 'Terms and conditions for using presenzia.ai services.',
+  },
 };
 
 const sectionStyle = { marginBottom: '2.5rem' };

@@ -13,6 +13,15 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'About | presenzia.ai',
     description: 'AI search visibility for UK wealth managers and IFAs. See where you stand, fix what\'s broken.',
+    url: 'https://presenzia.ai/about',
+    type: 'website',
+    images: ['/og-image.png'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About | presenzia.ai',
+    description: 'AI search visibility for UK wealth managers and IFAs. See where you stand, fix what\'s broken.',
+    images: ['/og-image.png'],
   },
 };
 

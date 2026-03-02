@@ -9,7 +9,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const PLAN_RANK: Record<string, number> = { audit: 1, starter: 1, growth: 2, premium: 3 };
 
 const PLAN_LABELS: Record<string, string> = {
-  audit: 'AI Visibility Audit',
+  audit: 'Full AI Audit & Action Plan',
   starter: 'Starter', // legacy
   growth: 'Growth Retainer',
   premium: 'Premium',
@@ -291,8 +291,8 @@ export async function POST(req: NextRequest) {
             },
             quantity: 1,
           }],
-          success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://presenzia.ai'}/dashboard?upgraded=${targetPlan}`,
-          cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://presenzia.ai'}/dashboard`,
+          success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://presenzia.ai'}/dashboard?upgraded=${targetPlan}`,
+          cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://presenzia.ai'}/dashboard`,
           metadata: {
             type: 'plan_upgrade',
             client_id: client.id,

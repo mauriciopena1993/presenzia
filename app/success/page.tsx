@@ -13,7 +13,7 @@ function SuccessContent() {
   const [state, setState] = useState<VerifyState>('loading');
 
   const planNames: Record<string, string> = {
-    audit: 'AI Visibility Audit',
+    audit: 'Full AI Audit & Action Plan',
     starter: 'Starter', // legacy
     growth: 'Growth Retainer',
     premium: 'Premium',

@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+
+/* ─── Interfaces ─── */
 
 interface AuditJob {
   id: string;
@@ -12,6 +14,7 @@ interface AuditJob {
   completed_at: string | null;
   created_at: string;
   error: string | null;
+  report_path: string | null;
 }
 
 interface Client {
@@ -23,7 +26,14 @@ interface Client {
   business_type: string | null;
   location: string | null;
   website: string | null;
+  keywords: string[] | null;
+  description: string | null;
+  stripe_customer_id: string | null;
+  pending_plan_change: string | null;
+  pending_change_date: string | null;
+  marketing_suppressed: boolean | null;
   created_at: string;
+  updated_at: string;
   audit_jobs: AuditJob[];
   latest_rating: number | null;
   latest_comment: string | null;
@@ -32,26 +42,63 @@ interface Client {
 interface Lead {
   id: string;
   email: string | null;
+  contact_name: string | null;
   business_name: string;
   business_type: string;
   location: string;
+  website: string | null;
+  keywords: string[] | null;
   plan: string;
   converted_at: string | null;
+  converted_to_audit: boolean | null;
+  converted_to_retainer: boolean | null;
+  email_sequence_started: boolean | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
   created_at: string;
 }
 
+interface FreeScore {
+  id: string;
+  firm_name: string;
+  postcode: string | null;
+  city: string | null;
+  region: string | null;
+  specialty: string | null;
+  email: string | null;
+  contact_name: string | null;
+  score: number;
+  grade: string;
+  top_competitor_name: string | null;
+  top_competitor_count: number | null;
+  share_id: string;
+  converted_to_audit: boolean | null;
+  converted_to_retainer: boolean | null;
+  email_sequence_started: boolean | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  created_at: string;
+}
+
+/* ─── Constants ─── */
+
 const PLAN_COLORS: Record<string, string> = {
   audit: '#3a7d44',
-  starter: '#3a7d44', // legacy
+  starter: '#3a7d44',
   growth: '#1a6fa8',
   premium: '#9b6b00',
 };
 
 const STATUS_COLORS: Record<string, string> = {
   active: '#3a7d44',
+  trialing: '#1a8fa8',
   past_due: '#9b4a00',
   cancelled: '#555',
 };
+
+/* ─── Helpers ─── */
 
 function fmt(date: string) {
   return new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -60,7 +107,7 @@ function fmt(date: string) {
 function Badge({ label, color }: { label: string; color: string }) {
   return (
     <span style={{
-      fontSize: '0.7rem',
+      fontSize: '0.68rem',
       padding: '2px 8px',
       background: color + '22',
       color: color,
@@ -75,168 +122,394 @@ function Badge({ label, color }: { label: string; color: string }) {
   );
 }
 
-/* ── Mobile card for client row ── */
-function ClientCard({ client, retrying, onRetry }: {
-  client: Client;
-  retrying: string | null;
-  onRetry: (jobId: string) => void;
-}) {
-  const latestJob = client.audit_jobs
-    ?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
-
+function TrialBadge() {
   return (
-    <div style={{
-      padding: '1rem',
-      borderBottom: '1px solid #1a1a1a',
+    <span style={{
+      fontSize: '0.68rem',
+      padding: '2px 8px',
+      background: 'rgba(26,143,168,0.15)',
+      color: '#1a8fa8',
+      border: '1px solid rgba(26,143,168,0.4)',
+      letterSpacing: '0.05em',
+      textTransform: 'uppercase',
+      fontWeight: 700,
+      whiteSpace: 'nowrap',
+      animation: 'trialPulse 2s infinite',
     }}>
-      {/* Header row: name + badges */}
-      <div style={{ marginBottom: '0.6rem' }}>
-        <div style={{ color: '#F5F0E8', fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.35rem' }}>
-          {client.business_name || '—'}
+      Free trial
+    </span>
+  );
+}
+
+/* ─── Export to CSV/Excel ─── */
+
+function exportToCSV(filename: string, headers: string[], rows: string[][]) {
+  const escapeCSV = (val: string) => {
+    if (val.includes(',') || val.includes('"') || val.includes('\n')) {
+      return '"' + val.replace(/"/g, '""') + '"';
+    }
+    return val;
+  };
+  const csv = [
+    headers.map(escapeCSV).join(','),
+    ...rows.map(row => row.map(escapeCSV).join(',')),
+  ].join('\n');
+
+  const BOM = '\uFEFF';
+  const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${filename}-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportClients(clients: Client[]) {
+  const headers = ['Business Name', 'Email', 'Plan', 'Status', 'Location', 'Website', 'Keywords', 'Latest Score', 'Grade', 'Rating', 'Comment', 'Audits', 'Joined'];
+  const rows = clients.map(c => {
+    const latest = c.audit_jobs?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
+    return [
+      c.business_name || '',
+      c.email,
+      c.plan,
+      c.status,
+      c.location || '',
+      c.website || '',
+      (c.keywords || []).join('; '),
+      latest?.overall_score?.toString() || '',
+      latest?.grade || '',
+      c.latest_rating?.toString() || '',
+      c.latest_comment || '',
+      c.audit_jobs?.length?.toString() || '0',
+      fmt(c.created_at),
+    ];
+  });
+  exportToCSV('presenzia-clients', headers, rows);
+}
+
+function exportLeads(leads: Lead[]) {
+  const headers = ['Business Name', 'Contact', 'Email', 'Type', 'Location', 'Website', 'Plan Intent', 'Converted', 'Email Sequence', 'UTM Source', 'UTM Medium', 'UTM Campaign', 'Date'];
+  const rows = leads.map(l => [
+    l.business_name,
+    l.contact_name || '',
+    l.email || '',
+    l.business_type,
+    l.location,
+    l.website || '',
+    l.plan,
+    l.converted_at ? 'Yes' : 'No',
+    l.email_sequence_started ? 'Yes' : 'No',
+    l.utm_source || '',
+    l.utm_medium || '',
+    l.utm_campaign || '',
+    fmt(l.created_at),
+  ]);
+  exportToCSV('presenzia-leads', headers, rows);
+}
+
+function exportFreeScores(scores: FreeScore[]) {
+  const headers = ['Firm Name', 'Email', 'Contact', 'City', 'Region', 'Specialty', 'Score', 'Grade', 'Top Competitor', 'Converted to Audit', 'Converted to Retainer', 'UTM Source', 'Date'];
+  const rows = scores.map(s => [
+    s.firm_name,
+    s.email || '',
+    s.contact_name || '',
+    s.city || '',
+    s.region || '',
+    s.specialty || '',
+    s.score.toString(),
+    s.grade,
+    s.top_competitor_name || '',
+    s.converted_to_audit ? 'Yes' : 'No',
+    s.converted_to_retainer ? 'Yes' : 'No',
+    s.utm_source || '',
+    fmt(s.created_at),
+  ]);
+  exportToCSV('presenzia-free-scores', headers, rows);
+}
+
+/* ─── Detail Modal ─── */
+
+function DetailModal({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 200,
+        background: 'rgba(0,0,0,0.8)',
+        display: 'flex',
+        justifyContent: 'flex-end',
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          width: 'min(520px, 90vw)',
+          height: '100vh',
+          background: '#0D0D0D',
+          borderLeft: '1px solid #1a1a1a',
+          overflowY: 'auto',
+          padding: 'clamp(1.25rem, 3vw, 2rem)',
+          fontFamily: 'var(--font-inter, Inter, sans-serif)',
+          color: '#F5F0E8',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <span style={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase' }}>Details</span>
+          <button
+            onClick={onClose}
+            style={{ background: 'none', border: 'none', color: '#888', fontSize: '1.2rem', cursor: 'pointer', lineHeight: 1, padding: '4px' }}
+          >
+            &#10005;
+          </button>
         </div>
-        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
-          <Badge label={client.plan} color={PLAN_COLORS[client.plan] || '#555'} />
-          <Badge label={client.status} color={STATUS_COLORS[client.status] || '#555'} />
-          {latestJob && (
-            <Badge
-              label={`Audit: ${latestJob.status}`}
-              color={
-                latestJob.status === 'completed' ? '#3a7d44' :
-                latestJob.status === 'running' ? '#C9A84C' :
-                latestJob.status === 'failed' ? '#9b1a1a' : '#555'
-              }
-            />
-          )}
-        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function DetailRow({ label, value }: { label: string; value: React.ReactNode }) {
+  if (!value || value === '') return null;
+  return (
+    <div style={{ display: 'flex', gap: '0.75rem', padding: '0.5rem 0', borderBottom: '1px solid #111', fontSize: '0.82rem' }}>
+      <span style={{ color: '#666', minWidth: '100px', flexShrink: 0, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.06em', paddingTop: '2px' }}>{label}</span>
+      <span style={{ color: '#CCCCCC', wordBreak: 'break-word' }}>{value}</span>
+    </div>
+  );
+}
+
+function ClientDetail({ client, onRetry, retrying }: { client: Client; onRetry: (id: string) => void; retrying: string | null }) {
+  const sortedJobs = [...(client.audit_jobs || [])].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  return (
+    <div>
+      <h2 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>
+        {client.business_name || 'Unnamed Client'}
+      </h2>
+      <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        <Badge label={client.plan} color={PLAN_COLORS[client.plan] || '#555'} />
+        {client.status === 'trialing' ? <TrialBadge /> : <Badge label={client.status} color={STATUS_COLORS[client.status] || '#555'} />}
+        {client.pending_plan_change && (
+          <Badge label={`Pending: ${client.pending_plan_change}`} color="#9b4a00" />
+        )}
+        {client.marketing_suppressed && (
+          <Badge label="Marketing suppressed" color="#cc4444" />
+        )}
       </div>
 
-      {/* Details grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.3rem 1rem', fontSize: '0.78rem' }}>
-        <div>
-          <span style={{ color: '#666' }}>Email: </span>
-          <a href={`mailto:${client.email}`} style={{ color: '#999', textDecoration: 'none' }}>{client.email}</a>
-        </div>
-        {client.location && (
-          <div>
-            <span style={{ color: '#666' }}>Location: </span>
-            <span style={{ color: '#999' }}>{client.location}</span>
-          </div>
+      <div style={{ marginBottom: '1.5rem' }}>
+        <DetailRow label="Email" value={<a href={`mailto:${client.email}`} style={{ color: '#C9A84C', textDecoration: 'none' }}>{client.email}</a>} />
+        <DetailRow label="Type" value={client.business_type} />
+        <DetailRow label="Location" value={client.location} />
+        <DetailRow label="Website" value={client.website ? <a href={client.website.startsWith('http') ? client.website : `https://${client.website}`} target="_blank" rel="noopener noreferrer" style={{ color: '#C9A84C', textDecoration: 'none' }}>{client.website}</a> : null} />
+        <DetailRow label="Keywords" value={client.keywords?.length ? client.keywords.join(', ') : null} />
+        <DetailRow label="Description" value={client.description} />
+        <DetailRow label="Stripe ID" value={client.stripe_customer_id} />
+        <DetailRow label="Joined" value={fmt(client.created_at)} />
+        <DetailRow label="Updated" value={fmt(client.updated_at)} />
+        {client.pending_plan_change && (
+          <DetailRow label="Pending change" value={`${client.pending_plan_change} on ${client.pending_change_date ? fmt(client.pending_change_date) : 'end of cycle'}`} />
         )}
-        <div>
-          <span style={{ color: '#666' }}>Score: </span>
-          {latestJob?.overall_score != null ? (
-            <span style={{ color: '#C9A84C', fontWeight: 600 }}>
-              {latestJob.overall_score}/100 ({latestJob.grade})
-            </span>
-          ) : <span style={{ color: '#888' }}>—</span>}
-        </div>
-        <div>
-          <span style={{ color: '#666' }}>Rating: </span>
-          {client.latest_rating != null ? (
-            <span style={{
-              color: client.latest_rating >= 4 ? '#3a7d44' : client.latest_rating === 3 ? '#C9A84C' : '#cc4444',
-              fontWeight: 600,
-            }}>
+      </div>
+
+      {client.latest_rating != null && (
+        <div style={{ marginBottom: '1.5rem' }}>
+          <div style={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Rating</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+            <span style={{ color: client.latest_rating >= 4 ? '#3a7d44' : client.latest_rating === 3 ? '#C9A84C' : '#cc4444', fontSize: '1rem' }}>
               {'★'.repeat(client.latest_rating)}{'☆'.repeat(5 - client.latest_rating)}
             </span>
-          ) : <span style={{ color: '#888' }}>—</span>}
-        </div>
-        <div>
-          <span style={{ color: '#666' }}>Joined: </span>
-          <span style={{ color: '#888' }}>{fmt(client.created_at)}</span>
-        </div>
-        {latestJob?.status === 'failed' && (
-          <div>
-            <button
-              onClick={() => onRetry(latestJob.id)}
-              disabled={retrying === latestJob.id}
-              style={{ fontSize: '0.72rem', padding: '2px 8px', background: 'none', border: '1px solid #555', color: '#999', cursor: 'pointer', fontFamily: 'inherit' }}
-            >
-              {retrying === latestJob.id ? '…' : 'Retry audit'}
-            </button>
+            <span style={{ color: '#888', fontSize: '0.8rem' }}>{client.latest_rating}/5</span>
           </div>
-        )}
+          {client.latest_comment && (
+            <p style={{ fontSize: '0.82rem', color: '#999', fontStyle: 'italic', margin: 0, lineHeight: 1.6 }}>
+              &ldquo;{client.latest_comment}&rdquo;
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Audit history */}
+      <div>
+        <div style={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+          Audit History ({sortedJobs.length})
+        </div>
+        {sortedJobs.length === 0 ? (
+          <div style={{ color: '#888', fontSize: '0.82rem' }}>No audits yet</div>
+        ) : sortedJobs.map((job, i) => (
+          <div key={job.id} style={{
+            padding: '0.75rem',
+            background: i === 0 ? '#111' : 'transparent',
+            border: '1px solid #1a1a1a',
+            marginBottom: '0.5rem',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+              <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                {i === 0 && <span style={{ fontSize: '0.6rem', color: '#C9A84C', fontWeight: 600 }}>LATEST</span>}
+                <Badge
+                  label={job.status}
+                  color={job.status === 'completed' ? '#3a7d44' : job.status === 'running' ? '#C9A84C' : job.status === 'failed' ? '#9b1a1a' : '#555'}
+                />
+              </div>
+              <span style={{ fontSize: '0.72rem', color: '#888' }}>{job.completed_at ? fmt(job.completed_at) : fmt(job.created_at)}</span>
+            </div>
+            {job.overall_score != null && (
+              <div style={{ fontSize: '0.82rem', color: '#F5F0E8', marginTop: '0.25rem' }}>
+                Score: <span style={{ color: '#C9A84C', fontWeight: 600 }}>{job.overall_score}/100</span> (Grade {job.grade})
+              </div>
+            )}
+            {job.error && (
+              <div style={{ fontSize: '0.72rem', color: '#cc4444', marginTop: '0.25rem' }}>Error: {job.error}</div>
+            )}
+            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.4rem' }}>
+              {job.status === 'failed' && (
+                <button
+                  onClick={() => onRetry(job.id)}
+                  disabled={retrying === job.id}
+                  style={{ fontSize: '0.7rem', padding: '2px 8px', background: 'none', border: '1px solid #555', color: '#999', cursor: 'pointer', fontFamily: 'inherit' }}
+                >
+                  {retrying === job.id ? 'Retrying...' : 'Retry'}
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
-      {client.latest_comment && (
-        <div style={{ marginTop: '0.4rem', fontSize: '0.75rem', color: '#888', fontStyle: 'italic' }}>
-          &ldquo;{client.latest_comment.length > 80 ? client.latest_comment.slice(0, 80) + '…' : client.latest_comment}&rdquo;
+
+      {/* Note about email tracking */}
+      <div style={{ marginTop: '1.5rem', padding: '0.75rem', background: '#111', border: '1px solid #1a1a1a', fontSize: '0.75rem', color: '#666' }}>
+        Email history and replies will be available once Resend webhook tracking is configured.
+      </div>
+    </div>
+  );
+}
+
+function LeadDetail({ lead }: { lead: Lead }) {
+  return (
+    <div>
+      <h2 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>
+        {lead.business_name}
+      </h2>
+      <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        <Badge label={lead.plan} color={PLAN_COLORS[lead.plan] || '#555'} />
+        <Badge
+          label={lead.converted_at ? 'Converted' : 'Dropped off'}
+          color={lead.converted_at ? '#3a7d44' : '#9b4a00'}
+        />
+        {lead.email_sequence_started && <Badge label="Email seq. started" color="#1a6fa8" />}
+      </div>
+
+      <DetailRow label="Contact" value={lead.contact_name} />
+      <DetailRow label="Email" value={lead.email ? <a href={`mailto:${lead.email}`} style={{ color: '#C9A84C', textDecoration: 'none' }}>{lead.email}</a> : null} />
+      <DetailRow label="Type" value={lead.business_type} />
+      <DetailRow label="Location" value={lead.location} />
+      <DetailRow label="Website" value={lead.website ? <a href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`} target="_blank" rel="noopener noreferrer" style={{ color: '#C9A84C', textDecoration: 'none' }}>{lead.website}</a> : null} />
+      <DetailRow label="Keywords" value={lead.keywords?.length ? lead.keywords.join(', ') : null} />
+      <DetailRow label="Plan intent" value={lead.plan} />
+      {lead.converted_at && <DetailRow label="Converted" value={fmt(lead.converted_at)} />}
+      {lead.converted_to_audit && <DetailRow label="Conv. to audit" value="Yes" />}
+      {lead.converted_to_retainer && <DetailRow label="Conv. to retainer" value="Yes" />}
+      <DetailRow label="Created" value={fmt(lead.created_at)} />
+
+      {(lead.utm_source || lead.utm_medium || lead.utm_campaign) && (
+        <div style={{ marginTop: '1rem' }}>
+          <div style={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.5rem' }}>UTM Tracking</div>
+          <DetailRow label="Source" value={lead.utm_source} />
+          <DetailRow label="Medium" value={lead.utm_medium} />
+          <DetailRow label="Campaign" value={lead.utm_campaign} />
+        </div>
+      )}
+
+      <div style={{ marginTop: '1.5rem', padding: '0.75rem', background: '#111', border: '1px solid #1a1a1a', fontSize: '0.75rem', color: '#666' }}>
+        Email history and replies will be available once Resend webhook tracking is configured.
+      </div>
+    </div>
+  );
+}
+
+function FreeScoreDetail({ score }: { score: FreeScore }) {
+  return (
+    <div>
+      <h2 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>
+        {score.firm_name}
+      </h2>
+      <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        <Badge label={`Score: ${score.score}`} color={score.score >= 50 ? '#3a7d44' : score.score >= 25 ? '#C9A84C' : '#cc4444'} />
+        <Badge label={`Grade ${score.grade}`} color={score.grade === 'A' || score.grade === 'B' ? '#3a7d44' : score.grade === 'C' ? '#C9A84C' : '#cc4444'} />
+        {score.converted_to_audit && <Badge label="Converted" color="#3a7d44" />}
+        {score.email && !score.converted_to_audit && <Badge label="Has email" color="#1a6fa8" />}
+        {!score.email && <Badge label="No email" color="#555" />}
+      </div>
+
+      <DetailRow label="Email" value={score.email ? <a href={`mailto:${score.email}`} style={{ color: '#C9A84C', textDecoration: 'none' }}>{score.email}</a> : null} />
+      <DetailRow label="Contact" value={score.contact_name} />
+      <DetailRow label="City" value={score.city} />
+      <DetailRow label="Region" value={score.region} />
+      <DetailRow label="Postcode" value={score.postcode} />
+      <DetailRow label="Specialty" value={score.specialty} />
+      <DetailRow label="Score" value={<span style={{ color: '#C9A84C', fontWeight: 600 }}>{score.score}/100 (Grade {score.grade})</span>} />
+      {score.top_competitor_name && (
+        <DetailRow label="Top competitor" value={`${score.top_competitor_name} (${score.top_competitor_count} mentions)`} />
+      )}
+      <DetailRow label="Share link" value={<a href={`/score/${score.share_id}`} target="_blank" rel="noopener noreferrer" style={{ color: '#C9A84C', textDecoration: 'none' }}>/score/{score.share_id}</a>} />
+      <DetailRow label="Created" value={fmt(score.created_at)} />
+
+      {score.email_sequence_started && <DetailRow label="Email seq." value="Started" />}
+
+      {(score.utm_source || score.utm_medium || score.utm_campaign) && (
+        <div style={{ marginTop: '1rem' }}>
+          <div style={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.5rem' }}>UTM Tracking</div>
+          <DetailRow label="Source" value={score.utm_source} />
+          <DetailRow label="Medium" value={score.utm_medium} />
+          <DetailRow label="Campaign" value={score.utm_campaign} />
         </div>
       )}
     </div>
   );
 }
 
-/* ── Mobile card for lead row ── */
-function LeadCard({ lead }: { lead: Lead }) {
-  return (
-    <div style={{
-      padding: '1rem',
-      borderBottom: '1px solid #1a1a1a',
-    }}>
-      <div style={{ marginBottom: '0.5rem' }}>
-        <div style={{ color: '#F5F0E8', fontWeight: 500, fontSize: '0.9rem', marginBottom: '0.3rem' }}>
-          {lead.business_name}
-        </div>
-        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
-          <Badge label={lead.plan} color={PLAN_COLORS[lead.plan] || '#555'} />
-          <Badge
-            label={lead.converted_at ? 'Converted' : 'Dropped off'}
-            color={lead.converted_at ? '#3a7d44' : '#9b4a00'}
-          />
-        </div>
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.3rem 1rem', fontSize: '0.78rem' }}>
-        <div>
-          <span style={{ color: '#666' }}>Type: </span>
-          <span style={{ color: '#999' }}>{lead.business_type}</span>
-        </div>
-        <div>
-          <span style={{ color: '#666' }}>Location: </span>
-          <span style={{ color: '#999' }}>{lead.location}</span>
-        </div>
-        <div>
-          <span style={{ color: '#666' }}>Email: </span>
-          {lead.email
-            ? <a href={`mailto:${lead.email}`} style={{ color: '#999', textDecoration: 'none' }}>{lead.email}</a>
-            : <span style={{ color: '#888' }}>Not provided</span>
-          }
-        </div>
-        <div>
-          <span style={{ color: '#666' }}>Date: </span>
-          <span style={{ color: '#888' }}>{fmt(lead.created_at)}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
+/* ─── Main Component ─── */
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const [tab, setTab] = useState<'clients' | 'leads'>('clients');
+  const [tab, setTab] = useState<'clients' | 'leads' | 'scores'>('clients');
   const [clients, setClients] = useState<Client[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [scores, setScores] = useState<FreeScore[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [retrying, setRetrying] = useState<string | null>(null);
 
+  // Detail modal state
+  const [detailClient, setDetailClient] = useState<Client | null>(null);
+  const [detailLead, setDetailLead] = useState<Lead | null>(null);
+  const [detailScore, setDetailScore] = useState<FreeScore | null>(null);
+
   useEffect(() => {
     const load = async () => {
       try {
-        const [cRes, lRes] = await Promise.all([
+        const [cRes, lRes, sRes] = await Promise.all([
           fetch('/api/admin/clients'),
           fetch('/api/admin/leads'),
+          fetch('/api/admin/free-scores'),
         ]);
 
-        if (cRes.status === 401 || lRes.status === 401) {
+        if (cRes.status === 401 || lRes.status === 401 || sRes.status === 401) {
           router.push('/admin/login');
           return;
         }
 
-        const cData = await cRes.json();
-        const lData = await lRes.json();
+        const [cData, lData, sData] = await Promise.all([
+          cRes.json(),
+          lRes.json(),
+          sRes.json(),
+        ]);
 
         setClients(cData.clients || []);
         setLeads(lData.leads || []);
+        setScores(sData.scores || []);
       } catch {
         setError('Failed to load data.');
       } finally {
@@ -251,7 +524,7 @@ export default function AdminDashboard() {
     router.push('/admin/login');
   };
 
-  const handleRetryAudit = async (jobId: string) => {
+  const handleRetryAudit = useCallback(async (jobId: string) => {
     setRetrying(jobId);
     try {
       await fetch('/api/admin/retry-audit', {
@@ -263,17 +536,33 @@ export default function AdminDashboard() {
     } finally {
       setRetrying(null);
     }
+  }, []);
+
+  const closeDetail = () => {
+    setDetailClient(null);
+    setDetailLead(null);
+    setDetailScore(null);
   };
 
+  const handleExport = () => {
+    if (tab === 'clients') exportClients(clients);
+    else if (tab === 'leads') exportLeads(leads);
+    else exportFreeScores(scores);
+  };
+
+  /* Stats */
   const activeClients = clients.filter(c => c.status === 'active').length;
+  const trialingClients = clients.filter(c => c.status === 'trialing').length;
   const unconvertedLeads = leads.filter(l => !l.converted_at).length;
   const pendingAudits = clients.flatMap(c => c.audit_jobs).filter(j => j.status === 'pending' || j.status === 'running').length;
+  const freeScoresWithEmail = scores.filter(s => s.email).length;
 
+  /* Styles */
   const s = {
     page: { minHeight: '100vh', background: '#0A0A0A', fontFamily: 'var(--font-inter, Inter, sans-serif)', color: '#F5F0E8' } as React.CSSProperties,
     nav: { borderBottom: '1px solid #1A1A1A', padding: '1rem clamp(1rem, 3vw, 2rem)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } as React.CSSProperties,
     brand: { fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.2rem', color: '#F5F0E8', textDecoration: 'none' } as React.CSSProperties,
-    main: { maxWidth: '1200px', margin: '0 auto', padding: '2rem clamp(1rem, 3vw, 2rem)' } as React.CSSProperties,
+    main: { maxWidth: '1400px', margin: '0 auto', padding: '2rem clamp(1rem, 3vw, 2rem)' } as React.CSSProperties,
     stat: { background: '#111', border: '1px solid #1a1a1a', padding: '1rem 1.25rem' } as React.CSSProperties,
     statNum: { fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: 700, color: '#C9A84C', lineHeight: 1 } as React.CSSProperties,
     statLabel: { fontSize: '0.7rem', color: '#999', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '0.08em' } as React.CSSProperties,
@@ -290,15 +579,15 @@ export default function AdminDashboard() {
       fontWeight: active ? 600 : 400,
     }),
     table: { width: '100%', borderCollapse: 'collapse' } as React.CSSProperties,
-    th: { textAlign: 'left', padding: '0.6rem 1rem', fontSize: '0.7rem', color: '#888', letterSpacing: '0.1em', textTransform: 'uppercase', borderBottom: '1px solid #1a1a1a' } as React.CSSProperties,
-    td: { padding: '0.875rem 1rem', borderBottom: '1px solid #111', fontSize: '0.83rem', color: '#CCCCCC', verticalAlign: 'top' } as React.CSSProperties,
+    th: { textAlign: 'left', padding: '0.6rem 0.75rem', fontSize: '0.65rem', color: '#888', letterSpacing: '0.1em', textTransform: 'uppercase', borderBottom: '1px solid #1a1a1a' } as React.CSSProperties,
+    td: { padding: '0.75rem', borderBottom: '1px solid #111', fontSize: '0.8rem', color: '#CCCCCC', verticalAlign: 'top' } as React.CSSProperties,
+    viewBtn: { fontSize: '0.7rem', padding: '3px 10px', background: 'none', border: '1px solid #333', color: '#888', cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' } as React.CSSProperties,
   };
 
   return (
     <div style={s.page}>
-      {/* Responsive styles */}
       <style>{`
-        .admin-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 2rem; }
+        .admin-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; margin-bottom: 2rem; }
         .admin-table-desktop { display: block; }
         .admin-cards-mobile { display: none; }
         @media (max-width: 768px) {
@@ -306,7 +595,31 @@ export default function AdminDashboard() {
           .admin-table-desktop { display: none !important; }
           .admin-cards-mobile { display: block !important; }
         }
+        @keyframes trialPulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
+        }
+        .admin-view-btn:hover { border-color: #C9A84C !important; color: #C9A84C !important; }
+        .admin-export-btn:hover { background: #C9A84C !important; color: #0A0A0A !important; }
+        .admin-row:hover { background: #0D0D0D; }
       `}</style>
+
+      {/* Detail modals */}
+      {detailClient && (
+        <DetailModal onClose={closeDetail}>
+          <ClientDetail client={detailClient} onRetry={handleRetryAudit} retrying={retrying} />
+        </DetailModal>
+      )}
+      {detailLead && (
+        <DetailModal onClose={closeDetail}>
+          <LeadDetail lead={detailLead} />
+        </DetailModal>
+      )}
+      {detailScore && (
+        <DetailModal onClose={closeDetail}>
+          <FreeScoreDetail score={detailScore} />
+        </DetailModal>
+      )}
 
       <div style={s.nav}>
         <Link href="/" style={s.brand}>
@@ -339,8 +652,12 @@ export default function AdminDashboard() {
             <div style={s.statLabel}>Active subs</div>
           </div>
           <div style={s.stat}>
-            <div style={{ ...s.statNum, color: unconvertedLeads > 0 ? '#888' : '#C9A84C' }}>{unconvertedLeads}</div>
-            <div style={s.statLabel}>Unconverted leads</div>
+            <div style={{ ...s.statNum, color: trialingClients > 0 ? '#1a8fa8' : '#C9A84C' }}>{trialingClients}</div>
+            <div style={s.statLabel}>Free trials</div>
+          </div>
+          <div style={s.stat}>
+            <div style={s.statNum}>{freeScoresWithEmail}</div>
+            <div style={s.statLabel}>Score leads</div>
           </div>
           <div style={s.stat}>
             <div style={s.statNum}>{pendingAudits}</div>
@@ -348,13 +665,36 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Tabs */}
-        <div style={s.tabs}>
-          <button style={s.tab(tab === 'clients')} onClick={() => setTab('clients')}>
-            Clients ({clients.length})
-          </button>
-          <button style={s.tab(tab === 'leads')} onClick={() => setTab('leads')}>
-            Leads ({leads.filter(l => !l.converted_at).length} unconverted)
+        {/* Tabs + Export */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '1rem', flexWrap: 'wrap' }}>
+          <div style={s.tabs}>
+            <button style={s.tab(tab === 'clients')} onClick={() => setTab('clients')}>
+              Clients ({clients.length})
+            </button>
+            <button style={s.tab(tab === 'leads')} onClick={() => setTab('leads')}>
+              Leads ({unconvertedLeads} unconverted)
+            </button>
+            <button style={s.tab(tab === 'scores')} onClick={() => setTab('scores')}>
+              Free Scores ({scores.length})
+            </button>
+          </div>
+          <button
+            className="admin-export-btn"
+            onClick={handleExport}
+            style={{
+              background: 'none',
+              border: '1px solid #333',
+              color: '#999',
+              padding: '0.4rem 1rem',
+              fontSize: '0.78rem',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              marginBottom: '1rem',
+              transition: 'all 0.2s',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Export to CSV
           </button>
         </div>
 
@@ -371,11 +711,11 @@ export default function AdminDashboard() {
                     <th style={s.th}>Email</th>
                     <th style={s.th}>Plan</th>
                     <th style={s.th}>Status</th>
-                    <th style={s.th}>Latest audit</th>
                     <th style={s.th}>Score</th>
+                    <th style={s.th}>Audits</th>
                     <th style={s.th}>Rating</th>
-                    <th style={s.th}>Comment</th>
                     <th style={s.th}>Joined</th>
+                    <th style={s.th}></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -386,70 +726,69 @@ export default function AdminDashboard() {
                       ?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
 
                     return (
-                      <tr key={client.id}>
+                      <tr key={client.id} className="admin-row" style={{ cursor: 'pointer' }} onClick={() => setDetailClient(client)}>
                         <td style={s.td}>
-                          <div style={{ color: '#F5F0E8', fontWeight: 500 }}>{client.business_name || '—'}</div>
-                          {client.location && <div style={{ fontSize: '0.72rem', color: '#888', marginTop: '2px' }}>{client.location}</div>}
+                          <div style={{ color: '#F5F0E8', fontWeight: 500 }}>{client.business_name || '(unnamed)'}</div>
+                          {client.location && <div style={{ fontSize: '0.7rem', color: '#888', marginTop: '2px' }}>{client.location}</div>}
+                          {client.website && <div style={{ fontSize: '0.65rem', color: '#666', marginTop: '1px' }}>{client.website}</div>}
                         </td>
                         <td style={s.td}>
-                          <a href={`mailto:${client.email}`} style={{ color: '#888', textDecoration: 'none' }}>{client.email}</a>
+                          <a href={`mailto:${client.email}`} style={{ color: '#888', textDecoration: 'none' }} onClick={e => e.stopPropagation()}>{client.email}</a>
                         </td>
                         <td style={s.td}>
                           <Badge label={client.plan} color={PLAN_COLORS[client.plan] || '#555'} />
                         </td>
                         <td style={s.td}>
-                          <Badge label={client.status} color={STATUS_COLORS[client.status] || '#555'} />
-                        </td>
-                        <td style={s.td}>
-                          {latestJob ? (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                              <Badge
-                                label={latestJob.status}
-                                color={
-                                  latestJob.status === 'completed' ? '#3a7d44' :
-                                  latestJob.status === 'running' ? '#C9A84C' :
-                                  latestJob.status === 'failed' ? '#9b1a1a' : '#555'
-                                }
-                              />
-                              {latestJob.status === 'failed' && (
-                                <button
-                                  onClick={() => handleRetryAudit(latestJob.id)}
-                                  disabled={retrying === latestJob.id}
-                                  title={latestJob.error || 'Retry audit'}
-                                  style={{ fontSize: '0.72rem', padding: '2px 6px', background: 'none', border: '1px solid #555', color: '#999', cursor: 'pointer', fontFamily: 'inherit' }}
-                                >
-                                  {retrying === latestJob.id ? '…' : 'Retry'}
-                                </button>
-                              )}
-                            </div>
-                          ) : <span style={{ color: '#888' }}>—</span>}
+                          {client.status === 'trialing' ? <TrialBadge /> : <Badge label={client.status} color={STATUS_COLORS[client.status] || '#555'} />}
                         </td>
                         <td style={s.td}>
                           {latestJob?.overall_score != null ? (
-                            <span style={{ color: '#C9A84C', fontWeight: 600 }}>
-                              {latestJob.overall_score}/100 <span style={{ color: '#999' }}>({latestJob.grade})</span>
+                            <span style={{ color: '#C9A84C', fontWeight: 600, fontSize: '0.82rem' }}>
+                              {latestJob.overall_score}<span style={{ color: '#888', fontWeight: 400 }}>/100 ({latestJob.grade})</span>
                             </span>
-                          ) : <span style={{ color: '#888' }}>—</span>}
+                          ) : latestJob?.status === 'running' ? (
+                            <Badge label="Running" color="#C9A84C" />
+                          ) : latestJob?.status === 'failed' ? (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                              <Badge label="Failed" color="#9b1a1a" />
+                              <button
+                                onClick={e => { e.stopPropagation(); handleRetryAudit(latestJob.id); }}
+                                disabled={retrying === latestJob.id}
+                                style={{ fontSize: '0.65rem', padding: '1px 6px', background: 'none', border: '1px solid #555', color: '#999', cursor: 'pointer', fontFamily: 'inherit' }}
+                              >
+                                {retrying === latestJob.id ? '...' : 'Retry'}
+                              </button>
+                            </div>
+                          ) : <span style={{ color: '#888' }}>-</span>}
+                        </td>
+                        <td style={{ ...s.td, color: '#888' }}>
+                          {client.audit_jobs?.length || 0}
                         </td>
                         <td style={s.td}>
-                          {client.latest_rating != null ? (
-                            <span style={{
-                              color: client.latest_rating >= 4 ? '#3a7d44' : client.latest_rating === 3 ? '#C9A84C' : '#cc4444',
-                              fontWeight: 600,
-                            }}>
-                              {'★'.repeat(client.latest_rating)}{'☆'.repeat(5 - client.latest_rating)}{' '}{client.latest_rating}/5
-                            </span>
-                          ) : <span style={{ color: '#888' }}>—</span>}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            {client.latest_rating != null ? (
+                              <span style={{ color: client.latest_rating >= 4 ? '#3a7d44' : client.latest_rating === 3 ? '#C9A84C' : '#cc4444', fontWeight: 600 }}>
+                                {'★'.repeat(client.latest_rating)} {client.latest_rating}/5
+                              </span>
+                            ) : <span style={{ color: '#888' }}>-</span>}
+                            {client.marketing_suppressed && (
+                              <span title="Marketing suppressed (dissatisfied)" style={{ fontSize: '0.6rem', background: 'rgba(204,68,68,0.15)', color: '#cc4444', padding: '1px 5px', borderRadius: '2px', fontWeight: 600, letterSpacing: '0.03em' }}>
+                                FLAGGED
+                              </span>
+                            )}
+                          </div>
                         </td>
-                        <td style={{ ...s.td, maxWidth: '200px' }}>
-                          {client.latest_comment ? (
-                            <span title={client.latest_comment} style={{ color: '#999' }}>
-                              {client.latest_comment.length > 40 ? client.latest_comment.slice(0, 40) + '…' : client.latest_comment}
-                            </span>
-                          ) : <span style={{ color: '#888' }}>—</span>}
-                        </td>
-                        <td style={{ ...s.td, color: '#888', fontSize: '0.78rem' }}>
+                        <td style={{ ...s.td, color: '#888', fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
                           {fmt(client.created_at)}
+                        </td>
+                        <td style={s.td}>
+                          <button
+                            className="admin-view-btn"
+                            onClick={e => { e.stopPropagation(); setDetailClient(client); }}
+                            style={s.viewBtn}
+                          >
+                            View
+                          </button>
                         </td>
                       </tr>
                     );
@@ -462,12 +801,28 @@ export default function AdminDashboard() {
             <div className="admin-cards-mobile">
               {clients.length === 0 ? (
                 <div style={{ color: '#888', textAlign: 'center', padding: '3rem' }}>No clients yet</div>
-              ) : clients.map(client => (
-                <ClientCard key={client.id} client={client} retrying={retrying} onRetry={handleRetryAudit} />
-              ))}
+              ) : clients.map(client => {
+                const latestJob = client.audit_jobs?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
+                return (
+                  <div key={client.id} style={{ padding: '1rem', borderBottom: '1px solid #1a1a1a', cursor: 'pointer' }} onClick={() => setDetailClient(client)}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                      <div>
+                        <div style={{ color: '#F5F0E8', fontWeight: 500, fontSize: '0.9rem' }}>{client.business_name || '(unnamed)'}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#888' }}>{client.email}</div>
+                      </div>
+                      <button className="admin-view-btn" onClick={e => { e.stopPropagation(); setDetailClient(client); }} style={s.viewBtn}>View</button>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                      <Badge label={client.plan} color={PLAN_COLORS[client.plan] || '#555'} />
+                      {client.status === 'trialing' ? <TrialBadge /> : <Badge label={client.status} color={STATUS_COLORS[client.status] || '#555'} />}
+                      {latestJob?.overall_score != null && <span style={{ fontSize: '0.75rem', color: '#C9A84C', fontWeight: 600 }}>{latestJob.overall_score}/100</span>}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </>
-        ) : (
+        ) : tab === 'leads' ? (
           <>
             {/* Desktop table */}
             <div className="admin-table-desktop" style={{ overflowX: 'auto' }}>
@@ -475,26 +830,30 @@ export default function AdminDashboard() {
                 <thead>
                   <tr>
                     <th style={s.th}>Business</th>
+                    <th style={s.th}>Contact</th>
                     <th style={s.th}>Email</th>
                     <th style={s.th}>Plan intent</th>
                     <th style={s.th}>Location</th>
                     <th style={s.th}>Status</th>
+                    <th style={s.th}>Source</th>
                     <th style={s.th}>Date</th>
+                    <th style={s.th}></th>
                   </tr>
                 </thead>
                 <tbody>
                   {leads.length === 0 ? (
-                    <tr><td colSpan={6} style={{ ...s.td, textAlign: 'center', color: '#888', padding: '3rem' }}>No leads yet</td></tr>
+                    <tr><td colSpan={9} style={{ ...s.td, textAlign: 'center', color: '#888', padding: '3rem' }}>No leads yet</td></tr>
                   ) : leads.map(lead => (
-                    <tr key={lead.id}>
+                    <tr key={lead.id} className="admin-row" style={{ cursor: 'pointer' }} onClick={() => setDetailLead(lead)}>
                       <td style={s.td}>
                         <div style={{ color: '#F5F0E8', fontWeight: 500 }}>{lead.business_name}</div>
-                        <div style={{ fontSize: '0.72rem', color: '#888', marginTop: '2px' }}>{lead.business_type}</div>
+                        <div style={{ fontSize: '0.7rem', color: '#888', marginTop: '2px' }}>{lead.business_type}</div>
                       </td>
+                      <td style={{ ...s.td, color: '#999' }}>{lead.contact_name || '-'}</td>
                       <td style={s.td}>
                         {lead.email
-                          ? <a href={`mailto:${lead.email}`} style={{ color: '#999', textDecoration: 'none' }}>{lead.email}</a>
-                          : <span style={{ color: '#888' }}>Not provided</span>
+                          ? <a href={`mailto:${lead.email}`} style={{ color: '#999', textDecoration: 'none' }} onClick={e => e.stopPropagation()}>{lead.email}</a>
+                          : <span style={{ color: '#888' }}>-</span>
                         }
                       </td>
                       <td style={s.td}>
@@ -507,8 +866,18 @@ export default function AdminDashboard() {
                           color={lead.converted_at ? '#3a7d44' : '#9b4a00'}
                         />
                       </td>
-                      <td style={{ ...s.td, color: '#888', fontSize: '0.78rem' }}>
+                      <td style={{ ...s.td, color: '#888', fontSize: '0.72rem' }}>{lead.utm_source || '-'}</td>
+                      <td style={{ ...s.td, color: '#888', fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
                         {fmt(lead.created_at)}
+                      </td>
+                      <td style={s.td}>
+                        <button
+                          className="admin-view-btn"
+                          onClick={e => { e.stopPropagation(); setDetailLead(lead); }}
+                          style={s.viewBtn}
+                        >
+                          View
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -521,7 +890,113 @@ export default function AdminDashboard() {
               {leads.length === 0 ? (
                 <div style={{ color: '#888', textAlign: 'center', padding: '3rem' }}>No leads yet</div>
               ) : leads.map(lead => (
-                <LeadCard key={lead.id} lead={lead} />
+                <div key={lead.id} style={{ padding: '1rem', borderBottom: '1px solid #1a1a1a', cursor: 'pointer' }} onClick={() => setDetailLead(lead)}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                    <div>
+                      <div style={{ color: '#F5F0E8', fontWeight: 500, fontSize: '0.9rem' }}>{lead.business_name}</div>
+                      <div style={{ fontSize: '0.75rem', color: '#888' }}>{lead.email || 'No email'}</div>
+                    </div>
+                    <button className="admin-view-btn" onClick={e => { e.stopPropagation(); setDetailLead(lead); }} style={s.viewBtn}>View</button>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                    <Badge label={lead.plan} color={PLAN_COLORS[lead.plan] || '#555'} />
+                    <Badge label={lead.converted_at ? 'Converted' : 'Dropped off'} color={lead.converted_at ? '#3a7d44' : '#9b4a00'} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          /* ─── FREE SCORES TAB ─── */
+          <>
+            <div className="admin-table-desktop" style={{ overflowX: 'auto' }}>
+              <table style={s.table}>
+                <thead>
+                  <tr>
+                    <th style={s.th}>Firm</th>
+                    <th style={s.th}>Email</th>
+                    <th style={s.th}>Location</th>
+                    <th style={s.th}>Score</th>
+                    <th style={s.th}>Grade</th>
+                    <th style={s.th}>Top Competitor</th>
+                    <th style={s.th}>Converted</th>
+                    <th style={s.th}>Date</th>
+                    <th style={s.th}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {scores.length === 0 ? (
+                    <tr><td colSpan={9} style={{ ...s.td, textAlign: 'center', color: '#888', padding: '3rem' }}>No free scores yet</td></tr>
+                  ) : scores.map(score => (
+                    <tr key={score.id} className="admin-row" style={{ cursor: 'pointer' }} onClick={() => setDetailScore(score)}>
+                      <td style={s.td}>
+                        <div style={{ color: '#F5F0E8', fontWeight: 500 }}>{score.firm_name}</div>
+                        {score.specialty && <div style={{ fontSize: '0.7rem', color: '#888', marginTop: '2px' }}>{score.specialty}</div>}
+                      </td>
+                      <td style={s.td}>
+                        {score.email
+                          ? <a href={`mailto:${score.email}`} style={{ color: '#999', textDecoration: 'none' }} onClick={e => e.stopPropagation()}>{score.email}</a>
+                          : <span style={{ color: '#555' }}>No email</span>
+                        }
+                      </td>
+                      <td style={{ ...s.td, color: '#999' }}>{score.city || score.region || '-'}</td>
+                      <td style={s.td}>
+                        <span style={{ color: score.score >= 50 ? '#3a7d44' : score.score >= 25 ? '#C9A84C' : '#cc4444', fontWeight: 600 }}>
+                          {score.score}/100
+                        </span>
+                      </td>
+                      <td style={s.td}>
+                        <Badge label={`Grade ${score.grade}`} color={score.grade === 'A' || score.grade === 'B' ? '#3a7d44' : score.grade === 'C' ? '#C9A84C' : '#cc4444'} />
+                      </td>
+                      <td style={{ ...s.td, color: '#999', fontSize: '0.78rem' }}>
+                        {score.top_competitor_name || '-'}
+                      </td>
+                      <td style={s.td}>
+                        {score.converted_to_audit ? (
+                          <Badge label="Converted" color="#3a7d44" />
+                        ) : score.email ? (
+                          <Badge label="Has email" color="#1a6fa8" />
+                        ) : (
+                          <span style={{ color: '#555', fontSize: '0.75rem' }}>-</span>
+                        )}
+                      </td>
+                      <td style={{ ...s.td, color: '#888', fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
+                        {fmt(score.created_at)}
+                      </td>
+                      <td style={s.td}>
+                        <button
+                          className="admin-view-btn"
+                          onClick={e => { e.stopPropagation(); setDetailScore(score); }}
+                          style={s.viewBtn}
+                        >
+                          View
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile cards */}
+            <div className="admin-cards-mobile">
+              {scores.length === 0 ? (
+                <div style={{ color: '#888', textAlign: 'center', padding: '3rem' }}>No free scores yet</div>
+              ) : scores.map(score => (
+                <div key={score.id} style={{ padding: '1rem', borderBottom: '1px solid #1a1a1a', cursor: 'pointer' }} onClick={() => setDetailScore(score)}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                    <div>
+                      <div style={{ color: '#F5F0E8', fontWeight: 500, fontSize: '0.9rem' }}>{score.firm_name}</div>
+                      <div style={{ fontSize: '0.75rem', color: '#888' }}>{score.email || 'No email'} {score.city && ` | ${score.city}`}</div>
+                    </div>
+                    <button className="admin-view-btn" onClick={e => { e.stopPropagation(); setDetailScore(score); }} style={s.viewBtn}>View</button>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <Badge label={`${score.score}/100`} color={score.score >= 50 ? '#3a7d44' : score.score >= 25 ? '#C9A84C' : '#cc4444'} />
+                    <Badge label={`Grade ${score.grade}`} color={score.grade === 'A' || score.grade === 'B' ? '#3a7d44' : score.grade === 'C' ? '#C9A84C' : '#cc4444'} />
+                    {score.converted_to_audit && <Badge label="Converted" color="#3a7d44" />}
+                  </div>
+                </div>
               ))}
             </div>
           </>

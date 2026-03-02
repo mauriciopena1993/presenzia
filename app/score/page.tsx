@@ -825,7 +825,7 @@ export default function ScorePage() {
                   Your full audit unlocks everything above
                 </p>
                 <p style={{ color: '#999', fontSize: '0.8rem', textAlign: 'center', marginBottom: '0.25rem', lineHeight: 1.5 }}>
-                  Competitor deep-dive, actionable step-by-step plan, platform-specific recommendations, and priority roadmap
+                  Interactive dashboard, competitor deep-dive, actionable step-by-step plan, platform-specific recommendations, and downloadable PDF
                 </p>
               </div>
             </div>

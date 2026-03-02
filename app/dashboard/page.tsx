@@ -75,7 +75,7 @@ const GRADE_COLORS: Record<string, string> = {
 };
 
 const PLAN_LABELS: Record<string, string> = {
-  audit: 'AI Visibility Audit',
+  audit: 'Full AI Audit',
   starter: 'Starter', // legacy
   growth: 'Growth Retainer',
   premium: 'Premium',
@@ -88,8 +88,22 @@ const PLAN_PRICES: Record<string, string> = {
   premium: '£1,997',
 };
 
+const PLAN_PRICE_SUFFIX: Record<string, string> = {
+  audit: 'one-off',
+  starter: '/mo',
+  growth: '/mo',
+  premium: '/mo',
+};
+
+const TIER_COLORS: Record<string, string> = {
+  audit: '#C9A84C',
+  starter: '#C9A84C',
+  growth: '#5BA88C',
+  premium: '#9b6bcc',
+};
+
 const PLAN_FEATURES: Record<string, string[]> = {
-  audit: ['One-off AI visibility audit', '120 wealth-specific prompts tested', 'Scored PDF report with action plan'],
+  audit: ['One-off AI visibility audit', '120 wealth-specific prompts tested', 'Online dashboard with full interactive report', 'Downloadable PDF report with action plan'],
   starter: ['Monthly AI visibility audit', 'Delivered by email (report)'], // legacy
   growth: ['Everything in Audit', 'Monthly re-audits', 'Online dashboard (weekly updates)', 'AI audit assistant', 'Quarterly strategy calls', 'Competitor deep-dive', 'Priority email support'],
   premium: ['Everything in Growth', 'Daily dashboard updates', 'Dedicated account manager', 'Monthly 1:1 strategy calls', 'Territory exclusivity', 'Done-for-you content recommendations', 'Custom prompt testing & industry benchmarking'],
@@ -126,10 +140,25 @@ function fmt(date: string) {
   return new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-function getNextAuditDate(lastDate: string): string {
+function getNextAuditDate(lastDate: string, plan?: string): string {
   const d = new Date(lastDate);
-  d.setMonth(d.getMonth() + 1);
+  if (plan === 'premium') {
+    // Premium: daily re-audits
+    d.setDate(d.getDate() + 1);
+  } else if (plan === 'growth') {
+    // Growth: weekly re-audits
+    d.setDate(d.getDate() + 7);
+  } else {
+    // Fallback: monthly
+    d.setMonth(d.getMonth() + 1);
+  }
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function getUpdateFrequencyLabel(plan?: string): string {
+  if (plan === 'premium') return 'Daily';
+  if (plan === 'growth') return 'Weekly';
+  return 'One-off';
 }
 
 function CongratsBanner({ plan, onClose }: { plan: string; onClose: () => void }) {
@@ -330,7 +359,7 @@ function CancelFlow({
             {lowerPlans.map(p => (
               <div key={p} style={{ flex: 1, minWidth: '200px', padding: '1rem', background: '#111', border: '1px solid #222' }}>
                 <div style={{ fontSize: '0.85rem', color: '#C9A84C', fontWeight: 600, marginBottom: '4px' }}>
-                  {PLAN_LABELS[p]} · {PLAN_PRICES[p]}/mo
+                  {PLAN_LABELS[p]} · {PLAN_PRICES[p]} {PLAN_PRICE_SUFFIX[p]}
                 </div>
                 <ul style={{ margin: '0.5rem 0 0.75rem', padding: '0 0 0 1rem', fontSize: '0.78rem', color: '#999', lineHeight: 1.6 }}>
                   {PLAN_FEATURES[p]?.map((f, i) => <li key={i}>{f}</li>)}
@@ -471,7 +500,7 @@ function CancelFlow({
           )}
 
           <p style={{ fontSize: '0.78rem', color: '#666', lineHeight: 1.6, margin: 0 }}>
-            If you change your mind, you can undo the cancellation from your dashboard anytime before the end date, or visit our <a href="/#pricing" style={{ color: '#C9A84C', textDecoration: 'none' }}>pricing page</a> to resubscribe later.
+            If you change your mind, you can undo the cancellation from your dashboard anytime before the end date, or visit our <a href="/pricing" style={{ color: '#C9A84C', textDecoration: 'none' }}>pricing page</a> to resubscribe later.
           </p>
         </>
       )}
@@ -565,7 +594,7 @@ function PlanConfirmModal({
         {isUpgrade ? (
           <>
             <p style={{ fontSize: '0.85rem', color: '#999', margin: '0 0 0.75rem', lineHeight: 1.6 }}>
-              You&apos;ll be charged the prorated difference for the rest of your billing cycle. From the next cycle, you&apos;ll pay {PLAN_PRICES[targetPlan]}/mo.
+              You&apos;ll be charged the prorated difference for the rest of your billing cycle. From the next cycle, you&apos;ll pay {PLAN_PRICES[targetPlan]} {PLAN_PRICE_SUFFIX[targetPlan]}.
             </p>
             <div style={{ fontSize: '0.8rem', color: '#888', marginBottom: '1rem' }}>
               <div style={{ color: '#666', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.4rem' }}>What you&apos;ll get</div>
@@ -592,7 +621,7 @@ function PlanConfirmModal({
               </div>
             )}
             <p style={{ fontSize: '0.8rem', color: '#888', marginBottom: '1rem' }}>
-              Your new price: <strong style={{ color: '#F5F0E8' }}>{PLAN_PRICES[targetPlan]}/mo</strong> (currently {PLAN_PRICES[currentPlan]}/mo)
+              Your new price: <strong style={{ color: '#F5F0E8' }}>{PLAN_PRICES[targetPlan]} {PLAN_PRICE_SUFFIX[targetPlan]}</strong> (currently {PLAN_PRICES[currentPlan]} {PLAN_PRICE_SUFFIX[currentPlan]})
             </p>
           </>
         )}
@@ -1133,6 +1162,8 @@ export default function DashboardPage() {
   const [congratsPlan, setCongratsPlan] = useState<string | null>(null);
   const [cancelEndDate, setCancelEndDate] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     // Detect post-checkout redirect (?upgraded=plan)
@@ -1172,6 +1203,27 @@ export default function DashboardPage() {
     // Cookie is httpOnly — must clear it server-side
     await fetch('/api/client/signout', { method: 'POST' });
     router.push('/');
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleteLoading(true);
+    try {
+      const res = await fetch('/api/client/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirm: true }),
+      });
+      if (res.ok) {
+        router.push('/?deleted=1');
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Failed to delete account. Please contact hello@presenzia.ai');
+        setDeleteLoading(false);
+      }
+    } catch {
+      alert('Network error. Please try again.');
+      setDeleteLoading(false);
+    }
   };
 
   const handleDownloadReport = (jobId: string) => {
@@ -1330,281 +1382,10 @@ export default function DashboardPage() {
     );
   }
 
-  // Audit/Starter plan: limited portal — report downloads + upsell
-  if (client?.plan === 'starter' || client?.plan === 'audit') {
-    const completedReports = history.filter(r => r.status === 'completed');
-    return (
-      <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'var(--font-inter, Inter, sans-serif)', color: '#F5F0E8' }}>
-        {/* Congratulations overlay */}
-        {congratsPlan && <CongratsBanner plan={congratsPlan} onClose={handleCongratsClose} />}
-        {/* Plan change confirmation modal */}
-        {confirmTarget && client && (
-          <PlanConfirmModal
-            currentPlan={client.plan}
-            targetPlan={confirmTarget}
-            pendingChange={client.pending_plan_change || null}
-            pendingDate={client.pending_change_date || null}
-            onConfirm={() => executeChangePlan(confirmTarget)}
-            onCancel={() => setConfirmTarget(null)}
-          />
-        )}
-        {/* Nav */}
-        <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1rem clamp(1rem, 3vw, 2rem)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: '#0A0A0A', zIndex: 50, gap: '0.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(0.5rem, 2vw, 1.5rem)', minWidth: 0 }}>
-            <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.2rem', color: '#F5F0E8', textDecoration: 'none', flexShrink: 0 }}>
-              presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
-            </Link>
-            <div style={{ fontSize: '0.75rem', color: '#999', display: 'flex', alignItems: 'center', gap: '0.5rem', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{client.business_name || client.email}</span>
-              <span style={{ padding: '2px 8px', background: '#1a1a1a', border: '1px solid #333', fontSize: '0.75rem', color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em', flexShrink: 0 }}>Starter</span>
-            </div>
-          </div>
-          <button onClick={handleSignOut} style={{ background: 'none', border: '1px solid #2a2a2a', color: '#999', padding: '0.4rem 1rem', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem', flexShrink: 0 }}>
-            Sign out
-          </button>
-        </div>
-
-        {/* Prominent pending-change banner — visible immediately on login */}
-        <PendingChangeBanner client={client} onCancelPending={handleCancelPending} actionLoading={actionLoading} />
-
-        <div style={{ maxWidth: '860px', margin: '0 auto', padding: '2.5rem clamp(1rem, 3vw, 2rem) 4rem' }}>
-
-          {/* Report repository */}
-          <div style={{ marginBottom: '3rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '1.25rem' }}>
-              <div>
-                <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>Audit library</div>
-                <h2 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.5rem', color: '#F5F0E8', fontWeight: 600 }}>Your AI visibility audits</h2>
-              </div>
-              <span style={{ fontSize: '0.75rem', color: '#888' }}>{completedReports.length} audit{completedReports.length !== 1 ? 's' : ''}</span>
-            </div>
-
-            <div style={{ border: '1px solid #111' }}>
-              {completedReports.length === 0 ? (
-                <div style={{ padding: '3rem', textAlign: 'center', color: '#888' }}>
-                  {pendingJob
-                    ? 'Your first audit is being prepared — check back shortly.'
-                    : 'Your first audit will arrive by email once it is complete.'}
-                </div>
-              ) : (
-                completedReports.map((report, i) => (
-                  <div key={report.id} style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '1rem 1.25rem',
-                    borderBottom: i < completedReports.length - 1 ? '1px solid #111' : 'none',
-                    background: i === 0 ? '#0D0D0D' : 'transparent',
-                  }}>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.2rem' }}>
-                        <span style={{ fontSize: '0.9rem', color: '#F5F0E8' }}>
-                          {report.completed_at ? fmt(report.completed_at) : fmt(report.created_at)}
-                        </span>
-                        {i === 0 && (
-                          <span style={{ fontSize: '0.75rem', padding: '2px 8px', background: '#1a1400', border: '1px solid #3a2e00', color: '#C9A84C', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Latest</span>
-                        )}
-                      </div>
-                      {report.overall_score !== null && report.grade && (
-                        <div style={{ fontSize: '0.75rem', color: '#888' }}>
-                          Score: <span style={{ color: '#C9A84C' }}>{report.overall_score}/100</span> · Grade {report.grade}
-                        </div>
-                      )}
-                    </div>
-                    {report.report_path ? (
-                      <button
-                        onClick={() => handleDownloadReport(report.id)}
-                        style={{ background: 'none', border: '1px solid #555', color: '#999', padding: '0.5rem 1rem', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#C9A84C'; (e.currentTarget as HTMLElement).style.borderColor = '#C9A84C'; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#999'; (e.currentTarget as HTMLElement).style.borderColor = '#555'; }}
-                      >
-                        ↓ Download audit
-                      </button>
-                    ) : (
-                      <span style={{ fontSize: '0.75rem', color: '#888' }}>Processing…</span>
-                    )}
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Next audit / Inactive subscription banner */}
-          {client.status === 'cancelled' ? (
-            <div style={{
-              padding: '1.25rem 1.5rem',
-              background: 'rgba(204,68,68,0.06)',
-              border: '1px solid rgba(204,68,68,0.2)',
-              marginBottom: '2rem',
-            }}>
-              <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem' }}>No active subscription</div>
-              <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6, margin: '0 0 1rem' }}>
-                Your previous reports are still available below. To generate a new audit, resubscribe to one of our plans.
-              </p>
-              <a
-                href="/#pricing"
-                style={{
-                  display: 'inline-block',
-                  padding: '0.5rem 1.5rem',
-                  background: '#C9A84C',
-                  color: '#0A0A0A',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  textDecoration: 'none',
-                  fontFamily: 'inherit',
-                }}
-              >
-                View plans & resubscribe
-              </a>
-            </div>
-          ) : (
-            <>
-              {/* Next audit date */}
-              {completedReports.length > 0 && (
-                <div style={{
-                  padding: '1rem 1.25rem',
-                  background: 'rgba(201,168,76,0.04)',
-                  border: '1px solid rgba(201,168,76,0.15)',
-                  marginBottom: '3rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                }}>
-                  <div style={{ width: '6px', height: '6px', background: '#C9A84C', borderRadius: '50%', flexShrink: 0 }} />
-                  <span style={{ fontSize: '0.85rem', color: '#AAAAAA' }}>
-                    Your next audit will be available on{' '}
-                    <span style={{ color: '#C9A84C', fontWeight: 600 }}>
-                      {getNextAuditDate(completedReports[0].completed_at || completedReports[0].created_at)}
-                    </span>
-                  </span>
-                </div>
-              )}
-
-              {/* Pending cancellation banner (Starter) */}
-              {client.pending_plan_change === 'cancel' && (
-                <div style={{
-                  padding: '1rem 1.25rem',
-                  background: 'rgba(204,68,68,0.06)',
-                  border: '1px solid rgba(204,68,68,0.2)',
-                  marginBottom: '1.5rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '1rem',
-                  flexWrap: 'wrap',
-                }}>
-                  <div style={{ fontSize: '0.85rem', color: '#cc8888' }}>
-                    Your subscription will end on {client.pending_change_date ? new Date(client.pending_change_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'the end of your billing cycle'}. No further payments will be made.
-                  </div>
-                  <button
-                    onClick={handleCancelPending}
-                    disabled={actionLoading}
-                    style={{
-                      background: 'none',
-                      border: '1px solid #444',
-                      color: '#AAAAAA',
-                      padding: '0.4rem 1rem',
-                      fontSize: '0.78rem',
-                      cursor: actionLoading ? 'wait' : 'pointer',
-                      fontFamily: 'inherit',
-                      whiteSpace: 'nowrap',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {actionLoading ? 'Processing...' : 'Stay on Starter'}
-                  </button>
-                </div>
-              )}
-
-              {/* Plan options — all 3 plans, current highlighted */}
-              <div style={{ marginBottom: '1.25rem' }}>
-                <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Your plan</div>
-
-                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                  {PLAN_ORDER.map(plan => {
-                    const isCurrent = plan === (client?.plan || 'audit');
-                    const accentColor = plan === 'premium' ? '#9b6bcc' : '#C9A84C';
-                    return (
-                      <div key={plan} style={{
-                        flex: 1,
-                        minWidth: 'min(240px, 100%)',
-                        padding: '1.25rem',
-                        background: isCurrent ? '#0D0D0D' : '#0A0A0A',
-                        border: isCurrent ? '2px solid #C9A84C' : '1px solid #1a1a1a',
-                      }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                          <div style={{ fontSize: '0.9rem', color: isCurrent ? '#F5F0E8' : accentColor, fontWeight: 600 }}>
-                            {PLAN_LABELS[plan]} · {PLAN_PRICES[plan]}/mo
-                          </div>
-                          {isCurrent && (
-                            <span style={{ fontSize: '0.65rem', color: '#C9A84C', letterSpacing: '0.05em', textTransform: 'uppercase', fontWeight: 700, background: 'rgba(201,168,76,0.12)', padding: '2px 8px' }}>
-                              Current plan
-                            </span>
-                          )}
-                          {!isCurrent && (
-                            <span style={{ fontSize: '0.65rem', color: accentColor, letterSpacing: '0.05em', textTransform: 'uppercase', fontWeight: 600 }}>Upgrade</span>
-                          )}
-                        </div>
-                        <ul style={{ margin: '0.5rem 0 1rem', padding: '0 0 0 1rem', fontSize: '0.8rem', color: isCurrent ? '#AAAAAA' : '#999', lineHeight: 1.7 }}>
-                          {PLAN_FEATURES[plan]?.map((f, i) => <li key={i}>{f}</li>)}
-                        </ul>
-                        {isCurrent ? (
-                          <div style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, textAlign: 'center', color: '#666', border: '1px solid #222', background: '#111' }}>
-                            Your current plan
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => handleChangePlan(plan)}
-                            disabled={actionLoading}
-                            style={{ background: accentColor, color: '#0A0A0A', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', width: '100%' }}
-                          >
-                            {actionLoading ? 'Processing…' : `Upgrade to ${PLAN_LABELS[plan]} →`}
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.5rem' }}>
-                  Upgrades are instant — you only pay the difference. Downgrades take effect at the end of your billing cycle.
-                </p>
-              </div>
-
-              {/* Cancel */}
-              <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
-                <p style={{ color: '#888', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
-                  Questions? <a href="mailto:hello@presenzia.ai" style={{ color: '#999', textDecoration: 'none' }}>hello@presenzia.ai</a>
-                </p>
-                {!showCancel ? (
-                  <button
-                    onClick={handleStartCancel}
-                    style={{ background: 'none', border: 'none', color: '#666', fontSize: '0.75rem', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline' }}
-                  >
-                    Cancel subscription
-                  </button>
-                ) : (
-                  <div style={{ marginTop: '1rem', textAlign: 'left' }}>
-                    <CancelFlow
-                      plan={client?.plan || 'starter'}
-                      cancelStep={cancelStep}
-                      setCancelStep={setCancelStep}
-                      retentionEligible={retentionEligible}
-                      actionLoading={actionLoading}
-                      onAcceptRetention={handleAcceptRetention}
-                      onConfirmCancel={handleConfirmCancel}
-                      onChangePlan={handleChangePlan}
-                      onSubmitFeedback={handleSubmitFeedback}
-                      onClose={() => setShowCancel(false)}
-                      cancelEndDate={cancelEndDate}
-                    />
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-    );
-  }
+  // Tier flags — all tiers now use the unified dashboard
+  const isAuditTier = client?.plan === 'starter' || client?.plan === 'audit';
+  const isPremium = client?.plan === 'premium';
+  const isGrowthOrAbove = client?.plan === 'growth' || isPremium;
 
   const platforms = latestJob?.platforms_json || [];
   const competitors = latestJob?.competitors_json || [];
@@ -1627,7 +1408,7 @@ export default function DashboardPage() {
       )}
 
       {/* Nav */}
-      <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1rem clamp(1rem, 3vw, 2rem)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: '#0A0A0A', zIndex: 50, gap: '0.75rem' }}>
+      <div style={{ borderBottom: `1px solid ${client ? TIER_COLORS[client.plan] + '30' : '#1A1A1A'}`, borderTop: `2px solid ${client ? TIER_COLORS[client.plan] || '#C9A84C' : 'transparent'}`, padding: '1rem clamp(1rem, 3vw, 2rem)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: '#0A0A0A', zIndex: 50, gap: '0.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(0.5rem, 2vw, 1.5rem)', minWidth: 0 }}>
           <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.2rem', color: '#F5F0E8', textDecoration: 'none', flexShrink: 0 }}>
             presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
@@ -1635,9 +1416,15 @@ export default function DashboardPage() {
           {client && (
             <div style={{ fontSize: '0.75rem', color: '#999', display: 'flex', alignItems: 'center', gap: '0.5rem', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
               <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{client.business_name || client.email}</span>
-              <span style={{ padding: '2px 8px', background: '#1a1a1a', border: '1px solid #333', fontSize: '0.75rem', color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em', flexShrink: 0 }}>
+              <span style={{ padding: '2px 8px', background: `${TIER_COLORS[client.plan] || '#C9A84C'}18`, border: `1px solid ${TIER_COLORS[client.plan] || '#C9A84C'}50`, fontSize: '0.75rem', color: TIER_COLORS[client.plan] || '#C9A84C', textTransform: 'uppercase', letterSpacing: '0.05em', flexShrink: 0, fontWeight: 600 }}>
                 {PLAN_LABELS[client.plan] || client.plan}
               </span>
+              {isGrowthOrAbove && (
+                <span style={{ fontSize: '0.6rem', color: TIER_COLORS[client.plan] || '#C9A84C', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <span style={{ width: '5px', height: '5px', background: TIER_COLORS[client.plan] || '#C9A84C', borderRadius: '50%', animation: 'pulse 2s infinite' }} />
+                  {isPremium ? 'Daily monitoring' : 'Weekly updates'}
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -1667,7 +1454,7 @@ export default function DashboardPage() {
               Your previous reports are still available below. To generate a new audit, resubscribe to one of our plans.
             </p>
             <a
-              href="/#pricing"
+              href="/pricing"
               style={{
                 display: 'inline-block',
                 padding: '0.5rem 1.5rem',
@@ -1733,32 +1520,38 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Tabs */}
+        {/* Tabs — audit tier only sees "Your Audit", Growth/Premium see all 3 */}
         <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #1a1a1a', marginBottom: '2rem' }}>
-          {([
-            { key: 'report', label: 'Latest Audit' },
-            { key: 'history', label: `History (${completedCount})` },
-            { key: 'chat', label: 'Ask AI' },
-          ] as const).map(tab => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              style={{
-                padding: '0.625rem 1.5rem',
-                background: 'none',
-                border: 'none',
-                borderBottom: activeTab === tab.key ? '2px solid #C9A84C' : '2px solid transparent',
-                color: activeTab === tab.key ? '#F5F0E8' : '#888',
-                fontFamily: 'inherit',
-                fontSize: '0.875rem',
-                cursor: 'pointer',
-                fontWeight: activeTab === tab.key ? 600 : 400,
-                transition: 'color 0.2s',
-              }}
-            >
-              {tab.label}
-            </button>
-          ))}
+          {(isAuditTier
+            ? [{ key: 'report' as const, label: 'Your Audit' }]
+            : [
+                { key: 'report' as const, label: 'Latest Audit' },
+                { key: 'history' as const, label: `History (${completedCount})` },
+                { key: 'chat' as const, label: 'Ask AI' },
+              ]
+          ).map(tab => {
+            const tabAccent = TIER_COLORS[client?.plan || 'audit'] || '#C9A84C';
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                style={{
+                  padding: '0.625rem 1.5rem',
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: activeTab === tab.key ? `2px solid ${tabAccent}` : '2px solid transparent',
+                  color: activeTab === tab.key ? '#F5F0E8' : '#888',
+                  fontFamily: 'inherit',
+                  fontSize: '0.875rem',
+                  cursor: 'pointer',
+                  fontWeight: activeTab === tab.key ? 600 : 400,
+                  transition: 'color 0.2s',
+                }}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
 
         {/* ─── REPORT TAB ─── */}
@@ -1776,6 +1569,50 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div>
+              {/* Report date + next update info */}
+              {latestJob.completed_at && (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '0.75rem',
+                  padding: '0.875rem 1.25rem',
+                  background: `${TIER_COLORS[client?.plan || 'audit']}0A`,
+                  border: `1px solid ${TIER_COLORS[client?.plan || 'audit']}20`,
+                  marginBottom: '1.25rem',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <div style={{ width: '5px', height: '5px', background: '#4a9e6a', borderRadius: '50%', flexShrink: 0 }} />
+                      <span style={{ fontSize: '0.78rem', color: '#999' }}>
+                        Report date: <span style={{ color: '#F5F0E8', fontWeight: 500 }}>{fmt(latestJob.completed_at)}</span>
+                      </span>
+                    </div>
+                    {isGrowthOrAbove && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <div style={{ width: '5px', height: '5px', background: TIER_COLORS[client?.plan || 'audit'], borderRadius: '50%', flexShrink: 0, animation: 'pulse 2s infinite' }} />
+                        <span style={{ fontSize: '0.78rem', color: '#999' }}>
+                          Next update: <span style={{ color: TIER_COLORS[client?.plan || 'audit'], fontWeight: 600 }}>{getNextAuditDate(latestJob.completed_at, client?.plan)}</span>
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <span style={{
+                    fontSize: '0.6rem',
+                    padding: '2px 8px',
+                    background: isGrowthOrAbove ? `${TIER_COLORS[client?.plan || 'audit']}18` : 'rgba(255,255,255,0.04)',
+                    border: isGrowthOrAbove ? `1px solid ${TIER_COLORS[client?.plan || 'audit']}40` : '1px solid #2a2a2a',
+                    color: isGrowthOrAbove ? TIER_COLORS[client?.plan || 'audit'] : '#888',
+                    fontWeight: 600,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                  }}>
+                    {getUpdateFrequencyLabel(client?.plan)}
+                  </span>
+                </div>
+              )}
+
               {/* Interactive report — replaces static report view */}
               <InteractiveReport
                 job={latestJob}
@@ -1789,42 +1626,153 @@ export default function DashboardPage() {
                 onDownload={handleDownloadReport}
               />
 
-              {/* Score trend graph */}
-              {history.filter(r => r.status === 'completed' && r.overall_score !== null).length >= 2 && (
+              {/* Score trend graph — Growth/Premium only (needs 2+ audits) */}
+              {isGrowthOrAbove && history.filter(r => r.status === 'completed' && r.overall_score !== null).length >= 2 && (
                 <div style={{
                   background: '#0D0D0D',
-                  border: '1px solid #1a1a1a',
+                  border: `1px solid ${TIER_COLORS[client?.plan || 'audit']}30`,
                   padding: 'clamp(1rem, 2vw, 1.5rem)',
                   marginTop: '1.25rem',
                 }}>
                   <div style={{
-                    fontSize: '0.7rem',
-                    color: '#666',
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
                     marginBottom: '0.75rem',
                   }}>
-                    Score trend ({client?.plan === 'premium' ? 'daily' : 'weekly'} audits)
+                    <div style={{
+                      fontSize: '0.7rem',
+                      color: '#666',
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                    }}>
+                      Score Evolution
+                    </div>
+                    <span style={{
+                      fontSize: '0.6rem',
+                      padding: '2px 8px',
+                      background: `${TIER_COLORS[client?.plan || 'audit']}18`,
+                      border: `1px solid ${TIER_COLORS[client?.plan || 'audit']}40`,
+                      color: TIER_COLORS[client?.plan || 'audit'],
+                      fontWeight: 600,
+                      letterSpacing: '0.08em',
+                      textTransform: 'uppercase',
+                    }}>
+                      Updated {client?.plan === 'premium' ? 'daily' : 'weekly'}
+                    </span>
                   </div>
                   <ScoreTrendGraph reports={history} plan={client?.plan || 'growth'} />
                 </div>
               )}
 
-              {/* Next audit date */}
-              {latestJob.completed_at && (
+              {/* Next audit date — Growth/Premium only */}
+              {isGrowthOrAbove && latestJob.completed_at && (
                 <div style={{
                   marginTop: '0.75rem',
                   padding: '0.75rem 1rem',
-                  background: 'rgba(201,168,76,0.04)',
-                  border: '1px solid rgba(201,168,76,0.12)',
+                  background: `${TIER_COLORS[client?.plan || 'audit']}0A`,
+                  border: `1px solid ${TIER_COLORS[client?.plan || 'audit']}20`,
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.5rem',
                 }}>
-                  <div style={{ width: '5px', height: '5px', background: '#C9A84C', borderRadius: '50%', flexShrink: 0 }} />
+                  <div style={{ width: '5px', height: '5px', background: TIER_COLORS[client?.plan || 'audit'], borderRadius: '50%', flexShrink: 0 }} />
                   <span style={{ fontSize: '0.78rem', color: '#999' }}>
-                    Next audit: <span style={{ color: '#C9A84C', fontWeight: 600 }}>{getNextAuditDate(latestJob.completed_at)}</span>
+                    Next audit: <span style={{ color: TIER_COLORS[client?.plan || 'audit'], fontWeight: 600 }}>{getNextAuditDate(latestJob.completed_at, client?.plan)}</span>
                   </span>
+                </div>
+              )}
+
+              {/* Audit tier: re-purchase + upsell options */}
+              {isAuditTier && client?.status !== 'cancelled' && (
+                <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {/* Buy another one-off audit */}
+                  <div style={{
+                    padding: '1.25rem 1.5rem',
+                    background: '#0D0D0D',
+                    border: '1px solid #1a1a1a',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                      <div style={{ width: '6px', height: '6px', background: '#C9A84C', borderRadius: '50%' }} />
+                      <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600 }}>
+                        Want an updated audit?
+                      </div>
+                    </div>
+                    <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6, margin: '0 0 1rem' }}>
+                      Your AI visibility changes over time. Purchase another one-off audit to see how your score has evolved and get fresh recommendations.
+                    </p>
+                    <button
+                      onClick={async () => {
+                        setActionLoading(true);
+                        try {
+                          const res = await fetch('/api/checkout', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              plan: 'audit',
+                              email: client.email,
+                              business_name: client.business_name || '',
+                              business_type: client.business_type || '',
+                              location: client.location || '',
+                              website: client.website || '',
+                            }),
+                          });
+                          const data = await res.json();
+                          if (data.url) window.location.href = data.url;
+                          else alert('Something went wrong. Please contact hello@presenzia.ai');
+                        } catch {
+                          alert('Something went wrong. Please contact hello@presenzia.ai');
+                        } finally {
+                          setActionLoading(false);
+                        }
+                      }}
+                      disabled={actionLoading}
+                      style={{
+                        display: 'inline-block',
+                        padding: '0.5rem 1.5rem',
+                        background: 'transparent',
+                        color: '#C9A84C',
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        border: '1px solid rgba(201,168,76,0.4)',
+                        cursor: actionLoading ? 'wait' : 'pointer',
+                        fontFamily: 'inherit',
+                      }}
+                    >
+                      {actionLoading ? 'Processing...' : 'Buy another audit — £297 →'}
+                    </button>
+                  </div>
+
+                  {/* Upsell to Growth */}
+                  <div style={{
+                    padding: '1.25rem 1.5rem',
+                    background: 'rgba(201,168,76,0.04)',
+                    border: '1px solid rgba(201,168,76,0.15)',
+                  }}>
+                    <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem' }}>
+                      Want ongoing visibility tracking?
+                    </div>
+                    <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6, margin: '0 0 1rem' }}>
+                      Upgrade to Growth for weekly re-audits, a live dashboard with score tracking, an AI audit assistant, and quarterly strategy calls — all for £697/mo.
+                    </p>
+                    <button
+                      onClick={() => handleChangePlan('growth')}
+                      disabled={actionLoading}
+                      style={{
+                        display: 'inline-block',
+                        padding: '0.5rem 1.5rem',
+                        background: '#C9A84C',
+                        color: '#0A0A0A',
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        border: 'none',
+                        cursor: actionLoading ? 'wait' : 'pointer',
+                        fontFamily: 'inherit',
+                      }}
+                    >
+                      {actionLoading ? 'Processing...' : 'Upgrade to Growth Retainer →'}
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -1943,49 +1891,71 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* Plan options — always visible, all 3 plans, current highlighted */}
+          {/* Plan options — always visible, all 3 plans, current highlighted with tier color */}
           {client && (
             <div id="plan-options" style={{ marginBottom: '2rem' }}>
               <div style={{ fontSize: '0.75rem', color: '#999', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Your plan</div>
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                 {PLAN_ORDER.map(plan => {
-                  const isCurrent = plan === client.plan;
+                  const isCurrent = plan === client.plan || (plan === 'audit' && client.plan === 'starter');
                   const isUpgrade = PLAN_ORDER.indexOf(plan) > PLAN_ORDER.indexOf(client.plan);
-                  const accentColor = plan === 'premium' ? '#9b6bcc' : '#C9A84C';
+                  const tierColor = TIER_COLORS[plan] || '#C9A84C';
                   return (
                     <div key={plan} style={{
                       flex: 1,
                       minWidth: 'min(260px, 100%)',
                       padding: '1.25rem',
-                      background: isCurrent ? '#0D0D0D' : '#0A0A0A',
-                      border: isCurrent ? '2px solid #C9A84C' : '1px solid #1a1a1a',
+                      background: isCurrent ? `${tierColor}08` : '#0A0A0A',
+                      borderTop: isCurrent ? `3px solid ${tierColor}` : '3px solid transparent',
+                      border: isCurrent ? `1px solid ${tierColor}40` : '1px solid #1a1a1a',
+                      borderTopWidth: '3px',
+                      position: 'relative',
                     }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                        <div style={{ fontSize: '0.9rem', color: isCurrent ? '#F5F0E8' : isUpgrade ? accentColor : '#999', fontWeight: 600 }}>
-                          {PLAN_LABELS[plan]} · {PLAN_PRICES[plan]}/mo
+                      {isCurrent && (
+                        <div style={{
+                          position: 'absolute',
+                          top: '-1px',
+                          right: '1rem',
+                          background: tierColor,
+                          color: '#0A0A0A',
+                          fontSize: '0.6rem',
+                          fontWeight: 700,
+                          letterSpacing: '0.1em',
+                          textTransform: 'uppercase',
+                          padding: '3px 10px',
+                        }}>
+                          Your plan
                         </div>
-                        {isCurrent ? (
-                          <span style={{ fontSize: '0.65rem', color: '#C9A84C', letterSpacing: '0.05em', textTransform: 'uppercase', fontWeight: 700, background: 'rgba(201,168,76,0.12)', padding: '2px 8px' }}>
-                            Current plan
+                      )}
+                      <div style={{ marginBottom: '0.5rem' }}>
+                        <div style={{ fontSize: '0.95rem', color: isCurrent ? '#F5F0E8' : '#AAAAAA', fontWeight: 600 }}>
+                          {PLAN_LABELS[plan]}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem', marginTop: '0.25rem' }}>
+                          <span style={{ fontSize: '1.5rem', fontWeight: 700, color: isCurrent ? tierColor : '#888', fontFamily: "var(--font-playfair, 'Playfair Display', serif)" }}>
+                            {PLAN_PRICES[plan]}
                           </span>
-                        ) : (
-                          <span style={{ fontSize: '0.65rem', color: isUpgrade ? accentColor : '#666', letterSpacing: '0.05em', textTransform: 'uppercase', fontWeight: 600 }}>
-                            {isUpgrade ? 'Upgrade' : 'Downgrade'}
+                          <span style={{ fontSize: '0.75rem', color: '#666' }}>
+                            {PLAN_PRICE_SUFFIX[plan]}
                           </span>
-                        )}
+                        </div>
                       </div>
-                      <ul style={{ margin: '0.5rem 0 1rem', padding: '0 0 0 1rem', fontSize: '0.8rem', color: isCurrent ? '#AAAAAA' : '#999', lineHeight: 1.7 }}>
-                        {PLAN_FEATURES[plan]?.map((f, i) => <li key={i}>{f}</li>)}
+                      <ul style={{ margin: '0.75rem 0 1.25rem', padding: '0 0 0 1rem', fontSize: '0.8rem', color: isCurrent ? '#BBBBBB' : '#888', lineHeight: 1.7 }}>
+                        {PLAN_FEATURES[plan]?.map((f, i) => (
+                          <li key={i} style={{ marginBottom: '2px' }}>
+                            <span style={{ color: isCurrent ? tierColor : '#555', marginRight: '2px' }}></span>{f}
+                          </li>
+                        ))}
                       </ul>
                       {isCurrent ? (
-                        <div style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, textAlign: 'center', color: '#666', border: '1px solid #222', background: '#111' }}>
-                          Your current plan
+                        <div style={{ padding: '0.5rem 1.25rem', fontSize: '0.8rem', fontWeight: 600, textAlign: 'center', color: tierColor, border: `1px solid ${tierColor}30`, background: `${tierColor}08` }}>
+                          Current plan
                         </div>
                       ) : isUpgrade ? (
                         <button
                           onClick={() => handleChangePlan(plan)}
                           disabled={actionLoading}
-                          style={{ background: accentColor, color: '#0A0A0A', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', width: '100%' }}
+                          style={{ background: tierColor, color: '#0A0A0A', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', width: '100%' }}
                         >
                           {actionLoading ? 'Processing...' : `Upgrade to ${PLAN_LABELS[plan]} →`}
                         </button>
@@ -1994,11 +1964,11 @@ export default function DashboardPage() {
                           <button
                             onClick={() => handleChangePlan(plan)}
                             disabled={actionLoading}
-                            style={{ background: 'transparent', color: '#999', border: '1px solid #333', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', width: '100%' }}
+                            style={{ background: 'transparent', color: '#888', border: '1px solid #333', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 500, cursor: actionLoading ? 'wait' : 'pointer', fontFamily: 'inherit', width: '100%' }}
                           >
-                            {actionLoading ? 'Processing...' : `Switch to ${PLAN_LABELS[plan]}`}
+                            {actionLoading ? 'Processing...' : `Downgrade to ${PLAN_LABELS[plan]}`}
                           </button>
-                          <p style={{ fontSize: '0.7rem', color: '#666', marginTop: '4px', textAlign: 'center' }}>Takes effect at end of billing cycle</p>
+                          <p style={{ fontSize: '0.7rem', color: '#555', marginTop: '4px', textAlign: 'center' }}>Takes effect at end of billing cycle</p>
                         </>
                       )}
                     </div>
@@ -2034,6 +2004,65 @@ export default function DashboardPage() {
               cancelEndDate={cancelEndDate}
             />
           )}
+
+          {/* Delete account */}
+          <div style={{ marginTop: '1.5rem' }}>
+            {!showDeleteConfirm ? (
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                style={{ background: 'none', border: 'none', color: '#555', fontSize: '0.7rem', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline' }}
+              >
+                Delete account and all data
+              </button>
+            ) : (
+              <div style={{
+                padding: '1.25rem',
+                background: 'rgba(204,68,68,0.04)',
+                border: '1px solid rgba(204,68,68,0.2)',
+                marginTop: '0.5rem',
+              }}>
+                <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem' }}>
+                  Delete your account?
+                </div>
+                <p style={{ fontSize: '0.8rem', color: '#999', lineHeight: 1.6, margin: '0 0 1rem' }}>
+                  This will permanently delete your account, all audit reports, score history, and any stored data. Your Stripe subscription will be cancelled immediately. This action cannot be undone.
+                </p>
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                  <button
+                    onClick={handleDeleteAccount}
+                    disabled={deleteLoading}
+                    style={{
+                      padding: '0.5rem 1.25rem',
+                      background: '#cc4444',
+                      color: '#F5F0E8',
+                      border: 'none',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      cursor: deleteLoading ? 'wait' : 'pointer',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    {deleteLoading ? 'Deleting...' : 'Yes, delete everything'}
+                  </button>
+                  <button
+                    onClick={() => setShowDeleteConfirm(false)}
+                    disabled={deleteLoading}
+                    style={{
+                      padding: '0.5rem 1.25rem',
+                      background: 'none',
+                      color: '#888',
+                      border: '1px solid #333',
+                      fontSize: '0.8rem',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
         ) : (
           <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid #1a1a1a', textAlign: 'center' }}>
@@ -2043,6 +2072,28 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Compact footer */}
+      <footer style={{
+        padding: '2rem clamp(1rem, 3vw, 2rem)',
+        borderTop: '1px solid #1a1a1a',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '0.75rem',
+        marginTop: '2rem',
+      }}>
+        <div style={{ fontSize: '0.75rem', color: '#666' }}>
+          &copy; {new Date().getFullYear()} Ketzal LTD t/a{' '}
+          <Link href="/" style={{ color: '#888', textDecoration: 'none' }}>presenzia.ai</Link>
+        </div>
+        <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.75rem' }}>
+          <a href="mailto:hello@presenzia.ai" style={{ color: '#666', textDecoration: 'none' }}>Contact</a>
+          <Link href="/privacy" style={{ color: '#666', textDecoration: 'none' }}>Privacy</Link>
+          <Link href="/terms" style={{ color: '#666', textDecoration: 'none' }}>Terms</Link>
+        </div>
+      </footer>
 
       <style>{`
         @keyframes pulse {

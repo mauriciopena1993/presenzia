@@ -5,6 +5,17 @@ export const metadata: Metadata = {
   title: 'Privacy Policy | presenzia.ai',
   description: 'How presenzia.ai collects, uses, and protects your personal data.',
   alternates: { canonical: '/privacy' },
+  openGraph: {
+    title: 'Privacy Policy | presenzia.ai',
+    description: 'How presenzia.ai collects, uses, and protects your personal data.',
+    url: 'https://presenzia.ai/privacy',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Privacy Policy | presenzia.ai',
+    description: 'How presenzia.ai collects, uses, and protects your personal data.',
+  },
 };
 
 const sectionStyle = {

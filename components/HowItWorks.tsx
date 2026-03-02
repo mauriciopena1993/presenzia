@@ -18,7 +18,7 @@ export default function HowItWorks() {
     {
       number: '03',
       title: 'You receive your results',
-      description: 'A clear, detailed audit with your visibility score, competitor analysis, and personalised action plan. Full audits include platform-by-platform breakdowns and implementation guides.',
+      description: 'A clear, detailed audit delivered instantly via your online dashboard and downloadable PDF. Includes your visibility score, competitor analysis, platform-by-platform breakdowns, and a personalised action plan.',
       icon: FileText,
     },
     {

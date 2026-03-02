@@ -71,7 +71,12 @@ export function verifyOTPChallenge(
     if (Date.now() > parseInt(expiryStr, 10)) return { valid: false };
 
     const trimmed = submittedCode.replace(/\s/g, '');
-    if (code !== trimmed) return { valid: false };
+    // Timing-safe comparison to prevent timing attacks
+    const codeBuffer = Buffer.from(code);
+    const trimmedBuffer = Buffer.from(trimmed);
+    if (codeBuffer.length !== trimmedBuffer.length || !crypto.timingSafeEqual(codeBuffer, trimmedBuffer)) {
+      return { valid: false };
+    }
 
     const expectedSig = hmacHex(`client-otp:${email}|${expiryStr}|${code}`, getSecret());
     if (sig !== expectedSig) return { valid: false };

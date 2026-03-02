@@ -12,10 +12,11 @@ export async function GET(req: NextRequest) {
     .from('clients')
     .select(`
       id, email, plan, status, business_name, business_type,
-      location, website, keywords, stripe_customer_id,
+      location, website, keywords, description, stripe_customer_id,
+      pending_plan_change, pending_change_date, marketing_suppressed,
       created_at, updated_at,
       audit_jobs (
-        id, status, overall_score, grade, completed_at, created_at, error
+        id, status, overall_score, grade, completed_at, created_at, error, report_path
       )
     `)
     .order('created_at', { ascending: false });
