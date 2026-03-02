@@ -119,7 +119,8 @@ function OnboardingForm() {
 
     try {
       const keywordList = formData.keywords.split(',').map(k => k.trim()).filter(Boolean);
-      if (keywordList.length < 2) {
+      // Require 2+ keywords only for manual form entry; score page data with 1 is fine
+      if (keywordList.length < 1 || (!fromScore.current && keywordList.length < 2)) {
         setError('Please add at least 2 keywords separated by commas. This is essential for an accurate audit.');
         setSubmitting(false);
         if (!fromScore.current) setLoaded(true);
