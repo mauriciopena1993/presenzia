@@ -91,14 +91,19 @@ export default function ScorePage() {
     { label: 'Connecting to ChatGPT...', status: 'in_progress' },
     { label: 'Testing ChatGPT prompts...', status: 'queued' },
     { label: 'Connecting to Claude...', status: 'queued' },
-    { label: 'Analysing competitors...', status: 'queued' },
-    { label: 'Calculating your score...', status: 'queued' },
+    { label: 'Testing Claude prompts...', status: 'queued' },
+    { label: 'Connecting to Perplexity...', status: 'queued' },
+    { label: 'Testing Perplexity prompts...', status: 'queued' },
+    { label: 'Connecting to Google AI...', status: 'queued' },
+    { label: 'Testing Google AI prompts...', status: 'queued' },
+    { label: 'Analysing competitor mentions...', status: 'queued' },
+    { label: 'Calculating your visibility score...', status: 'queued' },
   ];
 
   useEffect(() => {
     if (step !== 'loading') return;
 
-    const timings = [0, 2000, 4000, 6000, 7500];
+    const timings = [0, 1500, 3000, 4500, 6000, 7500, 9000, 10500, 12500, 14000];
     const timers = timings.map((delay, i) =>
       setTimeout(() => setLoadingStage(i), delay)
     );
@@ -109,7 +114,7 @@ export default function ScorePage() {
         if (prev >= 100) return 100;
         return prev + 1;
       });
-    }, 80);
+    }, 160);
 
     const minTimer = setTimeout(() => {
       minTimeReached.current = true;
@@ -117,7 +122,7 @@ export default function ScorePage() {
         setLoadingPercent(100);
         setTimeout(() => setStep('email'), 400);
       }
-    }, 8000);
+    }, 16000);
 
     return () => {
       timers.forEach(clearTimeout);
@@ -286,7 +291,7 @@ export default function ScorePage() {
 
                 {/* Firm Name */}
                 <div>
-                  <label style={labelStyle}>Firm name <span style={{ color: '#C9A84C' }}>*</span></label>
+                  <label style={labelStyle}>Your firm&apos;s name <span style={{ color: '#C9A84C' }}>*</span></label>
                   <input
                     type="text"
                     placeholder="e.g. Hartfield Wealth Management"
@@ -295,7 +300,7 @@ export default function ScorePage() {
                     onChange={e => setFirmName(e.target.value)}
                     style={inputStyle}
                   />
-                  <div style={hintStyle}>Exactly as it appears on your website. This is what we search for</div>
+                  <div style={hintStyle}>Exactly as it appears on your website — this is what we search for</div>
                 </div>
 
                 {/* Website */}
@@ -596,16 +601,6 @@ export default function ScorePage() {
                     required
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    style={inputStyle}
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle}>Name <span style={{ color: '#888' }}>(optional)</span></label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Jane Smith"
-                    value={name}
-                    onChange={e => setName(e.target.value)}
                     style={inputStyle}
                   />
                 </div>
