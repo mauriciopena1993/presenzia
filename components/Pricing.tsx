@@ -6,7 +6,7 @@ import { Check, ChevronDown } from 'lucide-react';
 const plans = [
   {
     key: 'audit',
-    name: 'AI Visibility Audit',
+    name: 'Full AI Audit & Action Plan',
     price: '\u00A3297',
     period: 'one-off',
     description: 'See exactly where your firm stands, and what to fix.',
