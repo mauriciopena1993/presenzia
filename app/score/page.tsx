@@ -136,18 +136,23 @@ export default function ScorePage() {
   useEffect(() => {
     if (step !== 'loading') return;
 
-    const timings = [0, 1500, 3000, 4500, 6000, 7500, 9000, 10500, 12500, 14000, 15500, 17000];
+    // Stages spread across ~40 seconds
+    const timings = [0, 2500, 5500, 8500, 11500, 14500, 18000, 21500, 26000, 30000, 34000, 38000];
     const timers = timings.map((delay, i) =>
       setTimeout(() => setLoadingStage(i), delay)
     );
 
+    // Progress bar: fast at first, gradually slows down, never feels stuck
     const interval = setInterval(() => {
       setLoadingPercent(prev => {
-        if (prev >= 95 && !resultReady.current) return 95;
         if (prev >= 100) return 100;
-        return prev + 1;
+        if (resultReady.current && prev >= 95) return prev + 2; // Sprint to 100 when done
+        if (prev >= 95) return prev; // Hard cap if API not done
+        if (prev >= 85) return prev + 0.2; // Very slow crawl 85-95%
+        if (prev >= 70) return prev + 0.4; // Slow 70-85%
+        return prev + 1; // Normal speed 0-70%
       });
-    }, 185);
+    }, 500);
 
     const minTimer = setTimeout(() => {
       minTimeReached.current = true;
@@ -155,7 +160,7 @@ export default function ScorePage() {
         setLoadingPercent(100);
         setTimeout(() => setStep('email'), 400);
       }
-    }, 18500);
+    }, 40000);
 
     return () => {
       timers.forEach(clearTimeout);

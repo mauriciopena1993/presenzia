@@ -8,31 +8,33 @@ const SYSTEM_PROMPT =
 // ── Prompt templates ──
 
 // Location-based prompts (used for local, multi, regional)
+// Uses {specialty} (e.g. "wealth management advisor"), {specialty_broad} (e.g. "wealth manager, private bank, or financial advisor"),
+// {specialty_context} (e.g. "managing a large investment portfolio"), and {location}
 const LOCATION_PROMPTS = [
   "Who is the best {specialty} in {location}?",
-  "Can you recommend a {specialty} near {location}?",
+  "Can you recommend a {specialty_broad} near {location}?",
   "I need a financial advisor in {location}. Who do you suggest?",
   "What are the top-rated {specialty} firms in {location}?",
-  "I'm looking for an independent financial advisor in {location} for {specialty_context}. Any recommendations?",
+  "What are the best private banks and {specialty} firms in {location}?",
+  "I'm looking for help with {specialty_context} in {location}. Any recommendations?",
   "Who should I speak to about {specialty_context} in {location}?",
-  "Can you recommend a trusted financial planner in {location}?",
-  "What financial advisory firms are well-regarded in {location}?",
-  "I need help with {specialty_context}. Which advisors in {location} are best?",
-  "Recommend a chartered financial planner in {location}",
+  "What financial firms are well-regarded in {location} for {specialty_context}?",
+  "I need help with {specialty_context}. Which firms in {location} are best?",
+  "Which {specialty_broad} firms in {location} would you recommend for someone with significant assets?",
 ];
 
 // National/online prompts (no location)
 const NATIONAL_PROMPTS = [
   "Who is the best {specialty} in the UK?",
-  "Can you recommend a {specialty} that works with clients remotely?",
-  "What are the top-rated online {specialty} firms in the UK?",
-  "I'm looking for an independent financial advisor for {specialty_context}. Any recommendations?",
+  "Can you recommend a {specialty_broad} that works with clients remotely?",
+  "What are the top-rated {specialty} firms in the UK?",
+  "What are the best private banks and {specialty} firms in the UK?",
+  "I'm looking for help with {specialty_context} in the UK. Any recommendations?",
   "Who should I speak to about {specialty_context} in the UK?",
-  "Can you recommend a trusted UK financial planner that works online?",
-  "What are the best UK financial advisory firms for {specialty_context}?",
-  "I need help with {specialty_context}. Which UK advisors are best?",
-  "Recommend a chartered financial planner in the UK",
-  "Which UK wealth managers offer the best online service?",
+  "What are the best UK financial firms for {specialty_context}?",
+  "I need help with {specialty_context}. Which UK firms are best?",
+  "Which {specialty_broad} firms in the UK would you recommend?",
+  "Which UK wealth managers or private banks offer the best service?",
 ];
 
 // Target client type prompts
@@ -103,6 +105,19 @@ const SPECIALTY_CONTEXT: Record<string, string> = {
   'General Financial Advisory': 'financial planning and advice',
 };
 
+// Broader labels that include related firm types (private banks, etc.)
+const SPECIALTY_BROAD: Record<string, string> = {
+  'Wealth Management': 'wealth manager, private bank, or financial advisor',
+  'Financial Planning': 'financial planner or financial advisor',
+  'Retirement & Pensions': 'pension advisor or retirement planning specialist',
+  'Tax Planning': 'tax planning specialist or financial advisor',
+  'Inheritance & Estate Planning': 'estate planning advisor or solicitor',
+  'Mortgage & Protection': 'mortgage broker or financial advisor',
+  'Investment Management': 'investment manager, wealth manager, or private bank',
+  'Corporate Financial Advisory': 'corporate financial advisor or business advisor',
+  'General Financial Advisory': 'financial advisor or wealth manager',
+};
+
 interface PromptItem {
   id: string;
   text: string;
@@ -117,6 +132,7 @@ function buildPrompts(
 ): PromptItem[] {
   const primarySpecialty = specialties[0] || 'Financial Planning';
   const specialtyContext = SPECIALTY_CONTEXT[primarySpecialty] || 'financial planning';
+  const specialtyBroad = SPECIALTY_BROAD[primarySpecialty] || 'financial advisor';
   const specialtyLabel = primarySpecialty.toLowerCase().includes('financial')
     ? primarySpecialty.toLowerCase()
     : `${primarySpecialty.toLowerCase()} advisor`;
@@ -131,6 +147,7 @@ function buildPrompts(
         id: `nat_${promptIndex}`,
         text: template
           .replace(/{specialty}/g, specialtyLabel)
+          .replace(/{specialty_broad}/g, specialtyBroad)
           .replace(/{specialty_context}/g, specialtyContext),
         weight: 10 - promptIndex,
       });
@@ -162,6 +179,7 @@ function buildPrompts(
           text: template
             .replace(/{location}/g, location)
             .replace(/{specialty}/g, specialtyLabel)
+            .replace(/{specialty_broad}/g, specialtyBroad)
             .replace(/{specialty_context}/g, specialtyContext),
           weight: 10 - promptIndex,
         });
@@ -196,6 +214,7 @@ function buildPrompts(
             text: LOCATION_PROMPTS[0]
               .replace(/{location}/g, location)
               .replace(/{specialty}/g, specialtyLabel)
+              .replace(/{specialty_broad}/g, specialtyBroad)
               .replace(/{specialty_context}/g, specialtyContext),
             weight: 10,
           });
@@ -208,6 +227,7 @@ function buildPrompts(
             text: template
               .replace(/{location}/g, location)
               .replace(/{specialty}/g, specialtyLabel)
+              .replace(/{specialty_broad}/g, specialtyBroad)
               .replace(/{specialty_context}/g, specialtyContext),
             weight: 9 - li,
           });
@@ -267,7 +287,10 @@ async function queryChatGPT(prompt: string): Promise<string> {
       temperature: 0.3,
     }),
   });
-  if (!response.ok) throw new Error(`ChatGPT error: ${response.statusText}`);
+  if (!response.ok) {
+    const errBody = await response.text().catch(() => '');
+    throw new Error(`ChatGPT error ${response.status}: ${errBody.slice(0, 200)}`);
+  }
   const data = await response.json();
   return data.choices[0]?.message?.content || '';
 }
@@ -287,7 +310,10 @@ async function queryClaude(prompt: string): Promise<string> {
       messages: [{ role: 'user', content: prompt }],
     }),
   });
-  if (!response.ok) throw new Error(`Claude error: ${response.statusText}`);
+  if (!response.ok) {
+    const errBody = await response.text().catch(() => '');
+    throw new Error(`Claude error ${response.status}: ${errBody.slice(0, 200)}`);
+  }
   const data = await response.json();
   return data.content[0]?.text || '';
 }
@@ -301,7 +327,10 @@ async function queryPerplexity(prompt: string): Promise<string> {
     },
     body: JSON.stringify({
       model: 'sonar',
-      messages: [{ role: 'user', content: prompt }],
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: prompt },
+      ],
       max_tokens: 800,
     }),
   });
@@ -322,7 +351,10 @@ async function queryGoogleAI(prompt: string): Promise<string> {
       }),
     }
   );
-  if (!response.ok) throw new Error(`Google AI error: ${response.statusText}`);
+  if (!response.ok) {
+    const errBody = await response.text().catch(() => '');
+    throw new Error(`Google AI error ${response.status}: ${errBody.slice(0, 200)}`);
+  }
   const data = await response.json();
   return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
@@ -512,10 +544,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Location is required' }, { status: 400 });
     }
 
-    // Build prompts
-    const prompts = buildPrompts(coverageType, locations, specialties, targetClient);
+    // Build prompts — pick the top ones by weight for the free score
+    const allPrompts = buildPrompts(coverageType, locations, specialties, targetClient);
+    const PROMPTS_PER_PLATFORM = 3; // Keep it fast & within rate limits
+    const prompts = allPrompts
+      .sort((a, b) => b.weight - a.weight)
+      .slice(0, PROMPTS_PER_PLATFORM);
 
-    // Run prompts across all available AI platforms in parallel
+    // Run prompts across all available AI platforms
     const platforms: Array<{ name: string; querier: (p: string) => Promise<string>; weight: number }> = [];
     if (process.env.OPENAI_API_KEY)     platforms.push({ name: 'ChatGPT',    querier: queryChatGPT,    weight: 0.35 });
     if (process.env.ANTHROPIC_API_KEY)  platforms.push({ name: 'Claude',      querier: queryClaude,     weight: 0.15 });
@@ -534,6 +570,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'AI platforms not configured' }, { status: 500 });
     }
 
+    // Retry helper for rate limits
+    async function queryWithRetry(querier: (p: string) => Promise<string>, prompt: string, retries = 3): Promise<string> {
+      for (let attempt = 0; attempt <= retries; attempt++) {
+        try {
+          return await querier(prompt);
+        } catch (err) {
+          const msg = String(err);
+          const isRateLimit = msg.includes('429') || msg.includes('Too Many Requests') || msg.includes('RESOURCE_EXHAUSTED');
+          if (isRateLimit && attempt < retries) {
+            const backoff = 3000 * Math.pow(2, attempt); // 3s, 6s, 12s exponential backoff
+            console.log(`Rate limited, retry ${attempt + 1}/${retries} after ${backoff}ms`);
+            await new Promise(r => setTimeout(r, backoff));
+            continue;
+          }
+          throw err;
+        }
+      }
+      return '';
+    }
+
     interface PromptResultItem {
       platform: string;
       promptId: string;
@@ -542,15 +598,22 @@ export async function POST(req: NextRequest) {
       position: 'first' | 'prominent' | 'mentioned' | null;
       competitors: string[];
       response: string;
+      failed?: boolean;
     }
 
     const allResults: PromptResultItem[] = [];
 
+    // Run all platforms in parallel — each platform sends its prompts sequentially
+    // with delays to respect per-platform rate limits
     await Promise.all(
-      platforms.map(async (platform) => {
-        for (const prompt of prompts) {
+      platforms.map(async (platform, platformIdx) => {
+        // Stagger platform starts by 500ms each to spread the initial burst
+        await new Promise(r => setTimeout(r, platformIdx * 500));
+
+        for (let i = 0; i < prompts.length; i++) {
+          const prompt = prompts[i];
           try {
-            const response = await platform.querier(prompt.text);
+            const response = await queryWithRetry(platform.querier, prompt.text);
             const mention = checkMention(response, firmName, website);
             const competitors = extractCompetitors(response, firmName);
             allResults.push({
@@ -572,20 +635,26 @@ export async function POST(req: NextRequest) {
               position: null,
               competitors: [],
               response: '',
+              failed: true,
             });
           }
-          await new Promise(resolve => setTimeout(resolve, 100));
+          // Wait between requests per platform to respect rate limits
+          if (i < prompts.length - 1) {
+            const delay = platform.name === 'Google AI' ? 5000 : 2000;
+            await new Promise(r => setTimeout(r, delay));
+          }
         }
       })
     );
 
-    // Calculate score
+    // Calculate score — only count successful responses (don't penalise for API failures)
+    const successResults = allResults.filter(r => !r.failed);
     let totalPoints = 0;
     let maxPoints = 0;
     const platformWeightMap: Record<string, number> = {};
     for (const p of platforms) platformWeightMap[p.name] = p.weight;
 
-    for (const result of allResults) {
+    for (const result of successResults) {
       const weight = platformWeightMap[result.platform] || 0.25;
       maxPoints += weight * 10;
 
@@ -618,15 +687,16 @@ export async function POST(req: NextRequest) {
       ? { name: sortedCompetitors[0][0], count: sortedCompetitors[0][1] }
       : null;
 
-    const mentionsCount = allResults.filter(r => r.mentioned).length;
-    const totalPrompts = allResults.length;
+    const mentionsCount = successResults.filter(r => r.mentioned).length;
+    const totalPrompts = successResults.length;
     const shareId = generateShareId();
 
     // Per-platform breakdown
     const platformBreakdown = platforms.map(p => {
       const pResults = allResults.filter(r => r.platform === p.name);
-      const pMentions = pResults.filter(r => r.mentioned).length;
-      return { platform: p.name, tested: pResults.length, mentioned: pMentions };
+      const pSuccess = pResults.filter(r => !r.failed);
+      const pMentions = pSuccess.filter(r => r.mentioned).length;
+      return { platform: p.name, tested: pSuccess.length, mentioned: pMentions };
     });
 
     // Store in database

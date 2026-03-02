@@ -52,6 +52,7 @@ function OnboardingForm() {
   const plan = searchParams.get('plan') || 'audit';
   const scoreState = useRef<ScoreState | null>(null);
   const autoSubmitted = useRef(false);
+  const fromScore = useRef(false); // true = came from score page, never show form
 
   // Load score state on mount (client-side only)
   const [loaded, setLoaded] = useState(false);
@@ -75,6 +76,7 @@ function OnboardingForm() {
     scoreState.current = saved;
 
     if (saved) {
+      fromScore.current = true;
       const keywords = (saved.specialties || []).join(', ');
       // Infer firm type from specialties if possible
       let inferredFirmType = 'Other';
@@ -98,18 +100,10 @@ function OnboardingForm() {
       };
       setForm(preFilled);
 
-      // Check if we have enough to auto-submit
-      const keywordList = keywords.split(',').map(k => k.trim()).filter(Boolean);
-      const canAutoSubmit =
-        preFilled.businessName &&
-        preFilled.email &&
-        preFilled.location &&
-        keywordList.length >= 2;
-
-      if (canAutoSubmit && !autoSubmitted.current) {
+      // Always auto-submit when coming from score page
+      if (!autoSubmitted.current) {
         autoSubmitted.current = true;
         setSubmitting(true);
-        // Auto-submit after a brief render so user sees "Redirecting..."
         setTimeout(() => doSubmit(preFilled), 100);
         return;
       }
@@ -128,7 +122,7 @@ function OnboardingForm() {
       if (keywordList.length < 2) {
         setError('Please add at least 2 keywords separated by commas. This is essential for an accurate audit.');
         setSubmitting(false);
-        setLoaded(true);
+        if (!fromScore.current) setLoaded(true);
         return;
       }
 
@@ -173,12 +167,12 @@ function OnboardingForm() {
       } else {
         setError(data.error || 'Something went wrong. Please try again or email hello@presenzia.ai');
         setSubmitting(false);
-        setLoaded(true);
+        if (!fromScore.current) setLoaded(true);
       }
     } catch {
       setError('Network error. Please try again.');
       setSubmitting(false);
-      setLoaded(true);
+      if (!fromScore.current) setLoaded(true);
     }
   };
 
@@ -212,8 +206,8 @@ function OnboardingForm() {
     );
   }
 
-  // Show redirecting screen while auto-submitting
-  if (submitting && !loaded) {
+  // Show redirecting screen when coming from score page (NEVER show the form)
+  if (fromScore.current) {
     return (
       <div style={{
         minHeight: '100vh',
@@ -231,31 +225,70 @@ function OnboardingForm() {
 
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
           <div style={{ textAlign: 'center', maxWidth: '400px' }}>
-            <div style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '50%',
-              border: '3px solid #1A1A1A',
-              borderTopColor: '#C9A84C',
-              animation: 'spin 1s linear infinite',
-              margin: '0 auto 1.5rem',
-            }} />
-            <h2 style={{
-              fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
-              fontSize: '1.5rem',
-              color: '#F5F0E8',
-              fontWeight: 600,
-              marginBottom: '0.75rem',
-            }}>
-              Redirecting to payment...
-            </h2>
-            <p style={{ color: '#999', fontSize: '0.9rem', lineHeight: 1.6 }}>
-              We already have your firm details from your free score. Taking you straight to checkout.
-            </p>
-            {error && (
-              <div style={{ padding: '0.75rem 1rem', background: '#1a0a0a', border: '1px solid #5a1a1a', color: '#ff8888', fontSize: '0.875rem', marginTop: '1rem' }}>
-                {error}
-              </div>
+            {!error ? (
+              <>
+                <div style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '50%',
+                  border: '3px solid #1A1A1A',
+                  borderTopColor: '#C9A84C',
+                  animation: 'spin 1s linear infinite',
+                  margin: '0 auto 1.5rem',
+                }} />
+                <h2 style={{
+                  fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
+                  fontSize: '1.5rem',
+                  color: '#F5F0E8',
+                  fontWeight: 600,
+                  marginBottom: '0.75rem',
+                }}>
+                  Redirecting to payment...
+                </h2>
+                <p style={{ color: '#999', fontSize: '0.9rem', lineHeight: 1.6 }}>
+                  We already have your firm details from your free score. Taking you straight to checkout.
+                </p>
+              </>
+            ) : (
+              <>
+                <h2 style={{
+                  fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
+                  fontSize: '1.5rem',
+                  color: '#F5F0E8',
+                  fontWeight: 600,
+                  marginBottom: '0.75rem',
+                }}>
+                  Something went wrong
+                </h2>
+                <div style={{ padding: '0.75rem 1rem', background: '#1a0a0a', border: '1px solid #5a1a1a', color: '#ff8888', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
+                  {error}
+                </div>
+                <button
+                  onClick={() => {
+                    setError('');
+                    setSubmitting(true);
+                    doSubmit(form);
+                  }}
+                  disabled={submitting}
+                  style={{
+                    padding: '0.875rem 2rem',
+                    background: submitting ? '#8a7030' : '#C9A84C',
+                    color: '#0A0A0A',
+                    fontWeight: 700,
+                    fontSize: '0.9rem',
+                    border: 'none',
+                    cursor: submitting ? 'not-allowed' : 'pointer',
+                    fontFamily: 'var(--font-inter, Inter, sans-serif)',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  {submitting ? 'Retrying...' : 'Try again'}
+                </button>
+                <p style={{ color: '#888', fontSize: '0.8rem' }}>
+                  Or email us at{' '}
+                  <a href="mailto:hello@presenzia.ai" style={{ color: '#999', textDecoration: 'none' }}>hello@presenzia.ai</a>
+                </p>
+              </>
             )}
           </div>
         </div>
