@@ -11,7 +11,7 @@ import {
 } from '@react-pdf/renderer';
 import type { AuditScore, PromptResult } from '../audit/scorer';
 import type { AuditConfig } from '../audit/runner';
-import type { ReportInsights, CategoryBreakdown, DetailedAction, PromptTestResult, ActionStep } from './insights';
+import type { ReportInsights, CategoryBreakdown, DetailedAction, PromptTestResult, ActionStep, PreviousAuditData } from './insights';
 
 /** Turn "Restaurant / Cafe" → "restaurant" */
 function cleanBT(bt: string): string {
@@ -309,6 +309,11 @@ function ActionCard({ action, index }: { action: DetailedAction; index: number }
               {isHigh ? 'HIGH PRIORITY' : 'RECOMMENDED'}
             </Text>
           </View>
+          {action.isRepeated && (
+            <View style={[s.actBadge, { backgroundColor: '#FFF3E0', marginLeft: 4 }]}>
+              <Text style={[s.actBadgeTxt, { color: '#E65100' }]}>STILL OUTSTANDING</Text>
+            </View>
+          )}
           <Text style={s.actTitle}>{index + 1}. {action.title}</Text>
         </View>
         {action.context && (
@@ -390,9 +395,10 @@ interface ReportData {
   insights?: ReportInsights;
   reportDate: string;
   jobId?: string;
+  previousAudit?: PreviousAuditData;
 }
 
-function AuditReport({ config, score, insights, reportDate, jobId }: ReportData) {
+function AuditReport({ config, score, insights, reportDate, jobId, previousAudit }: ReportData) {
   const actions = insights?.actions ?? getFallbackActions(score, config);
   const allPriorities = actions.slice(0, 5); // Show all actions on page 1
   const mainColor = scoreColor(score.overall);
@@ -428,6 +434,45 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
           </View>
 
           <ScoreBandVisual score={score.overall} />
+
+          {/* Progress since last audit (only for follow-up audits) */}
+          {insights?.progress && (
+            <View style={{ backgroundColor: insights.progress.scoreDelta >= 0 ? '#F0FFF4' : '#FFF5F5', borderColor: insights.progress.scoreDelta >= 0 ? '#C6F6D5' : '#FED7D7', borderWidth: 1, borderLeftColor: insights.progress.scoreDelta >= 0 ? GREEN : RED, borderLeftWidth: 3, padding: 12, marginBottom: 16 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                <Text style={{ fontSize: 9, fontWeight: 700, color: TEXT_PRIMARY }}>Progress Since Last Audit</Text>
+                <Text style={{ fontSize: 7.5, color: TEXT_MUTED }}>
+                  Previous: {new Date(insights.progress.previousDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </Text>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 20, fontWeight: 700, color: insights.progress.scoreDelta >= 0 ? GREEN : RED }}>
+                  {insights.progress.scoreDelta >= 0 ? '+' : ''}{insights.progress.scoreDelta}
+                </Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 8, color: TEXT_SECONDARY, lineHeight: 1.5 }}>
+                    {insights.progress.scoreDelta > 0
+                      ? `Your score improved from ${insights.progress.previousScore} to ${insights.progress.currentScore}. ${insights.progress.resolvedActions.length > 0 ? `Actions completed: ${insights.progress.resolvedActions.join(', ')}.` : 'Keep implementing the recommended actions to continue climbing.'}`
+                      : insights.progress.scoreDelta === 0
+                      ? `Your score is unchanged at ${insights.progress.currentScore}. AI visibility takes time — continue implementing the actions below and you should see movement.`
+                      : `Your score dipped from ${insights.progress.previousScore} to ${insights.progress.currentScore}. This can happen as AI platforms update their data. Focus on the priority actions below.`
+                    }
+                  </Text>
+                </View>
+              </View>
+              {insights.progress.platformDeltas.length > 0 && (
+                <View style={{ flexDirection: 'row', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
+                  {insights.progress.platformDeltas.map(pd => (
+                    <View key={pd.platform} style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+                      <Text style={{ fontSize: 7, color: TEXT_MUTED }}>{pd.platform}:</Text>
+                      <Text style={{ fontSize: 7, fontWeight: 600, color: pd.delta > 0 ? GREEN : pd.delta < 0 ? RED : TEXT_MUTED }}>
+                        {pd.delta > 0 ? '+' : ''}{pd.delta}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+          )}
 
           {/* Stats */}
           <View style={s.statsRow}>
@@ -711,14 +756,32 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
           {/* Looking Ahead — trailer with next-month hints */}
           {(() => {
             const hints = insights?.nextMonthHints ?? [];
-            const hintText = hints.length > 0
-              ? ` We also identified additional areas to work on: ${hints.join(', ')}. Once you complete this month's priorities, those will become the focus.`
-              : ' The more you complete now, the more your next report can shift from foundational fixes to growth tactics.';
+            const prog = insights?.progress;
+            let lookAheadText: string;
+            if (prog) {
+              if (prog.scoreDelta > 0) {
+                lookAheadText = `Great progress — you improved ${prog.scoreDelta} points since your last audit. Your next audit will measure whether this momentum continues.`;
+              } else if (prog.scoreDelta === 0) {
+                lookAheadText = `Your score held steady since your last audit. Implementing the actions above should help push your score higher next time.`;
+              } else {
+                lookAheadText = `Your score dipped ${Math.abs(prog.scoreDelta)} points, which can happen as AI platforms refresh their data. Completing the actions above will help you recover and grow.`;
+              }
+              if (prog.repeatedActions.length > 0) {
+                lookAheadText += ` Some recommendations from your previous audit are still relevant — prioritise those for the biggest impact.`;
+              }
+            } else {
+              lookAheadText = `Your next audit will measure the impact of these changes.`;
+            }
+            if (hints.length > 0) {
+              lookAheadText += ` We also identified additional areas to work on: ${hints.join(', ')}. Once you complete this month's priorities, those will become the focus.`;
+            } else if (!prog) {
+              lookAheadText += ' The more you complete now, the more your next report can shift from foundational fixes to growth tactics.';
+            }
             return (
               <View style={[s.goldBox, { marginBottom: 16 }]}>
                 <Text style={{ fontSize: 8.5, fontWeight: 600, color: TEXT_PRIMARY, marginBottom: 3 }}>Looking Ahead</Text>
                 <Text style={s.bodySmall}>
-                  Your next audit will measure the impact of these changes.{hintText} Complete as much as you can this month, and watch your score climb.
+                  {lookAheadText} Complete as much as you can this month, and watch your score climb.
                 </Text>
               </View>
             );
@@ -806,6 +869,7 @@ export async function generatePDFReport(
   results?: PromptResult[],
   insights?: ReportInsights,
   jobId?: string,
+  previousAudit?: PreviousAuditData,
 ): Promise<Buffer> {
   const reportDate = new Date().toLocaleDateString('en-GB', {
     year: 'numeric',
@@ -813,7 +877,7 @@ export async function generatePDFReport(
     day: 'numeric',
   });
 
-  const doc = <AuditReport config={config} score={score} insights={insights} reportDate={reportDate} jobId={jobId} />;
+  const doc = <AuditReport config={config} score={score} insights={insights} reportDate={reportDate} jobId={jobId} previousAudit={previousAudit} />;
   const buffer = await renderToBuffer(doc);
   return Buffer.from(buffer);
 }

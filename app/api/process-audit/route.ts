@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { runAudit, AuditConfig } from '@/lib/audit/runner';
 import { generatePDFReport } from '@/lib/report/generate';
-import { generateInsights } from '@/lib/report/insights';
+import { generateInsights, PreviousAuditData } from '@/lib/report/insights';
 import { Resend } from 'resend';
 
 // Allow up to 5 minutes for the audit to complete (Vercel Pro)
@@ -72,14 +72,46 @@ export async function POST(req: NextRequest) {
       website: client.website || undefined,
     };
 
+    // Fetch previous completed audit for comparison
+    let previousAudit: PreviousAuditData | undefined;
+    const { data: prevJob } = await supabase
+      .from('audit_jobs')
+      .select('overall_score, grade, platforms_json, insights_json, completed_at')
+      .eq('client_id', client.id)
+      .eq('status', 'completed')
+      .neq('id', jobId)
+      .order('completed_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (prevJob?.overall_score != null) {
+      const prevPlatforms = Array.isArray(prevJob.platforms_json) ? prevJob.platforms_json : [];
+      const prevInsights = prevJob.insights_json as Record<string, unknown> | null;
+      const prevActions = Array.isArray((prevInsights as any)?.actions)
+        ? ((prevInsights as any).actions as Array<{ title?: string }>).map(a => a.title || '').filter(Boolean)
+        : [];
+      previousAudit = {
+        overallScore: prevJob.overall_score,
+        grade: prevJob.grade || '',
+        platforms: prevPlatforms.map((p: any) => ({
+          platform: p.platform || '',
+          score: p.score || 0,
+          promptsMentioned: p.promptsMentioned || 0,
+          promptsTested: p.promptsTested || 0,
+        })),
+        actionTitles: prevActions,
+        completedAt: prevJob.completed_at || '',
+      };
+    }
+
     console.log(`🔍 Running audit for ${config.businessName} (job: ${jobId})`);
 
     // Run the audit (platforms run in parallel — takes ~60-120s)
     const { results, score } = await runAudit(config);
 
     // Generate insights and PDF report
-    const insights = generateInsights(config, score, results);
-    const pdfBuffer = await generatePDFReport(config, score, results, insights, jobId);
+    const insights = generateInsights(config, score, results, previousAudit);
+    const pdfBuffer = await generatePDFReport(config, score, results, insights, jobId, previousAudit);
 
     // Store report in Supabase Storage
     const reportFileName = `${jobId}.pdf`;
@@ -129,6 +161,7 @@ export async function POST(req: NextRequest) {
         jobId,
         score.summary,
         score.topCompetitors[0]?.name,
+        previousAudit?.overallScore,
       );
     }
 
@@ -183,6 +216,7 @@ async function sendReportEmail(
   jobId: string,
   summary?: string,
   topComp?: string,
+  previousScore?: number,
 ) {
   const scoreBand = score >= 70 ? 'Strong' : score >= 45 ? 'Moderate' : score >= 25 ? 'Weak' : 'Not Visible';
   const scoreColor = score >= 70 ? '#4a9e6a' : score >= 45 ? '#C9A84C' : score >= 25 ? '#cc8833' : '#cc4444';
@@ -195,13 +229,26 @@ async function sendReportEmail(
     ? `<p style="font-size:13px;color:#888888;margin:0 0 24px;line-height:1.6;">We found that <strong style="color:#555555;">${topComp}</strong> is currently being recommended by AI platforms in your category. Your audit includes a detailed competitor analysis with tips to close the gap.</p>`
     : '';
 
+  const trendHtml = previousScore != null
+    ? (() => {
+        const delta = score - previousScore;
+        const arrow = delta > 0 ? '↑' : delta < 0 ? '↓' : '→';
+        const trendColor = delta > 0 ? '#4a9e6a' : delta < 0 ? '#cc4444' : '#888888';
+        const trendWord = delta > 0 ? 'improved' : delta < 0 ? 'declined' : 'unchanged';
+        return `<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;"><tr><td style="padding:14px 16px;background:#FAFAF8;border:1px solid #E8E4DA;text-align:center;">
+          <span style="font-size:13px;color:${trendColor};font-weight:700;">${arrow} ${Math.abs(delta)} points ${trendWord}</span>
+          <span style="font-size:12px;color:#888888;"> — from ${previousScore}/100 to ${score}/100 since your last audit</span>
+        </td></tr></table>`;
+      })()
+    : '';
+
   try {
     await resend.emails.send({
       from: 'presenzia.ai <reports@presenzia.ai>',
       replyTo: 'hello@presenzia.ai',
       to: email,
       subject: `Your AI Visibility Audit: ${score}/100 (${scoreBand}) — ${businessName}`,
-      text: `Your AI Visibility Audit for ${businessName} is ready.\n\nAI Visibility Score: ${score}/100 — Grade ${grade} (${scoreBand})\n\n${summary ?? ''}\n\n${topComp ? `Top competitor detected: ${topComp}\n\n` : ''}Your full audit is attached. It includes your platform-by-platform breakdown, competitor analysis, and a personalised action plan.\n\nLog in to your dashboard at https://presenzia.ai/dashboard to view your results online.\n\nQuestions? Reply to this email and we'll get back to you within a few hours.\n\npresenzia.ai | Ketzal LTD (Co. No. 14570156)\nAudit ID: ${jobId}`,
+      text: `Your AI Visibility Audit for ${businessName} is ready.\n\nAI Visibility Score: ${score}/100 — Grade ${grade} (${scoreBand})${previousScore != null ? `\nChange: ${score > previousScore ? '+' : ''}${score - previousScore} points (from ${previousScore}/100)` : ''}\n\n${summary ?? ''}\n\n${topComp ? `Top competitor detected: ${topComp}\n\n` : ''}Your full audit is attached. It includes your platform-by-platform breakdown, competitor analysis, and a personalised action plan.\n\nLog in to your dashboard at https://presenzia.ai/dashboard to view your results online.\n\nQuestions? Reply to this email and we'll get back to you within a few hours.\n\npresenzia.ai | Ketzal LTD (Co. No. 14570156)\nAudit ID: ${jobId}`,
       html: `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -224,6 +271,7 @@ async function sendReportEmail(
       </td></tr>
     </table>
 
+    ${trendHtml}
     ${summaryHtml}
     ${topCompHtml}
 

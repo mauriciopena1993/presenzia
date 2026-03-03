@@ -44,6 +44,29 @@ export interface DetailedAction {
   why: string;              // One-line explanation
   context?: string;         // Data-driven observation from the audit results
   steps: (string | ActionStep)[];  // 3-6 specific, actionable bullet points (string for backward compat)
+  isRepeated?: boolean;
+}
+
+/** Previous audit data passed in for comparison */
+export interface PreviousAuditData {
+  overallScore: number;
+  grade: string;
+  platforms: Array<{ platform: string; score: number; promptsMentioned: number; promptsTested: number }>;
+  actionTitles: string[];
+  completedAt: string;
+}
+
+/** Score comparison between current and previous audit */
+export interface AuditProgress {
+  previousScore: number;
+  currentScore: number;
+  scoreDelta: number;
+  previousGrade: string;
+  currentGrade: string;
+  previousDate: string;
+  platformDeltas: Array<{ platform: string; previousScore: number; currentScore: number; delta: number }>;
+  repeatedActions: string[];
+  resolvedActions: string[];
 }
 
 export interface ReportInsights {
@@ -52,6 +75,7 @@ export interface ReportInsights {
   nextMonthHints: string[];  // Action titles that didn't make top 5 — teasers for next month
   totalSearches: number;
   totalFound: number;
+  progress?: AuditProgress;
 }
 
 // ── Constants ────────────────────────────────────────────────
@@ -618,6 +642,7 @@ export function generateInsights(
   config: AuditConfig,
   score: AuditScore,
   results: PromptResult[],
+  previousAudit?: PreviousAuditData,
 ): ReportInsights {
   const categories = buildCategories(results);
   const allActions = buildActions(config, score, results);
@@ -627,6 +652,51 @@ export function generateInsights(
 
   const actions = sortedActions.slice(0, 5);
   const nextMonthHints = sortedActions.slice(5).map(a => a.title);
+
+  // ── Compare with previous audit (if available) ──
+  let progress: AuditProgress | undefined;
+  if (previousAudit) {
+    // Mark repeated actions
+    const prevTitlesLower = previousAudit.actionTitles.map(t => t.toLowerCase());
+    for (const action of actions) {
+      if (prevTitlesLower.some(prev => prev === action.title.toLowerCase() || action.title.toLowerCase().includes(prev) || prev.includes(action.title.toLowerCase()))) {
+        action.isRepeated = true;
+        // Prepend repeated notice to context
+        action.context = `This was also recommended in your previous audit. It remains a priority — the steps below are still relevant.${action.context ? ' ' + action.context : ''}`;
+      }
+    }
+
+    // Compute platform-level deltas
+    const platformDeltas = score.platforms.map(curr => {
+      const prev = previousAudit.platforms.find(p => p.platform === curr.platform);
+      return {
+        platform: curr.platform,
+        previousScore: prev?.score ?? 0,
+        currentScore: curr.score,
+        delta: curr.score - (prev?.score ?? 0),
+      };
+    });
+
+    // Find resolved actions (previously recommended but no longer needed)
+    const currentTitlesLower = actions.map(a => a.title.toLowerCase());
+    const resolvedActions = previousAudit.actionTitles.filter(
+      prev => !currentTitlesLower.some(curr => curr === prev.toLowerCase() || curr.includes(prev.toLowerCase()) || prev.toLowerCase().includes(curr))
+    );
+
+    const repeatedActions = actions.filter(a => a.isRepeated).map(a => a.title);
+
+    progress = {
+      previousScore: previousAudit.overallScore,
+      currentScore: score.overall,
+      scoreDelta: score.overall - previousAudit.overallScore,
+      previousGrade: previousAudit.grade,
+      currentGrade: score.grade,
+      previousDate: previousAudit.completedAt,
+      platformDeltas,
+      repeatedActions,
+      resolvedActions,
+    };
+  }
 
   // Compute totals from raw results
   const totalSearches = results.length;
@@ -638,6 +708,7 @@ export function generateInsights(
     nextMonthHints,
     totalSearches,
     totalFound,
+    progress,
   };
 }
 
