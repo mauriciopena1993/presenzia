@@ -218,19 +218,20 @@ export const PLAN_FEATURES: Record<string, string[]> = Object.fromEntries(
   Object.entries(PLANS).map(([key, plan]) => [key, plan.detailFeatures])
 );
 
-/** Comparison table data for the pricing page — differentiators first */
+/** Comparison table data for the pricing page — builds up from Audit → Growth → Premium */
 export const COMPARISON_ROWS = [
-  // Key differentiators
-  { feature: 'Audit & dashboard frequency',                audit: 'One-off' as boolean | string, growth: 'Weekly' as boolean | string, premium: 'Daily' as boolean | string },
-  { feature: 'AI audit assistant',                         audit: false,       growth: true,        premium: true },
-  { feature: 'Strategy calls',                             audit: false,       growth: false,       premium: 'Monthly 1hr' },
-  { feature: 'Dedicated account strategist',               audit: false,       growth: false,       premium: true },
-  { feature: 'Territory exclusivity',                      audit: false,       growth: false,       premium: true },
-  { feature: 'AI-optimised articles written for you',      audit: false,       growth: false,       premium: '4/month' },
+  // All plans (Audit baseline)
+  { feature: 'Full AI audit (4 platforms, 120+ prompts)',  audit: true as boolean | string,  growth: true as boolean | string,              premium: true as boolean | string },
+  { feature: 'Personalised action plan',                   audit: true,        growth: true,              premium: true },
+  { feature: 'Downloadable PDF report',                    audit: true,        growth: true,              premium: true },
   { feature: 'Competitor analysis',                        audit: true,        growth: 'Deep-dive + alerts', premium: 'Deep-dive + alerts' },
-  { feature: 'Priority email support',                     audit: false,       growth: true,        premium: true },
-  // Included in all plans
-  { feature: 'Full AI audit (4 platforms, 120+ prompts)',  audit: true,        growth: true,        premium: true },
-  { feature: 'Personalised action plan',                   audit: true,        growth: true,        premium: true },
-  { feature: 'Downloadable PDF report',                    audit: true,        growth: true,        premium: true },
+  // Growth adds
+  { feature: 'Audit & dashboard frequency',                audit: 'One-off',   growth: 'Weekly',          premium: 'Daily' },
+  { feature: 'AI audit assistant',                         audit: false,       growth: true,              premium: true },
+  { feature: 'Priority email support',                     audit: false,       growth: true,              premium: true },
+  // Premium adds
+  { feature: 'Strategy calls',                             audit: false,       growth: false,             premium: 'Monthly 1hr' },
+  { feature: 'Dedicated account strategist',               audit: false,       growth: false,             premium: true },
+  { feature: 'Territory exclusivity',                      audit: false,       growth: false,             premium: true },
+  { feature: 'AI-optimised articles written for you',      audit: false,       growth: false,             premium: '4/month' },
 ];
