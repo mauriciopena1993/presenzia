@@ -15,9 +15,17 @@ export async function POST(req: NextRequest) {
     }
 
     const selectedPlan = PLANS[plan as PlanKey];
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
-    // Use payment mode for one-off plans (audit), subscription mode for recurring
+    // Validate that the Stripe price ID is configured
+    if (!selectedPlan.priceId) {
+      console.error(`Stripe price ID not configured for plan "${plan}". Check STRIPE_PRICE_${plan.toUpperCase()} env var.`);
+      return NextResponse.json(
+        { error: 'This plan is not yet available for purchase. Please contact hello@presenzia.ai for assistance.' },
+        { status: 500 }
+      );
+    }
+
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const isRecurring = selectedPlan.recurring;
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
@@ -60,9 +68,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url: session.url });
   } catch (error) {
     console.error('Checkout error:', error);
-    const msg = error instanceof Error ? error.message : 'Unknown error';
+    // Never expose raw Stripe errors to the user
     return NextResponse.json(
-      { error: `Failed to create checkout session: ${msg}` },
+      { error: 'Something went wrong creating your checkout session. Please try again or contact hello@presenzia.ai for help.' },
       { status: 500 }
     );
   }
