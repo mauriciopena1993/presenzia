@@ -31,7 +31,7 @@ export default function HowItWorks() {
 
   return (
     <section id="how-it-works" style={{
-      padding: '6rem 2rem',
+      padding: 'clamp(3rem, 6vw, 6rem) clamp(1rem, 4vw, 2rem)',
       maxWidth: '1100px',
       margin: '0 auto',
     }}>

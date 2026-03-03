@@ -110,13 +110,19 @@ export function buildPrompts(
     add('desc_find',   `I'm looking for a ${searchTerm} specialising in ${desc.substring(0, 60)} near ${loc}`, 8);
   }
 
-  // ── 5. COMPARISON & ALTERNATIVE PROMPTS ──
+  // ── 5. RANKING QUALITY PROMPTS (tests top-3 positioning) ──
+  add('rank_top3',      `What are the top 3 ${searchTerm}s in ${loc}?`, 10);
+  add('rank_no1',       `Who is the number one ${searchTerm} in ${loc}?`, 10);
+  add('rank_top5_ifa',  `List the top 5 financial advisors in ${loc}`, 9);
+  add('rank_must',      `If I could only speak to one ${searchTerm} in ${loc}, who should it be?`, 9);
+
+  // ── 6. COMPARISON & ALTERNATIVE PROMPTS ──
   add('cmp_leading',    `Who are the leading financial advisory firms in ${loc}?`, 6);
   add('cmp_compare',    `Compare the best ${searchTerm}s in ${loc}`, 6);
   add('cmp_options',    `What are my options for financial advice in ${loc}?`, 6);
   add('cmp_vs_sj',      `Is St. James's Place the best option for financial advice in ${loc} or are there better alternatives?`, 7);
 
-  // ── 6. LOCAL TRUST & REVIEW PROMPTS ──
+  // ── 7. LOCAL TRUST & REVIEW PROMPTS ──
   add('loc_find',       `Find me a ${searchTerm} in ${loc}`, 7);
   add('loc_local',      `Local ${searchTerm} recommendations in ${loc}`, 6);
   add('loc_highly',     `Highly recommended ${searchTerm} in ${loc}`, 7);
@@ -124,13 +130,19 @@ export function buildPrompts(
   add('rev_trusted',    `Most trusted financial advisor in ${loc}`, 7);
   add('rev_vouched',    `Best rated financial advisor on VouchedFor near ${loc}`, 6);
 
-  // ── 7. SITUATIONAL PROMPTS ──
+  // ── 8. ACCREDITATION & TRUST SIGNAL PROMPTS ──
+  add('acc_chartered',  `Chartered financial planner in ${loc}`, 8);
+  add('acc_fca',        `FCA regulated financial advisor in ${loc}`, 8);
+  add('acc_vouched',    `Which financial advisors in ${loc} are listed on VouchedFor?`, 7);
+  add('acc_unbiased',   `Financial advisor in ${loc} listed on Unbiased`, 7);
+
+  // ── 9. SITUATIONAL PROMPTS ──
   add('sit_moving',     `I'm moving to ${loc} and need a financial advisor. Who do you recommend?`, 7);
   add('sit_lump',       `I've received a large inheritance and need financial advice in ${loc}`, 7);
   add('sit_business',   `Financial advisor for business owners in ${loc}`, 7);
   add('sit_couple',     `Best financial advisor for couples planning retirement in ${loc}`, 7);
 
-  // ── 8. CROSS-KEYWORD COMBINATIONS ──
+  // ── 10. CROSS-KEYWORD COMBINATIONS ──
   if (keywords.length >= 2) {
     add('combo_1', `Best ${keywords[0]} and ${keywords[1]} advisor in ${loc}`, 7);
     add('combo_2', `${searchTerm} specialising in ${keywords[0]} and ${keywords[1]} in ${loc}`, 6);

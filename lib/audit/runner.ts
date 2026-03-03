@@ -28,6 +28,9 @@ export interface AuditJob {
   error?: string;
 }
 
+// Shared system prompt — instructs AI to provide numbered, specific recommendations
+const SYSTEM_PROMPT = `You are a UK financial services expert. When asked about financial advisors, wealth managers, or financial planners, always respond with a numbered list of specific, real companies or firms by name. Include their location and any relevant qualifications (e.g., Chartered, FCA-regulated). Provide at least 5 recommendations when possible. Be specific and name real firms.`;
+
 // Check if a business name appears in an AI response
 function checkMention(response: string, businessName: string): {
   mentioned: boolean;
@@ -97,14 +100,11 @@ async function queryChatGPT(prompt: string): Promise<string> {
     body: JSON.stringify({
       model: 'gpt-4o-mini',
       messages: [
-        {
-          role: 'system',
-          content: 'You are a helpful assistant. When asked about local businesses, provide specific recommendations with business names.',
-        },
+        { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: prompt },
       ],
       max_tokens: 500,
-      temperature: 0.3,
+      temperature: 0.4,
     }),
   });
 
@@ -132,6 +132,7 @@ async function queryClaude(prompt: string): Promise<string> {
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 500,
+      system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: prompt }],
     }),
   });
@@ -158,7 +159,10 @@ async function queryPerplexity(prompt: string): Promise<string> {
     },
     body: JSON.stringify({
       model: 'sonar',
-      messages: [{ role: 'user', content: prompt }],
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: prompt },
+      ],
       max_tokens: 500,
     }),
   });
@@ -184,8 +188,9 @@ async function queryGoogleAI(prompt: string): Promise<string> {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 500, temperature: 0.3 },
+        generationConfig: { maxOutputTokens: 500, temperature: 0.4 },
       }),
     }
   );
@@ -285,7 +290,7 @@ export async function runAudit(
   // Limit prompts for cost efficiency (top-weighted ones)
   const sortedPrompts = prompts
     .sort((a, b) => b.weight - a.weight)
-    .slice(0, 20); // Max 20 prompts per run
+    .slice(0, 25); // Max 25 prompts per run
 
   onProgress?.(5, `Starting audit across ${platforms.length} AI platform${platforms.length !== 1 ? 's' : ''}...`);
 

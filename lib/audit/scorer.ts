@@ -20,6 +20,7 @@ export interface PlatformScore {
   promptsTested: number;
   promptsMentioned: number;
   avgPosition: number | null;
+  topThreeCount: number; // How many times appeared in top 3
   competitors: string[];
 }
 
@@ -28,26 +29,42 @@ export interface AuditScore {
   platforms: PlatformScore[];
   totalPrompts: number;
   mentionedInCount: number;
+  topThreePct: number;  // % of prompts where firm appeared in top 3
   topCompetitors: Array<{ name: string; count: number }>;
   grade: 'A' | 'B' | 'C' | 'D' | 'F';
   summary: string;
+}
+
+/** Position multiplier — rewards higher ranking in AI responses */
+function getPositionMultiplier(position: number | null): number {
+  if (position === null) return 1; // Mentioned but no position data → full credit
+  if (position <= 2) return 1;     // Top 2: full credit
+  if (position <= 3) return 0.9;   // Position 3: 90%
+  if (position <= 5) return 0.7;   // Position 4-5: 70%
+  return 0.4;                      // Position 6+: 40%
 }
 
 export function calculateScore(results: PromptResult[]): AuditScore {
   const platforms = ['ChatGPT', 'Claude', 'Perplexity', 'Google AI'];
   const platformScores: PlatformScore[] = [];
 
-  // Score each platform
+  // Score each platform — position-weighted scoring
+  // Position 1-2: full credit, 3: 90%, 4-5: 70%, 6+: 40%
   for (const platform of platforms) {
     const platformResults = results.filter(r => r.platform === platform);
     if (platformResults.length === 0) continue;
 
     const totalWeight = platformResults.reduce((sum, r) => sum + r.weight, 0);
-    const mentionedWeight = platformResults
-      .filter(r => r.mentioned)
-      .reduce((sum, r) => sum + r.weight, 0);
 
-    const score = totalWeight > 0 ? Math.round((mentionedWeight / totalWeight) * 100) : 0;
+    // Position-weighted score: being mentioned matters, but ranking higher matters more
+    let positionWeightedScore = 0;
+    for (const r of platformResults) {
+      if (!r.mentioned) continue;
+      const posMultiplier = getPositionMultiplier(r.position);
+      positionWeightedScore += r.weight * posMultiplier;
+    }
+
+    const score = totalWeight > 0 ? Math.round((positionWeightedScore / totalWeight) * 100) : 0;
 
     // Calculate average position (lower = better)
     const positions = platformResults
@@ -56,6 +73,11 @@ export function calculateScore(results: PromptResult[]): AuditScore {
     const avgPosition = positions.length > 0
       ? positions.reduce((sum, p) => sum + p, 0) / positions.length
       : null;
+
+    // Count top-3 appearances
+    const topThreeCount = platformResults.filter(
+      r => r.mentioned && r.position !== null && r.position <= 3
+    ).length;
 
     // Collect competitors
     const competitorCounts: Record<string, number> = {};
@@ -71,6 +93,7 @@ export function calculateScore(results: PromptResult[]): AuditScore {
       promptsTested: platformResults.length,
       promptsMentioned: platformResults.filter(r => r.mentioned).length,
       avgPosition,
+      topThreeCount,
       competitors: Object.entries(competitorCounts)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5)
@@ -102,6 +125,17 @@ export function calculateScore(results: PromptResult[]): AuditScore {
   // Total mentions across all platforms
   const mentionedInCount = results.filter(r => r.mentioned).length;
 
+  // Top-3 appearance percentage (across all platforms)
+  const totalUniquePrompts = new Set(results.map(r => r.promptId)).size;
+  const promptsWithTopThree = new Set(
+    results
+      .filter(r => r.mentioned && r.position !== null && r.position <= 3)
+      .map(r => r.promptId)
+  ).size;
+  const topThreePct = totalUniquePrompts > 0
+    ? Math.round((promptsWithTopThree / totalUniquePrompts) * 100)
+    : 0;
+
   // Top competitors across all platforms
   const allCompetitorCounts: Record<string, number> = {};
   for (const result of results) {
@@ -123,13 +157,14 @@ export function calculateScore(results: PromptResult[]): AuditScore {
   else grade = 'F';
 
   // Summary
-  const summary = generateSummary(overall, grade, platformScores, topCompetitors);
+  const summary = generateSummary(overall, grade, platformScores, topCompetitors, topThreePct);
 
   return {
     overall,
     platforms: platformScores,
     totalPrompts: results.length,
     mentionedInCount,
+    topThreePct,
     topCompetitors,
     grade,
     summary,
@@ -140,22 +175,43 @@ function generateSummary(
   score: number,
   grade: string,
   platforms: PlatformScore[],
-  competitors: Array<{ name: string; count: number }>
+  competitors: Array<{ name: string; count: number }>,
+  topThreePct: number,
 ): string {
+  if (platforms.length === 0) {
+    return `No platform data available. Score: ${score}/100.`;
+  }
+
   const bestPlatform = platforms.reduce((best, p) =>
     p.score > (best?.score ?? -1) ? p : best, platforms[0]);
   const worstPlatform = platforms.reduce((worst, p) =>
     p.score < (worst?.score ?? 101) ? p : worst, platforms[0]);
+  const platformsFound = platforms.filter(p => p.promptsMentioned > 0).length;
+
+  // Competitor context
+  const compLine = competitors[0]
+    ? ` ${competitors[0].name} was the most recommended competitor, cited ${competitors[0].count} time${competitors[0].count !== 1 ? 's' : ''}.`
+    : '';
+
+  // Top-3 context
+  const topThreeLine = topThreePct > 0
+    ? ` You appeared in the top 3 recommendations in ${topThreePct}% of searches.`
+    : ' You did not appear in the top 3 recommendations for any search.';
+
+  // Platform spread
+  const spreadLine = platforms.length > 1 && bestPlatform.platform !== worstPlatform.platform
+    ? ` Strongest on ${bestPlatform.platform} (${bestPlatform.score}%), weakest on ${worstPlatform.platform} (${worstPlatform.score}%).`
+    : '';
 
   if (score < 20) {
-    return `Your firm has very low AI visibility (${score}/100). You are essentially invisible to AI search. ${competitors[0] ? `Competitors like ${competitors[0].name} are being recommended instead of you.` : ''} Immediate action is needed.`;
+    return `Your firm has very low AI visibility (${score}/100, Grade ${grade}). You are essentially invisible across ${platforms.length} AI platforms — found on ${platformsFound} of them.${compLine} When prospective clients ask AI for recommendations, they are being directed to your competitors.${topThreeLine} Immediate action is needed to establish your digital footprint.`;
   } else if (score < 40) {
-    return `Your AI visibility score of ${score}/100 indicates significant gaps. You appear on ${bestPlatform?.platform} (${bestPlatform?.score}%) but are largely missing from ${worstPlatform?.platform} (${worstPlatform?.score}%). There is substantial room for improvement.`;
+    return `Your AI visibility score of ${score}/100 (Grade ${grade}) reveals significant gaps.${spreadLine}${compLine}${topThreeLine} Your firm is missing from the majority of AI-powered searches in your category. Targeted improvements to your online presence could meaningfully shift these results.`;
   } else if (score < 60) {
-    return `A score of ${score}/100 shows moderate AI visibility. You have a presence on some platforms but inconsistently. Strengthening your content and directory strategy could significantly improve your score.`;
+    return `A score of ${score}/100 (Grade ${grade}) shows moderate AI visibility. You were found on ${platformsFound} of ${platforms.length} platforms, but inconsistently.${spreadLine}${topThreeLine}${compLine} Strengthening your content, reviews, and directory strategy could significantly improve your ranking.`;
   } else if (score < 80) {
-    return `Good AI visibility at ${score}/100. Your firm is being recommended across most platforms. Focus on improving your ${worstPlatform?.platform} presence (${worstPlatform?.score}%) to reach the top tier.`;
+    return `Good AI visibility at ${score}/100 (Grade ${grade}). Your firm is being recommended across ${platformsFound} of ${platforms.length} platforms.${spreadLine}${topThreeLine}${compLine} Focus on closing gaps on your weakest platform and building top-3 positioning to reach the top tier.`;
   } else {
-    return `Excellent AI visibility at ${score}/100. Your firm is consistently being recommended across AI platforms. Continue your content strategy to maintain this position.`;
+    return `Excellent AI visibility at ${score}/100 (Grade ${grade}). Your firm is consistently being recommended across ${platformsFound} of ${platforms.length} AI platforms.${topThreeLine}${compLine} Continue your content strategy and monitor competitor movements to maintain this position.`;
   }
 }

@@ -34,7 +34,7 @@ const faqs = [
 export default function FAQ() {
   return (
     <section id="faq" style={{
-      padding: '6rem 2rem',
+      padding: 'clamp(3rem, 6vw, 6rem) clamp(1rem, 4vw, 2rem)',
       maxWidth: '800px',
       margin: '0 auto',
     }}>

@@ -442,8 +442,10 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
               <Text style={s.statLbl}>Times you appeared</Text>
             </View>
             <View style={s.stat}>
-              <Text style={s.statNum}>{score.platforms.length}</Text>
-              <Text style={s.statLbl}>Platforms audited</Text>
+              <Text style={[s.statNum, { color: score.topThreePct > 0 ? GREEN : '#CCCCCC' }]}>
+                {score.topThreePct}%
+              </Text>
+              <Text style={s.statLbl}>In top 3 results</Text>
             </View>
             <View style={s.stat}>
               <Text style={[s.statNum, { color: score.topCompetitors.length > 0 ? '#cc6644' : GOLD }]}>
@@ -533,7 +535,7 @@ function AuditReport({ config, score, insights, reportDate, jobId }: ReportData)
                   </Text>
                   {platform.avgPosition !== null && (
                     <Text style={s.platDetail}>
-                      Avg. position when found: #{Math.round(platform.avgPosition)}
+                      Avg. position: #{platform.avgPosition.toFixed(1)}  ·  Top 3: {platform.topThreeCount}/{platform.promptsTested}
                     </Text>
                   )}
                   <View style={s.barBg}>

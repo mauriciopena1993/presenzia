@@ -62,14 +62,18 @@ const CATEGORY_PREFIX_MAP: Record<string, string> = {
   loc: 'local',
   svc: 'service',
   rev: 'review',
+  rank: 'ranking',
+  acc: 'accreditation',
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
   recommendation: 'Direct Recommendations',
+  ranking: 'Top Ranking Queries',
   comparison: 'Comparison Queries',
   local: 'Local Search',
   service: 'Service-Specific Queries',
   review: 'Review & Trust Queries',
+  accreditation: 'Accreditation & Credentials',
 };
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -131,7 +135,7 @@ function buildCategories(results: PromptResult[]): CategoryBreakdown[] {
 
   // Build CategoryBreakdown for each category
   const categories: CategoryBreakdown[] = [];
-  const categoryOrder = ['recommendation', 'comparison', 'local', 'service', 'review'];
+  const categoryOrder = ['recommendation', 'ranking', 'comparison', 'local', 'service', 'review', 'accreditation'];
 
   for (const cat of categoryOrder) {
     const tests = byCategory.get(cat);
@@ -617,8 +621,12 @@ export function generateInsights(
 ): ReportInsights {
   const categories = buildCategories(results);
   const allActions = buildActions(config, score, results);
-  const actions = allActions.slice(0, 5);
-  const nextMonthHints = allActions.slice(5).map(a => a.title);
+
+  // Data-driven reordering: surface actions for the weakest areas first
+  const sortedActions = reorderByWeakness(allActions, categories, score);
+
+  const actions = sortedActions.slice(0, 5);
+  const nextMonthHints = sortedActions.slice(5).map(a => a.title);
 
   // Compute totals from raw results
   const totalSearches = results.length;
@@ -631,4 +639,65 @@ export function generateInsights(
     totalSearches,
     totalFound,
   };
+}
+
+/** Re-order actions based on actual audit weaknesses */
+function reorderByWeakness(
+  actions: DetailedAction[],
+  categories: CategoryBreakdown[],
+  score: AuditScore,
+): DetailedAction[] {
+  // Find the weakest platform
+  const weakestPlatform = score.platforms.length > 0
+    ? score.platforms.reduce((w, p) => p.score < w.score ? p : w, score.platforms[0])
+    : null;
+
+  // Find the weakest category
+  const weakestCategory = categories.length > 0
+    ? categories.reduce((w, c) => {
+        const wPct = w.totalSearches > 0 ? w.timesFound / w.totalSearches : 1;
+        const cPct = c.totalSearches > 0 ? c.timesFound / c.totalSearches : 1;
+        return cPct < wPct ? c : w;
+      }, categories[0])
+    : null;
+
+  // Score each action by relevance to weaknesses
+  return actions.map(action => {
+    let boost = 0;
+    const titleLower = action.title.toLowerCase();
+
+    // Boost actions that address the weakest platform
+    if (weakestPlatform && titleLower.includes(weakestPlatform.platform.toLowerCase())) {
+      boost += 3;
+    }
+
+    // Boost review actions when review category is weakest
+    if (weakestCategory?.category === 'review' && titleLower.includes('review')) {
+      boost += 2;
+    }
+
+    // Boost directory actions when accreditation/ranking categories are weak
+    if (weakestCategory?.category === 'accreditation' && titleLower.includes('directory')) {
+      boost += 2;
+    }
+
+    // Boost content actions when service-specific queries are weakest
+    if (weakestCategory?.category === 'service' && titleLower.includes('content')) {
+      boost += 2;
+    }
+
+    // Boost GBP when Google AI is weakest platform
+    if (weakestPlatform?.platform === 'Google AI' && titleLower.includes('google')) {
+      boost += 2;
+    }
+
+    return { action, boost };
+  })
+    .sort((a, b) => {
+      // HIGH priority first, then by boost
+      const priDiff = (a.action.priority === 'HIGH' ? 0 : 1) - (b.action.priority === 'HIGH' ? 0 : 1);
+      if (priDiff !== 0) return priDiff;
+      return b.boost - a.boost;
+    })
+    .map(({ action }) => action);
 }

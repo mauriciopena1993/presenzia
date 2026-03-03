@@ -24,14 +24,13 @@ describe('lib/audit/scorer — calculateScore', () => {
       expect(score.grade).toBe('F');
     });
 
-    it('score 19 → grade F', () => {
-      // 19% mentioned: about 1 out of ~5 weighted
+    it('low score → grade F', () => {
+      // Position 1 = full credit, so 19% mentioned weight = 19%
       const results = [
         makeResult({ platform: 'ChatGPT', mentioned: true, position: 1, weight: 19 }),
         makeResult({ platform: 'ChatGPT', mentioned: false, weight: 81 }),
       ];
       const score = calculateScore(results);
-      // With only ChatGPT at 19%, overall = 19
       expect(score.grade).toBe('F');
     });
 
@@ -72,9 +71,50 @@ describe('lib/audit/scorer — calculateScore', () => {
     });
   });
 
+  describe('position weighting', () => {
+    it('position 1-2 gets full credit', () => {
+      const results = [
+        makeResult({ platform: 'ChatGPT', mentioned: true, position: 1, weight: 100 }),
+      ];
+      const score = calculateScore(results);
+      expect(score.overall).toBe(100);
+    });
+
+    it('position 3 gets 90% credit', () => {
+      const results = [
+        makeResult({ platform: 'ChatGPT', mentioned: true, position: 3, weight: 100 }),
+      ];
+      const score = calculateScore(results);
+      expect(score.overall).toBe(90);
+    });
+
+    it('position 4-5 gets 70% credit', () => {
+      const results = [
+        makeResult({ platform: 'ChatGPT', mentioned: true, position: 4, weight: 100 }),
+      ];
+      const score = calculateScore(results);
+      expect(score.overall).toBe(70);
+    });
+
+    it('position 6+ gets 40% credit', () => {
+      const results = [
+        makeResult({ platform: 'ChatGPT', mentioned: true, position: 8, weight: 100 }),
+      ];
+      const score = calculateScore(results);
+      expect(score.overall).toBe(40);
+    });
+
+    it('null position (mentioned but no rank data) gets full credit', () => {
+      const results = [
+        makeResult({ platform: 'ChatGPT', mentioned: true, position: null, weight: 100 }),
+      ];
+      const score = calculateScore(results);
+      expect(score.overall).toBe(100);
+    });
+  });
+
   describe('platform weighting', () => {
     it('ChatGPT has highest weight (35)', () => {
-      // Only ChatGPT at 100%: overall = 100 (only platform)
       const results = [
         makeResult({ platform: 'ChatGPT', mentioned: true, position: 1 }),
       ];
@@ -84,11 +124,11 @@ describe('lib/audit/scorer — calculateScore', () => {
 
     it('weighs multiple platforms correctly', () => {
       const results = [
-        // ChatGPT: 100% (weight 35)
+        // ChatGPT: 100% at position 1 (weight 35)
         makeResult({ platform: 'ChatGPT', mentioned: true, position: 1 }),
         // Claude: 0% (weight 15)
         makeResult({ platform: 'Claude', mentioned: false }),
-        // Perplexity: 100% (weight 20)
+        // Perplexity: 100% at position 2 (weight 20) — position 2 = full credit
         makeResult({ platform: 'Perplexity', mentioned: true, position: 2 }),
         // Google AI: 0% (weight 30)
         makeResult({ platform: 'Google AI', mentioned: false }),
@@ -136,7 +176,7 @@ describe('lib/audit/scorer — calculateScore', () => {
   });
 
   describe('platform scores', () => {
-    it('calculates per-platform scores', () => {
+    it('calculates per-platform scores with position weighting', () => {
       const results = [
         makeResult({ platform: 'ChatGPT', mentioned: true, position: 1 }),
         makeResult({ platform: 'ChatGPT', mentioned: false }),
@@ -148,11 +188,11 @@ describe('lib/audit/scorer — calculateScore', () => {
 
       expect(chatgpt?.promptsTested).toBe(2);
       expect(chatgpt?.promptsMentioned).toBe(1);
-      expect(chatgpt?.score).toBe(50);
+      expect(chatgpt?.score).toBe(50); // position 1 = full credit: 1/2 = 50%
 
       expect(claude?.promptsTested).toBe(1);
       expect(claude?.promptsMentioned).toBe(1);
-      expect(claude?.score).toBe(100);
+      expect(claude?.score).toBe(100); // position 2 = full credit
     });
 
     it('calculates average position', () => {
@@ -172,6 +212,50 @@ describe('lib/audit/scorer — calculateScore', () => {
       const score = calculateScore(results);
       const chatgpt = score.platforms.find(p => p.platform === 'ChatGPT');
       expect(chatgpt?.avgPosition).toBeNull();
+    });
+
+    it('tracks top-3 count per platform', () => {
+      const results = [
+        makeResult({ platform: 'ChatGPT', mentioned: true, position: 1 }),
+        makeResult({ platform: 'ChatGPT', mentioned: true, position: 3 }),
+        makeResult({ platform: 'ChatGPT', mentioned: true, position: 5 }),
+        makeResult({ platform: 'ChatGPT', mentioned: false }),
+      ];
+      const score = calculateScore(results);
+      const chatgpt = score.platforms.find(p => p.platform === 'ChatGPT');
+      expect(chatgpt?.topThreeCount).toBe(2); // positions 1 and 3
+    });
+  });
+
+  describe('top-3 percentage', () => {
+    it('calculates topThreePct across all platforms', () => {
+      const results = [
+        makeResult({ promptId: 'p1', platform: 'ChatGPT', mentioned: true, position: 1 }),
+        makeResult({ promptId: 'p1', platform: 'Claude', mentioned: true, position: 5 }),
+        makeResult({ promptId: 'p2', platform: 'ChatGPT', mentioned: true, position: 4 }),
+        makeResult({ promptId: 'p2', platform: 'Claude', mentioned: false }),
+      ];
+      const score = calculateScore(results);
+      // p1 has top-3 on ChatGPT, p2 does not → 1/2 = 50%
+      expect(score.topThreePct).toBe(50);
+    });
+
+    it('topThreePct is 0 when no top-3 appearances', () => {
+      const results = [
+        makeResult({ platform: 'ChatGPT', mentioned: true, position: 6 }),
+        makeResult({ platform: 'ChatGPT', mentioned: false }),
+      ];
+      const score = calculateScore(results);
+      expect(score.topThreePct).toBe(0);
+    });
+
+    it('topThreePct is 100 when all in top 3', () => {
+      const results = [
+        makeResult({ platform: 'ChatGPT', mentioned: true, position: 1 }),
+        makeResult({ platform: 'Claude', mentioned: true, position: 2 }),
+      ];
+      const score = calculateScore(results);
+      expect(score.topThreePct).toBe(100);
     });
   });
 

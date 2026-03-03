@@ -3,7 +3,7 @@ import Link from 'next/link';
 export default function Footer() {
   return (
     <footer style={{
-      padding: '4rem 2rem 2rem',
+      padding: 'clamp(2.5rem, 4vw, 4rem) clamp(1rem, 4vw, 2rem) clamp(1.5rem, 2vw, 2rem)',
       background: 'rgba(10,10,10,0.88)',
     }}>
       <style>{`
