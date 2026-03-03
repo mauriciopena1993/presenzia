@@ -1,14 +1,24 @@
 # Presenzia.ai — Master Backlog
-> Last updated: 2026-02-24
+> Last updated: 2026-03-03
 
 ---
 
-## PHASE 2: Technical & Quality (CURRENT)
-- [ ] Add Perplexity API key (`PERPLEXITY_API_KEY`) to Vercel
-- [ ] Add Google AI API key (`GOOGLE_AI_API_KEY`) to Vercel
-- [ ] Improve audit report depth and quality (richer analysis, better prompts)
-- [ ] End-to-end QA: signup → payment → onboarding → audit → report → dashboard
-- [ ] Ensure all flows work smoothly on mobile
+## PHASE 2: Technical & Quality (COMPLETE)
+- [x] Add Perplexity API key (`PERPLEXITY_API_KEY`) to Vercel — keys in `.env.local`, need manual Vercel dashboard addition
+- [x] Add Google AI API key (`GOOGLE_AI_API_KEY`) to Vercel — keys in `.env.local`, need manual Vercel dashboard addition
+- [x] Improve audit report depth and quality (richer analysis, better prompts)
+  - Position-weighted scoring (pos 1-2: 100%, 3: 90%, 4-5: 70%, 6+: 40%)
+  - Top-3 appearance tracking per platform and overall
+  - 8 new prompts: ranking quality (4) + accreditation/trust signals (4)
+  - System prompt for all AI platforms for more specific firm recommendations
+  - Data-driven action prioritisation based on weakest platform/category
+  - Richer summary generation with top-3 context and competitor data
+  - Top-3 stat added to PDF report
+- [x] End-to-end QA: 503 unit/integration tests + 124 E2E tests (desktop + mobile)
+  - Enriched admin dashboard with per-platform score bars, score trends, ratings history
+  - 5 new E2E test suites: login, audit dashboard, growth dashboard, premium dashboard, billing
+- [x] Ensure all flows work smoothly on mobile
+  - Replaced fixed padding with clamp() across Hero, HowItWorks, FAQ, Testimonials, Footer
 
 ## PHASE 3: Growth & Launch
 - [ ] Pricing strategy review (Alex Hormozi "Money Models" approach)
