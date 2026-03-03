@@ -55,7 +55,7 @@ export const PLANS: Record<string, PlanConfig> = {
     period: null,
     periodLabel: 'one-off',
     recurring: false,
-    priceId: process.env.STRIPE_PRICE_AUDIT || process.env.STRIPE_PRICE_STARTER || '',
+    priceId: process.env.STRIPE_PRICE_AUDIT || '',
     description: '120 wealth-specific prompts across 4 AI platforms',
     cta: 'Get my audit',
     highlighted: false,

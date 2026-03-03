@@ -71,7 +71,12 @@ function OnboardingForm() {
     const saved = loadScoreState();
     scoreState.current = saved;
 
-    if (saved) {
+    // Only auto-submit if we have COMPLETE data from the score page:
+    // firmName, email, and at least 1 specialty/keyword are required
+    const hasValidScoreData = saved && saved.firmName && saved.email &&
+      (saved.specialties || []).length > 0;
+
+    if (hasValidScoreData && saved) {
       fromScore.current = true;
       const keywords = (saved.specialties || []).join(', ');
       // Infer firm type from specialties if possible
@@ -96,13 +101,26 @@ function OnboardingForm() {
       };
       setForm(preFilled);
 
-      // Always auto-submit when coming from score page
+      // Auto-submit only with complete data
       if (!autoSubmitted.current) {
         autoSubmitted.current = true;
         setSubmitting(true);
         setTimeout(() => doSubmit(preFilled), 100);
         return;
       }
+    } else if (saved) {
+      // Partial score data: pre-fill the form but DON'T auto-submit
+      const keywords = (saved.specialties || []).join(', ');
+      setForm(f => ({
+        ...f,
+        businessName: saved.firmName || f.businessName,
+        email: saved.email || f.email,
+        contactName: saved.name || f.contactName,
+        location: saved.locations || f.location,
+        website: saved.website || f.website,
+        description: saved.firmDescription || f.description,
+        keywords: keywords || f.keywords,
+      }));
     }
 
     setLoaded(true);
