@@ -466,8 +466,8 @@ function PlatformsTab({ job }: { job: InteractiveReportJob }) {
             {competitors[0] ? ` ${competitors[0].name} appeared ${competitors[0].count} times.` : ''}
           </div>
           <div style={{ background: '#0D0D0D', border: '1px solid #1a1a1a', padding: '1rem' }}>
-            {competitors.slice(0, 8).map((comp, i) => (
-              <div key={comp.name} style={{ display: 'flex', alignItems: 'center', padding: '0.5rem 0', borderBottom: i < Math.min(7, competitors.length - 1) ? '1px solid #111' : 'none' }}>
+            {competitors.slice(0, 10).map((comp, i) => (
+              <div key={comp.name} style={{ display: 'flex', alignItems: 'center', padding: '0.5rem 0', borderBottom: i < Math.min(9, competitors.length - 1) ? '1px solid #111' : 'none' }}>
                 <span style={{ fontSize: '0.7rem', color: '#555', fontWeight: 600, width: 24 }}>#{i + 1}</span>
                 <span style={{ flex: 1, fontSize: '0.85rem', color: '#CCCCCC' }}>{comp.name}</span>
                 <div style={{ width: 80, height: 3, background: '#1a1a1a', borderRadius: 2, marginRight: 12 }}>
@@ -485,9 +485,11 @@ function PlatformsTab({ job }: { job: InteractiveReportJob }) {
         <div style={{ padding: '1rem', background: '#0D0D0D', borderLeft: '3px solid #C9A84C', border: '1px solid #1a1a1a' }}>
           <div style={{ fontSize: '0.78rem', fontWeight: 600, color: '#F5F0E8', marginBottom: 4 }}>What this means</div>
           <div style={{ fontSize: '0.82rem', color: '#AAAAAA', lineHeight: 1.65 }}>
-            Found on {platformsFound} of {platforms.length} platforms.
-            {bestPlat.score > 0 ? ` Strongest: ${bestPlat.platform} (${bestPlat.promptsMentioned}/${bestPlat.promptsTested}).` : ''}
-            {worstPlat.platform !== bestPlat.platform ? ` Biggest gap: ${worstPlat.platform} (${worstPlat.promptsMentioned}/${worstPlat.promptsTested}).` : ''}
+            {platformsFound === 0
+              ? `Your firm was not found on any of the ${platforms.length} AI platforms tested. When prospective clients ask AI assistants for recommendations in your category, your competitors are being suggested instead. This is a significant growth opportunity — firms that optimise their AI visibility early gain a compounding advantage.`
+              : platformsFound === platforms.length
+                ? `Excellent — you were found on all ${platforms.length} AI platforms. Your firm is well-positioned for AI-driven discovery.`
+                : `Found on ${platformsFound} of ${platforms.length} platforms. ${bestPlat.score > 0 ? `Strongest: ${bestPlat.platform} (${bestPlat.promptsMentioned}/${bestPlat.promptsTested}).` : ''} ${worstPlat.platform !== bestPlat.platform ? `Biggest gap: ${worstPlat.platform} (${worstPlat.promptsMentioned}/${worstPlat.promptsTested}).` : ''} Focus your efforts on the platforms where you're missing to capture more AI-driven referrals.`}
           </div>
         </div>
       )}
@@ -746,6 +748,7 @@ function ActionPlanTab({ job }: { job: InteractiveReportJob }) {
 
 export default function InteractiveReport({ job, client, onDownload }: Props) {
   const [activeTab, setActiveTab] = useState<ReportTab>('overview');
+  const [lockedToast, setLockedToast] = useState(false);
   const hasInsights = !!job.insights_json;
 
   const tabs: { key: ReportTab; label: string; disabled?: boolean }[] = [
@@ -755,32 +758,54 @@ export default function InteractiveReport({ job, client, onDownload }: Props) {
     { key: 'actions', label: 'Action Plan', disabled: !hasInsights },
   ];
 
+  const handleTabClick = (tab: typeof tabs[0]) => {
+    if (tab.disabled) {
+      setLockedToast(true);
+      setTimeout(() => setLockedToast(false), 3000);
+      return;
+    }
+    setActiveTab(tab.key);
+  };
+
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
+      {/* Locked tab toast */}
+      {lockedToast && (
+        <div style={{
+          position: 'fixed', top: '1.5rem', left: '50%', transform: 'translateX(-50%)',
+          background: '#1a1a1a', border: '1px solid #333', padding: '0.625rem 1.25rem',
+          fontSize: '0.82rem', color: '#CCCCCC', zIndex: 1000, boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+          display: 'flex', alignItems: 'center', gap: '0.5rem', animation: 'fadeIn 0.2s',
+        }}>
+          <span style={{ fontSize: '0.8rem' }}>🔒</span>
+          This section will be available once your audit insights are processed.
+        </div>
+      )}
+
       {/* Header bar: sub-tabs + download button */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1a1a1a', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
         <div style={{ display: 'flex', gap: 0 }}>
           {tabs.map(tab => (
             <button
               key={tab.key}
-              onClick={() => !tab.disabled && setActiveTab(tab.key)}
+              onClick={() => handleTabClick(tab)}
               style={{
                 padding: '0.5rem 1rem',
                 background: 'none',
                 border: 'none',
                 borderBottom: activeTab === tab.key ? '2px solid #C9A84C' : '2px solid transparent',
-                color: tab.disabled ? '#333' : activeTab === tab.key ? '#F5F0E8' : '#888',
+                color: tab.disabled ? '#555' : activeTab === tab.key ? '#F5F0E8' : '#888',
                 fontFamily: 'inherit',
                 fontSize: '0.82rem',
                 cursor: tab.disabled ? 'not-allowed' : 'pointer',
                 fontWeight: activeTab === tab.key ? 600 : 400,
                 transition: 'color 0.2s',
-                opacity: tab.disabled ? 0.5 : 1,
+                opacity: tab.disabled ? 0.6 : 1,
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.3rem',
               }}
-              title={tab.disabled ? 'Available in your next audit' : undefined}
+              title={tab.disabled ? 'This section will be available once your audit insights are processed' : undefined}
             >
               {tab.disabled && <span style={{ fontSize: '0.7rem' }}>🔒</span>}
               {tab.label}

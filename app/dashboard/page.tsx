@@ -105,7 +105,7 @@ const TIER_COLORS: Record<string, string> = {
 const PLAN_FEATURES: Record<string, string[]> = {
   audit: ['One-off AI visibility audit', '120 wealth-specific prompts tested', 'Online dashboard with full interactive report', 'Downloadable PDF report with action plan'],
   starter: ['Monthly AI visibility audit', 'Delivered by email (report)'], // legacy
-  growth: ['Everything in Audit', 'Monthly re-audits with score tracking', 'Online dashboard (weekly updates)', 'AI audit assistant', 'Quarterly strategy calls', 'Competitor deep-dive analysis', 'Priority email support'],
+  growth: ['Everything in Audit', 'Weekly re-audits with score tracking', 'Online dashboard (weekly updates)', 'AI audit assistant', 'Quarterly strategy calls', 'Competitor deep-dive analysis', 'Priority email support'],
   premium: ['Everything in Growth', 'Daily dashboard updates', 'Dedicated account strategist', 'Monthly 1:1 strategy calls', 'Territory exclusivity in your area', 'Done-for-you content (4 articles/month)', 'Custom prompt testing & industry benchmarking'],
 };
 
@@ -114,7 +114,7 @@ const PLAN_ORDER = ['audit', 'growth', 'premium'];
 const PLAN_LOSSES: Record<string, string[]> = {
   audit: ['AI visibility audit report', 'Score tracking', 'Action plan recommendations'],
   starter: ['Monthly AI visibility audits', 'Email reports with action plans', 'Score tracking over time'], // legacy
-  growth: ['Monthly re-audits', 'Online dashboard with weekly updates', 'AI audit assistant', 'Quarterly strategy calls', 'Competitor deep-dive analysis', 'Priority email support'],
+  growth: ['Weekly re-audits', 'Online dashboard with weekly updates', 'AI audit assistant', 'Quarterly strategy calls', 'Competitor deep-dive analysis', 'Priority email support'],
   premium: ['Daily dashboard updates', 'Dedicated account manager', 'Monthly 1:1 strategy calls', 'Territory exclusivity', 'Done-for-you content', 'Custom prompt testing', 'Industry benchmarking'],
 };
 
@@ -159,6 +159,37 @@ function getUpdateFrequencyLabel(plan?: string): string {
   if (plan === 'premium') return 'Daily';
   if (plan === 'growth') return 'Weekly';
   return 'One-off';
+}
+
+/** Simple markdown renderer for AI chat responses — handles bold, italic, headers, lists, links */
+function renderMarkdown(text: string): string {
+  let html = text
+    // Escape HTML entities
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    // Headers (## → h3, ### → h4)
+    .replace(/^### (.+)$/gm, '<strong style="display:block;margin:0.5em 0 0.25em;font-size:0.9em;color:#F5F0E8">$1</strong>')
+    .replace(/^## (.+)$/gm, '<strong style="display:block;margin:0.6em 0 0.3em;font-size:0.95em;color:#F5F0E8">$1</strong>')
+    .replace(/^# (.+)$/gm, '<strong style="display:block;margin:0.6em 0 0.3em;font-size:1em;color:#F5F0E8">$1</strong>')
+    // Bold + italic
+    .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+    // Bold
+    .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#F5F0E8">$1</strong>')
+    // Italic
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    // Unordered list items
+    .replace(/^[-•] (.+)$/gm, '<li style="margin-left:1em;list-style:disc;margin-bottom:0.2em">$1</li>')
+    // Ordered list items (1. 2. etc.)
+    .replace(/^\d+\.\s+(.+)$/gm, '<li style="margin-left:1em;list-style:decimal;margin-bottom:0.2em">$1</li>')
+    // Links [text](url)
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:#C9A84C;text-decoration:underline">$1</a>')
+    // Line breaks (double newline → paragraph break)
+    .replace(/\n\n/g, '<br/><br/>')
+    // Single newlines within content
+    .replace(/\n/g, '<br/>');
+
+  return html;
 }
 
 function CongratsBanner({ plan, onClose }: { plan: string; onClose: () => void }) {
@@ -1094,7 +1125,14 @@ function ChatPane({ jobId, businessName }: { jobId: string; businessName: string
               lineHeight: 1.55,
               border: msg.role === 'user' ? 'none' : '1px solid #222',
             }}>
-              {msg.content}
+              {msg.role === 'assistant' ? (
+                <div
+                  className="chat-markdown"
+                  dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.content) }}
+                />
+              ) : (
+                msg.content
+              )}
             </div>
           </div>
         ))}
@@ -2150,28 +2188,32 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* Cancel */}
-          {!showCancel ? (
-            <button
-              onClick={handleStartCancel}
-              style={{ background: 'none', border: 'none', color: '#666', fontSize: '0.75rem', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline' }}
-            >
-              Cancel subscription
-            </button>
-          ) : (
-            <CancelFlow
-              plan={client?.plan || 'growth'}
-              cancelStep={cancelStep}
-              setCancelStep={setCancelStep}
-              retentionEligible={retentionEligible}
-              actionLoading={actionLoading}
-              onAcceptRetention={handleAcceptRetention}
-              onConfirmCancel={handleConfirmCancel}
-              onChangePlan={handleChangePlan}
-              onSubmitFeedback={handleSubmitFeedback}
-              onClose={() => setShowCancel(false)}
-              cancelEndDate={cancelEndDate}
-            />
+          {/* Cancel — only show for subscription plans (growth/premium) */}
+          {isGrowthOrAbove && (
+            <>
+              {!showCancel ? (
+                <button
+                  onClick={handleStartCancel}
+                  style={{ background: 'none', border: 'none', color: '#666', fontSize: '0.75rem', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline' }}
+                >
+                  Cancel subscription
+                </button>
+              ) : (
+                <CancelFlow
+                  plan={client?.plan || 'growth'}
+                  cancelStep={cancelStep}
+                  setCancelStep={setCancelStep}
+                  retentionEligible={retentionEligible}
+                  actionLoading={actionLoading}
+                  onAcceptRetention={handleAcceptRetention}
+                  onConfirmCancel={handleConfirmCancel}
+                  onChangePlan={handleChangePlan}
+                  onSubmitFeedback={handleSubmitFeedback}
+                  onClose={() => setShowCancel(false)}
+                  cancelEndDate={cancelEndDate}
+                />
+              )}
+            </>
           )}
 
           {/* Delete account */}
