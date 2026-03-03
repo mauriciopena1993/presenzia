@@ -292,7 +292,7 @@ export default function Pricing() {
           {/* Column headers */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '1fr repeat(3, 80px)',
+            gridTemplateColumns: '1fr repeat(3, minmax(90px, 120px))',
             gap: '0',
             padding: '0.75rem 1rem',
             fontFamily: 'var(--font-inter, Inter, sans-serif)',
@@ -316,7 +316,7 @@ export default function Pricing() {
           {COMPARISON_ROWS.map((row, idx) => (
             <div key={row.feature} style={{
               display: 'grid',
-              gridTemplateColumns: '1fr repeat(3, 80px)',
+              gridTemplateColumns: '1fr repeat(3, minmax(90px, 120px))',
               gap: '0',
               padding: '0.6rem 1rem',
               borderTop: idx === 0 ? '1px solid rgba(255,255,255,0.04)' : 'none',
