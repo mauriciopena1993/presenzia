@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
+import { PLAN_LABELS } from '@/lib/plans';
 
 type VerifyState = 'loading' | 'verified' | 'invalid';
 
@@ -12,12 +13,7 @@ function SuccessContent() {
   const plan = searchParams.get('plan') || 'audit';
   const [state, setState] = useState<VerifyState>('loading');
 
-  const planNames: Record<string, string> = {
-    audit: 'Full AI Audit & Action Plan',
-    starter: 'Starter', // legacy
-    growth: 'Growth Retainer',
-    premium: 'Premium',
-  };
+  const planNames = PLAN_LABELS;
 
   useEffect(() => {
     if (!sessionId) {

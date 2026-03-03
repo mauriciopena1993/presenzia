@@ -2,87 +2,9 @@
 
 import { useState } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
-
-const plans = [
-  {
-    key: 'audit',
-    name: 'Full AI Audit & Action Plan',
-    price: '\u00A3297',
-    period: 'one-off',
-    description: 'See exactly where your firm stands, and what to fix.',
-    features: [
-      '120+ wealth-specific prompts tested',
-      '4 AI platforms (ChatGPT, Claude, Perplexity, Google AI)',
-      'Visibility score, grade & personalised action plan',
-      'Full competitor analysis',
-      'Prioritised recommendations by impact',
-      'Online dashboard + downloadable PDF report',
-    ],
-    cta: 'Get my audit',
-    highlighted: false,
-  },
-  {
-    key: 'growth',
-    name: 'Growth Retainer',
-    price: '\u00A3697',
-    period: '/month',
-    description: 'Ongoing monitoring, recommendations, and measurable improvement.',
-    features: [
-      'Everything in the Audit, plus:',
-      'Monthly re-audits with score tracking and trends',
-      'Online client dashboard (updated weekly)',
-      'Competitor deep-dive with real-time alerts',
-      'AI audit assistant and content recommendations',
-      'Quarterly 30-minute strategy call',
-    ],
-    cta: 'Start growing',
-    highlighted: true,
-    badge: 'Most popular',
-  },
-  {
-    key: 'premium',
-    name: 'Premium',
-    price: '\u00A31,997',
-    period: '/month',
-    description: 'We do the work. You get the clients.',
-    features: [
-      'Everything in Growth, plus:',
-      'Dedicated account strategist',
-      '4 AI-optimised articles written & published monthly',
-      'Monthly 60-minute strategy call',
-      'Exclusive territory protection (one firm per area)',
-      'Daily visibility monitoring with real-time alerts',
-    ],
-    cta: 'Book a discovery call',
-    highlighted: false,
-  },
-];
-
-/* ── Comparison table data ── */
+import { PRICING_PLANS, COMPARISON_ROWS } from '@/lib/plans';
 
 type CellValue = boolean | string;
-
-interface ComparisonRow {
-  feature: string;
-  starter: CellValue;
-  growth: CellValue;
-  premium: CellValue;
-}
-
-const comparisonRows: ComparisonRow[] = [
-  { feature: '120+ wealth-specific prompts tested',        starter: true,  growth: true,     premium: true },
-  { feature: '4 AI platforms tested',                      starter: true,  growth: true,     premium: true },
-  { feature: 'Visibility score, grade & action plan',      starter: true,  growth: true,     premium: true },
-  { feature: 'Competitor analysis',                        starter: true,  growth: 'Deep-dive + alerts', premium: 'Deep-dive + alerts' },
-  { feature: 'PDF audit report',                           starter: true,  growth: true,     premium: true },
-  { feature: 'Monthly re-audits with trend tracking',      starter: false, growth: true,     premium: true },
-  { feature: 'Online client dashboard',                    starter: true, growth: 'Weekly updates', premium: 'Daily updates' },
-  { feature: 'AI audit assistant',                         starter: false, growth: true,     premium: true },
-  { feature: 'Strategy calls',                             starter: false, growth: 'Quarterly 30m', premium: 'Monthly 60m' },
-  { feature: 'Dedicated account strategist',               starter: false, growth: false,    premium: true },
-  { feature: 'Done-for-you content (4 articles/month)',    starter: false, growth: false,    premium: true },
-  { feature: 'Exclusive territory protection',             starter: false, growth: false,    premium: true },
-];
 
 /* ── Render helper for table cells ── */
 
@@ -99,7 +21,7 @@ function CellContent({ value }: { value: CellValue }) {
 /* ── Single plan card (shared between desktop grid and mobile tabs) ── */
 
 function PlanCard({ plan, premiumMailto, handleClick }: {
-  plan: typeof plans[number];
+  plan: typeof PRICING_PLANS[number];
   premiumMailto: string;
   handleClick: (key: string) => void;
 }) {
@@ -138,15 +60,15 @@ function PlanCard({ plan, premiumMailto, handleClick }: {
             color: '#F5F0E8',
             fontWeight: 600,
           }}>
-            {plan.price}
+            {plan.priceDisplay}
           </span>
-          <span style={{ color: '#999999', fontSize: '0.875rem' }}>{plan.period}</span>
+          <span style={{ color: '#999999', fontSize: '0.875rem' }}>{plan.periodLabel}</span>
         </div>
-        <p style={{ color: '#999999', fontSize: '0.875rem', lineHeight: 1.6 }}>{plan.description}</p>
+        <p style={{ color: '#999999', fontSize: '0.875rem', lineHeight: 1.6 }}>{plan.marketingDescription}</p>
       </div>
 
       <ul style={{ listStyle: 'none', marginBottom: '2.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-        {plan.features.map((feature) => (
+        {plan.cardFeatures.map((feature) => (
           <li key={feature} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', fontSize: '0.875rem', color: '#AAAAAA' }}>
             <Check size={14} strokeWidth={2.5} style={{ color: '#C9A84C', marginTop: '3px', flexShrink: 0 }} />
             {feature}
@@ -252,9 +174,9 @@ export default function Pricing() {
         }
       `}</style>
 
-      {/* ── Desktop: 3-column grid (unchanged) ── */}
+      {/* ── Desktop: 3-column grid ── */}
       <div className="pricing-desktop">
-        {plans.map((plan) => (
+        {PRICING_PLANS.map((plan) => (
           <PlanCard key={plan.name} plan={plan} premiumMailto={premiumMailto} handleClick={handleClick} />
         ))}
       </div>
@@ -267,7 +189,7 @@ export default function Pricing() {
           borderBottom: '1px solid rgba(255,255,255,0.08)',
           marginBottom: '0',
         }}>
-          {plans.map((plan, i) => (
+          {PRICING_PLANS.map((plan, i) => (
             <button
               key={plan.key}
               onClick={() => setMobileTab(i)}
@@ -305,7 +227,7 @@ export default function Pricing() {
         </div>
 
         {/* Active plan card */}
-        <PlanCard plan={plans[mobileTab]} premiumMailto={premiumMailto} handleClick={handleClick} />
+        <PlanCard plan={PRICING_PLANS[mobileTab]} premiumMailto={premiumMailto} handleClick={handleClick} />
       </div>
 
       <p style={{ textAlign: 'center', color: '#999999', fontSize: '0.8rem', marginTop: '2rem' }}>
@@ -385,7 +307,7 @@ export default function Pricing() {
           </div>
 
           {/* Rows */}
-          {comparisonRows.map((row, idx) => (
+          {COMPARISON_ROWS.map((row, idx) => (
             <div key={row.feature} style={{
               display: 'grid',
               gridTemplateColumns: '1fr repeat(3, 80px)',
@@ -398,7 +320,7 @@ export default function Pricing() {
               <div style={{ fontSize: '0.78rem', color: '#AAAAAA', paddingRight: '0.5rem' }}>
                 {row.feature}
               </div>
-              {([row.starter, row.growth, row.premium] as CellValue[]).map((val, i) => (
+              {([row.audit, row.growth, row.premium] as CellValue[]).map((val, i) => (
                 <div key={i} style={{ textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <CellContent value={val} />
                 </div>
@@ -409,7 +331,7 @@ export default function Pricing() {
 
         {/* Mobile: stacked feature cards */}
         <div className="comparison-mobile">
-          {comparisonRows.map((row, idx) => (
+          {COMPARISON_ROWS.map((row, idx) => (
             <div key={row.feature} style={{
               padding: '1rem 0',
               borderBottom: '1px solid rgba(255,255,255,0.04)',
@@ -421,7 +343,7 @@ export default function Pricing() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
                 {([
-                  { label: 'Audit', value: row.starter },
+                  { label: 'Audit', value: row.audit },
                   { label: 'Growth', value: row.growth },
                   { label: 'Premium', value: row.premium },
                 ] as const).map(({ label, value }, colIdx) => (

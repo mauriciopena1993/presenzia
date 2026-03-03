@@ -15,25 +15,10 @@ export async function POST(req: NextRequest) {
 
     const selectedPlan = PLANS[plan as PlanKey];
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const isOneOff = plan === 'audit';
 
-    // Use 'payment' mode for one-off audit, 'subscription' for retainers
-    interface SessionParams {
-      mode: 'payment' | 'subscription';
-      payment_method_types: ('card')[];
-      line_items: Array<{ price: string; quantity: number }>;
-      customer_email?: string;
-      success_url: string;
-      cancel_url: string;
-      metadata: Record<string, string>;
-      allow_promotion_codes: boolean;
-      billing_address_collection: 'required';
-      tax_id_collection: { enabled: boolean };
-      subscription_data?: { metadata: Record<string, string> };
-    }
-
-    const sessionParams: SessionParams = {
-      mode: isOneOff ? 'payment' : 'subscription',
+    // All plans use subscription mode — Stripe prices are recurring
+    const session = await stripe.checkout.sessions.create({
+      mode: 'subscription',
       payment_method_types: ['card'],
       line_items: [
         {
@@ -53,23 +38,17 @@ export async function POST(req: NextRequest) {
         website: website?.trim() || '',
         keywords: keywords?.trim() || '',
       },
+      subscription_data: {
+        metadata: {
+          plan,
+        },
+      },
       allow_promotion_codes: true,
       billing_address_collection: 'required',
       tax_id_collection: {
         enabled: true,
       },
-    };
-
-    // Only include subscription_data for recurring plans
-    if (!isOneOff) {
-      sessionParams.subscription_data = {
-        metadata: {
-          plan,
-        },
-      };
-    }
-
-    const session = await stripe.checkout.sessions.create(sessionParams as Parameters<typeof stripe.checkout.sessions.create>[0]);
+    } as Parameters<typeof stripe.checkout.sessions.create>[0]);
 
     return NextResponse.json({ url: session.url });
   } catch (error) {

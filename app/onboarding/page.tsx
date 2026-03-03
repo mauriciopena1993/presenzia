@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useState, useEffect, useRef } from 'react';
+import { PLAN_LABELS } from '@/lib/plans';
 
 const SCORE_STORAGE_KEY = 'presenzia_score_state';
 
@@ -20,12 +21,7 @@ const FIRM_TYPES = [
   'Other',
 ];
 
-const planNames: Record<string, string> = {
-  audit: 'Full AI Audit & Action Plan',
-  starter: 'Starter', // legacy fallback
-  growth: 'Growth Retainer',
-  premium: 'Premium',
-};
+const planNames = PLAN_LABELS;
 
 interface ScoreState {
   firmName?: string;

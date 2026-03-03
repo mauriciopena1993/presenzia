@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
+import { PLANS } from '@/lib/plans';
 
 const SPECIALTIES = [
   'Wealth Management',
@@ -119,7 +120,8 @@ export default function ScorePage() {
   }, [step, firmName, coverageType, locations, specialties, targetClient, website, firmDescription, additionalContext, email, name, result]);
 
   const loadingStages = [
-    { label: 'Connecting to ChatGPT...', status: 'in_progress' },
+    { label: 'Analysing your website & information...', status: 'in_progress' },
+    { label: 'Connecting to ChatGPT...', status: 'queued' },
     { label: 'Testing ChatGPT prompts...', status: 'queued' },
     { label: 'Connecting to Claude...', status: 'queued' },
     { label: 'Testing Claude prompts...', status: 'queued' },
@@ -136,21 +138,23 @@ export default function ScorePage() {
   useEffect(() => {
     if (step !== 'loading') return;
 
-    // Stages spread across ~40 seconds
-    const timings = [0, 2500, 5500, 8500, 11500, 14500, 18000, 21500, 26000, 30000, 34000, 38000];
+    // Stages spread across ~40 seconds (13 stages)
+    const timings = [0, 2000, 4500, 7500, 10000, 13000, 16000, 19000, 22000, 26000, 30000, 34000, 38000];
     const timers = timings.map((delay, i) =>
       setTimeout(() => setLoadingStage(i), delay)
     );
 
     // Progress bar: fast at first, gradually slows down, never feels stuck
+    let tick = 0;
     const interval = setInterval(() => {
+      tick++;
       setLoadingPercent(prev => {
         if (prev >= 100) return 100;
         if (resultReady.current && prev >= 95) return prev + 2; // Sprint to 100 when done
         if (prev >= 95) return prev; // Hard cap if API not done
-        if (prev >= 85) return prev + 0.2; // Very slow crawl 85-95%
-        if (prev >= 70) return prev + 0.4; // Slow 70-85%
-        return prev + 1; // Normal speed 0-70%
+        if (prev >= 85) return tick % 5 === 0 ? prev + 1 : prev; // +1 every 2.5s (85-95%)
+        if (prev >= 70) return tick % 3 === 0 ? prev + 1 : prev; // +1 every 1.5s (70-85%)
+        return prev + 1; // +1 every 0.5s (0-70%)
       });
     }, 500);
 
@@ -600,7 +604,7 @@ export default function ScorePage() {
               }} />
             </div>
             <div style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.5rem' }}>
-              {loadingPercent}%
+              {Math.floor(loadingPercent)}%
             </div>
           </div>
         )}
@@ -670,9 +674,19 @@ export default function ScorePage() {
         {step === 'results' && result && (
           <div>
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-              <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
-                Your AI Visibility Score
+              <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+                AI Visibility Score
               </div>
+
+              <h1 style={{
+                fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
+                fontSize: 'clamp(1.3rem, 3.5vw, 1.8rem)',
+                fontWeight: 600,
+                marginBottom: '1.5rem',
+                color: '#F5F0E8',
+              }}>
+                {firmName}
+              </h1>
 
               <div style={{
                 width: '140px',
@@ -863,6 +877,24 @@ export default function ScorePage() {
               </div>
             </div>
 
+            {/* Paid audit value prop */}
+            <div style={{
+              padding: '1rem 1.25rem',
+              background: 'rgba(201,168,76,0.06)',
+              border: '1px solid rgba(201,168,76,0.15)',
+              marginBottom: '1rem',
+            }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#C9A84C', marginBottom: '0.5rem' }}>
+                Your full audit goes further:
+              </div>
+              <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.8rem', color: '#AAAAAA', lineHeight: 1.8 }}>
+                <li>Tests <strong style={{ color: '#F5F0E8' }}>30+ prompts</strong> across all 4 AI platforms (vs {result.totalPrompts} in your free score)</li>
+                <li>In-depth <strong style={{ color: '#F5F0E8' }}>website content analysis</strong> with specific improvement recommendations</li>
+                <li>Complete competitor breakdown with <strong style={{ color: '#F5F0E8' }}>positioning strategy</strong></li>
+                <li>Actionable step-by-step plan, interactive dashboard &amp; downloadable PDF report</li>
+              </ul>
+            </div>
+
             {/* CTA */}
             <Link
               href="/onboarding?plan=audit"
@@ -882,7 +914,7 @@ export default function ScorePage() {
                 boxSizing: 'border-box',
               }}
             >
-              Get my full audit for £297 →
+              Get my full audit for {PLANS.audit.priceDisplay} →
             </Link>
 
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>

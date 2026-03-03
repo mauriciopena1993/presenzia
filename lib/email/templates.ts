@@ -5,6 +5,8 @@
  * Dark-mode-safe HTML email templates with the presenzia gold accent.
  */
 
+import { PLANS } from '@/lib/plans';
+
 const FROM_EMAIL = 'presenzia.ai <reports@presenzia.ai>';
 const REPLY_TO = 'hello@presenzia.ai';
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://presenzia.ai';
@@ -61,7 +63,7 @@ export function freeScoreNurture1(businessName: string, score: number, email: st
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Yesterday you checked ${businessName}'s AI visibility and scored <strong style="color:#111;">${score}/100</strong>.</p>
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Here's what that means: when a potential client asks ChatGPT, Claude, or Perplexity to recommend a financial adviser in your area, ${score >= 50 ? 'you appear sometimes — but your competitors appear more.' : 'your competitors are being recommended instead of you.'}</p>
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Our full audit tests <strong>120 wealth-specific prompts</strong> across 4 AI platforms — and gives you a step-by-step action plan to improve your ranking.</p>
-    ${ctaButton('Get your full AI audit for £297 →', `${APP_URL}/onboarding?plan=audit`)}
+    ${ctaButton(`Get your full AI audit for ${PLANS.audit.priceDisplay} →`, `${APP_URL}/onboarding?plan=audit`)}
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Results delivered in 15 minutes via your online dashboard and PDF.</p>
   `.replace('{{email}}', email), { preheader: `Your AI visibility score was ${score}/100 — here's what to do about it.` });
 
@@ -79,7 +81,7 @@ export function freeScoreNurture2(businessName: string, score: number, email: st
       <li><strong>Missing from niche queries</strong> — you may appear for broad terms but not the specific questions clients actually ask.</li>
     </ol>
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Our full audit identifies exactly which of these apply to you — across 120 prompts on ChatGPT, Claude, Perplexity, and Google AI. You get a scored report with a personalised action plan.</p>
-    ${ctaButton("See what's holding you back — £297 →", `${APP_URL}/onboarding?plan=audit`)}
+    ${ctaButton(`See what's holding you back — ${PLANS.audit.priceDisplay} →`, `${APP_URL}/onboarding?plan=audit`)}
   `.replace('{{email}}', email), { preheader: 'The 3 most common reasons AI assistants recommend your competitors instead.' });
 
   return { subject, html, text: `3 reasons AI isn't recommending ${businessName}. Get the full audit at ${APP_URL}/onboarding?plan=audit` };
@@ -92,7 +94,7 @@ export function freeScoreNurture3(businessName: string, email: string) {
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">This is our last email about your AI visibility check for ${businessName}.</p>
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">AI is changing how clients find financial advisers. The firms that act now will dominate these new referral channels. Those that wait will wonder where their leads went.</p>
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">The full audit takes 15 minutes to deliver and comes with a step-by-step plan you can action immediately.</p>
-    ${ctaButton('Get your audit now — £297 →', `${APP_URL}/onboarding?plan=audit`)}
+    ${ctaButton(`Get your audit now — ${PLANS.audit.priceDisplay} →`, `${APP_URL}/onboarding?plan=audit`)}
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Questions? Just reply to this email.</p>
   `.replace('{{email}}', email), { preheader: 'Last reminder about your AI visibility assessment.' });
 

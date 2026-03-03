@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe, planFromPriceId } from '@/lib/stripe';
 import { supabase } from '@/lib/supabase';
+import { PLAN_LABELS } from '@/lib/plans';
 import Stripe from 'stripe';
 import { Resend } from 'resend';
 
@@ -9,7 +10,6 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 import { FROM_EMAIL } from '@/lib/email/templates';
 
 const ADMIN_EMAIL = 'hello@presenzia.ai';
-const PLAN_LABELS: Record<string, string> = { audit: 'Full AI Audit & Action Plan', starter: 'Starter', growth: 'Growth Retainer', premium: 'Premium' };
 
 async function notifyAdmin(subject: string, html: string) {
   if (!process.env.RESEND_API_KEY) {

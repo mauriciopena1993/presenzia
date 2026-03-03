@@ -74,6 +74,12 @@ export async function generateMetadata({
       title,
       description,
       type: 'website',
+      url: `https://presenzia.ai/score/${id}`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
     },
   };
 }

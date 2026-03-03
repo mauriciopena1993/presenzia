@@ -1,56 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { stripe, PLANS, PlanKey } from '@/lib/stripe';
+import { PLAN_LABELS, PLAN_PRICES, PLAN_FEATURES, PLAN_RANK } from '@/lib/plans';
 import { verifySessionToken, SESSION_COOKIE } from '@/lib/client-auth';
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-
-const PLAN_RANK: Record<string, number> = { audit: 1, starter: 1, growth: 2, premium: 3 };
-
-const PLAN_LABELS: Record<string, string> = {
-  audit: 'Full AI Audit & Action Plan',
-  starter: 'Starter', // legacy
-  growth: 'Growth Retainer',
-  premium: 'Premium',
-};
-
-const PLAN_PRICES: Record<string, string> = {
-  audit: '£297 one-off',
-  starter: '£99/month', // legacy
-  growth: '£697/month',
-  premium: '£1,997/month',
-};
-
-const PLAN_FEATURES: Record<string, string[]> = {
-  audit: [
-    '120 wealth-specific prompts tested',
-    '4 AI platforms audited',
-    'Scored PDF report with action plan',
-  ],
-  starter: [ // legacy
-    'Monthly AI visibility audit',
-    'Delivered by email (PDF report)',
-  ],
-  growth: [
-    'Monthly re-audits with 120 prompts',
-    'Online dashboard with weekly updates',
-    'AI audit assistant — ask anything about your results',
-    'Quarterly strategy calls',
-    'Competitor deep-dive analysis',
-    'Priority email support',
-  ],
-  premium: [
-    'Monthly re-audits with 120 prompts',
-    'Online dashboard with daily updates',
-    'AI audit assistant — ask anything about your results',
-    'Dedicated account manager',
-    'Monthly 1:1 strategy calls',
-    'Territory exclusivity in your area',
-    'Done-for-you content recommendations',
-    'Custom prompt testing & industry benchmarking',
-  ],
-};
 
 export async function sendPlanChangeEmail(
   email: string,

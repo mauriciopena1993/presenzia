@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { stripe } from '@/lib/stripe';
+import { PLAN_LABELS } from '@/lib/plans';
 import { verifySessionToken, SESSION_COOKIE } from '@/lib/client-auth';
 import { Resend } from 'resend';
 
 const RETENTION_COOLDOWN_MS = 90 * 24 * 60 * 60 * 1000; // ~3 months in ms
 const resend = new Resend(process.env.RESEND_API_KEY);
-
-const PLAN_LABELS: Record<string, string> = { audit: 'Full AI Audit & Action Plan', starter: 'Starter', growth: 'Growth Retainer', premium: 'Premium' };
 
 function isRetentionOfferEligible(lastOfferAt: string | null): boolean {
   if (!lastOfferAt) return true;
