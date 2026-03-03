@@ -56,19 +56,74 @@ function scoreColor(score: number): string {
   return '#2ECC71';
 }
 
-function getActionItems(score: number, specialty: string): Array<{ title: string; priority: string }> {
+function getActionItems(
+  result: ScoreResult,
+  firmName: string,
+  specialty: string,
+  location: string,
+): Array<{ title: string; priority: string }> {
   const items: Array<{ title: string; priority: string }> = [];
+  const name = firmName || 'Your firm';
 
-  if (score < 50) {
-    items.push({ title: 'Add FinancialService schema markup to your website', priority: 'Critical' });
-    items.push({ title: 'Optimise Google Business Profile with detailed service descriptions', priority: 'Critical' });
+  // Find the weakest and strongest platforms
+  const working = result.platformBreakdown.filter(p => !p.failed);
+  const zeroPlats = working.filter(p => p.mentioned === 0);
+  const strongPlats = working.filter(p => p.mentioned > 0).sort((a, b) => b.mentioned - a.mentioned);
+
+  // Critical: platform-specific gaps
+  if (zeroPlats.length > 0) {
+    const platNames = zeroPlats.map(p => p.platform).join(' or ');
+    items.push({
+      title: `${name} isn't appearing on ${platNames} — the most used AI search tools`,
+      priority: 'Critical',
+    });
   }
-  items.push({ title: `Publish thought leadership content on ${specialty.toLowerCase()}`, priority: 'High' });
-  items.push({ title: 'Build citation authority across VouchedFor, Unbiased & FTAdviser', priority: 'High' });
-  items.push({ title: 'Create comprehensive FAQ page answering common client questions', priority: 'Medium' });
-  items.push({ title: 'Implement systematic review generation strategy', priority: 'Medium' });
+
+  // Critical: competitor gap
+  if (result.topCompetitor && result.topCompetitor.count > result.mentionsCount) {
+    items.push({
+      title: `Close the gap with ${result.topCompetitor.name} (found ${result.topCompetitor.count}× vs your ${result.mentionsCount}×)`,
+      priority: 'Critical',
+    });
+  }
+
+  // High: leverage strong platform
+  if (strongPlats.length > 0 && strongPlats.length < working.length) {
+    items.push({
+      title: `Replicate your ${strongPlats[0].platform} success (${strongPlats[0].mentioned}/${strongPlats[0].tested}) across weaker platforms`,
+      priority: 'High',
+    });
+  }
+
+  // High: content strategy based on specialty
+  const loc = location ? ` in ${location}` : '';
+  items.push({
+    title: `Publish ${specialty.toLowerCase()} thought leadership to get ${name} cited${loc}`,
+    priority: 'High',
+  });
+
+  // Medium: build authority
+  items.push({
+    title: 'Build citation authority on VouchedFor, Unbiased & FTAdviser',
+    priority: 'Medium',
+  });
+
+  // Medium: schema + structured data
+  if (result.score < 50) {
+    items.push({
+      title: 'Add FinancialService schema markup so AI models can find your services',
+      priority: 'Medium',
+    });
+  }
 
   return items.slice(0, 6);
+}
+
+function getScoreContext(score: number): { label: string; comparison: string; color: string } {
+  if (score >= 60) return { label: 'Above average', comparison: 'You\'re ahead of most UK wealth firms. A full audit shows how to reach the top 10%.', color: '#27AE60' };
+  if (score >= 35) return { label: 'Near average', comparison: 'Most UK wealth firms score 20-40. You have a real opportunity to pull ahead of competitors.', color: '#F39C12' };
+  if (score >= 15) return { label: 'Below average', comparison: 'The average UK wealth firm scores around 25. Your competitors are being found where you\'re not.', color: '#E67E22' };
+  return { label: 'Needs attention', comparison: 'Most UK wealth firms score higher. Without action, AI platforms will keep recommending your competitors instead.', color: '#E74C3C' };
 }
 
 const STORAGE_KEY = 'presenzia_score_state';
@@ -725,9 +780,59 @@ export default function ScorePage() {
                 Your firm was found in <strong style={{ color: '#F5F0E8' }}>{result.mentionsCount} of {result.totalPrompts}</strong> AI searches
                 {result.city ? ` for ${result.city}` : ''}.
               </p>
+
+              {/* Industry benchmark context */}
+              {(() => {
+                const ctx = getScoreContext(result.score);
+                return (
+                  <div style={{
+                    margin: '1rem 0 0',
+                    padding: '0.6rem 0.9rem',
+                    background: `${ctx.color}11`,
+                    border: `1px solid ${ctx.color}33`,
+                    fontSize: '0.8rem',
+                    color: '#AAAAAA',
+                    lineHeight: 1.6,
+                  }}>
+                    <span style={{ color: ctx.color, fontWeight: 600 }}>{ctx.label}.</span>{' '}
+                    {ctx.comparison}
+                  </div>
+                );
+              })()}
+
+              {/* Visual grade scale */}
+              <div style={{ margin: '1rem 0 0' }}>
+                <div style={{ display: 'flex', gap: '2px', marginBottom: '0.3rem' }}>
+                  {['F', 'E', 'D', 'C', 'B', 'A'].map(g => (
+                    <div key={g} style={{
+                      flex: 1,
+                      height: '6px',
+                      background: g === result.grade ? scoreColor(result.score) : '#1A1A1A',
+                      borderRadius: '2px',
+                      position: 'relative',
+                    }}>
+                      {g === result.grade && (
+                        <div style={{
+                          position: 'absolute',
+                          bottom: '-16px',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          fontSize: '0.6rem',
+                          color: scoreColor(result.score),
+                          fontWeight: 700,
+                        }}>▲</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.6rem' }}>
+                  <span style={{ fontSize: '0.6rem', color: '#666' }}>F</span>
+                  <span style={{ fontSize: '0.6rem', color: '#666' }}>A</span>
+                </div>
+              </div>
             </div>
 
-            {/* Competitor callout */}
+            {/* Competitor callout with urgency */}
             {result.topCompetitor && (
               <div style={{
                 padding: '1.25rem',
@@ -736,13 +841,21 @@ export default function ScorePage() {
                 marginBottom: '1.5rem',
               }}>
                 <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#E74C3C', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-                  Your Top Competitor
+                  Most-Recommended Competitor
                 </div>
                 <p style={{ color: '#F5F0E8', fontSize: '0.9rem', lineHeight: 1.7, margin: 0 }}>
-                  <strong>&quot;{result.topCompetitor.name}&quot;</strong> appeared in{' '}
-                  <strong>{result.topCompetitor.count} of {result.totalPrompts}</strong> searches.
-                  They are being recommended where you are not.
+                  When AI users search for {specialties[0]?.toLowerCase() || 'financial advice'}{coverageType === 'national' ? ' in the UK' : result.city ? ` in ${result.city}` : locations ? ` in ${locations}` : ''},{' '}
+                  <strong style={{ color: '#E74C3C' }}>&quot;{result.topCompetitor.name}&quot;</strong> appeared in{' '}
+                  <strong>{result.topCompetitor.count} of {result.totalPrompts}</strong> searches
+                  {result.mentionsCount > 0
+                    ? ` — vs your ${result.mentionsCount}.`
+                    : ` — while ${firmName || 'your firm'} wasn't mentioned at all.`}
                 </p>
+                {result.topCompetitor.count > result.mentionsCount && (
+                  <p style={{ color: '#E74C3C', fontSize: '0.8rem', lineHeight: 1.6, margin: '0.5rem 0 0', fontStyle: 'italic' }}>
+                    Every search where they appear instead of you is a potential client lost.
+                  </p>
+                )}
               </div>
             )}
 
@@ -757,7 +870,7 @@ export default function ScorePage() {
                 color: '#F39C12',
                 lineHeight: 1.6,
               }}>
-                Some AI platforms were temporarily unavailable. Your score is based on <strong>{result.platformsAvailable} of {result.platformsTotal}</strong> platforms. A full audit tests all platforms with 30+ prompts for a more complete picture.
+                Some AI platforms were temporarily unavailable. Your score is based on <strong>{result.platformsAvailable} of {result.platformsTotal}</strong> platforms. A full audit tests all platforms with 120+ prompts for a more complete picture.
               </div>
             )}
 
@@ -797,6 +910,54 @@ export default function ScorePage() {
               ))}
             </div>
 
+            {/* Sample prompts teaser */}
+            <div style={{
+              background: '#111',
+              border: '1px solid #1A1A1A',
+              padding: '1.25rem 1.5rem',
+              marginBottom: '1.5rem',
+            }}>
+              <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+                Sample Prompts Tested
+              </div>
+              <p style={{ color: '#888', fontSize: '0.78rem', lineHeight: 1.5, margin: '0 0 0.75rem' }}>
+                We asked each AI platform questions like real users would. Here are {result.totalPrompts > 3 ? '3' : result.totalPrompts.toString()} of the {result.totalPrompts} prompts we tested:
+              </p>
+              {(() => {
+                const spec = (specialties[0] || 'Financial Planning').toLowerCase();
+                const specBroad = spec.includes('financial') ? spec : `${spec} advisor`;
+                const loc = result.city || locations || 'the UK';
+                const isNational = coverageType === 'national';
+                const samplePrompts = isNational
+                  ? [
+                      `Who is the best ${spec} in the UK?`,
+                      `Can you recommend a ${specBroad} that works with clients remotely?`,
+                      `What are the top-rated ${spec} firms in the UK?`,
+                    ]
+                  : [
+                      `Who is the best ${spec} in ${loc}?`,
+                      `Can you recommend a ${specBroad} near ${loc}?`,
+                      `What are the top-rated ${spec} firms in ${loc}?`,
+                    ];
+                return samplePrompts.map((prompt, i) => (
+                  <div key={i} style={{
+                    display: 'flex',
+                    gap: '0.5rem',
+                    padding: '0.5rem 0',
+                    borderBottom: i < 2 ? '1px solid #1A1A1A' : 'none',
+                  }}>
+                    <span style={{ color: '#C9A84C', fontSize: '0.8rem', fontWeight: 600, flexShrink: 0 }}>→</span>
+                    <span style={{ color: '#F5F0E8', fontSize: '0.8rem', lineHeight: 1.4, fontStyle: 'italic' }}>
+                      &ldquo;{prompt}&rdquo;
+                    </span>
+                  </div>
+                ));
+              })()}
+              <p style={{ color: '#666', fontSize: '0.72rem', lineHeight: 1.5, margin: '0.75rem 0 0', textAlign: 'center' }}>
+                A full audit tests <strong style={{ color: '#C9A84C' }}>120+ prompts</strong> across all 4 AI platforms
+              </p>
+            </div>
+
             {/* Enhanced blurred preview */}
             <div style={{
               position: 'relative',
@@ -833,7 +994,7 @@ export default function ScorePage() {
               </div>
 
               <div style={{ padding: '0 1.5rem' }}>
-                {getActionItems(result.score, specialties[0] || 'Financial Planning').map((item, i) => (
+                {getActionItems(result, firmName, specialties[0] || 'Financial Planning', result.city || locations).map((item, i) => (
                   <div key={i} style={{ padding: '0.5rem 0', borderBottom: '1px solid #1A1A1A' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
                       <span style={{
@@ -855,29 +1016,43 @@ export default function ScorePage() {
               </div>
 
               <div style={{ padding: '1rem 1.5rem 0' }}>
-                <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+                <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
                   Platform Deep-Dive
                 </div>
+                <p style={{ fontSize: '0.72rem', color: '#888', lineHeight: 1.5, margin: '0 0 0.5rem' }}>
+                  How each AI platform responds when users search for firms like yours
+                </p>
               </div>
-              <div style={{ padding: '0 1.5rem 1rem' }}>
-                {result.platformBreakdown.map((p, i) => (
-                  <div key={i} style={{ padding: '0.4rem 0', borderBottom: '1px solid #1A1A1A' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-                      <span style={{ color: '#F5F0E8', fontSize: '0.8rem' }}>{p.platform}</span>
-                      <span style={{ color: p.mentioned > 0 ? '#27AE60' : '#E74C3C', fontSize: '0.75rem', fontWeight: 600 }}>
-                        {p.mentioned}/{p.tested}
-                      </span>
-                    </div>
-                    <div style={{ filter: 'blur(5px)', pointerEvents: 'none', userSelect: 'none' }}>
-                      <div style={{ height: '6px', background: '#1A1A1A', borderRadius: '3px', marginBottom: '0.25rem', overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${p.tested > 0 ? (p.mentioned / p.tested) * 100 : 5}%`, background: p.mentioned > 0 ? '#27AE60' : '#E74C3C', borderRadius: '3px' }} />
+              <div style={{ padding: '0 1.5rem 2rem' }}>
+                {result.platformBreakdown.filter(p => !p.failed).map((p, i) => {
+                  const platformDescriptions: Record<string, string> = {
+                    'ChatGPT': '~200M weekly users · Highest volume AI search tool',
+                    'Google AI': 'AI Overviews on Google Search · Dominant search engine',
+                    'Perplexity': 'Fastest-growing AI search · Cited source answers',
+                    'Claude': 'Anthropic\'s AI · Popular with professionals & advisors',
+                  };
+                  return (
+                    <div key={i} style={{ padding: '0.5rem 0', borderBottom: '1px solid #1A1A1A' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.15rem' }}>
+                        <span style={{ color: '#F5F0E8', fontSize: '0.8rem', fontWeight: 500 }}>{p.platform}</span>
+                        <span style={{ color: p.mentioned > 0 ? '#27AE60' : '#E74C3C', fontSize: '0.75rem', fontWeight: 600 }}>
+                          {p.mentioned}/{p.tested} found
+                        </span>
                       </div>
-                      <div style={{ fontSize: '0.7rem', color: '#666' }}>
-                        3 specific recommendations for improving your {p.platform} visibility
+                      <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem' }}>
+                        {platformDescriptions[p.platform] || ''}
+                      </div>
+                      <div style={{ filter: 'blur(5px)', pointerEvents: 'none', userSelect: 'none' }}>
+                        <div style={{ height: '6px', background: '#1A1A1A', borderRadius: '3px', marginBottom: '0.25rem', overflow: 'hidden' }}>
+                          <div style={{ height: '100%', width: `${p.tested > 0 ? (p.mentioned / p.tested) * 100 : 5}%`, background: p.mentioned > 0 ? '#27AE60' : '#E74C3C', borderRadius: '3px' }} />
+                        </div>
+                        <div style={{ fontSize: '0.7rem', color: '#666' }}>
+                          Prompt-by-prompt breakdown &amp; specific recommendations for {p.platform}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div style={{
@@ -885,8 +1060,8 @@ export default function ScorePage() {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                background: 'linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.85) 40%, rgba(10,10,10,0.97) 100%)',
-                padding: '4rem 1.5rem 1.5rem',
+                background: 'linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.9) 35%, rgba(10,10,10,0.98) 100%)',
+                padding: '5rem 1.5rem 1.5rem',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -895,7 +1070,7 @@ export default function ScorePage() {
                   Your full audit unlocks everything above
                 </p>
                 <p style={{ color: '#999', fontSize: '0.8rem', textAlign: 'center', marginBottom: '0.25rem', lineHeight: 1.5 }}>
-                  Interactive dashboard, competitor deep-dive, actionable step-by-step plan, platform-specific recommendations, and downloadable PDF
+                  Interactive dashboard · competitor deep-dive · step-by-step action plan · platform recommendations · PDF report
                 </p>
               </div>
             </div>
@@ -911,7 +1086,7 @@ export default function ScorePage() {
                 Your full audit goes further:
               </div>
               <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.8rem', color: '#AAAAAA', lineHeight: 1.8 }}>
-                <li>Tests <strong style={{ color: '#F5F0E8' }}>30+ prompts</strong> across all 4 AI platforms (vs {result.totalPrompts} in your free score)</li>
+                <li>Tests <strong style={{ color: '#F5F0E8' }}>120+ prompts</strong> across all 4 AI platforms (vs {result.totalPrompts} in your free score)</li>
                 <li>In-depth <strong style={{ color: '#F5F0E8' }}>website content analysis</strong> with specific improvement recommendations</li>
                 <li>Complete competitor breakdown with <strong style={{ color: '#F5F0E8' }}>positioning strategy</strong></li>
                 <li>Actionable step-by-step plan, interactive dashboard &amp; downloadable PDF report</li>
@@ -933,26 +1108,37 @@ export default function ScorePage() {
                 textDecoration: 'none',
                 textAlign: 'center',
                 letterSpacing: '0.02em',
-                marginBottom: '0.75rem',
+                marginBottom: '0.5rem',
                 boxSizing: 'border-box',
               }}
             >
-              Get my full audit for {PLANS.audit.priceDisplay} →
+              {result.score < 35
+                ? `Fix my AI visibility — full audit for ${PLANS.audit.priceDisplay}`
+                : `Unlock my full audit for ${PLANS.audit.priceDisplay}`}
             </Link>
+            <p style={{ textAlign: 'center', fontSize: '0.72rem', color: '#666', margin: '0 0 0.75rem', lineHeight: 1.5 }}>
+              One-off payment · No subscription required · Results within 24 hours
+            </p>
 
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <Link href="/pricing" target="_blank" style={{ color: '#888', fontSize: '0.8rem', textDecoration: 'none' }}>
-                Or see all plans →
+                Or see subscription plans →
               </Link>
             </div>
 
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
               <button
                 onClick={() => {
+                  const shareUrl = `${window.location.origin}/score/${result.id}`;
                   if (navigator.share) {
-                    navigator.share({ title: `AI Visibility Score: ${result.score}/100`, url: `${window.location.origin}/score/${result.id}` });
+                    navigator.share({
+                      title: `${firmName || 'Our'} AI Visibility Score: ${result.score}/100`,
+                      text: `${firmName || 'Our firm'} scored ${result.score}/100 for AI search visibility. See the full breakdown:`,
+                      url: shareUrl,
+                    });
                   } else {
-                    navigator.clipboard.writeText(`${window.location.origin}/score/${result.id}`);
+                    navigator.clipboard.writeText(shareUrl);
+                    alert('Link copied to clipboard!');
                   }
                 }}
                 style={{
@@ -965,7 +1151,7 @@ export default function ScorePage() {
                   fontFamily: 'var(--font-inter, Inter, sans-serif)',
                 }}
               >
-                Share this score
+                {result.score < 35 ? 'Send to your marketing team' : 'Share this score'}
               </button>
             </div>
           </div>
