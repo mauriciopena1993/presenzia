@@ -106,7 +106,7 @@ const PLAN_FEATURES: Record<string, string[]> = {
   audit: ['Complete AI visibility audit (4 platforms)', 'Personalised action plan with recommendations', 'Competitor analysis & positioning insights', 'Online dashboard + PDF report'],
   starter: ['Monthly AI visibility audit', 'Delivered by email (report)'], // legacy
   growth: ['Everything in Audit', 'Weekly re-audits with score tracking & trends', 'AI audit assistant', 'Competitor deep-dive with real-time alerts', 'Priority email support'],
-  premium: ['Everything in Growth', 'Daily re-audits (vs weekly in Growth)', 'Dedicated account strategist', 'Monthly 60-minute strategy call', 'Exclusive territory protection', '4 AI-optimised articles written & published monthly'],
+  premium: ['Everything in Growth', 'Daily re-audits (vs weekly in Growth)', 'Dedicated account strategist', 'Monthly 1-hour strategy call', 'Exclusive territory protection', '4 AI-optimised articles written & published monthly'],
 };
 
 const PLAN_ORDER = ['audit', 'growth', 'premium'];
