@@ -63,7 +63,7 @@ export default function About() {
               marginBottom: '1.5rem',
             }}
           >
-            Built for the firms AI overlooks
+            The future of client discovery is AI. Are you ready?
           </h2>
           <p
             style={{
@@ -74,11 +74,12 @@ export default function About() {
               margin: '0 auto',
             }}
           >
-            AI search is replacing the way clients find financial advisors. When a high-net-worth
-            individual asks ChatGPT for a wealth manager or asks Claude to recommend a pension
-            transfer specialist, most IFA firms are completely invisible. Presenzia was built to
-            change that, giving every financial advisory firm the clarity and data they need to
-            show up where it matters most.
+            Google dominated client discovery for two decades. That era is ending. AI search
+            usage is growing exponentially — across every demographic, from millennials to retirees.
+            When a high-net-worth individual asks ChatGPT for a wealth manager, they trust the
+            answer and act on it. The firms that show up win the client. The firms that don&apos;t,
+            lose them without ever knowing. Presenzia gives you the data to make sure you&apos;re
+            visible where it matters most — before your competitors get there first.
           </p>
         </div>
 

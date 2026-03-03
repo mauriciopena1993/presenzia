@@ -3,7 +3,7 @@ import FAQAccordion from './FAQAccordion';
 const faqs = [
   {
     q: 'What is AI search visibility, and why does it matter for IFAs?',
-    a: 'When potential clients ask ChatGPT, Claude, Perplexity, or Google AI to recommend a financial advisor, AI generates a response based on its training data and web knowledge. Firms with strong AI visibility appear in these recommendations. Firms without it are invisible to a rapidly growing discovery channel. With over 15 million UK adults now using AI assistants regularly, this is becoming as important as Google rankings.',
+    a: 'AI search is replacing Google as the way people find services — and it\u2019s happening faster than anyone expected. Over 15 million UK adults already use AI assistants regularly, and that number is growing exponentially across all age groups. When a prospective client asks ChatGPT or Claude to recommend a financial advisor, they trust the answer and act on it. Firms that appear in these responses get the enquiry. Firms that don\u2019t are invisible to an entire generation of high-net-worth clients. This isn\u2019t a future trend — it\u2019s happening now.',
   },
   {
     q: 'How does presenzia.ai test my visibility?',

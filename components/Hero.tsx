@@ -63,7 +63,7 @@ export default function Hero() {
         lineHeight: 1.75,
         fontWeight: 300,
       }}>
-        When a high-net-worth client asks ChatGPT or Claude to recommend a financial advisor in your area, does your firm appear? Most don&apos;t. We fix that.
+        AI search is replacing Google — and it&apos;s happening fast. Millions already use ChatGPT, Claude, and Perplexity to find financial advisors, and that number is growing exponentially across every age group. If your firm isn&apos;t showing up, your competitors are. Are you prepared?
       </p>
 
       {/* CTA Buttons */}
