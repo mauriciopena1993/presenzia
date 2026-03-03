@@ -236,7 +236,7 @@ describe('POST /api/webhook', () => {
         data: {
           object: {
             customer: 'cus_123',
-            amount_due: 69700,
+            amount_due: 24900,
             attempt_count: 1,
           },
         },

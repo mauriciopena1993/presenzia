@@ -82,10 +82,10 @@ const PLAN_LABELS: Record<string, string> = {
 };
 
 const PLAN_PRICES: Record<string, string> = {
-  audit: '£297',
+  audit: '£99',
   starter: '£99', // legacy
-  growth: '£697',
-  premium: '£1,997',
+  growth: '£249',
+  premium: '£599',
 };
 
 const PLAN_PRICE_SUFFIX: Record<string, string> = {
@@ -1726,7 +1726,7 @@ export default function DashboardPage() {
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      {actionLoading ? 'Processing...' : 'Buy another audit — £297'}
+                      {actionLoading ? 'Processing...' : 'Buy another audit — £99'}
                     </button>
                     <button
                       onClick={() => handleChangePlan('growth')}
@@ -1743,7 +1743,7 @@ export default function DashboardPage() {
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      Upgrade to Growth — £697/mo →
+                      Upgrade to Growth — £249/mo →
                     </button>
                   </div>
                 </div>
@@ -1897,7 +1897,7 @@ export default function DashboardPage() {
                         fontFamily: 'inherit',
                       }}
                     >
-                      {actionLoading ? 'Processing...' : 'Buy another audit — £297 →'}
+                      {actionLoading ? 'Processing...' : 'Buy another audit — £99 →'}
                     </button>
                   </div>
 
@@ -1911,7 +1911,7 @@ export default function DashboardPage() {
                       Want ongoing visibility tracking?
                     </div>
                     <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6, margin: '0 0 1rem' }}>
-                      Upgrade to Growth for weekly re-audits, a live dashboard with score tracking, an AI audit assistant, and competitor deep-dive analysis — all for £697/mo.
+                      Upgrade to Growth for weekly re-audits, a live dashboard with score tracking, an AI audit assistant, and competitor deep-dive analysis — all for £249/mo.
                     </p>
                     <button
                       onClick={() => handleChangePlan('growth')}

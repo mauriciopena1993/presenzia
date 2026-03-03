@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
 
   const { data: client } = await supabase
     .from('clients')
-    .select('id, business_name')
+    .select('id, business_name, plan')
     .eq('email', email)
     .single();
 
@@ -173,7 +173,7 @@ export async function POST(req: NextRequest) {
     // Outreach email to the client is sent 24h later by the campaign cron
     // Alert admin immediately so they can follow up
     if (process.env.RESEND_API_KEY) {
-      const adminAlert = adminDissatisfiedAlert(email, businessName, rating, comment?.trim() || null);
+      const adminAlert = adminDissatisfiedAlert(email, businessName, rating, comment?.trim() || null, client.plan || null);
       resend.emails.send({
         from: FROM_EMAIL,
         to: 'hello@presenzia.ai',

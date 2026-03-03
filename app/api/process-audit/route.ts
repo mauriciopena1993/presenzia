@@ -195,6 +195,7 @@ export async function POST(req: NextRequest) {
               <tr><td style="color:#999;font-size:12px;padding:6px 0;width:130px;">Job ID</td><td style="color:#F5F0E8;font-size:13px;">${jobId}</td></tr>
               <tr><td style="color:#999;font-size:12px;padding:6px 0;">Client</td><td style="color:#F5F0E8;font-size:13px;">${client?.business_name || '—'}</td></tr>
               <tr><td style="color:#999;font-size:12px;padding:6px 0;">Email</td><td style="color:#F5F0E8;font-size:13px;">${client?.email || '—'}</td></tr>
+              <tr><td style="color:#999;font-size:12px;padding:6px 0;">Plan</td><td style="font-size:13px;font-weight:600;color:${client?.plan === 'premium' ? '#9b6bcc' : client?.plan === 'growth' ? '#5BA88C' : '#C9A84C'};">${client?.plan ? (client.plan.charAt(0).toUpperCase() + client.plan.slice(1)) : 'Unknown'}</td></tr>
               <tr><td style="color:#999;font-size:12px;padding:6px 0;">Error</td><td style="color:#cc4444;font-size:13px;">${message}</td></tr>
             </table>
           </div>

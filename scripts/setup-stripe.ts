@@ -1,9 +1,9 @@
 /**
  * Stripe setup script for presenzia.ai IFA vertical.
  * Creates the 3 products and prices:
- *   - AI Visibility Audit (£297 one-off)
- *   - Growth Retainer (£697/month)
- *   - Premium (£1,997/month)
+ *   - AI Visibility Audit (£99 one-off)
+ *   - Growth Retainer (£249/month)
+ *   - Premium (£599/month)
  *
  * Usage:
  *   npx ts-node --project tsconfig.json scripts/setup-stripe.ts
@@ -35,7 +35,7 @@ const PRODUCTS: ProductConfig[] = [
     name: 'AI Visibility Audit',
     description: 'One-off AI visibility audit: 120 wealth-specific prompts across 4 AI platforms. Scored PDF report with action plan.',
     envKey: 'STRIPE_PRICE_AUDIT',
-    amount: 29700, // £297.00 in pence
+    amount: 9900, // £99.00 in pence
     recurring: false,
     metadata: { plan: 'audit' },
   },
@@ -43,7 +43,7 @@ const PRODUCTS: ProductConfig[] = [
     name: 'Growth Retainer',
     description: 'Monthly AI visibility retainer for IFAs: weekly re-audits, live dashboard with weekly updates, AI audit assistant, competitor deep-dive, priority support.',
     envKey: 'STRIPE_PRICE_GROWTH',
-    amount: 69700, // £697.00 in pence
+    amount: 24900, // £249.00 in pence
     recurring: true,
     interval: 'month',
     metadata: { plan: 'growth' },
@@ -52,7 +52,7 @@ const PRODUCTS: ProductConfig[] = [
     name: 'Premium',
     description: 'Full-service AI visibility for wealth managers: dedicated account manager, monthly 1:1 strategy calls, territory exclusivity, done-for-you content recommendations, daily dashboard updates.',
     envKey: 'STRIPE_PRICE_PREMIUM',
-    amount: 199700, // £1,997.00 in pence
+    amount: 59900, // £599.00 in pence
     recurring: true,
     interval: 'month',
     metadata: { plan: 'premium' },

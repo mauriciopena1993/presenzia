@@ -8,10 +8,10 @@ vi.mock('@/lib/stripe', () => ({
     checkout: { sessions: { create: (...args: unknown[]) => mockCreate(...args) } },
   },
   PLANS: {
-    audit: { priceId: 'price_test_audit', name: 'Full AI Audit & Action Plan', price: 297, recurring: false },
+    audit: { priceId: 'price_test_audit', name: 'Full AI Audit & Action Plan', price: 99, recurring: false },
     starter: { priceId: 'price_test_starter', name: 'Starter', price: 99, recurring: true },
-    growth: { priceId: 'price_test_growth', name: 'Growth Retainer', price: 697, recurring: true },
-    premium: { priceId: 'price_test_premium', name: 'Premium', price: 1997, recurring: true },
+    growth: { priceId: 'price_test_growth', name: 'Growth Retainer', price: 249, recurring: true },
+    premium: { priceId: 'price_test_premium', name: 'Premium', price: 599, recurring: true },
   },
 }));
 

@@ -3,22 +3,22 @@ import { test, expect } from '@playwright/test';
 test.describe('Pricing Page', () => {
   // ─── Price Display ──────────────────────────────────────────
 
-  test('shows correct price for Audit plan (£297)', async ({ page }) => {
+  test('shows correct price for Audit plan (£99)', async ({ page }) => {
     await page.goto('/pricing');
     const desktop = page.locator('.pricing-desktop');
-    await expect(desktop.getByText('£297')).toBeVisible();
+    await expect(desktop.getByText('£99')).toBeVisible();
   });
 
-  test('shows correct price for Growth plan (£697)', async ({ page }) => {
+  test('shows correct price for Growth plan (£249)', async ({ page }) => {
     await page.goto('/pricing');
     const desktop = page.locator('.pricing-desktop');
-    await expect(desktop.getByText('£697')).toBeVisible();
+    await expect(desktop.getByText('£249')).toBeVisible();
   });
 
-  test('shows correct price for Premium plan (£1,997)', async ({ page }) => {
+  test('shows correct price for Premium plan (£599)', async ({ page }) => {
     await page.goto('/pricing');
     const desktop = page.locator('.pricing-desktop');
-    await expect(desktop.getByText('£1,997')).toBeVisible();
+    await expect(desktop.getByText('£599')).toBeVisible();
   });
 
   // ─── Plan Names ─────────────────────────────────────────────
@@ -85,8 +85,8 @@ test.describe('Pricing Page', () => {
     await expect(page.getByRole('button', { name: /hide comparison/i })).toBeVisible();
 
     // Comparison rows should be visible
-    await expect(page.getByText('120+ wealth-specific prompts tested').first()).toBeVisible({ timeout: 2000 });
-    await expect(page.getByText('PDF audit report').first()).toBeVisible();
+    await expect(page.getByText('Full AI audit').first()).toBeVisible({ timeout: 2000 });
+    await expect(page.getByText('Personalised action plan').first()).toBeVisible();
 
     // Click to close
     await page.getByRole('button', { name: /hide comparison/i }).click();
@@ -131,7 +131,7 @@ test.describe('Pricing Page — Mobile', () => {
 
     const mobileTabs = page.locator('.pricing-mobile-tabs');
     await expect(mobileTabs).toBeVisible();
-    await expect(mobileTabs.getByText('£697')).toBeVisible();
+    await expect(mobileTabs.getByText('£249')).toBeVisible();
     await expect(mobileTabs.locator('button', { hasText: 'Start growing' })).toBeVisible();
   });
 
@@ -141,7 +141,7 @@ test.describe('Pricing Page — Mobile', () => {
     const mobileTabs = page.locator('.pricing-mobile-tabs');
     await mobileTabs.getByRole('button', { name: /full ai audit/i }).click();
 
-    await expect(mobileTabs.getByText('£297')).toBeVisible();
+    await expect(mobileTabs.getByText('£99')).toBeVisible();
     await expect(mobileTabs.locator('button', { hasText: 'Get my audit' })).toBeVisible();
     await expect(mobileTabs.getByText('one-off')).toBeVisible();
   });
@@ -152,7 +152,7 @@ test.describe('Pricing Page — Mobile', () => {
     const mobileTabs = page.locator('.pricing-mobile-tabs');
     await mobileTabs.getByRole('button', { name: /premium/i }).click();
 
-    await expect(mobileTabs.getByText('£1,997')).toBeVisible();
+    await expect(mobileTabs.getByText('£599')).toBeVisible();
     await expect(mobileTabs.locator('button', { hasText: 'Book a discovery call' })).toBeVisible();
     await expect(mobileTabs.getByText('/month')).toBeVisible();
   });

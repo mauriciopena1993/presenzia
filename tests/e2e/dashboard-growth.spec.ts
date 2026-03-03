@@ -379,14 +379,14 @@ test.describe('Dashboard — Growth Tier', () => {
 
   // ─── Billing Info ──────────────────────────────────────────
 
-  test('shows Growth price (£697/mo) and per-month label', async ({ page }) => {
+  test('shows Growth price (£249/mo) and per-month label', async ({ page }) => {
     await setupGrowthDashboardMocks(page);
     await page.goto('/dashboard');
 
     await expect(page.getByText('Loading…')).not.toBeVisible({ timeout: 10000 });
 
     // In plan management section
-    await expect(page.getByText('£697').first()).toBeVisible();
+    await expect(page.getByText('£249').first()).toBeVisible();
     await expect(page.getByText('per month').first()).toBeVisible();
   });
 });

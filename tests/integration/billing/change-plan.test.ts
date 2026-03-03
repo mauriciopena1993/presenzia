@@ -83,7 +83,7 @@ vi.mock('@/lib/stripe', () => ({
 // Mock plans
 vi.mock('@/lib/plans', () => ({
   PLAN_LABELS: { audit: 'Full AI Audit & Action Plan', starter: 'Starter', growth: 'Growth Retainer', premium: 'Premium' },
-  PLAN_PRICES: { audit: '£297', starter: '£99/month', growth: '£697/month', premium: '£1,997/month' },
+  PLAN_PRICES: { audit: '£99', starter: '£99/month', growth: '£249/month', premium: '£599/month' },
   PLAN_FEATURES: {
     audit: ['One-time audit'],
     growth: ['Weekly re-audits', 'AI chat'],

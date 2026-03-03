@@ -222,8 +222,10 @@ export function winBack2(businessName: string, email: string) {
 // Admin notification for dissatisfied customer
 // ════════════════════════════════════════════════════════════════════════
 
-export function adminDissatisfiedAlert(clientEmail: string, businessName: string, rating: number, comment: string | null) {
-  const subject = `⚠️ Dissatisfied client: ${businessName || clientEmail} (${rating}★)`;
+export function adminDissatisfiedAlert(clientEmail: string, businessName: string, rating: number, comment: string | null, plan: string | null = null) {
+  const tierLabel = plan ? (plan.charAt(0).toUpperCase() + plan.slice(1)) : 'Unknown';
+  const tierColor = plan === 'premium' ? '#9b6bcc' : plan === 'growth' ? '#5BA88C' : '#C9A84C';
+  const subject = `⚠️ Dissatisfied client: ${businessName || clientEmail} (${rating}★) [${tierLabel}]`;
   const html = `<div style="font-family:Inter,sans-serif;max-width:560px;margin:0 auto;background:#0A0A0A;color:#F5F0E8;padding:40px;">
     <div style="font-size:18px;font-weight:600;margin-bottom:4px;border-bottom:2px solid #cc4444;padding-bottom:12px;margin-bottom:24px;">
       presenzia<span style="color:#C9A84C;">.ai</span> <span style="color:#888;font-size:12px;font-weight:400;">Dissatisfied client alert</span>
@@ -232,6 +234,7 @@ export function adminDissatisfiedAlert(clientEmail: string, businessName: string
       <table style="width:100%;border-collapse:collapse;">
         <tr><td style="color:#999;font-size:12px;padding:6px 0;width:130px;">Client</td><td style="color:#F5F0E8;font-size:13px;">${businessName || '—'}</td></tr>
         <tr><td style="color:#999;font-size:12px;padding:6px 0;">Email</td><td style="color:#F5F0E8;font-size:13px;">${clientEmail}</td></tr>
+        <tr><td style="color:#999;font-size:12px;padding:6px 0;">Plan</td><td style="font-size:13px;font-weight:600;color:${tierColor};">${tierLabel}</td></tr>
         <tr><td style="color:#999;font-size:12px;padding:6px 0;">Rating</td><td style="color:#cc4444;font-size:13px;font-weight:600;">${rating}/5</td></tr>
         ${comment ? `<tr><td style="color:#999;font-size:12px;padding:6px 0;">Comment</td><td style="color:#F5F0E8;font-size:13px;">${comment}</td></tr>` : ''}
         <tr><td style="color:#999;font-size:12px;padding:6px 0;">Action</td><td style="color:#cc8833;font-size:13px;">Marketing suppressed. Personal outreach email sent.</td></tr>

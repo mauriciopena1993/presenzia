@@ -91,9 +91,9 @@ supabase/
 ## Pricing Plans
 | Plan    | Price        | What's included                                                                        |
 |---------|-------------|----------------------------------------------------------------------------------------|
-| Audit   | £297 one-off | One-off AI visibility audit (120+ prompts, 4 platforms), online dashboard + downloadable PDF report, personalised action plan |
-| Growth  | £697/month   | Everything in Audit + weekly re-audits, weekly dashboard updates, AI audit assistant, competitor deep-dive, priority email support |
-| Premium | £1,997/month | Everything in Growth + daily dashboard updates, dedicated account strategist, monthly 1-hour strategy calls, done-for-you content (4 articles/month), exclusive territory protection |
+| Audit   | £99 one-off  | One-off AI visibility audit (120+ prompts, 4 platforms), online dashboard + downloadable PDF report, personalised action plan |
+| Growth  | £249/month   | Everything in Audit + weekly re-audits, weekly dashboard updates, AI audit assistant, competitor deep-dive, priority email support |
+| Premium | £599/month   | Everything in Growth + daily dashboard updates, dedicated account strategist, monthly 1-hour strategy calls, done-for-you content (4 articles/month), exclusive territory protection |
 
 **Key distinction:** Audit is one-off. Growth/Premium are subscriptions with recurring re-audits. All tiers get the full online dashboard + PDF download.
 

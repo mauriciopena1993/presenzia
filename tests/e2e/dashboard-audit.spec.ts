@@ -204,14 +204,14 @@ test.describe('Dashboard — Audit Tier', () => {
     await expect(upgradePremium.first()).toBeVisible();
   });
 
-  test('shows Growth plan price (£697/mo) and Premium price (£1,997/mo) in plan cards', async ({ page }) => {
+  test('shows Growth plan price (£249/mo) and Premium price (£599/mo) in plan cards', async ({ page }) => {
     await setupAuditDashboardMocks(page);
     await page.goto('/dashboard');
 
     await expect(page.getByText('Loading…')).not.toBeVisible({ timeout: 10000 });
 
-    await expect(page.getByText('£697').first()).toBeVisible();
-    await expect(page.getByText('£1,997').first()).toBeVisible();
+    await expect(page.getByText('£249').first()).toBeVisible();
+    await expect(page.getByText('£599').first()).toBeVisible();
   });
 
   // ─── Sign Out ──────────────────────────────────────────────

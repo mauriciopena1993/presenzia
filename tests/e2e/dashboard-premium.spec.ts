@@ -306,13 +306,13 @@ test.describe('Dashboard — Premium Tier', () => {
 
   // ─── Billing Info ──────────────────────────────────────────
 
-  test('shows Premium price (£1,997/mo) in plan management', async ({ page }) => {
+  test('shows Premium price (£599/mo) in plan management', async ({ page }) => {
     await setupPremiumDashboardMocks(page);
     await page.goto('/dashboard');
 
     await expect(page.getByText('Loading…')).not.toBeVisible({ timeout: 10000 });
 
-    await expect(page.getByText('£1,997').first()).toBeVisible();
+    await expect(page.getByText('£599').first()).toBeVisible();
     await expect(page.getByText('per month').first()).toBeVisible();
   });
 

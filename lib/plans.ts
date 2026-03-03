@@ -14,9 +14,9 @@ export interface PlanConfig {
   price: number;
   /** Price in pence for Stripe verification */
   pricePence: number;
-  /** Formatted price string e.g. "£297" */
+  /** Formatted price string e.g. "£99" */
   priceDisplay: string;
-  /** Price with billing period e.g. "£697/month" or "£297 one-off" */
+  /** Price with billing period e.g. "£249/month" or "£99 one-off" */
   priceWithPeriod: string;
   /** Billing period label or null for one-off */
   period: string | null;
@@ -48,10 +48,10 @@ export const PLANS: Record<string, PlanConfig> = {
   audit: {
     name: 'Full AI Audit & Action Plan',
     key: 'audit',
-    price: 297,
-    pricePence: 29700,
-    priceDisplay: '£297',
-    priceWithPeriod: '£297 one-off',
+    price: 99,
+    pricePence: 9900,
+    priceDisplay: '£99',
+    priceWithPeriod: '£99 one-off',
     period: null,
     periodLabel: 'one-off',
     recurring: false,
@@ -105,10 +105,10 @@ export const PLANS: Record<string, PlanConfig> = {
   growth: {
     name: 'Growth Retainer',
     key: 'growth',
-    price: 697,
-    pricePence: 69700,
-    priceDisplay: '£697',
-    priceWithPeriod: '£697/month',
+    price: 249,
+    pricePence: 24900,
+    priceDisplay: '£249',
+    priceWithPeriod: '£249/month',
     period: 'month',
     periodLabel: '/month',
     recurring: true,
@@ -136,10 +136,10 @@ export const PLANS: Record<string, PlanConfig> = {
   premium: {
     name: 'Premium',
     key: 'premium',
-    price: 1997,
-    pricePence: 199700,
-    priceDisplay: '£1,997',
-    priceWithPeriod: '£1,997/month',
+    price: 599,
+    pricePence: 59900,
+    priceDisplay: '£599',
+    priceWithPeriod: '£599/month',
     period: 'month',
     periodLabel: '/month',
     recurring: true,

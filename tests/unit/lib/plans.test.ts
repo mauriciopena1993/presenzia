@@ -50,10 +50,10 @@ describe('lib/plans — Single Source of Truth', () => {
     });
 
     it('priceDisplay matches price value', () => {
-      expect(PLANS.audit.priceDisplay).toBe('£297');
+      expect(PLANS.audit.priceDisplay).toBe('£99');
       expect(PLANS.starter.priceDisplay).toBe('£99');
-      expect(PLANS.growth.priceDisplay).toBe('£697');
-      expect(PLANS.premium.priceDisplay).toBe('£1,997');
+      expect(PLANS.growth.priceDisplay).toBe('£249');
+      expect(PLANS.premium.priceDisplay).toBe('£599');
     });
 
     it('recurring plans have month period', () => {
@@ -66,9 +66,9 @@ describe('lib/plans — Single Source of Truth', () => {
     });
 
     it('priceWithPeriod includes both price and period', () => {
-      expect(PLANS.audit.priceWithPeriod).toBe('£297 one-off');
-      expect(PLANS.growth.priceWithPeriod).toBe('£697/month');
-      expect(PLANS.premium.priceWithPeriod).toBe('£1,997/month');
+      expect(PLANS.audit.priceWithPeriod).toBe('£99 one-off');
+      expect(PLANS.growth.priceWithPeriod).toBe('£249/month');
+      expect(PLANS.premium.priceWithPeriod).toBe('£599/month');
     });
   });
 
@@ -94,9 +94,9 @@ describe('lib/plans — Single Source of Truth', () => {
     });
 
     it('PLAN_PRICES maps keys to priceWithPeriod', () => {
-      expect(PLAN_PRICES.audit).toBe('£297 one-off');
-      expect(PLAN_PRICES.growth).toBe('£697/month');
-      expect(PLAN_PRICES.premium).toBe('£1,997/month');
+      expect(PLAN_PRICES.audit).toBe('£99 one-off');
+      expect(PLAN_PRICES.growth).toBe('£249/month');
+      expect(PLAN_PRICES.premium).toBe('£599/month');
     });
 
     it('PLAN_RANK orders plans correctly', () => {
@@ -123,13 +123,13 @@ describe('lib/plans — Single Source of Truth', () => {
     });
 
     it('planPrice returns formatted price', () => {
-      expect(planPrice('audit')).toBe('£297');
-      expect(planPrice('premium')).toBe('£1,997');
+      expect(planPrice('audit')).toBe('£99');
+      expect(planPrice('premium')).toBe('£599');
     });
 
     it('planPriceWithPeriod returns price with period', () => {
-      expect(planPriceWithPeriod('audit')).toBe('£297 one-off');
-      expect(planPriceWithPeriod('growth')).toBe('£697/month');
+      expect(planPriceWithPeriod('audit')).toBe('£99 one-off');
+      expect(planPriceWithPeriod('growth')).toBe('£249/month');
     });
 
     it('planFromPriceId returns null for unknown price IDs', () => {
@@ -149,8 +149,8 @@ describe('lib/plans — Single Source of Truth', () => {
   });
 
   describe('COMPARISON_ROWS', () => {
-    it('has 12 comparison features', () => {
-      expect(COMPARISON_ROWS.length).toBe(12);
+    it('has 10 comparison features', () => {
+      expect(COMPARISON_ROWS.length).toBe(10);
     });
 
     it('every row has audit, growth, premium values', () => {
