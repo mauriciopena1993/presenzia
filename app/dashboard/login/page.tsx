@@ -1,9 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { Suspense, useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function LoginPage() {
+function LoginContent() {
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirect');
+
   const [step, setStep] = useState<'email' | 'code'>('email');
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
@@ -103,6 +107,7 @@ export default function LoginPage() {
           email: email.trim().toLowerCase(),
           code: code.trim(),
           ...(challengeToken ? { challengeToken } : {}),
+          ...(redirectTo ? { redirect: redirectTo } : {}),
         }),
       });
 
@@ -313,5 +318,17 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight: '100vh', background: '#0A0A0A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ color: '#C9A84C', fontSize: '0.875rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Loading...</div>
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }

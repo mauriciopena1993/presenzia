@@ -12,6 +12,9 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 /**
  * GET /api/client/rate?jobId=...
  * Returns the existing rating for the given audit job, if any.
+ *
+ * GET /api/client/rate?latest=true
+ * Returns the latest completed audit job that hasn't been rated yet.
  */
 export async function GET(req: NextRequest) {
   const token = req.cookies.get(SESSION_COOKIE)?.value;
@@ -20,9 +23,6 @@ export async function GET(req: NextRequest) {
   const { valid, email } = verifySessionToken(token);
   if (!valid || !email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const jobId = req.nextUrl.searchParams.get('jobId');
-  if (!jobId) return NextResponse.json({ error: 'Missing jobId' }, { status: 400 });
-
   const { data: client } = await supabase
     .from('clients')
     .select('id')
@@ -30,6 +30,44 @@ export async function GET(req: NextRequest) {
     .single();
 
   if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
+
+  // ── Latest unrated audit auto-detection ──
+  const latest = req.nextUrl.searchParams.get('latest');
+  if (latest === 'true') {
+    // Find the most recent completed audit for this client
+    const { data: recentJobs } = await supabase
+      .from('audit_jobs')
+      .select('id')
+      .eq('client_id', client.id)
+      .eq('status', 'completed')
+      .order('completed_at', { ascending: false })
+      .limit(5);
+
+    if (!recentJobs || recentJobs.length === 0) {
+      return NextResponse.json({ jobId: null });
+    }
+
+    // Find one that hasn't been rated yet
+    for (const job of recentJobs) {
+      const { data: existingRating } = await supabase
+        .from('report_ratings')
+        .select('id')
+        .eq('audit_job_id', job.id)
+        .single();
+
+      if (!existingRating) {
+        // This job hasn't been rated — return it
+        return NextResponse.json({ jobId: job.id });
+      }
+    }
+
+    // All recent audits have been rated — return the most recent one (will show "already rated")
+    return NextResponse.json({ jobId: recentJobs[0].id });
+  }
+
+  // ── Standard: fetch rating for a specific jobId ──
+  const jobId = req.nextUrl.searchParams.get('jobId');
+  if (!jobId) return NextResponse.json({ error: 'Missing jobId' }, { status: 400 });
 
   // Verify the job belongs to this client
   const { data: job } = await supabase

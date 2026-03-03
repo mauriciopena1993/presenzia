@@ -13,14 +13,26 @@ import {
   SESSION_MAX_AGE,
 } from '@/lib/client-auth';
 
+/** Validate a redirect path: must be a relative path starting with / and not an open redirect */
+function sanitizeRedirect(redirect: unknown): string | null {
+  if (typeof redirect !== 'string') return null;
+  const trimmed = redirect.trim();
+  // Must start with / and must NOT start with // (protocol-relative URL)
+  if (!trimmed.startsWith('/') || trimmed.startsWith('//')) return null;
+  // Only allow /dashboard paths
+  if (!trimmed.startsWith('/dashboard')) return null;
+  return trimmed;
+}
+
 export async function POST(req: NextRequest) {
-  const { email, code, challengeToken } = await req.json();
+  const { email, code, challengeToken, redirect } = await req.json();
 
   if (!email || !code) {
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
   }
 
   const normalizedEmail = (email as string).trim().toLowerCase();
+  const safeRedirect = sanitizeRedirect(redirect);
 
   // ── Admin verification ─────────────────────────────────────────────────────
   if (isAdminEmail(normalizedEmail)) {
@@ -60,7 +72,7 @@ export async function POST(req: NextRequest) {
   }
 
   const sessionToken = createClientSession(result.email!);
-  const res = NextResponse.json({ success: true, redirect: '/dashboard' });
+  const res = NextResponse.json({ success: true, redirect: safeRedirect || '/dashboard' });
   res.cookies.set(CLIENT_COOKIE, sessionToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
