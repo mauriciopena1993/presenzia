@@ -6,15 +6,41 @@ import Link from 'next/link';
 
 /* ─── Interfaces ─── */
 
+interface PlatformScore {
+  platform: string;
+  score: number;
+  promptsTested: number;
+  promptsMentioned: number;
+  avgPosition: number | null;
+  competitors: string[];
+}
+
 interface AuditJob {
   id: string;
   status: string;
   overall_score: number | null;
   grade: string | null;
+  summary: string | null;
+  platforms_json: PlatformScore[] | null;
+  competitors_json: Array<{ name: string; count: number }> | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  insights_json: any | null;
   completed_at: string | null;
   created_at: string;
   error: string | null;
   report_path: string | null;
+}
+
+interface Rating {
+  rating: number;
+  comment: string | null;
+  created_at: string;
+  audit_job_id: string;
+}
+
+interface CampaignEmail {
+  campaign_key: string;
+  sent_at: string;
 }
 
 interface Client {
@@ -29,14 +55,18 @@ interface Client {
   keywords: string[] | null;
   description: string | null;
   stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
   pending_plan_change: string | null;
   pending_change_date: string | null;
   marketing_suppressed: boolean | null;
+  last_retention_offer_at: string | null;
   created_at: string;
   updated_at: string;
   audit_jobs: AuditJob[];
   latest_rating: number | null;
   latest_comment: string | null;
+  all_ratings: Rating[];
+  campaign_emails: CampaignEmail[];
 }
 
 interface Lead {
@@ -281,8 +311,87 @@ function DetailRow({ label, value }: { label: string; value: React.ReactNode }) 
   );
 }
 
+function SectionHeader({ title, count }: { title: string; count?: number }) {
+  return (
+    <div style={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem', marginTop: '1.5rem' }}>
+      {title}{count != null ? ` (${count})` : ''}
+    </div>
+  );
+}
+
+function PlatformScoreBar({ platform }: { platform: PlatformScore }) {
+  const barColor = platform.score >= 70 ? '#3a7d44' : platform.score >= 40 ? '#C9A84C' : '#9b1a1a';
+  return (
+    <div style={{ marginBottom: '0.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3px' }}>
+        <span style={{ fontSize: '0.78rem', color: '#CCC' }}>{platform.platform}</span>
+        <span style={{ fontSize: '0.72rem', color: barColor, fontWeight: 600 }}>{platform.score}/100</span>
+      </div>
+      <div style={{ height: '4px', background: '#1a1a1a', width: '100%' }}>
+        <div style={{ height: '4px', background: barColor, width: `${platform.score}%`, transition: 'width 0.3s' }} />
+      </div>
+      <div style={{ fontSize: '0.68rem', color: '#666', marginTop: '2px' }}>
+        {platform.promptsMentioned}/{platform.promptsTested} prompts · {platform.avgPosition != null ? `avg pos ${platform.avgPosition.toFixed(1)}` : 'no position data'}
+      </div>
+    </div>
+  );
+}
+
+function ScoreTrend({ jobs }: { jobs: AuditJob[] }) {
+  const completed = jobs.filter(j => j.status === 'completed' && j.overall_score != null).sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+  if (completed.length < 2) return null;
+
+  const maxScore = 100;
+  const latest = completed[completed.length - 1].overall_score!;
+  const previous = completed[completed.length - 2].overall_score!;
+  const diff = latest - previous;
+  const trend = diff > 0 ? `+${diff}` : `${diff}`;
+  const trendColor = diff > 0 ? '#3a7d44' : diff < 0 ? '#cc4444' : '#888';
+
+  return (
+    <div style={{ marginBottom: '1rem' }}>
+      <SectionHeader title="Score Trend" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+        <span style={{ fontSize: '1.5rem', fontWeight: 700, color: '#C9A84C' }}>{latest}</span>
+        <span style={{ fontSize: '0.82rem', fontWeight: 600, color: trendColor }}>{trend} pts</span>
+        <span style={{ fontSize: '0.72rem', color: '#666' }}>from {previous}</span>
+      </div>
+      {/* Mini sparkline */}
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '3px', height: '32px' }}>
+        {completed.map((j, i) => {
+          const h = Math.max(4, (j.overall_score! / maxScore) * 32);
+          const isLatest = i === completed.length - 1;
+          return (
+            <div
+              key={j.id}
+              title={`${j.overall_score}/100 — ${j.completed_at ? fmt(j.completed_at) : fmt(j.created_at)}`}
+              style={{
+                width: Math.max(6, Math.floor(120 / completed.length)),
+                height: `${h}px`,
+                background: isLatest ? '#C9A84C' : '#333',
+                borderRadius: '1px',
+                flexShrink: 0,
+              }}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+const CAMPAIGN_LABELS: Record<string, string> = {
+  'free_score_nurture': 'Free Score Nurture',
+  'post_audit_rating_request': 'Post-Audit Rating Request',
+  'happy_customer_referral': 'Happy Customer Referral',
+  'dissatisfied_followup': 'Dissatisfied Follow-up',
+  'win_back': 'Win-Back',
+};
+
 function ClientDetail({ client, onRetry, retrying }: { client: Client; onRetry: (id: string) => void; retrying: string | null }) {
+  const [expandedJob, setExpandedJob] = useState<string | null>(null);
   const sortedJobs = [...(client.audit_jobs || [])].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
   return (
     <div>
       <h2 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>
@@ -299,43 +408,126 @@ function ClientDetail({ client, onRetry, retrying }: { client: Client; onRetry: 
         )}
       </div>
 
-      <div style={{ marginBottom: '1.5rem' }}>
+      {/* ── Business Information ── */}
+      <div style={{ marginBottom: '1rem' }}>
         <DetailRow label="Email" value={<a href={`mailto:${client.email}`} style={{ color: '#C9A84C', textDecoration: 'none' }}>{client.email}</a>} />
         <DetailRow label="Type" value={client.business_type} />
         <DetailRow label="Location" value={client.location} />
         <DetailRow label="Website" value={client.website ? <a href={client.website.startsWith('http') ? client.website : `https://${client.website}`} target="_blank" rel="noopener noreferrer" style={{ color: '#C9A84C', textDecoration: 'none' }}>{client.website}</a> : null} />
         <DetailRow label="Keywords" value={client.keywords?.length ? client.keywords.join(', ') : null} />
         <DetailRow label="Description" value={client.description} />
-        <DetailRow label="Stripe ID" value={client.stripe_customer_id} />
+        <DetailRow label="Stripe Cust." value={client.stripe_customer_id ? <a href={`https://dashboard.stripe.com/customers/${client.stripe_customer_id}`} target="_blank" rel="noopener noreferrer" style={{ color: '#C9A84C', textDecoration: 'none', fontSize: '0.75rem' }}>{client.stripe_customer_id}</a> : null} />
+        <DetailRow label="Stripe Sub." value={client.stripe_subscription_id ? <a href={`https://dashboard.stripe.com/subscriptions/${client.stripe_subscription_id}`} target="_blank" rel="noopener noreferrer" style={{ color: '#C9A84C', textDecoration: 'none', fontSize: '0.75rem' }}>{client.stripe_subscription_id}</a> : null} />
         <DetailRow label="Joined" value={fmt(client.created_at)} />
         <DetailRow label="Updated" value={fmt(client.updated_at)} />
         {client.pending_plan_change && (
-          <DetailRow label="Pending change" value={`${client.pending_plan_change} on ${client.pending_change_date ? fmt(client.pending_change_date) : 'end of cycle'}`} />
+          <DetailRow label="Pending" value={`${client.pending_plan_change} on ${client.pending_change_date ? fmt(client.pending_change_date) : 'end of cycle'}`} />
+        )}
+        {client.last_retention_offer_at && (
+          <DetailRow label="Last offer" value={fmt(client.last_retention_offer_at)} />
         )}
       </div>
 
-      {client.latest_rating != null && (
-        <div style={{ marginBottom: '1.5rem' }}>
-          <div style={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Rating</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-            <span style={{ color: client.latest_rating >= 4 ? '#3a7d44' : client.latest_rating === 3 ? '#C9A84C' : '#cc4444', fontSize: '1rem' }}>
-              {'★'.repeat(client.latest_rating)}{'☆'.repeat(5 - client.latest_rating)}
-            </span>
-            <span style={{ color: '#888', fontSize: '0.8rem' }}>{client.latest_rating}/5</span>
-          </div>
-          {client.latest_comment && (
-            <p style={{ fontSize: '0.82rem', color: '#999', fontStyle: 'italic', margin: 0, lineHeight: 1.6 }}>
-              &ldquo;{client.latest_comment}&rdquo;
-            </p>
-          )}
+      {/* ── Score Trend ── */}
+      <ScoreTrend jobs={sortedJobs} />
+
+      {/* ── Latest Audit Summary ── */}
+      {sortedJobs[0]?.status === 'completed' && sortedJobs[0]?.summary && (
+        <div style={{ marginBottom: '1rem' }}>
+          <SectionHeader title="Latest Audit Summary" />
+          <p style={{ fontSize: '0.82rem', color: '#AAA', lineHeight: 1.6, margin: 0 }}>
+            {sortedJobs[0].summary}
+          </p>
         </div>
       )}
 
-      {/* Audit history */}
-      <div>
-        <div style={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
-          Audit History ({sortedJobs.length})
+      {/* ── Platform Scores (latest completed audit) ── */}
+      {sortedJobs[0]?.status === 'completed' && sortedJobs[0]?.platforms_json && sortedJobs[0].platforms_json.length > 0 && (
+        <div style={{ marginBottom: '1rem' }}>
+          <SectionHeader title="Platform Scores" />
+          {sortedJobs[0].platforms_json.map(p => (
+            <PlatformScoreBar key={p.platform} platform={p} />
+          ))}
         </div>
+      )}
+
+      {/* ── Competitors (latest completed audit) ── */}
+      {sortedJobs[0]?.status === 'completed' && sortedJobs[0]?.competitors_json && sortedJobs[0].competitors_json.length > 0 && (
+        <div style={{ marginBottom: '1rem' }}>
+          <SectionHeader title="Top Competitors" count={sortedJobs[0].competitors_json.length} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+            {sortedJobs[0].competitors_json.slice(0, 10).map((c, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', padding: '0.3rem 0', borderBottom: '1px solid #111' }}>
+                <span style={{ color: '#CCC' }}>{c.name}</span>
+                <span style={{ color: '#888', fontSize: '0.72rem' }}>{c.count} mentions</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── AI Insights (latest completed audit) ── */}
+      {sortedJobs[0]?.status === 'completed' && sortedJobs[0]?.insights_json && (
+        <div style={{ marginBottom: '1rem' }}>
+          <SectionHeader title="AI Insights" />
+          <div style={{ fontSize: '0.8rem', lineHeight: 1.6 }}>
+            {sortedJobs[0].insights_json.strengths?.length > 0 && (
+              <div style={{ marginBottom: '0.5rem' }}>
+                <span style={{ color: '#3a7d44', fontWeight: 600, fontSize: '0.72rem', textTransform: 'uppercase' }}>Strengths</span>
+                {sortedJobs[0].insights_json.strengths.map((s: string, i: number) => (
+                  <div key={i} style={{ color: '#AAA', paddingLeft: '0.5rem' }}>• {s}</div>
+                ))}
+              </div>
+            )}
+            {sortedJobs[0].insights_json.weaknesses?.length > 0 && (
+              <div style={{ marginBottom: '0.5rem' }}>
+                <span style={{ color: '#cc4444', fontWeight: 600, fontSize: '0.72rem', textTransform: 'uppercase' }}>Weaknesses</span>
+                {sortedJobs[0].insights_json.weaknesses.map((w: string, i: number) => (
+                  <div key={i} style={{ color: '#AAA', paddingLeft: '0.5rem' }}>• {w}</div>
+                ))}
+              </div>
+            )}
+            {sortedJobs[0].insights_json.recommendations?.length > 0 && (
+              <div>
+                <span style={{ color: '#C9A84C', fontWeight: 600, fontSize: '0.72rem', textTransform: 'uppercase' }}>Recommendations</span>
+                {sortedJobs[0].insights_json.recommendations.map((r: string, i: number) => (
+                  <div key={i} style={{ color: '#AAA', paddingLeft: '0.5rem' }}>• {r}</div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── Ratings History ── */}
+      {client.all_ratings && client.all_ratings.length > 0 && (
+        <div style={{ marginBottom: '1rem' }}>
+          <SectionHeader title="Ratings" count={client.all_ratings.length} />
+          {client.all_ratings.map((r, i) => (
+            <div key={i} style={{ padding: '0.5rem', background: i === 0 ? '#111' : 'transparent', border: '1px solid #1a1a1a', marginBottom: '0.3rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ color: r.rating >= 4 ? '#3a7d44' : r.rating === 3 ? '#C9A84C' : '#cc4444', fontSize: '0.9rem' }}>
+                    {'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}
+                  </span>
+                  <span style={{ color: '#888', fontSize: '0.75rem' }}>{r.rating}/5</span>
+                  {i === 0 && <span style={{ fontSize: '0.6rem', color: '#C9A84C', fontWeight: 600 }}>LATEST</span>}
+                </div>
+                <span style={{ fontSize: '0.68rem', color: '#666' }}>{fmt(r.created_at)}</span>
+              </div>
+              {r.comment && (
+                <p style={{ fontSize: '0.78rem', color: '#999', fontStyle: 'italic', margin: '0.25rem 0 0', lineHeight: 1.5 }}>
+                  &ldquo;{r.comment}&rdquo;
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── Audit History (expandable) ── */}
+      <div>
+        <SectionHeader title="Audit History" count={sortedJobs.length} />
         {sortedJobs.length === 0 ? (
           <div style={{ color: '#888', fontSize: '0.82rem' }}>No audits yet</div>
         ) : sortedJobs.map((job, i) => (
@@ -344,7 +536,10 @@ function ClientDetail({ client, onRetry, retrying }: { client: Client; onRetry: 
             background: i === 0 ? '#111' : 'transparent',
             border: '1px solid #1a1a1a',
             marginBottom: '0.5rem',
-          }}>
+            cursor: job.status === 'completed' ? 'pointer' : 'default',
+          }}
+            onClick={() => job.status === 'completed' && setExpandedJob(expandedJob === job.id ? null : job.id)}
+          >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
               <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
                 {i === 0 && <span style={{ fontSize: '0.6rem', color: '#C9A84C', fontWeight: 600 }}>LATEST</span>}
@@ -352,6 +547,9 @@ function ClientDetail({ client, onRetry, retrying }: { client: Client; onRetry: 
                   label={job.status}
                   color={job.status === 'completed' ? '#3a7d44' : job.status === 'running' ? '#C9A84C' : job.status === 'failed' ? '#9b1a1a' : '#555'}
                 />
+                {job.status === 'completed' && (
+                  <span style={{ fontSize: '0.6rem', color: '#666' }}>{expandedJob === job.id ? '▼' : '▶'}</span>
+                )}
               </div>
               <span style={{ fontSize: '0.72rem', color: '#888' }}>{job.completed_at ? fmt(job.completed_at) : fmt(job.created_at)}</span>
             </div>
@@ -363,25 +561,78 @@ function ClientDetail({ client, onRetry, retrying }: { client: Client; onRetry: 
             {job.error && (
               <div style={{ fontSize: '0.72rem', color: '#cc4444', marginTop: '0.25rem' }}>Error: {job.error}</div>
             )}
+
+            {/* Expanded details */}
+            {expandedJob === job.id && job.status === 'completed' && (
+              <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid #222' }}>
+                {job.summary && (
+                  <div style={{ marginBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '0.68rem', color: '#888', textTransform: 'uppercase' }}>Summary</span>
+                    <p style={{ fontSize: '0.78rem', color: '#AAA', margin: '0.2rem 0 0', lineHeight: 1.5 }}>{job.summary}</p>
+                  </div>
+                )}
+                {job.platforms_json && job.platforms_json.length > 0 && (
+                  <div style={{ marginBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '0.68rem', color: '#888', textTransform: 'uppercase' }}>Platforms</span>
+                    <div style={{ marginTop: '0.3rem' }}>
+                      {job.platforms_json.map(p => (
+                        <div key={p.platform} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', padding: '0.15rem 0' }}>
+                          <span style={{ color: '#CCC' }}>{p.platform}</span>
+                          <span style={{ color: p.score >= 70 ? '#3a7d44' : p.score >= 40 ? '#C9A84C' : '#9b1a1a', fontWeight: 600 }}>{p.score}/100</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {job.competitors_json && job.competitors_json.length > 0 && (
+                  <div>
+                    <span style={{ fontSize: '0.68rem', color: '#888', textTransform: 'uppercase' }}>Competitors</span>
+                    <div style={{ marginTop: '0.2rem', fontSize: '0.75rem', color: '#AAA' }}>
+                      {job.competitors_json.map(c => c.name).join(', ')}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.4rem' }}>
               {job.status === 'failed' && (
                 <button
-                  onClick={() => onRetry(job.id)}
+                  onClick={(e) => { e.stopPropagation(); onRetry(job.id); }}
                   disabled={retrying === job.id}
                   style={{ fontSize: '0.7rem', padding: '2px 8px', background: 'none', border: '1px solid #555', color: '#999', cursor: 'pointer', fontFamily: 'inherit' }}
                 >
                   {retrying === job.id ? 'Retrying...' : 'Retry'}
                 </button>
               )}
+              {job.report_path && (
+                <a
+                  href={`/api/client/download?job_id=${job.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  style={{ fontSize: '0.7rem', padding: '2px 8px', border: '1px solid #333', color: '#888', textDecoration: 'none', fontFamily: 'inherit' }}
+                >
+                  PDF
+                </a>
+              )}
             </div>
           </div>
         ))}
       </div>
 
-      {/* Note about email tracking */}
-      <div style={{ marginTop: '1.5rem', padding: '0.75rem', background: '#111', border: '1px solid #1a1a1a', fontSize: '0.75rem', color: '#666' }}>
-        Email history and replies will be available once Resend webhook tracking is configured.
-      </div>
+      {/* ── Campaign Emails ── */}
+      {client.campaign_emails && client.campaign_emails.length > 0 && (
+        <div>
+          <SectionHeader title="Campaign Emails Sent" count={client.campaign_emails.length} />
+          {client.campaign_emails.map((ce, i) => (
+            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', padding: '0.35rem 0', borderBottom: '1px solid #111' }}>
+              <span style={{ color: '#CCC' }}>{CAMPAIGN_LABELS[ce.campaign_key] || ce.campaign_key}</span>
+              <span style={{ fontSize: '0.68rem', color: '#666' }}>{fmt(ce.sent_at)}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

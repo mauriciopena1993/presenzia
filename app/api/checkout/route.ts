@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import Stripe from 'stripe';
 import { stripe, PLANS, PlanKey } from '@/lib/stripe';
 
 export async function POST(req: NextRequest) {
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
     // Use payment mode for one-off plans (audit), subscription mode for recurring
     const isRecurring = selectedPlan.recurring;
 
-    const sessionParams: Parameters<typeof stripe.checkout.sessions.create>[0] = {
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       mode: isRecurring ? 'subscription' : 'payment',
       payment_method_types: ['card'],
       line_items: [

@@ -51,7 +51,7 @@ const mockDissatisfiedRatings = [
   },
 ];
 
-const mockCancelledClients = [
+const mockCancelledClients: Array<{ id: string; email: string | null; business_name: string; status: string; updated_at: string; marketing_suppressed: boolean }> = [
   {
     id: 'client-4',
     email: 'cancelled@test.com',
