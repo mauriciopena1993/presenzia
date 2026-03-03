@@ -107,7 +107,15 @@ export async function POST(req: NextRequest) {
   const { valid, email } = verifySessionToken(token);
   if (!valid || !email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { targetPlan, action } = await req.json();
+  let targetPlan: string | undefined;
+  let action: string | undefined;
+  try {
+    const body = await req.json();
+    targetPlan = body.targetPlan;
+    action = body.action;
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+  }
 
   // ── Cancel pending downgrade / cancellation ──
   if (action === 'cancel-pending') {
@@ -195,13 +203,14 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Clear pending state in DB
-    await supabase
-      .from('clients')
-      .update({ pending_plan_change: null, pending_change_date: null })
-      .eq('id', client.id);
-
     const plan = PLANS[targetPlan as PlanKey];
+
+    // Reject downgrading to a non-recurring plan (e.g. audit) — can't schedule a subscription to a one-off price
+    if (!isUpgrade && !plan.recurring) {
+      return NextResponse.json({
+        error: `Cannot switch to ${PLAN_LABELS[targetPlan] || targetPlan} — it is a one-off product, not a subscription. Please cancel your subscription and purchase it separately from the pricing page.`,
+      }, { status: 400 });
+    }
 
     if (isUpgrade) {
       // ── UPGRADE: Checkout session for prorated payment ──
@@ -261,6 +270,12 @@ export async function POST(req: NextRequest) {
             business_name: client.business_name || '',
           },
         });
+
+        // Clear pending state only AFTER Stripe checkout session is created successfully
+        await supabase
+          .from('clients')
+          .update({ pending_plan_change: null, pending_change_date: null })
+          .eq('id', client.id);
 
         return NextResponse.json({
           success: true,

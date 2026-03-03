@@ -329,11 +329,12 @@ function CancelFlow({
 
   const planRank = PLAN_ORDER.indexOf(plan);
   const losses = PLAN_LOSSES[plan] || [];
-  const lowerPlans = PLAN_ORDER.filter((_, i) => i < planRank);
+  // Only show subscription plans as downgrade options (exclude one-off plans like 'audit')
+  const lowerPlans = PLAN_ORDER.filter((p, i) => i < planRank && PLAN_PRICE_SUFFIX[p] !== 'one-time payment');
 
   const handleProceedFromLoss = () => {
-    // Tier 2+ → offer downgrade first; Tier 1 → retention or confirming
-    if (planRank > 0) {
+    // Offer downgrade only if there are subscription-based lower plans available
+    if (lowerPlans.length > 0) {
       setCancelStep('downgrade-offer');
     } else if (retentionEligible) {
       setCancelStep('retention-offer');
@@ -577,6 +578,7 @@ function PlanConfirmModal({
   pendingDate,
   onConfirm,
   onCancel,
+  loading,
 }: {
   currentPlan: string;
   targetPlan: string;
@@ -584,6 +586,7 @@ function PlanConfirmModal({
   pendingDate: string | null;
   onConfirm: () => void;
   onCancel: () => void;
+  loading?: boolean;
 }) {
   const isUpgrade = PLAN_ORDER.indexOf(targetPlan) > PLAN_ORDER.indexOf(currentPlan);
   const targetLabel = PLAN_LABELS[targetPlan] || targetPlan;
@@ -666,9 +669,10 @@ function PlanConfirmModal({
           </button>
           <button
             onClick={onConfirm}
-            style={{ flex: 1, padding: '0.6rem', background: isUpgrade ? (targetPlan === 'premium' ? '#9b6bcc' : '#C9A84C') : '#C9A84C', color: '#0A0A0A', border: 'none', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
+            disabled={loading}
+            style={{ flex: 1, padding: '0.6rem', background: isUpgrade ? (targetPlan === 'premium' ? '#9b6bcc' : '#C9A84C') : '#C9A84C', color: '#0A0A0A', border: 'none', fontSize: '0.85rem', fontWeight: 600, cursor: loading ? 'wait' : 'pointer', fontFamily: 'inherit', opacity: loading ? 0.7 : 1 }}
           >
-            {isUpgrade ? `Upgrade to ${targetLabel}` : `Switch to ${targetLabel}`}
+            {loading ? 'Processing...' : isUpgrade ? `Upgrade to ${targetLabel}` : `Switch to ${targetLabel}`}
           </button>
         </div>
       </div>
@@ -1374,6 +1378,8 @@ export default function DashboardPage() {
         setCancelEndDate(data.formattedEndDate || null);
         setClient(prev => prev ? { ...prev, pending_plan_change: 'cancel', pending_change_date: data.endDate || null } : null);
         setCancelStep('done');
+      } else {
+        alert(data.error || 'Cancellation failed. Please contact hello@presenzia.ai');
       }
     } catch {
       alert('Something went wrong. Please contact hello@presenzia.ai');
@@ -1447,6 +1453,7 @@ export default function DashboardPage() {
           pendingDate={client.pending_change_date || null}
           onConfirm={() => executeChangePlan(confirmTarget)}
           onCancel={() => setConfirmTarget(null)}
+          loading={actionLoading}
         />
       )}
 
