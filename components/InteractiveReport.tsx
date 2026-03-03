@@ -2,6 +2,26 @@
 
 import { useState } from 'react';
 
+// ── Utilities ──────────────────────────────────────────────────
+
+/** Deduplicate competitor names: if one name contains another, keep only the longer form */
+function deduplicateCompetitors(competitors: Array<{ name: string; count: number }>): Array<{ name: string; count: number }> {
+  const sorted = [...competitors].sort((a, b) => b.name.length - a.name.length);
+  const result: Array<{ name: string; count: number }> = [];
+  for (const comp of sorted) {
+    const compLower = comp.name.toLowerCase();
+    const isDuplicate = result.some(existing => {
+      const existingLower = existing.name.toLowerCase();
+      return existingLower.includes(compLower) || compLower.includes(existingLower);
+    });
+    if (!isDuplicate) {
+      result.push(comp);
+    }
+  }
+  // Re-sort by count descending (original order)
+  return result.sort((a, b) => b.count - a.count);
+}
+
 // ── Types ──────────────────────────────────────────────────────
 
 interface PlatformScore {
@@ -224,7 +244,7 @@ function OverviewTab({ job, client, onTabChange }: { job: InteractiveReportJob; 
   const grade = job.grade || '?';
   const color = scoreColor(score);
   const platforms = job.platforms_json || [];
-  const competitors = job.competitors_json || [];
+  const competitors = deduplicateCompetitors(job.competitors_json || []);
   const insights = job.insights_json;
 
   const totalPrompts = platforms.reduce((s, p) => s + p.promptsTested, 0);
@@ -381,7 +401,7 @@ function OverviewTab({ job, client, onTabChange }: { job: InteractiveReportJob; 
 
 function PlatformsTab({ job }: { job: InteractiveReportJob }) {
   const platforms = job.platforms_json || [];
-  const competitors = job.competitors_json || [];
+  const competitors = deduplicateCompetitors(job.competitors_json || []);
   const maxCompCount = competitors[0]?.count || 1;
 
   // Platform insight
@@ -749,15 +769,20 @@ export default function InteractiveReport({ job, client, onDownload }: Props) {
                 background: 'none',
                 border: 'none',
                 borderBottom: activeTab === tab.key ? '2px solid #C9A84C' : '2px solid transparent',
-                color: tab.disabled ? '#444' : activeTab === tab.key ? '#F5F0E8' : '#888',
+                color: tab.disabled ? '#333' : activeTab === tab.key ? '#F5F0E8' : '#888',
                 fontFamily: 'inherit',
                 fontSize: '0.82rem',
-                cursor: tab.disabled ? 'default' : 'pointer',
+                cursor: tab.disabled ? 'not-allowed' : 'pointer',
                 fontWeight: activeTab === tab.key ? 600 : 400,
                 transition: 'color 0.2s',
+                opacity: tab.disabled ? 0.5 : 1,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.3rem',
               }}
               title={tab.disabled ? 'Available in your next audit' : undefined}
             >
+              {tab.disabled && <span style={{ fontSize: '0.7rem' }}>🔒</span>}
               {tab.label}
             </button>
           ))}

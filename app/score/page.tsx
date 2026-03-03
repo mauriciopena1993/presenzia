@@ -40,7 +40,9 @@ interface ScoreResult {
   mentionsCount: number;
   totalPrompts: number;
   topCompetitor: { name: string; count: number } | null;
-  platformBreakdown: Array<{ platform: string; tested: number; mentioned: number }>;
+  platformBreakdown: Array<{ platform: string; tested: number; mentioned: number; failed?: boolean }>;
+  platformsAvailable: number;
+  platformsTotal: number;
   city: string;
 }
 
@@ -738,9 +740,24 @@ export default function ScorePage() {
                 </div>
                 <p style={{ color: '#F5F0E8', fontSize: '0.9rem', lineHeight: 1.7, margin: 0 }}>
                   <strong>&quot;{result.topCompetitor.name}&quot;</strong> appeared in{' '}
-                  <strong>{result.topCompetitor.count} of {result.totalPrompts / 2}</strong> searches.
+                  <strong>{result.topCompetitor.count} of {result.totalPrompts}</strong> searches.
                   They are being recommended where you are not.
                 </p>
+              </div>
+            )}
+
+            {/* Reliability banner when platforms failed */}
+            {result.platformsAvailable < result.platformsTotal && (
+              <div style={{
+                padding: '0.75rem 1.25rem',
+                background: 'rgba(243,156,18,0.08)',
+                border: '1px solid rgba(243,156,18,0.2)',
+                marginBottom: '1rem',
+                fontSize: '0.8rem',
+                color: '#F39C12',
+                lineHeight: 1.6,
+              }}>
+                Some AI platforms were temporarily unavailable. Your score is based on <strong>{result.platformsAvailable} of {result.platformsTotal}</strong> platforms. A full audit tests all platforms with 30+ prompts for a more complete picture.
               </div>
             )}
 
@@ -756,12 +773,17 @@ export default function ScorePage() {
               </div>
               {result.platformBreakdown.map(p => (
                 <div key={p.platform} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #1A1A1A' }}>
-                  <span style={{ color: '#F5F0E8', fontSize: '0.9rem' }}>{p.platform}</span>
+                  <span style={{ color: p.failed ? '#666' : '#F5F0E8', fontSize: '0.9rem' }}>{p.platform}</span>
+                  {p.failed ? (
+                    <span style={{ color: '#666', fontSize: '0.8rem', fontStyle: 'italic' }}>
+                      Temporarily unavailable
+                    </span>
+                  ) : (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <div style={{ width: '80px', height: '4px', background: '#1A1A1A', borderRadius: '2px', overflow: 'hidden' }}>
                       <div style={{
                         height: '100%',
-                        width: `${(p.mentioned / p.tested) * 100}%`,
+                        width: `${p.tested > 0 ? (p.mentioned / p.tested) * 100 : 0}%`,
                         background: p.mentioned > 0 ? '#27AE60' : '#E74C3C',
                         borderRadius: '2px',
                       }} />
@@ -770,6 +792,7 @@ export default function ScorePage() {
                       {p.mentioned}/{p.tested} found
                     </span>
                   </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -847,7 +870,7 @@ export default function ScorePage() {
                     </div>
                     <div style={{ filter: 'blur(5px)', pointerEvents: 'none', userSelect: 'none' }}>
                       <div style={{ height: '6px', background: '#1A1A1A', borderRadius: '3px', marginBottom: '0.25rem', overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${(p.mentioned / p.tested) * 100 || 5}%`, background: p.mentioned > 0 ? '#27AE60' : '#E74C3C', borderRadius: '3px' }} />
+                        <div style={{ height: '100%', width: `${p.tested > 0 ? (p.mentioned / p.tested) * 100 : 5}%`, background: p.mentioned > 0 ? '#27AE60' : '#E74C3C', borderRadius: '3px' }} />
                       </div>
                       <div style={{ fontSize: '0.7rem', color: '#666' }}>
                         3 specific recommendations for improving your {p.platform} visibility

@@ -101,6 +101,20 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
+        <>
+        {/* Full-screen backdrop to prevent content bleed-through */}
+        <div
+          onClick={() => setMenuOpen(false)}
+          style={{
+            position: 'fixed',
+            top: '72px',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(10,10,10,0.95)',
+            zIndex: 98,
+          }}
+        />
         <div style={{
           position: 'absolute',
           top: '72px',
@@ -112,6 +126,7 @@ export default function Navbar() {
           display: 'flex',
           flexDirection: 'column',
           gap: '1.25rem',
+          zIndex: 99,
         }}>
           {[
             { label: 'How it works', href: '/#how-it-works' },
@@ -139,6 +154,7 @@ export default function Navbar() {
             Get your free score →
           </Link>
         </div>
+        </>
       )}
 
       <style>{`

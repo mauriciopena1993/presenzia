@@ -341,7 +341,7 @@ async function queryPerplexity(prompt: string): Promise<string> {
 
 async function queryGoogleAI(prompt: string): Promise<string> {
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GOOGLE_AI_API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GOOGLE_AI_API_KEY}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -456,13 +456,48 @@ function checkMention(response: string, firmName: string, website?: string): { m
   return { mentioned: false, position: null };
 }
 
+// Generic industry terms that should NOT be treated as firm names
+const GENERIC_TERMS = new Set([
+  'wealth management', 'financial planning', 'financial advisory', 'investment management',
+  'tax planning', 'estate planning', 'retirement planning', 'pension planning',
+  'corporate financial', 'comprehensive financial', 'independent financial',
+  'personal financial', 'private wealth', 'global wealth', 'strategic wealth',
+  'holistic financial', 'specialist financial', 'professional financial',
+  'integrated wealth', 'bespoke wealth', 'discretionary wealth',
+  'financial advisors', 'wealth advisors', 'financial partners', 'wealth partners',
+  'financial consulting', 'wealth consulting', 'investment advisory',
+  'financial associates', 'capital management', 'asset management',
+]);
+
+function isGenericTerm(name: string): boolean {
+  return GENERIC_TERMS.has(name.toLowerCase().trim());
+}
+
+function deduplicateNames(names: string[]): string[] {
+  // Sort by length descending so longer names are preferred
+  const sorted = [...names].sort((a, b) => b.length - a.length);
+  const result: string[] = [];
+  for (const name of sorted) {
+    const nameLower = name.toLowerCase();
+    // Skip if a longer name already in results contains this name
+    const isDuplicate = result.some(existing => {
+      const existingLower = existing.toLowerCase();
+      return existingLower.includes(nameLower) || nameLower.includes(existingLower);
+    });
+    if (!isDuplicate) {
+      result.push(name);
+    }
+  }
+  return result;
+}
+
 function extractCompetitors(response: string, firmName: string): string[] {
   const firmPattern = /(?:[A-Z][a-z]+(?:\s+(?:&\s+)?[A-Z][a-z]+)*)\s+(?:Financial|Wealth|Advisory|Planning|Advisors|Partners|Capital|Associates|Consulting|Management)/g;
   const found = new Set<string>();
   let match;
   while ((match = firmPattern.exec(response)) !== null) {
     const name = match[0].trim();
-    if (name.toLowerCase() !== firmName.toLowerCase() && name.length > 5 && name.length < 100) {
+    if (name.toLowerCase() !== firmName.toLowerCase() && name.length > 5 && name.length < 100 && !isGenericTerm(name)) {
       found.add(name);
     }
   }
@@ -473,12 +508,12 @@ function extractCompetitors(response: string, firmName: string): string[] {
   for (const pattern of patterns) {
     while ((match = pattern.exec(response)) !== null) {
       const name = match[1].trim();
-      if (name.toLowerCase() !== firmName.toLowerCase() && name.length > 3 && name.length < 80 && !name.includes('http')) {
+      if (name.toLowerCase() !== firmName.toLowerCase() && name.length > 3 && name.length < 80 && !name.includes('http') && !isGenericTerm(name)) {
         found.add(name);
       }
     }
   }
-  return Array.from(found).slice(0, 10);
+  return deduplicateNames(Array.from(found)).slice(0, 10);
 }
 
 function generateShareId(): string {
@@ -558,25 +593,32 @@ export async function POST(req: NextRequest) {
     if (process.env.PERPLEXITY_API_KEY) platforms.push({ name: 'Perplexity',  querier: queryPerplexity,  weight: 0.20 });
     if (process.env.GOOGLE_AI_API_KEY)  platforms.push({ name: 'Google AI',   querier: queryGoogleAI,   weight: 0.30 });
 
-    // If only 2 platforms, rebalance weights
-    if (platforms.length === 2) {
-      const hasGPT = platforms.find(p => p.name === 'ChatGPT');
-      const hasClaude = platforms.find(p => p.name === 'Claude');
-      if (hasGPT) hasGPT.weight = 0.6;
-      if (hasClaude) hasClaude.weight = 0.4;
+    // Dynamic weight rebalancing: redistribute so weights always sum to 1.0
+    const totalWeight = platforms.reduce((sum, p) => sum + p.weight, 0);
+    if (totalWeight > 0 && Math.abs(totalWeight - 1.0) > 0.01) {
+      for (const p of platforms) {
+        p.weight = p.weight / totalWeight;
+      }
     }
 
     if (platforms.length === 0) {
       return NextResponse.json({ error: 'AI platforms not configured' }, { status: 500 });
     }
 
-    // Retry helper for rate limits
+    // Retry helper — only retries transient rate limits, not billing/quota errors
     async function queryWithRetry(querier: (p: string) => Promise<string>, prompt: string, retries = 3): Promise<string> {
       for (let attempt = 0; attempt <= retries; attempt++) {
         try {
           return await querier(prompt);
         } catch (err) {
           const msg = String(err);
+          // Don't retry billing/quota/auth errors — these won't resolve with retries
+          const isBillingError = msg.includes('insufficient_quota') || msg.includes('credit balance') ||
+            msg.includes('quota exceeded') || msg.includes('billing') || msg.includes('limit: 0');
+          if (isBillingError) {
+            console.error(`Billing/quota error (not retrying): ${msg.slice(0, 200)}`);
+            throw err;
+          }
           const isRateLimit = msg.includes('429') || msg.includes('Too Many Requests') || msg.includes('RESOURCE_EXHAUSTED');
           if (isRateLimit && attempt < retries) {
             const backoff = 3000 * Math.pow(2, attempt); // 3s, 6s, 12s exponential backoff
@@ -647,17 +689,23 @@ export async function POST(req: NextRequest) {
       })
     );
 
-    // Calculate score — only count successful responses (don't penalise for API failures)
+    // Calculate score — use ALL platforms in denominator so failed platforms lower the score
+    // (a firm only checked on 1 of 4 platforms should not get an inflated score)
     const successResults = allResults.filter(r => !r.failed);
     let totalPoints = 0;
     let maxPoints = 0;
     const platformWeightMap: Record<string, number> = {};
     for (const p of platforms) platformWeightMap[p.name] = p.weight;
 
-    for (const result of successResults) {
+    // Max points = ALL results (including failed), so score reflects incomplete coverage
+    for (const result of allResults) {
       const weight = platformWeightMap[result.platform] || 0.25;
       maxPoints += weight * 10;
+    }
 
+    // Only successful results can earn points
+    for (const result of successResults) {
+      const weight = platformWeightMap[result.platform] || 0.25;
       if (result.mentioned) {
         if (result.position === 'first') totalPoints += weight * 10;
         else if (result.position === 'prominent') totalPoints += weight * 7;
@@ -691,13 +739,16 @@ export async function POST(req: NextRequest) {
     const totalPrompts = successResults.length;
     const shareId = generateShareId();
 
-    // Per-platform breakdown
+    // Per-platform breakdown — include failed flag so UI can show "Unavailable"
     const platformBreakdown = platforms.map(p => {
       const pResults = allResults.filter(r => r.platform === p.name);
       const pSuccess = pResults.filter(r => !r.failed);
+      const pFailed = pResults.some(r => r.failed);
       const pMentions = pSuccess.filter(r => r.mentioned).length;
-      return { platform: p.name, tested: pSuccess.length, mentioned: pMentions };
+      return { platform: p.name, tested: pSuccess.length, mentioned: pMentions, failed: pFailed && pSuccess.length === 0 };
     });
+    const platformsAvailable = platformBreakdown.filter(p => !p.failed).length;
+    const platformsTotal = platforms.length;
 
     // Store in database
     try {
@@ -720,6 +771,8 @@ export async function POST(req: NextRequest) {
             competitors: r.competitors,
           })),
           platformBreakdown,
+          platformsAvailable,
+          platformsTotal,
           mentionsCount,
           totalPrompts,
           coverageType,
@@ -746,6 +799,8 @@ export async function POST(req: NextRequest) {
       totalPrompts,
       topCompetitor,
       platformBreakdown,
+      platformsAvailable,
+      platformsTotal,
       city: displayCity,
     });
   } catch (error) {

@@ -72,7 +72,8 @@ export default function TermsPage() {
         <div style={sectionStyle}>
           <h2 style={headingStyle}>2. Subscriptions and Billing</h2>
           <p style={textStyle}>
-            Our services are offered on a monthly subscription basis. Subscriptions are billed in advance each month.
+            Our services are offered as one-off audits or on a monthly subscription basis. One-off audits are billed
+            at the time of purchase. Subscriptions are billed in advance each month.
             All prices are in GBP and include VAT where applicable.
           </p>
           <p style={textStyle}>

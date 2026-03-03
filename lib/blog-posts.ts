@@ -5,6 +5,7 @@ export interface BlogPost {
   date: string;
   readTime: string;
   category: string;
+  author?: string;
   content: string;
   heroImage: string;
   heroImageAlt: string;

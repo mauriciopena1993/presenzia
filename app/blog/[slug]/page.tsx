@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { BLOG_POSTS, getBlogPost } from '@/lib/blog-posts';
+import Navbar from '@/components/Navbar';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -131,7 +132,9 @@ export default async function BlogPostPage({ params }: Props) {
     datePublished: post.date,
     url,
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
-    author: { '@type': 'Organization', name: 'presenzia.ai', url: 'https://presenzia.ai' },
+    author: post.author
+      ? { '@type': 'Person', name: post.author }
+      : { '@type': 'Organization', name: 'presenzia.ai', url: 'https://presenzia.ai' },
     publisher: {
       '@type': 'Organization',
       name: 'presenzia.ai',
@@ -147,14 +150,18 @@ export default async function BlogPostPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingSchema) }}
       />
-      <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1.25rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', color: '#F5F0E8', textDecoration: 'none' }}>
-          presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
-        </Link>
-        <Link href="/blog" style={{ color: '#999', fontSize: '0.85rem', textDecoration: 'none' }}>← All posts</Link>
+      <Navbar />
+
+      {/* Breadcrumb below navbar */}
+      <div style={{ paddingTop: '72px' }}>
+        <div style={{ borderBottom: '1px solid #1A1A1A', padding: '0.75rem 2rem' }}>
+          <Link href="/blog" style={{ color: '#999', fontSize: '0.8rem', textDecoration: 'none', transition: 'color 0.2s' }}>
+            ← All posts
+          </Link>
+        </div>
       </div>
 
-      <article style={{ maxWidth: '680px', margin: '0 auto', padding: '4rem 2rem 6rem' }}>
+      <article style={{ maxWidth: '680px', margin: '0 auto', padding: '3rem 2rem 6rem' }}>
         {/* Meta */}
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
           <span style={{ fontSize: '0.75rem', color: '#C9A84C', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
@@ -162,6 +169,7 @@ export default async function BlogPostPage({ params }: Props) {
           </span>
           <span style={{ fontSize: '0.75rem', color: '#999' }}>{fmtDate(post.date)}</span>
           <span style={{ fontSize: '0.75rem', color: '#999' }}>{post.readTime}</span>
+          <span style={{ fontSize: '0.75rem', color: '#999' }}>By {post.author || 'Presenzia Team'}</span>
         </div>
 
         {/* Title */}

@@ -105,8 +105,8 @@ const TIER_COLORS: Record<string, string> = {
 const PLAN_FEATURES: Record<string, string[]> = {
   audit: ['One-off AI visibility audit', '120 wealth-specific prompts tested', 'Online dashboard with full interactive report', 'Downloadable PDF report with action plan'],
   starter: ['Monthly AI visibility audit', 'Delivered by email (report)'], // legacy
-  growth: ['Everything in Audit', 'Monthly re-audits', 'Online dashboard (weekly updates)', 'AI audit assistant', 'Quarterly strategy calls', 'Competitor deep-dive', 'Priority email support'],
-  premium: ['Everything in Growth', 'Daily dashboard updates', 'Dedicated account manager', 'Monthly 1:1 strategy calls', 'Territory exclusivity', 'Done-for-you content recommendations', 'Custom prompt testing & industry benchmarking'],
+  growth: ['Everything in Audit', 'Monthly re-audits with score tracking', 'Online dashboard (weekly updates)', 'AI audit assistant', 'Quarterly strategy calls', 'Competitor deep-dive analysis', 'Priority email support'],
+  premium: ['Everything in Growth', 'Daily dashboard updates', 'Dedicated account strategist', 'Monthly 1:1 strategy calls', 'Territory exclusivity in your area', 'Done-for-you content (4 articles/month)', 'Custom prompt testing & industry benchmarking'],
 };
 
 const PLAN_ORDER = ['audit', 'growth', 'premium'];
@@ -1419,17 +1419,19 @@ export default function DashboardPage() {
             presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
           </Link>
           {client && (
-            <div style={{ fontSize: '0.75rem', color: '#999', display: 'flex', alignItems: 'center', gap: '0.5rem', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{client.business_name || client.email}</span>
+            <div className="dash-nav-info" style={{ fontSize: '0.75rem', color: '#999', display: 'flex', alignItems: 'center', gap: '0.5rem', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+              <span className="dash-nav-name" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{client.business_name || client.email}</span>
               <span style={{ padding: '2px 8px', background: `${TIER_COLORS[client.plan] || '#C9A84C'}18`, border: `1px solid ${TIER_COLORS[client.plan] || '#C9A84C'}50`, fontSize: '0.75rem', color: TIER_COLORS[client.plan] || '#C9A84C', textTransform: 'uppercase', letterSpacing: '0.05em', flexShrink: 0, fontWeight: 600 }}>
                 {PLAN_LABELS[client.plan] || client.plan}
               </span>
-              {isGrowthOrAbove && (
-                <span style={{ fontSize: '0.6rem', color: TIER_COLORS[client.plan] || '#C9A84C', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                  <span style={{ width: '5px', height: '5px', background: TIER_COLORS[client.plan] || '#C9A84C', borderRadius: '50%', animation: 'pulse 2s infinite' }} />
-                  {isPremium ? 'Daily monitoring' : 'Weekly updates'}
-                </span>
-              )}
+              <span className="dash-nav-status" style={{ fontSize: '0.6rem', color: TIER_COLORS[client.plan] || '#C9A84C', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                {isGrowthOrAbove && (
+                  <>
+                    <span style={{ width: '5px', height: '5px', background: TIER_COLORS[client.plan] || '#C9A84C', borderRadius: '50%', animation: 'pulse 2s infinite' }} />
+                    {isPremium ? 'Daily monitoring' : 'Weekly updates'}
+                  </>
+                )}
+              </span>
             </div>
           )}
         </div>
@@ -1714,6 +1716,45 @@ export default function DashboardPage() {
                 }}
                 onDownload={handleDownloadReport}
               />
+
+              {/* Rate your audit prompt */}
+              {latestJob.completed_at && (
+                <div style={{
+                  marginTop: '1.25rem',
+                  padding: '1rem 1.25rem',
+                  background: '#0D0D0D',
+                  border: '1px solid #1a1a1a',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '0.75rem',
+                }}>
+                  <div>
+                    <div style={{ fontSize: '0.85rem', color: '#F5F0E8', fontWeight: 500, marginBottom: '0.25rem' }}>
+                      How was your audit?
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#888' }}>
+                      Your feedback helps us improve the service
+                    </div>
+                  </div>
+                  <Link
+                    href="/dashboard/rate"
+                    style={{
+                      padding: '0.4rem 1rem',
+                      background: 'transparent',
+                      border: `1px solid ${TIER_COLORS[client?.plan || 'audit']}50`,
+                      color: TIER_COLORS[client?.plan || 'audit'],
+                      fontSize: '0.78rem',
+                      textDecoration: 'none',
+                      fontWeight: 500,
+                      flexShrink: 0,
+                    }}
+                  >
+                    Rate your audit
+                  </Link>
+                </div>
+              )}
 
               {/* Score trend graph — Growth/Premium only (needs 2+ audits) */}
               {isGrowthOrAbove && history.filter(r => r.status === 'completed' && r.overall_score !== null).length >= 2 && (
@@ -2242,10 +2283,19 @@ export default function DashboardPage() {
           .dash-platform-grid {
             grid-template-columns: repeat(2, 1fr) !important;
           }
+          .dash-nav-status {
+            display: none !important;
+          }
+          .dash-nav-name {
+            max-width: 120px;
+          }
         }
         @media (max-width: 480px) {
           .dash-platform-grid {
             grid-template-columns: 1fr !important;
+          }
+          .dash-nav-name {
+            display: none !important;
           }
         }
       `}</style>

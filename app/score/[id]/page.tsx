@@ -13,7 +13,9 @@ interface ScoreData {
   mentionsCount: number;
   totalPrompts: number;
   topCompetitor: { name: string; count: number } | null;
-  platformBreakdown: Array<{ platform: string; tested: number; mentioned: number }>;
+  platformBreakdown: Array<{ platform: string; tested: number; mentioned: number; failed?: boolean }>;
+  platformsAvailable: number;
+  platformsTotal: number;
   hasEmail: boolean;
 }
 
@@ -48,6 +50,8 @@ async function getScoreData(id: string): Promise<ScoreData | null> {
     mentionsCount: data.results_json?.mentionsCount || 0,
     totalPrompts: data.results_json?.totalPrompts || 0,
     platformBreakdown: data.results_json?.platformBreakdown || [],
+    platformsAvailable: data.results_json?.platformsAvailable || data.results_json?.platformBreakdown?.filter((p: { failed?: boolean }) => !p.failed).length || 0,
+    platformsTotal: data.results_json?.platformsTotal || data.results_json?.platformBreakdown?.length || 0,
     hasEmail: !!data.email,
   };
 }
@@ -169,6 +173,21 @@ export default async function SharedScorePage({
           </div>
         )}
 
+        {/* Reliability banner when platforms failed */}
+        {data.platformsAvailable < data.platformsTotal && (
+          <div style={{
+            padding: '0.75rem 1.25rem',
+            background: 'rgba(243,156,18,0.08)',
+            border: '1px solid rgba(243,156,18,0.2)',
+            marginBottom: '1rem',
+            fontSize: '0.8rem',
+            color: '#F39C12',
+            lineHeight: 1.6,
+          }}>
+            Score based on <strong>{data.platformsAvailable} of {data.platformsTotal}</strong> platforms. Some were temporarily unavailable.
+          </div>
+        )}
+
         {/* Platform breakdown */}
         <div style={{ padding: '1.25rem', background: '#111', border: '1px solid #1A1A1A', marginBottom: '1.5rem' }}>
           <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
@@ -176,12 +195,17 @@ export default async function SharedScorePage({
           </div>
           {data.platformBreakdown.map(p => (
             <div key={p.platform} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #1A1A1A' }}>
-              <span style={{ color: '#F5F0E8', fontSize: '0.9rem' }}>{p.platform}</span>
+              <span style={{ color: p.failed ? '#666' : '#F5F0E8', fontSize: '0.9rem' }}>{p.platform}</span>
+              {p.failed ? (
+                <span style={{ color: '#666', fontSize: '0.8rem', fontStyle: 'italic' }}>
+                  Temporarily unavailable
+                </span>
+              ) : (
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <div style={{ width: '80px', height: '4px', background: '#1A1A1A', borderRadius: '2px', overflow: 'hidden' }}>
                   <div style={{
                     height: '100%',
-                    width: `${(p.mentioned / p.tested) * 100}%`,
+                    width: `${p.tested > 0 ? (p.mentioned / p.tested) * 100 : 0}%`,
                     background: p.mentioned > 0 ? '#27AE60' : '#E74C3C',
                     borderRadius: '2px',
                   }} />
@@ -190,6 +214,7 @@ export default async function SharedScorePage({
                   {p.mentioned}/{p.tested}
                 </span>
               </div>
+              )}
             </div>
           ))}
         </div>
