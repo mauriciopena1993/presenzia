@@ -208,7 +208,7 @@ test.describe('Dashboard — Billing Flows', () => {
     // Should list the features they'll lose
     await expect(page.getByText('Monthly re-audits')).toBeVisible();
     await expect(page.getByText('AI audit assistant')).toBeVisible();
-    await expect(page.getByText('Quarterly strategy calls')).toBeVisible();
+    await expect(page.getByText('Competitor deep-dive analysis')).toBeVisible();
   });
 
   test('"Never mind, keep my plan" button closes cancellation flow', async ({ page }) => {

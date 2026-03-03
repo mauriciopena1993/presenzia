@@ -105,7 +105,7 @@ const TIER_COLORS: Record<string, string> = {
 const PLAN_FEATURES: Record<string, string[]> = {
   audit: ['Complete AI visibility audit (4 platforms)', 'Personalised action plan with recommendations', 'Competitor analysis & positioning insights', 'Online dashboard + PDF report'],
   starter: ['Monthly AI visibility audit', 'Delivered by email (report)'], // legacy
-  growth: ['Everything in Audit', 'Weekly re-audits with score tracking & trends', 'AI audit assistant', 'Quarterly 30-minute strategy call', 'Competitor deep-dive with real-time alerts', 'Priority email support'],
+  growth: ['Everything in Audit', 'Weekly re-audits with score tracking & trends', 'AI audit assistant', 'Competitor deep-dive with real-time alerts', 'Priority email support'],
   premium: ['Everything in Growth', 'Daily re-audits (vs weekly in Growth)', 'Dedicated account strategist', 'Monthly 60-minute strategy call', 'Exclusive territory protection', '4 AI-optimised articles written & published monthly'],
 };
 
@@ -114,7 +114,7 @@ const PLAN_ORDER = ['audit', 'growth', 'premium'];
 const PLAN_LOSSES: Record<string, string[]> = {
   audit: ['AI visibility audit report', 'Score tracking', 'Action plan recommendations'],
   starter: ['Monthly AI visibility audits', 'Email reports with action plans', 'Score tracking over time'], // legacy
-  growth: ['Weekly re-audits', 'Online dashboard with weekly updates', 'AI audit assistant', 'Quarterly strategy calls', 'Competitor deep-dive analysis', 'Priority email support'],
+  growth: ['Weekly re-audits', 'Online dashboard with weekly updates', 'AI audit assistant', 'Competitor deep-dive analysis', 'Priority email support'],
   premium: ['Daily dashboard updates', 'Dedicated account manager', 'Monthly 1:1 strategy calls', 'Territory exclusivity', 'Done-for-you content', 'Custom prompt testing', 'Industry benchmarking'],
 };
 
@@ -1911,7 +1911,7 @@ export default function DashboardPage() {
                       Want ongoing visibility tracking?
                     </div>
                     <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6, margin: '0 0 1rem' }}>
-                      Upgrade to Growth for weekly re-audits, a live dashboard with score tracking, an AI audit assistant, and quarterly strategy calls — all for £697/mo.
+                      Upgrade to Growth for weekly re-audits, a live dashboard with score tracking, an AI audit assistant, and competitor deep-dive analysis — all for £697/mo.
                     </p>
                     <button
                       onClick={() => handleChangePlan('growth')}

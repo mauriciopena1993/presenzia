@@ -41,7 +41,7 @@ const PRODUCTS: ProductConfig[] = [
   },
   {
     name: 'Growth Retainer',
-    description: 'Monthly AI visibility retainer for IFAs: monthly re-audits, live dashboard with weekly updates, quarterly strategy calls, competitor deep-dive, priority support.',
+    description: 'Monthly AI visibility retainer for IFAs: weekly re-audits, live dashboard with weekly updates, AI audit assistant, competitor deep-dive, priority support.',
     envKey: 'STRIPE_PRICE_GROWTH',
     amount: 69700, // £697.00 in pence
     recurring: true,
