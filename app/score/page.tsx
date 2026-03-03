@@ -73,8 +73,9 @@ function getActionItems(
   // Critical: platform-specific gaps
   if (zeroPlats.length > 0) {
     const platNames = zeroPlats.map(p => p.platform).join(' or ');
+    const toolWord = zeroPlats.length === 1 ? 'tool' : 'tools';
     items.push({
-      title: `${name} isn't appearing on ${platNames} — the most used AI search tools`,
+      title: `${name} isn't appearing on ${platNames} — the most used AI search ${toolWord}`,
       priority: 'Critical',
     });
   }
@@ -381,7 +382,7 @@ export default function ScorePage() {
                 How visible is your firm to AI?
               </h1>
               <p style={{ color: '#AAAAAA', fontSize: '0.95rem', lineHeight: 1.7 }}>
-                We test real AI search prompts across ChatGPT and Claude to see if your firm gets recommended. The more you tell us, the more accurate your score.
+                We test real AI search prompts across ChatGPT, Claude, Perplexity, and Google AI to see if your firm gets recommended. The more you tell us, the more accurate your score.
               </p>
             </div>
 
@@ -547,7 +548,7 @@ export default function ScorePage() {
                     }}
                   />
                   <div style={hintStyle}>
-                    Your specialisms, qualifications, years of experience, what sets you apart. The more detail, the more refined our prompts
+                    Your specialisms, qualifications, years of experience, what sets you apart. The more detail, the more refined our prompts.
                   </div>
                 </div>
 
