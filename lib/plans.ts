@@ -221,8 +221,7 @@ export const PLAN_FEATURES: Record<string, string[]> = Object.fromEntries(
 /** Comparison table data for the pricing page — differentiators first */
 export const COMPARISON_ROWS = [
   // Key differentiators
-  { feature: 'Audit frequency',                            audit: 'One-off' as boolean | string, growth: 'Weekly' as boolean | string, premium: 'Daily' as boolean | string },
-  { feature: 'Dashboard updates',                          audit: 'One-off',  growth: 'Weekly',    premium: 'Daily' },
+  { feature: 'Audit & dashboard frequency',                audit: 'One-off' as boolean | string, growth: 'Weekly' as boolean | string, premium: 'Daily' as boolean | string },
   { feature: 'AI audit assistant',                         audit: false,       growth: true,        premium: true },
   { feature: 'Strategy calls',                             audit: false,       growth: false,       premium: 'Monthly 60m' },
   { feature: 'Dedicated account strategist',               audit: false,       growth: false,       premium: true },
