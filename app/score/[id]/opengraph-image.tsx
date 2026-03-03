@@ -43,19 +43,21 @@ export default async function Image({ params }: { params: Promise<{ id: string }
       >
         {/* Top: brand */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ color: '#F5F0E8', fontSize: 28, fontWeight: 600, letterSpacing: '-0.02em' }}>
-            presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
-          </span>
-          <span style={{ color: '#C9A84C', fontSize: 14, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-            AI Visibility Score
-          </span>
+          <div style={{ display: 'flex', fontSize: 28, fontWeight: 600, letterSpacing: '-0.02em' }}>
+            <span style={{ color: '#F5F0E8' }}>presenzia</span>
+            <span style={{ color: '#C9A84C' }}>.ai</span>
+          </div>
+          <div style={{ display: 'flex', color: '#C9A84C', fontSize: 14, letterSpacing: '0.12em' }}>
+            AI VISIBILITY SCORE
+          </div>
         </div>
 
         {/* Middle: firm name + score */}
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 0' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '650px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', maxWidth: 650 }}>
             <div
               style={{
+                display: 'flex',
                 color: '#F5F0E8',
                 fontSize: firmName.length > 30 ? 40 : 50,
                 fontWeight: 700,
@@ -65,11 +67,11 @@ export default async function Image({ params }: { params: Promise<{ id: string }
             >
               {firmName}
             </div>
-            {city && (
-              <div style={{ color: '#888', fontSize: 22 }}>
+            {city ? (
+              <div style={{ display: 'flex', color: '#888', fontSize: 22 }}>
                 {city}
               </div>
-            )}
+            ) : null}
           </div>
 
           {/* Score circle */}
@@ -81,35 +83,34 @@ export default async function Image({ params }: { params: Promise<{ id: string }
               justifyContent: 'center',
               width: 200,
               height: 200,
-              borderRadius: '50%',
+              borderRadius: 100,
               border: `6px solid ${color}`,
             }}
           >
-            <div style={{ fontSize: 80, fontWeight: 700, color, lineHeight: 1 }}>
-              {score}
+            <div style={{ display: 'flex', fontSize: 80, fontWeight: 700, color, lineHeight: 1 }}>
+              {String(score)}
             </div>
-            <div style={{ fontSize: 20, color: '#888' }}>/ 100</div>
+            <div style={{ display: 'flex', fontSize: 20, color: '#888' }}>/ 100</div>
           </div>
         </div>
 
         {/* Bottom */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div
-              style={{
-                background: `${color}22`,
-                border: `2px solid ${color}44`,
-                color,
-                fontSize: 18,
-                fontWeight: 700,
-                padding: '8px 20px',
-                letterSpacing: '0.05em',
-              }}
-            >
-              Grade: {grade}
-            </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div
+            style={{
+              display: 'flex',
+              background: `${color}22`,
+              border: `2px solid ${color}44`,
+              color,
+              fontSize: 18,
+              fontWeight: 700,
+              padding: '8px 20px',
+              letterSpacing: '0.05em',
+            }}
+          >
+            {`Grade: ${grade}`}
           </div>
-          <div style={{ color: '#555', fontSize: 16 }}>
+          <div style={{ display: 'flex', color: '#555', fontSize: 16 }}>
             Get your free score at presenzia.ai/score
           </div>
         </div>
