@@ -8,10 +8,10 @@ vi.mock('@/lib/stripe', () => ({
     checkout: { sessions: { create: (...args: unknown[]) => mockCreate(...args) } },
   },
   PLANS: {
-    audit: { priceId: 'price_test_audit', name: 'Full AI Audit & Action Plan', price: 297 },
-    starter: { priceId: 'price_test_starter', name: 'Starter', price: 99 },
-    growth: { priceId: 'price_test_growth', name: 'Growth Retainer', price: 697 },
-    premium: { priceId: 'price_test_premium', name: 'Premium', price: 1997 },
+    audit: { priceId: 'price_test_audit', name: 'Full AI Audit & Action Plan', price: 297, recurring: false },
+    starter: { priceId: 'price_test_starter', name: 'Starter', price: 99, recurring: true },
+    growth: { priceId: 'price_test_growth', name: 'Growth Retainer', price: 697, recurring: true },
+    premium: { priceId: 'price_test_premium', name: 'Premium', price: 1997, recurring: true },
   },
 }));
 
@@ -45,16 +45,15 @@ describe('POST /api/checkout', () => {
     expect(data.url).toBe('https://checkout.stripe.com/test-session');
   });
 
-  it('creates subscription mode session for audit plan', async () => {
+  it('creates payment mode session for one-off audit plan', async () => {
     const req = createRequest('/api/checkout', { method: 'POST', body: validBody });
     await POST(req);
 
     expect(mockCreate).toHaveBeenCalledTimes(1);
     const params = mockCreate.mock.calls[0][0];
-    expect(params.mode).toBe('subscription');
+    expect(params.mode).toBe('payment');
     expect(params.metadata.plan).toBe('audit');
-    expect(params.subscription_data).toBeDefined();
-    expect(params.subscription_data.metadata.plan).toBe('audit');
+    expect(params.subscription_data).toBeUndefined();
   });
 
   it('creates subscription mode session for growth plan', async () => {
