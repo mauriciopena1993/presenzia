@@ -1,7 +1,7 @@
 /**
  * Vercel Cron: Scheduled Re-audits
  *
- * Runs daily at 06:00 UTC.
+ * Runs daily at 00:00 UTC (midnight).
  * - Premium clients: triggers a new audit every day
  * - Growth clients: triggers a new audit every 7 days
  *
