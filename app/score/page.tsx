@@ -167,15 +167,45 @@ export default function ScorePage() {
   const resultReady = useRef(false);
   const minTimeReached = useRef(false);
 
+  // Track when results were first completed (for "run new score" cooldown)
+  const [completedAt, setCompletedAt] = useState<number>(() => (saved.current?.completedAt as number) || 0);
+  const [showRescore, setShowRescore] = useState(false);
+
+  // Show "run new score" link after 30 minutes
+  useEffect(() => {
+    if (!completedAt || step !== 'results') return;
+    const elapsed = Date.now() - completedAt;
+    const RESCORE_DELAY = 30 * 60 * 1000; // 30 minutes
+    if (elapsed >= RESCORE_DELAY) {
+      setShowRescore(true);
+    } else {
+      const timer = setTimeout(() => setShowRescore(true), RESCORE_DELAY - elapsed);
+      return () => clearTimeout(timer);
+    }
+  }, [completedAt, step]);
+
+  const handleRescore = () => {
+    // Keep form data pre-filled but reset result and go back to form
+    setResult(null);
+    setStep('form');
+    setShowRescore(false);
+    setCompletedAt(0);
+    setLoadingStage(0);
+    setLoadingPercent(0);
+    resultReady.current = false;
+    minTimeReached.current = false;
+    setError('');
+  };
+
   // Persist state to sessionStorage on meaningful changes
   useEffect(() => {
     if (step === 'loading') return; // don't save transient loading state
     saveState({
       step, firmName, coverageType, locations, specialties,
       targetClient, website, firmDescription, additionalContext,
-      email, name, result,
+      email, name, result, completedAt,
     });
-  }, [step, firmName, coverageType, locations, specialties, targetClient, website, firmDescription, additionalContext, email, name, result]);
+  }, [step, firmName, coverageType, locations, specialties, targetClient, website, firmDescription, additionalContext, email, name, result, completedAt]);
 
   const loadingStages = [
     { label: 'Analysing your website & information...', status: 'in_progress' },
@@ -220,6 +250,7 @@ export default function ScorePage() {
       minTimeReached.current = true;
       if (resultReady.current) {
         setLoadingPercent(100);
+        setCompletedAt(Date.now());
         setTimeout(() => setStep('email'), 400);
       }
     }, 40000);
@@ -279,6 +310,7 @@ export default function ScorePage() {
 
       if (minTimeReached.current) {
         setLoadingPercent(100);
+        setCompletedAt(Date.now());
         setTimeout(() => setStep('email'), 400);
       }
     } catch (err) {
@@ -725,6 +757,25 @@ export default function ScorePage() {
             <p style={{ color: '#555', fontSize: '0.8rem', marginTop: '1rem' }}>
               We&apos;ll also email you a copy. No spam, ever.
             </p>
+
+            {showRescore && (
+              <button
+                onClick={handleRescore}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#444',
+                  fontSize: '0.72rem',
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-inter, Inter, sans-serif)',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: '3px',
+                  marginTop: '2rem',
+                }}
+              >
+                Run a new score with different details
+              </button>
+            )}
           </div>
         )}
 
@@ -1149,6 +1200,27 @@ export default function ScorePage() {
                 {result.score < 35 ? 'Send to your marketing team' : 'Share this score'}
               </button>
             </div>
+
+            {/* "Run new score" — appears after 30 min cooldown */}
+            {showRescore && (
+              <div style={{ textAlign: 'center', marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid #1A1A1A' }}>
+                <button
+                  onClick={handleRescore}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#555',
+                    fontSize: '0.75rem',
+                    cursor: 'pointer',
+                    fontFamily: 'var(--font-inter, Inter, sans-serif)',
+                    textDecoration: 'underline',
+                    textUnderlineOffset: '3px',
+                  }}
+                >
+                  Run a new score with different details
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
