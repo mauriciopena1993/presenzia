@@ -160,7 +160,7 @@ export default function Pricing() {
           Don&apos;t wait until your competitors own the conversation
         </h2>
         <p style={{ color: '#AAAAAA', maxWidth: '580px', margin: '0 auto', fontSize: '1rem', lineHeight: 1.7 }}>
-          AI search is growing exponentially. The firms that act now will dominate tomorrow&apos;s client discovery. A single new high-net-worth client is worth £10,000–350,000+ in lifetime fees — every tier pays for itself.
+          AI search is growing exponentially. The firms that act now will dominate tomorrow&apos;s client discovery. A single new high-net-worth client is worth £10,000–350,000+ in lifetime fees, so every tier pays for itself.
         </p>
       </div>
 

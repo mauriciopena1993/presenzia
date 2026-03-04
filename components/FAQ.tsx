@@ -3,7 +3,7 @@ import FAQAccordion from './FAQAccordion';
 const faqs = [
   {
     q: 'What is AI search visibility, and why does it matter for IFAs?',
-    a: 'AI search is replacing Google as the way people find services — and it\u2019s happening faster than anyone expected. Over 15 million UK adults already use AI assistants regularly, and that number is growing exponentially across all age groups. When a prospective client asks ChatGPT or Claude to recommend a financial advisor, they trust the answer and act on it. Firms that appear in these responses get the enquiry. Firms that don\u2019t are invisible to an entire generation of high-net-worth clients. This isn\u2019t a future trend — it\u2019s happening now.',
+    a: 'AI search is replacing Google as the way people find services, and it\u2019s happening faster than anyone expected. Over 15 million UK adults already use AI assistants regularly, and that number is growing exponentially across all age groups. When a prospective client asks ChatGPT or Claude to recommend a financial advisor, they trust the answer and act on it. Firms that appear in these responses get the enquiry. Firms that don\u2019t are invisible to an entire generation of high-net-worth clients. This isn\u2019t a future trend. It\u2019s happening now.',
   },
   {
     q: 'How does presenzia.ai test my visibility?',
@@ -19,7 +19,7 @@ const faqs = [
   },
   {
     q: 'How quickly will I see results?',
-    a: 'Some quick wins, like updating your website\u2019s structured data and optimising your content for AI readability, can show results within 2\u20134 weeks. More substantial improvements, like building citation authority and publishing thought leadership content, typically take 2\u20133 months to fully register across AI platforms. Your re-audits track every change \u2014 weekly on Growth, daily on Premium.',
+    a: 'Some quick wins, like updating your website\u2019s structured data and optimising your content for AI readability, can show results within 2\u20134 weeks. More substantial improvements, like building citation authority and publishing thought leadership content, typically take 2\u20133 months to fully register across AI platforms. Your re-audits track every change: weekly on Growth, daily on Premium.',
   },
   {
     q: 'Is my data secure?',

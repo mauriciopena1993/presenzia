@@ -61,11 +61,11 @@ export function freeScoreNurture1(businessName: string, score: number, email: st
     <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">Your competitors are gaining ground</h1>
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Hi there,</p>
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Yesterday you checked ${businessName}'s AI visibility and scored <strong style="color:#111;">${score}/100</strong>.</p>
-    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Here's what that means: when a potential client asks ChatGPT, Claude, or Perplexity to recommend a financial adviser in your area, ${score >= 50 ? 'you appear sometimes — but your competitors appear more.' : 'your competitors are being recommended instead of you.'}</p>
-    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Our full audit tests <strong>120 wealth-specific prompts</strong> across 4 AI platforms — and gives you a step-by-step action plan to improve your ranking.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Here's what that means: when a potential client asks ChatGPT, Claude, or Perplexity to recommend a financial adviser in your area, ${score >= 50 ? 'you appear sometimes, but your competitors appear more often.' : 'your competitors are being recommended instead of you.'}</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Our full audit tests <strong>120 wealth-specific prompts</strong> across 4 AI platforms, and gives you a step-by-step action plan to improve your ranking.</p>
     ${ctaButton(`Get your full AI audit for ${PLANS.audit.priceDisplay} →`, `${APP_URL}/score?plan=audit`)}
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Results delivered in 15 minutes via your online dashboard and PDF.</p>
-  `.replace('{{email}}', email), { preheader: `Your AI visibility score was ${score}/100 — here's what to do about it.` });
+  `.replace('{{email}}', email), { preheader: `Your AI visibility score was ${score}/100. Here's what to do about it.` });
 
   return { subject, html, text: `${businessName} scored ${score}/100 on the free AI visibility check. Your competitors are appearing more often. Get the full audit at ${APP_URL}/score?plan=audit` };
 }
@@ -76,12 +76,12 @@ export function freeScoreNurture2(businessName: string, score: number, email: st
     <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">3 reasons AI isn't recommending you</h1>
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">A few days ago you checked ${businessName}'s AI visibility. The most common reasons wealth managers score below 70:</p>
     <ol style="font-size:14px;color:#555555;margin:0 0 16px;padding-left:20px;line-height:1.8;">
-      <li><strong>No structured online presence</strong> — AI models need clear, crawlable content to reference you.</li>
-      <li><strong>Competitors have more mentions</strong> — they appear in directories, articles, and reviews that AI models train on.</li>
-      <li><strong>Missing from niche queries</strong> — you may appear for broad terms but not the specific questions clients actually ask.</li>
+      <li><strong>No structured online presence.</strong> AI models need clear, crawlable content to reference you.</li>
+      <li><strong>Competitors have more mentions.</strong> They appear in directories, articles, and reviews that AI models train on.</li>
+      <li><strong>Missing from niche queries.</strong> You may appear for broad terms but not the specific questions clients actually ask.</li>
     </ol>
-    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Our full audit identifies exactly which of these apply to you — across 120 prompts on ChatGPT, Claude, Perplexity, and Google AI. You get a scored report with a personalised action plan.</p>
-    ${ctaButton(`See what's holding you back — ${PLANS.audit.priceDisplay} →`, `${APP_URL}/score?plan=audit`)}
+    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Our full audit identifies exactly which of these apply to you, across 120 prompts on ChatGPT, Claude, Perplexity, and Google AI. You get a scored report with a personalised action plan.</p>
+    ${ctaButton(`See what's holding you back for ${PLANS.audit.priceDisplay} →`, `${APP_URL}/score?plan=audit`)}
   `.replace('{{email}}', email), { preheader: 'The 3 most common reasons AI assistants recommend your competitors instead.' });
 
   return { subject, html, text: `3 reasons AI isn't recommending ${businessName}. Get the full audit at ${APP_URL}/score?plan=audit` };
@@ -94,7 +94,7 @@ export function freeScoreNurture3(businessName: string, email: string) {
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">This is our last email about your AI visibility check for ${businessName}.</p>
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">AI is changing how clients find financial advisers. The firms that act now will dominate these new referral channels. Those that wait will wonder where their leads went.</p>
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">The full audit takes 15 minutes to deliver and comes with a step-by-step plan you can action immediately.</p>
-    ${ctaButton(`Get your audit now — ${PLANS.audit.priceDisplay} →`, `${APP_URL}/score?plan=audit`)}
+    ${ctaButton(`Get your audit now for ${PLANS.audit.priceDisplay} →`, `${APP_URL}/score?plan=audit`)}
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Questions? Just reply to this email.</p>
   `.replace('{{email}}', email), { preheader: 'Last reminder about your AI visibility assessment.' });
 
@@ -127,7 +127,7 @@ export function happyReviewRequest(businessName: string, email: string) {
   const html = emailWrapper(`
     <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">Thank you for the great rating!</h1>
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">We're thrilled you found the audit valuable for ${businessName}. Ratings like yours keep us going.</p>
-    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Would you mind sharing a quick review on Trustpilot? It helps other wealth managers discover presenzia.ai — and takes less than 2 minutes.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Would you mind sharing a quick review on Trustpilot? It helps other wealth managers discover presenzia.ai, and it takes less than 2 minutes.</p>
     ${ctaButton('Leave a Trustpilot review →', 'https://uk.trustpilot.com/evaluate/presenzia.ai')}
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Every review makes a real difference. Thank you!</p>
   `.replace('{{email}}', email), { preheader: 'Your review helps other advisers find us.' });
@@ -140,7 +140,7 @@ export function happyReferralRequest(businessName: string, email: string) {
   const html = emailWrapper(`
     <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">Refer a colleague</h1>
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">You clearly understand the importance of AI visibility for ${businessName}. Do you know another wealth manager or IFA who could benefit from an AI audit?</p>
-    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Simply forward this email to a colleague, or share our free score checker. They'll get a quick AI visibility assessment at no cost — and if they find it useful, they can go deeper with the full audit.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Simply forward this email to a colleague, or share our free score checker. They'll get a quick AI visibility assessment at no cost, and if they find it useful, they can go deeper with the full audit.</p>
     ${ctaButton('Share the free AI score checker →', `${APP_URL}/score`)}
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Word of mouth from trusted professionals like you is the best way to grow. Thank you for spreading the word.</p>
   `.replace('{{email}}', email), { preheader: 'Know another adviser who should check their AI visibility?' });
@@ -152,7 +152,7 @@ export function happySocialFollow(businessName: string, email: string) {
   const subject = `Stay in the loop: AI visibility tips for wealth managers`;
   const html = emailWrapper(`
     <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">Follow us for AI visibility tips</h1>
-    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">We regularly share insights on how AI is reshaping client acquisition for wealth managers — and practical tips you can act on immediately.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">We regularly share insights on how AI is reshaping client acquisition for wealth managers, along with practical tips you can act on immediately.</p>
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Follow us to stay ahead:</p>
     <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
       <tr>
@@ -174,15 +174,15 @@ export function dissatisfiedOutreach(businessName: string, rating: number, email
   const prefsUrl = `${APP_URL}/email-preferences?email=${encodeURIComponent(email)}`;
   const subject = `About your recent experience with presenzia.ai`;
   const html = emailWrapper(`
-    <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">We hear you — and we appreciate your honesty</h1>
-    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Thank you for taking the time to rate your audit for ${businessName}. Your feedback is important to us — it helps us understand where we fell short and how we can improve.</p>
-    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">We are actively reviewing your feedback and working on making the experience better. If there is anything specific you would like us to address, or if you have any further thoughts, please reply to this email — we read every response and will get back to you promptly.</p>
+    <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">We hear you, and we appreciate your honesty</h1>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Thank you for taking the time to rate your audit for ${businessName}. Your feedback is important to us. It helps us understand where we fell short and how we can improve.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">We are actively reviewing your feedback and working on making the experience better. If there is anything specific you would like us to address, or if you have any further thoughts, please reply to this email. We read every response and will get back to you promptly.</p>
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">We also want to let you know that <strong>we have unsubscribed you from all marketing emails</strong>. We understand that our product may not be the right fit for everyone, and the last thing we want is to clutter your inbox.</p>
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">If you ever change your mind and would like to hear from us again, you can update your preferences at any time:</p>
     ${ctaButton('Manage email preferences →', prefsUrl)}
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Thank you again for your candid feedback. It genuinely helps us improve.</p>
-    <p style="font-size:13px;color:#888888;margin:8px 0 0;line-height:1.6;">— The presenzia.ai team</p>
-  `.replace('{{email}}', email), { preheader: 'Thank you for your feedback — we are working on it.' });
+    <p style="font-size:13px;color:#888888;margin:8px 0 0;line-height:1.6;">The presenzia.ai team</p>
+  `.replace('{{email}}', email), { preheader: 'Thank you for your feedback. We are working on it.' });
 
   return { subject, html, text: `Thank you for your feedback on the audit for ${businessName}. We are reviewing it and have unsubscribed you from marketing emails. Manage your preferences: ${prefsUrl}` };
 }
@@ -195,7 +195,7 @@ export function winBack1(businessName: string, email: string) {
   const subject = `We miss you, ${businessName}`;
   const html = emailWrapper(`
     <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">Your AI visibility has been changing</h1>
-    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">It's been a week since you cancelled your presenzia.ai plan for ${businessName}. We respect your decision — but we wanted to let you know that AI recommendations for financial advisers are still changing rapidly.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">It's been a week since you cancelled your presenzia.ai plan for ${businessName}. We respect your decision, but we wanted to let you know that AI recommendations for financial advisers are still changing rapidly.</p>
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Without regular monitoring, your competitors may be overtaking your position. A quick check could reveal opportunities you're missing.</p>
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">If you'd like to see where you stand, you can always run a free score check or resubscribe from your dashboard.</p>
     ${ctaButton('Check your score for free →', `${APP_URL}/score`)}
@@ -205,12 +205,12 @@ export function winBack1(businessName: string, email: string) {
 }
 
 export function winBack2(businessName: string, email: string) {
-  const subject = `A lot has changed in AI — ${businessName}`;
+  const subject = `A lot has changed in AI, ${businessName}`;
   const html = emailWrapper(`
     <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">AI visibility is evolving fast</h1>
-    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">It's been a month since you stopped monitoring ${businessName}'s AI visibility. A lot can change in 30 days — new AI models, updated training data, and shifting competitor landscapes.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">It's been a month since you stopped monitoring ${businessName}'s AI visibility. A lot can change in 30 days: new AI models, updated training data, and shifting competitor landscapes.</p>
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Firms that track their AI presence regularly are consistently outperforming those that don't. The gap widens every month.</p>
-    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">We'd love to have you back. Your dashboard and historical data are still available — simply resubscribe and pick up where you left off.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">We'd love to have you back. Your dashboard and historical data are still available. Simply resubscribe and pick up where you left off.</p>
     ${ctaButton('View plans and resubscribe →', `${APP_URL}/pricing`)}
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Or run a free quick check first: <a href="${APP_URL}/score" style="color:#C9A84C;text-decoration:none;">presenzia.ai/score</a></p>
   `.replace('{{email}}', email), { preheader: 'AI recommendations have shifted in the past month.' });

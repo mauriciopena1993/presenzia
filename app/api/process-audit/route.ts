@@ -238,7 +238,7 @@ async function sendReportEmail(
         const trendWord = delta > 0 ? 'improved' : delta < 0 ? 'declined' : 'unchanged';
         return `<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;"><tr><td style="padding:14px 16px;background:#FAFAF8;border:1px solid #E8E4DA;text-align:center;">
           <span style="font-size:13px;color:${trendColor};font-weight:700;">${arrow} ${Math.abs(delta)} points ${trendWord}</span>
-          <span style="font-size:12px;color:#888888;"> — from ${previousScore}/100 to ${score}/100 since your last audit</span>
+          <span style="font-size:12px;color:#888888;">, from ${previousScore}/100 to ${score}/100 since your last audit</span>
         </td></tr></table>`;
       })()
     : '';
@@ -248,7 +248,7 @@ async function sendReportEmail(
       from: 'presenzia.ai <reports@presenzia.ai>',
       replyTo: 'hello@presenzia.ai',
       to: email,
-      subject: `Your AI Visibility Audit: ${score}/100 (${scoreBand}) — ${businessName}`,
+      subject: `Your AI Visibility Audit: ${score}/100 (${scoreBand}), ${businessName}`,
       text: `Your AI Visibility Audit for ${businessName} is ready.\n\nAI Visibility Score: ${score}/100 — Grade ${grade} (${scoreBand})${previousScore != null ? `\nChange: ${score > previousScore ? '+' : ''}${score - previousScore} points (from ${previousScore}/100)` : ''}\n\n${summary ?? ''}\n\n${topComp ? `Top competitor detected: ${topComp}\n\n` : ''}Your full audit is attached. It includes your platform-by-platform breakdown, competitor analysis, and a personalised action plan.\n\nLog in to your dashboard at https://presenzia.ai/dashboard to view your results online.\n\nQuestions? Reply to this email and we'll get back to you within a few hours.\n\npresenzia.ai | Ketzal LTD (Co. No. 14570156)\nAudit ID: ${jobId}`,
       html: `<!DOCTYPE html>
 <html lang="en">

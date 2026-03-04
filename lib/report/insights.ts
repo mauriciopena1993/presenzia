@@ -223,7 +223,7 @@ function buildActions(
           text: `Go to business.google.com and claim or verify your listing for "${config.businessName}".`,
           substeps: [
             'Sign in with your firm Google account (or create one)',
-            'Search for your firm name — if it appears, click "Claim this business"',
+            'If your firm appears, click "Claim this business"',
             'If not listed, click "Add your firm" and follow the verification steps',
             'Google will send a verification postcard or offer phone/email verification',
           ],
@@ -233,11 +233,11 @@ function buildActions(
           substeps: [
             'Cover: what you do, who you serve, your specialisms, and how long you have been operating',
             `Use natural phrasing like "We are a ${bt} based in ${config.location}, specialising in..."`,
-            'Avoid keyword stuffing — write for humans, AI will pick it up naturally',
+            'Avoid keyword stuffing. Write for humans, and AI will pick it up naturally',
           ],
         },
         `Upload at least 10 high-quality photos: exterior signage, interior, your team at work, and examples of your products or services. AI platforms reference image metadata.`,
-        `Select every relevant business category — both primary and secondary categories matter. Your primary should be "${bt}" or the closest match available.`,
+        `Select every relevant business category (both primary and secondary categories matter). Your primary should be "${bt}" or the closest match available.`,
         `Ensure your opening hours are set for all 7 days, including any special holiday hours.`,
         `Respond to every existing review (positive and negative) within 48 hours. AI systems note active, responsive businesses.`,
       ],
@@ -260,7 +260,7 @@ function buildActions(
       {
         text: 'Claim or verify these essential free directory listings:',
         substeps: [
-          'Google Business Profile -business.google.com (most important — do this first)',
+          'Google Business Profile -business.google.com (most important, do this first)',
           'Yell.com -yell.com/free-listing (free, high UK authority)',
           'FreeIndex -freeindex.co.uk (free, feeds multiple AI sources)',
           'Thomson Local -thomsonlocal.com (free, long-standing UK directory)',
@@ -275,7 +275,7 @@ function buildActions(
         substeps: [
           'TripAdvisor -tripadvisor.com/Owners (free owner listing, high AI authority for food/hospitality)',
           'Yelp UK -biz.yelp.co.uk/signup (free listing, frequently cited by ChatGPT)',
-          'OpenTable -restaurant.opentable.co.uk (if you take reservations — boosts discoverability)',
+          'OpenTable -restaurant.opentable.co.uk (if you take reservations; boosts discoverability)',
         ],
       });
     }
@@ -297,8 +297,8 @@ function buildActions(
       directorySteps.push({
         text: 'Claim these critical financial advisory directories:',
         substeps: [
-          'VouchedFor -vouchedfor.co.uk (top trust signal for UK IFAs — heavily cited by AI)',
-          'Unbiased -unbiased.co.uk (leading financial advisor directory — frequently referenced by ChatGPT)',
+          'VouchedFor -vouchedfor.co.uk (top trust signal for UK IFAs, heavily cited by AI)',
+          'Unbiased -unbiased.co.uk (leading financial advisor directory, frequently referenced by ChatGPT)',
           'FTAdviser -ftadviser.com (trade publication presence signals authority)',
           'FCA Register -register.fca.org.uk (ensure your listing is complete and current)',
           'PFS Directory -thepfs.org (Personal Finance Society membership listing)',
@@ -311,8 +311,8 @@ function buildActions(
       directorySteps.push({
         text: 'Claim these professional services directories:',
         substeps: [
-          'Clutch -clutch.co (B2B reviews — cited by AI for professional services)',
-          'G2 -g2.com (if you offer software/SaaS — major AI citation source)',
+          'Clutch -clutch.co (B2B reviews, cited by AI for professional services)',
+          'G2 -g2.com (if you offer software/SaaS, a major AI citation source)',
         ],
       });
     }
@@ -329,13 +329,13 @@ function buildActions(
     }
 
     directorySteps.push(
-      'Claim your free Trustpilot firm account at business.trustpilot.com — Trustpilot is one of the highest-authority review sources for AI platforms.',
+      'Claim your free Trustpilot firm account at business.trustpilot.com. Trustpilot is one of the highest-authority review sources for AI platforms.',
       {
         text: 'Ensure your NAP (Name, Address, Phone) is identical across every single listing.',
         substeps: [
           'Use the exact same firm name spelling, including "Ltd" or "Limited"',
           'Use the same phone number format everywhere (e.g. 0161 xxx xxxx, not +44 161)',
-          'Use the same address format — AI cross-references these to verify your firm',
+          'Use the same address format everywhere. AI cross-references these to verify your firm',
         ],
       },
     );
@@ -374,14 +374,14 @@ function buildActions(
           ],
         },
         {
-          text: `Match their directory presence — create profiles on every platform where they appear and you don't.`,
+          text: `Match their directory presence. Create profiles on every platform where they appear and you don't.`,
           substeps: [
             'Focus first on the platforms cited most often by AI: Google, Yelp, TripAdvisor, Trustpilot',
             'Use the exact same NAP format across all new listings for consistency',
           ],
         },
         `Aim to match or exceed their Google review count. If ${topComp.name} has 50+ reviews and you have fewer than 20, this is likely a primary reason for the gap.`,
-        `Check if ${topComp.name} has been featured in local press or publications — if so, pitch your own story to those same outlets (see "Get Featured in Local Publications" below).`,
+        `Check if ${topComp.name} has been featured in local press or publications. If so, pitch your own story to those same outlets (see "Get Featured in Local Publications" below).`,
         `Your next Presenzia audit will show whether the gap is closing. Track your progress over time.`,
       ],
     });
@@ -440,12 +440,12 @@ function buildActions(
       {
         text: `Add a FAQ page answering the exact questions clients ask AI.`,
         substeps: [
-          `"What is the best ${bt} in ${config.location}?" — answer with what makes you stand out`,
-          `"How much does a ${bt} cost in ${config.location}?" — provide price ranges or starting prices`,
+          `"What is the best ${bt} in ${config.location}?" Answer with what makes you stand out`,
+          `"How much does a ${bt} cost in ${config.location}?" Provide price ranges or starting prices`,
         ],
       },
-      `Add Schema.org FinancialService structured data (JSON-LD) to your homepage — include your firm name, FCA number, services offered, and areas covered`,
-      `Ensure your address, phone, and email appear as selectable plain text on every page — not embedded in images.`,
+      `Add Schema.org FinancialService structured data (JSON-LD) to your homepage. Include your firm name, FCA number, services offered, and areas covered`,
+      `Ensure your address, phone, and email appear as selectable plain text on every page, not embedded in images.`,
       `Publish at least 1-2 blog posts per month demonstrating expertise: guides, case studies, and tips related to ${bt}in ${config.location}.`,
     ],
   });
@@ -513,7 +513,7 @@ function getPlatformSpecificSteps(
   if (name === 'Perplexity') {
     return [
       {
-        text: 'Submit your website to Bing Webmaster Tools at bing.com/webmasters — Perplexity primarily uses Bing\'s index.',
+        text: 'Submit your website to Bing Webmaster Tools at bing.com/webmasters. Perplexity primarily uses Bing\'s index.',
         substeps: [
           'Create a free account, add your site URL, and verify ownership',
           'Submit your sitemap.xml for faster indexing',
@@ -523,7 +523,7 @@ function getPlatformSpecificSteps(
       'Ensure your website loads in under 2 seconds. Perplexity favours fast, accessible sites.',
       'Add Schema.org FinancialService structured data markup to your homepage.',
       `Make sure your site has a clear, crawlable page for "${cleanBusinessType(config.businessType)} in ${config.location}" with plain-text contact details.`,
-      'Check your robots.txt file — make sure it does not block PerplexityBot or Bingbot.',
+      'Check your robots.txt file and make sure it does not block PerplexityBot or Bingbot.',
     ];
   }
 
@@ -533,20 +533,20 @@ function getPlatformSpecificSteps(
       {
         text: 'Aim for mentions in high-authority sources that ChatGPT frequently cites:',
         substeps: [
-          'Local press (Manchester Evening News, TimeOut, etc.) — pitch a story about your firm',
+          'Local press (Manchester Evening News, TimeOut, etc.): pitch a story about your firm',
           'Industry publications and trade bodies relevant to your sector',
-          'Wikipedia (if notable enough) — or ensure existing Wikipedia references to your area mention you',
+          'Wikipedia (if notable enough), or ensure existing Wikipedia references to your area mention you',
         ],
       },
       `Build high-authority backlinks from chambers of commerce, local business associations, and industry directories.`,
       `Ensure detailed, factual entries on well-indexed directories: Yell.com, FreeIndex, Thomson Local, Trustpilot.`,
-      `Publish long-form expert content (1,000+ words) on your website — guides, case studies, and thought leadership.`,
+      `Publish long-form expert content (1,000+ words) on your website: guides, case studies, and thought leadership.`,
     ];
   }
 
   if (name === 'Claude') {
     return [
-      'Ensure your firm is present on established, well-known directories — Claude prioritises authoritative web sources.',
+      'Ensure your firm is present on established, well-known directories. Claude prioritises authoritative web sources.',
       'Maintain consistent NAP (Name, Address, Phone) data across every platform and listing.',
       'Build a comprehensive website with clear service descriptions, an About page, and structured data.',
       `Add detailed content covering your services in ${config.location}. Specificity helps Claude identify relevant businesses.`,
@@ -557,7 +557,7 @@ function getPlatformSpecificSteps(
   if (name === 'Google AI') {
     return [
       {
-        text: 'Complete your Google Business Profile — this is the #1 data source for Google AI responses.',
+        text: 'Complete your Google Business Profile. This is the #1 data source for Google AI responses.',
         substeps: [
           'Verify ownership at business.google.com',
           'Fill out every single field: description, categories, services, attributes',
@@ -565,7 +565,7 @@ function getPlatformSpecificSteps(
         ],
       },
       'Add Schema.org structured data to your website: FinancialService, Service, and Review markup.',
-      'Verify your site in Google Search Console (search.google.com/search-console) — fix any indexing errors.',
+      'Verify your site in Google Search Console (search.google.com/search-console) and fix any indexing errors.',
       'Build Google review volume. Both the number of reviews and how recent they are matter for Google AI.',
       `Optimise your site content for queries like "best ${cleanBusinessType(config.businessType)} in ${config.location}".`,
     ];
@@ -605,13 +605,13 @@ function getLocalPublicationSteps(config: AuditConfig): (string | ActionStep)[] 
     steps.push({
       text: `Pitch your story to these high-authority local publications in ${config.location}:`,
       substeps: [
-        ...publicationMap[matchedCity].map(pub => `${pub} — email their editorial/features desk`),
+        ...publicationMap[matchedCity].map(pub => `${pub}: email their editorial/features desk`),
         'Look for a "Contact us" or "Submit a story" page on each site',
       ],
     });
   } else {
     steps.push({
-      text: `Contact local publications and news outlets in ${config.location} — local press coverage is highly trusted by AI.`,
+      text: `Contact local publications and news outlets in ${config.location}. Local press coverage is highly trusted by AI.`,
       substeps: [
         'Search Google for "[your city] news" and "[your city] magazine" to find local outlets',
         'Look for their editorial contact or "Submit a story" page',
@@ -621,10 +621,10 @@ function getLocalPublicationSteps(config: AuditConfig): (string | ActionStep)[] 
 
   steps.push(
     {
-      text: `Pitch a story angle — journalists want a narrative, not an advert.`,
+      text: `Pitch a story angle. Journalists want a narrative, not an advert.`,
       substeps: [
         `Try: "How ${config.businessName} is [serving/helping/transforming] ${config.location}"`,
-        `Or: "The rise of [your niche] in ${config.location} — a local business perspective"`,
+        `Or: "The rise of [your niche] in ${config.location}: a local business perspective"`,
         'Keep your email pitch under 150 words with a clear subject line',
       ],
     },
@@ -662,7 +662,7 @@ export function generateInsights(
       if (prevTitlesLower.some(prev => prev === action.title.toLowerCase() || action.title.toLowerCase().includes(prev) || prev.includes(action.title.toLowerCase()))) {
         action.isRepeated = true;
         // Prepend repeated notice to context
-        action.context = `This was also recommended in your previous audit. It remains a priority — the steps below are still relevant.${action.context ? ' ' + action.context : ''}`;
+        action.context = `This was also recommended in your previous audit. It remains a priority, and the steps below are still relevant.${action.context ? ' ' + action.context : ''}`;
       }
     }
 

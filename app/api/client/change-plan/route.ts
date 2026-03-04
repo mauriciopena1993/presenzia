@@ -34,10 +34,10 @@ export async function sendPlanChangeEmail(
     : '';
 
   const subject = isUpgrade
-    ? `Welcome to ${planLabel} — your upgraded dashboard is ready`
-    : `Plan change confirmed — switching to ${planLabel}`;
+    ? `Welcome to ${planLabel}: your upgraded dashboard is ready`
+    : `Plan change confirmed: switching to ${planLabel}`;
 
-  const headline = isUpgrade ? `Congratulations — you've upgraded!` : `Your plan change is confirmed`;
+  const headline = isUpgrade ? `Congratulations, you've upgraded!` : `Your plan change is confirmed`;
 
   const timingNote = isUpgrade
     ? `Your <strong>${planLabel}</strong> plan is now active for <strong>${businessName}</strong>. Everything is set up and ready to go.`
@@ -69,7 +69,7 @@ export async function sendPlanChangeEmail(
     </td></tr></table>
     ${premiumExtra}
     <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;"><tr><td style="background:#0A0A0A;padding:14px 28px;"><a href="https://presenzia.ai/dashboard" style="color:#C9A84C;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:0.02em;">Go to your dashboard</a></td></tr></table>
-    <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Questions? Simply reply to this email — we typically respond within a few hours.</p>
+    <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Questions? Simply reply to this email. We typically respond within a few hours.</p>
   </td></tr>
   <tr><td style="padding:16px 32px;background:#F9F9F9;border-top:1px solid #E0E0E0;"><p style="font-size:12px;color:#999999;margin:0;">presenzia.ai · <a href="mailto:hello@presenzia.ai" style="color:#C9A84C;text-decoration:none;">hello@presenzia.ai</a></p></td></tr>
 </table></td></tr></table></body></html>`,
@@ -208,7 +208,7 @@ export async function POST(req: NextRequest) {
     // Reject downgrading to a non-recurring plan (e.g. audit) — can't schedule a subscription to a one-off price
     if (!isUpgrade && !plan.recurring) {
       return NextResponse.json({
-        error: `Cannot switch to ${PLAN_LABELS[targetPlan] || targetPlan} — it is a one-off product, not a subscription. Please cancel your subscription and purchase it separately from the pricing page.`,
+        error: `Cannot switch to ${PLAN_LABELS[targetPlan] || targetPlan}. It is a one-off product, not a subscription. Please cancel your subscription and purchase it separately from the pricing page.`,
       }, { status: 400 });
     }
 

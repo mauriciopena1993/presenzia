@@ -486,9 +486,9 @@ function PlatformsTab({ job }: { job: InteractiveReportJob }) {
           <div style={{ fontSize: '0.78rem', fontWeight: 600, color: '#F5F0E8', marginBottom: 4 }}>What this means</div>
           <div style={{ fontSize: '0.82rem', color: '#AAAAAA', lineHeight: 1.65 }}>
             {platformsFound === 0
-              ? `Your firm was not found on any of the ${platforms.length} AI platforms tested. When prospective clients ask AI assistants for recommendations in your category, your competitors are being suggested instead. This is a significant growth opportunity — firms that optimise their AI visibility early gain a compounding advantage.`
+              ? `Your firm was not found on any of the ${platforms.length} AI platforms tested. When prospective clients ask AI assistants for recommendations in your category, your competitors are being suggested instead. This is a significant growth opportunity. Firms that optimise their AI visibility early gain a compounding advantage.`
               : platformsFound === platforms.length
-                ? `Excellent — you were found on all ${platforms.length} AI platforms. Your firm is well-positioned for AI-driven discovery.`
+                ? `Excellent: you were found on all ${platforms.length} AI platforms. Your firm is well-positioned for AI-driven discovery.`
                 : `Found on ${platformsFound} of ${platforms.length} platforms. ${bestPlat.score > 0 ? `Strongest: ${bestPlat.platform} (${bestPlat.promptsMentioned}/${bestPlat.promptsTested}).` : ''} ${worstPlat.platform !== bestPlat.platform ? `Biggest gap: ${worstPlat.platform} (${worstPlat.promptsMentioned}/${worstPlat.promptsTested}).` : ''} Focus your efforts on the platforms where you're missing to capture more AI-driven referrals.`}
           </div>
         </div>

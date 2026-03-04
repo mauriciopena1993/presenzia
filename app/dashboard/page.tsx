@@ -63,7 +63,7 @@ const PLATFORM_TOOLTIPS: Record<string, string> = {
   'ChatGPT': 'Used by 200M+ people daily. When someone asks ChatGPT to recommend a financial advisor, this score shows how often your firm appears.',
   'Claude': 'Anthropic\'s AI assistant, growing rapidly in professional use. A high score here means Claude is recommending your firm.',
   'Perplexity': 'An AI-powered search engine replacing Google for many users. High visibility here drives direct, high-intent traffic to your firm.',
-  'Google AI': 'Google\'s AI Overview appears at the top of search results. Critical for discovery — this is the highest-impact platform.',
+  'Google AI': 'Google\'s AI Overview appears at the top of search results. Critical for discovery, this is the highest-impact platform.',
 };
 
 const GRADE_COLORS: Record<string, string> = {
@@ -122,7 +122,7 @@ const PLAN_LOSSES: Record<string, string[]> = {
 const BOOKING_URL = 'https://calendly.com/presenzia/strategy-call';
 
 const GRADE_CONTEXT: Record<string, string> = {
-  'A': 'Excellent — AI assistants are actively recommending your firm. Keep monitoring to maintain your position.',
+  'A': 'Excellent. AI assistants are actively recommending your firm. Keep monitoring to maintain your position.',
   'B': 'Good visibility with room to grow. A few targeted improvements could push you into the top tier.',
   'C': 'Moderate presence. You appear on some platforms but competitors are being recommended more often.',
   'D': 'Low visibility. Most AI searches in your category are recommending competitors instead of you.',
@@ -270,8 +270,8 @@ function CongratsBanner({ plan, onClose }: { plan: string; onClose: () => void }
           marginBottom: '1.5rem',
         }}>
           {plan === 'growth'
-            ? 'Your online dashboard is now unlocked. Access your full audit report, competitor insights, and AI assistant — all in one place.'
-            : 'You now have access to everything — daily updates, your dedicated account manager, and monthly strategy calls. We\'re excited to work with you.'}
+            ? 'Your online dashboard is now unlocked. Access your full audit report, competitor insights, and AI assistant, all in one place.'
+            : 'You now have access to everything: daily updates, your dedicated account manager, and monthly strategy calls. We\'re excited to work with you.'}
         </p>
 
         <div style={{
@@ -547,7 +547,7 @@ function CancelFlow({
         <>
           <div style={{ fontSize: '0.9rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem' }}>Last step</div>
           <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6, marginBottom: '1rem' }}>
-            Your subscription will remain active until the end of your current billing period. After that, no new audits will be generated — but you can still log in to view your previous reports anytime.
+            Your subscription will remain active until the end of your current billing period. After that, no new audits will be generated, but you can still log in to view your previous reports anytime.
           </p>
           <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
             <button
@@ -627,7 +627,7 @@ function CancelFlow({
             </div>
           ) : (
             <div style={{ padding: '0.75rem', background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.15)', marginBottom: '1rem', fontSize: '0.85rem', color: '#C9A84C' }}>
-              Thank you for your feedback — it genuinely helps us improve.
+              Thank you for your feedback. It genuinely helps us improve.
             </div>
           )}
 
@@ -820,8 +820,8 @@ function PendingChangeBanner({
           </div>
           <div style={{ fontSize: '0.78rem', color: '#999', marginTop: '2px' }}>
             {isCancel
-              ? `Active until ${dateStr} — no further payments will be taken`
-              : `Takes effect on ${dateStr} — you keep your current features until then`}
+              ? `Active until ${dateStr}. No further payments will be taken.`
+              : `Takes effect on ${dateStr}. You keep your current features until then.`}
           </div>
         </div>
       </div>
@@ -1663,7 +1663,7 @@ export default function DashboardPage() {
         {pendingJob && (
           <div style={{ padding: '0.875rem 1.25rem', background: '#0d0d00', border: '1px solid #2a2000', color: '#C9A84C', fontSize: '0.875rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div style={{ width: '8px', height: '8px', background: '#C9A84C', borderRadius: '50%', flexShrink: 0 }} />
-            Your AI visibility audit is running — results will appear here within 15 minutes.
+            Your AI visibility audit is running. Results will appear here within 15 minutes.
           </div>
         )}
 
@@ -1821,7 +1821,7 @@ export default function DashboardPage() {
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      {actionLoading ? 'Processing...' : 'Buy another audit — £99'}
+                      {actionLoading ? 'Processing...' : 'Buy another audit: £99'}
                     </button>
                     <button
                       onClick={() => handleChangePlan('growth')}
@@ -1838,7 +1838,7 @@ export default function DashboardPage() {
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      Upgrade to Growth — £249/mo →
+                      Upgrade to Growth: £249/mo →
                     </button>
                   </div>
                 </div>
@@ -1992,7 +1992,7 @@ export default function DashboardPage() {
                         fontFamily: 'inherit',
                       }}
                     >
-                      {actionLoading ? 'Processing...' : 'Buy another audit — £99 →'}
+                      {actionLoading ? 'Processing...' : 'Buy another audit: £99 →'}
                     </button>
                   </div>
 
@@ -2006,7 +2006,7 @@ export default function DashboardPage() {
                       Want ongoing visibility tracking?
                     </div>
                     <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6, margin: '0 0 1rem' }}>
-                      Upgrade to Growth for weekly re-audits, a live dashboard with score tracking, an AI audit assistant, and competitor deep-dive analysis — all for £249/mo.
+                      Upgrade to Growth for weekly re-audits, a live dashboard with score tracking, an AI audit assistant, and competitor deep-dive analysis, all for £249/mo.
                     </p>
                     <button
                       onClick={() => handleChangePlan('growth')}
@@ -2283,7 +2283,7 @@ export default function DashboardPage() {
                     })}
                   </div>
                   <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.5rem' }}>
-                    Upgrades are instant — you only pay the difference. Downgrades take effect at the end of your billing cycle.
+                    Upgrades are instant. You only pay the difference. Downgrades take effect at the end of your billing cycle.
                   </p>
                 </>
               )}

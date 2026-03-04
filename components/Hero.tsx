@@ -63,7 +63,7 @@ export default function Hero() {
         lineHeight: 1.75,
         fontWeight: 300,
       }}>
-        AI search is replacing Google — and it&apos;s happening fast. Millions already use ChatGPT, Claude, and Perplexity to find financial advisors, and that number is growing exponentially across every age group. If your firm isn&apos;t showing up, your competitors are. Are you prepared?
+        AI search is replacing Google, and it&apos;s happening fast. Millions already use ChatGPT, Claude, and Perplexity to find financial advisors, and that number is growing exponentially across every age group. If your firm isn&apos;t showing up, your competitors are. Are you prepared?
       </p>
 
       {/* CTA Buttons */}

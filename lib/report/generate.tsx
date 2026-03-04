@@ -453,7 +453,7 @@ function AuditReport({ config, score, insights, reportDate, jobId, previousAudit
                     {insights.progress.scoreDelta > 0
                       ? `Your score improved from ${insights.progress.previousScore} to ${insights.progress.currentScore}. ${insights.progress.resolvedActions.length > 0 ? `Actions completed: ${insights.progress.resolvedActions.join(', ')}.` : 'Keep implementing the recommended actions to continue climbing.'}`
                       : insights.progress.scoreDelta === 0
-                      ? `Your score is unchanged at ${insights.progress.currentScore}. AI visibility takes time — continue implementing the actions below and you should see movement.`
+                      ? `Your score is unchanged at ${insights.progress.currentScore}. AI visibility takes time. Continue implementing the actions below and you should see movement.`
                       : `Your score dipped from ${insights.progress.previousScore} to ${insights.progress.currentScore}. This can happen as AI platforms update their data. Focus on the priority actions below.`
                     }
                   </Text>
@@ -714,7 +714,7 @@ function AuditReport({ config, score, insights, reportDate, jobId, previousAudit
 
           <Text style={s.secTitle}>Your Action Plan</Text>
           <Text style={s.secSub}>
-            5 key recommendations ordered by impact. Focus on the priorities first — complete as many as you can before your next audit, and you will see measurable improvement.
+            5 key recommendations ordered by impact. Focus on the priorities first. Complete as many as you can before your next audit, and you will see measurable improvement.
           </Text>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomColor: BORDER, borderBottomWidth: 1, paddingBottom: 4, marginBottom: 8 }}>
@@ -760,14 +760,14 @@ function AuditReport({ config, score, insights, reportDate, jobId, previousAudit
             let lookAheadText: string;
             if (prog) {
               if (prog.scoreDelta > 0) {
-                lookAheadText = `Great progress — you improved ${prog.scoreDelta} points since your last audit. Your next audit will measure whether this momentum continues.`;
+                lookAheadText = `Great progress! You improved ${prog.scoreDelta} points since your last audit. Your next audit will measure whether this momentum continues.`;
               } else if (prog.scoreDelta === 0) {
                 lookAheadText = `Your score held steady since your last audit. Implementing the actions above should help push your score higher next time.`;
               } else {
                 lookAheadText = `Your score dipped ${Math.abs(prog.scoreDelta)} points, which can happen as AI platforms refresh their data. Completing the actions above will help you recover and grow.`;
               }
               if (prog.repeatedActions.length > 0) {
-                lookAheadText += ` Some recommendations from your previous audit are still relevant — prioritise those for the biggest impact.`;
+                lookAheadText += ` Some recommendations from your previous audit are still relevant. Prioritise those for the biggest impact.`;
               }
             } else {
               lookAheadText = `Your next audit will measure the impact of these changes.`;
@@ -799,10 +799,10 @@ function AuditReport({ config, score, insights, reportDate, jobId, previousAudit
           <Text style={s.secTitle}>Important Notes</Text>
           <View style={[s.grayBox, { marginBottom: 12 }]}>
             <Text style={s.bodySmall}>
-              <Text style={{ fontWeight: 600 }}>Results vary by user</Text> — AI responses differ based on search history, location, and context. This audit represents a neutral baseline.{'\n'}
-              <Text style={{ fontWeight: 600 }}>AI data may not be fully current</Text> — AI platforms draw from training data and web sources that may not reflect very recent changes.{'\n'}
-              <Text style={{ fontWeight: 600 }}>No guaranteed outcomes</Text> — these recommendations are expected to improve visibility over time, but specific results cannot be guaranteed.{'\n'}
-              <Text style={{ fontWeight: 600 }}>Point-in-time snapshot</Text> — each subsequent audit tracks your progress so you can measure impact.
+              <Text style={{ fontWeight: 600 }}>Results vary by user:</Text> AI responses differ based on search history, location, and context. This audit represents a neutral baseline.{'\n'}
+              <Text style={{ fontWeight: 600 }}>AI data may not be fully current:</Text> AI platforms draw from training data and web sources that may not reflect very recent changes.{'\n'}
+              <Text style={{ fontWeight: 600 }}>No guaranteed outcomes:</Text> These recommendations are expected to improve visibility over time, but specific results cannot be guaranteed.{'\n'}
+              <Text style={{ fontWeight: 600 }}>Point-in-time snapshot:</Text> Each subsequent audit tracks your progress so you can measure impact.
             </Text>
           </View>
 

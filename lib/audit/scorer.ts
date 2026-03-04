@@ -204,7 +204,7 @@ function generateSummary(
     : '';
 
   if (score < 20) {
-    return `Your firm has very low AI visibility (${score}/100, Grade ${grade}). You are essentially invisible across ${platforms.length} AI platforms — found on ${platformsFound} of them.${compLine} When prospective clients ask AI for recommendations, they are being directed to your competitors.${topThreeLine} Immediate action is needed to establish your digital footprint.`;
+    return `Your firm has very low AI visibility (${score}/100, Grade ${grade}). You are essentially invisible across ${platforms.length} AI platforms, found on ${platformsFound} of them.${compLine} When prospective clients ask AI for recommendations, they are being directed to your competitors.${topThreeLine} Immediate action is needed to establish your digital footprint.`;
   } else if (score < 40) {
     return `Your AI visibility score of ${score}/100 (Grade ${grade}) reveals significant gaps.${spreadLine}${compLine}${topThreeLine} Your firm is missing from the majority of AI-powered searches in your category. Targeted improvements to your online presence could meaningfully shift these results.`;
   } else if (score < 60) {

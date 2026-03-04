@@ -32,7 +32,7 @@ Of 50 firms tested across four AI platforms:
 
 - **Only 3 firms** were consistently recommended by at least two platforms
 - **6 firms** appeared at least once across all tests
-- **41 firms** were completely invisible — not a single AI mention across any platform
+- **41 firms** were completely invisible, with not a single AI mention across any platform
 - The average visibility score was **14 out of 100**
 
 To put that in context: when a high-net-worth individual asks ChatGPT to recommend a financial advisor in their area, 94% of firms will never be mentioned. The same few names appear repeatedly, while the vast majority of qualified, experienced advisors are simply invisible.
@@ -42,7 +42,7 @@ To put that in context: when a high-net-worth individual asks ChatGPT to recomme
 The three firms that consistently appeared in AI recommendations shared clear characteristics:
 
 **1. Strong, specific website content**
-Not just a services page — genuine thought leadership. Articles about pension transfers, inheritance tax planning, and retirement strategies. FAQ pages answering the exact questions prospective clients ask.
+Not just a services page, but genuine thought leadership. Articles about pension transfers, inheritance tax planning, and retirement strategies. FAQ pages answering the exact questions prospective clients ask.
 
 **2. Consistent citations across authoritative platforms**
 Complete profiles on VouchedFor, Unbiased, FTAdviser, and Google Business Profile. The same firm name, address, and services described consistently everywhere.
@@ -51,20 +51,20 @@ Complete profiles on VouchedFor, Unbiased, FTAdviser, and Google Business Profil
 FinancialService schema markup that tells AI systems exactly what services they offer, where they are located, and their regulatory credentials.
 
 **4. Client reviews mentioning specialties**
-Not just "great advisor" — reviews that mention specific services: "helped us with our pension transfer", "brilliant inheritance tax planning advice." This teaches AI to match the firm with specific queries.
+Not just "great advisor", but reviews that mention specific services: "helped us with our pension transfer", "brilliant inheritance tax planning advice." This teaches AI to match the firm with specific queries.
 
 ## What the Invisible 41 Had in Common
 
 The pattern was equally clear for firms that scored zero:
 
-- **Generic website copy** — "We provide comprehensive financial planning solutions" could describe any firm in the country
-- **No VouchedFor or Unbiased presence** — or thin profiles with minimal reviews
-- **No content beyond a services page** — no articles, no guides, no FAQs
-- **Inconsistent or incomplete Google Business Profile** — missing service categories, no reviews, outdated information
+- **Generic website copy:** "We provide comprehensive financial planning solutions" could describe any firm in the country
+- **No VouchedFor or Unbiased presence**, or thin profiles with minimal reviews
+- **No content beyond a services page:** no articles, no guides, no FAQs
+- **Inconsistent or incomplete Google Business Profile:** missing service categories, no reviews, outdated information
 
 ## Why This Matters Now
 
-AI search is not a future trend. Over 15 million UK adults now use AI assistants regularly, and that number is growing rapidly. For high-net-worth individuals — exactly the clients IFA firms want to attract — AI adoption is even higher.
+AI search is not a future trend. Over 15 million UK adults now use AI assistants regularly, and that number is growing rapidly. For high-net-worth individuals (exactly the clients IFA firms want to attract) AI adoption is even higher.
 
 When a prospective client worth tens of thousands in lifetime fees asks AI for a financial advisor recommendation, the firms that appear get the call. The firms that don't get nothing. There is no page two in AI search.
 
@@ -78,7 +78,7 @@ The window won't stay open forever. As awareness grows, competition will increas
 
 Start by understanding where you stand. A free AI visibility score takes 60 seconds and shows you whether AI platforms are currently recommending your firm.
 
-If you score below 30 — and based on our research, most firms will — the full AI Visibility Audit provides a complete breakdown across all four platforms with a specific, prioritised action plan.
+If you score below 30 (and based on our research, most firms will) the full AI Visibility Audit provides a complete breakdown across all four platforms with a specific, prioritised action plan.
 
 The firms that take this seriously in 2026 will own their local market in AI search for years to come.
     `.trim(),
@@ -147,13 +147,13 @@ Each mention is a vote of confidence that AI systems use to calibrate their reco
 
 ## What Doesn't Matter (As Much As You Think)
 
-**Your Google search ranking** — A firm can rank #1 on Google for "financial advisor [city]" and still score zero on AI visibility. The signals are different.
+**Your Google search ranking.** A firm can rank #1 on Google for "financial advisor [city]" and still score zero on AI visibility. The signals are different.
 
-**Your social media following** — LinkedIn posts and Twitter activity are largely invisible to AI training data. They matter for engagement, not for AI visibility.
+**Your social media following.** LinkedIn posts and Twitter activity are largely invisible to AI training data. They matter for engagement, not for AI visibility.
 
-**Paid advertising spend** — Google Ads, VouchedFor sponsorships, and other paid placements do not directly improve AI visibility. AI recommendations are based on organic signals, not advertising.
+**Paid advertising spend.** Google Ads, VouchedFor sponsorships, and other paid placements do not directly improve AI visibility. AI recommendations are based on organic signals, not advertising.
 
-**Your website design** — A beautiful website doesn't help if it contains generic, undifferentiated content. AI reads text, not visual design.
+**Your website design.** A beautiful website doesn't help if it contains generic, undifferentiated content. AI reads text, not visual design.
 
 ## The Compound Effect
 
@@ -192,7 +192,7 @@ The output: a list of blue links, with your website somewhere in the results.
 
 ## How AI Search Works
 
-AI search is fundamentally different. When someone asks ChatGPT "who is the best financial advisor in Guildford?", the AI doesn't search an index. It draws on its training data — a vast synthesis of web content — to form an opinion about which firms to recommend.
+AI search is fundamentally different. When someone asks ChatGPT "who is the best financial advisor in Guildford?", the AI doesn't search an index. It draws on its training data (a vast synthesis of web content) to form an opinion about which firms to recommend.
 
 The AI is not returning search results. It is making a recommendation. It is telling the user "based on everything I know, these are the firms you should consider."
 
@@ -214,7 +214,7 @@ This is a crucial distinction. In traditional search, you compete for visibility
 - Third-party mentions in authoritative sources
 - Structured data that AI can parse
 
-A financial advisory firm can have perfect technical SEO — fast loading, mobile-optimised, keyword-rich — and still be invisible to AI if its content is generic, its directory listings are incomplete, and it has few specific client reviews.
+A financial advisory firm can have perfect technical SEO (fast loading, mobile-optimised, keyword-rich) and still be invisible to AI if its content is generic, its directory listings are incomplete, and it has few specific client reviews.
 
 Conversely, a firm with a modest website but strong VouchedFor reviews, detailed FTAdviser listings, published thought leadership, and consistent directory citations can score highly on AI visibility despite mediocre Google rankings.
 
@@ -247,7 +247,7 @@ The firms that treat AI visibility as a separate, important marketing channel al
 
 ## Know Where You Stand
 
-The first step is measurement. A free AI visibility score shows you how your firm currently appears across AI platforms — and it may surprise you how different the result is from your Google rankings.
+The first step is measurement. A free AI visibility score shows you how your firm currently appears across AI platforms, and it may surprise you how different the result is from your Google rankings.
 
 Understanding the gap is the beginning of closing it.
     `.trim(),
@@ -288,7 +288,7 @@ This approach served firms well in the age of traditional search. But AI models 
 
 **Authority and citations.** AI models weight content that has been referenced, quoted, or cited by other credible sources. Firms that publish original research, contribute to industry publications, or are quoted in the financial press build the kind of authority that AI recognises. Firms that only publish content on their own website, with no external validation, are significantly less likely to appear in AI-generated answers.
 
-**Depth of content.** A 300-word blog post titled "Five Tips for Retirement Planning" adds no value to an AI model that has already consumed thousands of similar articles. What AI models surface is depth — detailed, authoritative content that demonstrates genuine expertise. Think 1,500-word guides on specific tax planning strategies, detailed case studies (anonymised, of course), or data-driven analysis of market trends affecting specific client segments.
+**Depth of content.** A 300-word blog post titled "Five Tips for Retirement Planning" adds no value to an AI model that has already consumed thousands of similar articles. What AI models surface is depth: detailed, authoritative content that demonstrates genuine expertise. Think 1,500-word guides on specific tax planning strategies, detailed case studies (anonymised, of course), or data-driven analysis of market trends affecting specific client segments.
 
 **Structured information.** AI models parse structured data more effectively than unstructured prose. Firms that present their credentials, specialisms, fee structures, and client outcomes in clear, well-organised formats are more likely to be understood and cited by AI systems.
 
@@ -298,7 +298,7 @@ In traditional SEO, catching up to established competitors was always possible. 
 
 Here is why. AI models are trained on snapshots of the internet. The content that exists today shapes the answers these models give for months or even years. Firms that establish a strong AI-visible presence now will be embedded in the training data that powers the next generation of AI responses. Firms that wait will find themselves competing not just against other advisers, but against the entrenched position of those who moved first.
 
-There is also a compounding effect. When an AI model recommends a firm, that recommendation generates traffic, press mentions, and further citations — all of which reinforce the firm's position in future AI responses. The rich get richer.
+There is also a compounding effect. When an AI model recommends a firm, that recommendation generates traffic, press mentions, and further citations, all of which reinforce the firm's position in future AI responses. The rich get richer.
 
 Early data from the US market, where AI adoption in financial services is roughly 12 to 18 months ahead of the UK, supports this. Firms that invested in AI visibility strategies in 2024 are now receiving between 15% and 30% of their new client enquiries through AI-assisted channels. Firms that did not invest are seeing their overall enquiry volumes decline as traditional search traffic erodes.
 
@@ -320,17 +320,17 @@ The firms that appear in these AI-generated answers share common characteristics
 
 The FCA's Consumer Duty, which came into full force in 2024, has pushed firms to demonstrate better client outcomes and clearer communication. This regulatory pressure, somewhat inadvertently, aligns with what AI models reward.
 
-Firms that have invested in clear, jargon-free content that explains their services, fees, and client outcomes in plain English are not only meeting their regulatory obligations — they are also building the kind of content that AI models can parse, understand, and cite. There is a genuine opportunity here for compliance-driven content to serve a dual purpose.
+Firms that have invested in clear, jargon-free content that explains their services, fees, and client outcomes in plain English are not only meeting their regulatory obligations but also building the kind of content that AI models can parse, understand, and cite. There is a genuine opportunity here for compliance-driven content to serve a dual purpose.
 
 Conversely, firms that treat their website as a regulatory tick-box exercise, with dense legal language and minimal substantive content, are failing on both fronts: they are not meeting the spirit of Consumer Duty, and they are invisible to AI.
 
 ## The Cost of Inaction
 
-The financial advice profession has weathered multiple waves of change — RDR, pension freedoms, Consumer Duty. Each time, the firms that adapted earliest gained a lasting advantage. The AI shift is no different in this respect, but it is moving faster than any previous disruption.
+The financial advice profession has weathered multiple waves of change: RDR, pension freedoms, Consumer Duty. Each time, the firms that adapted earliest gained a lasting advantage. The AI shift is no different in this respect, but it is moving faster than any previous disruption.
 
-Consider the trajectory. In 2024, AI-assisted search was a curiosity. By 2025, it was a meaningful channel. In 2026, it is becoming a primary channel for a significant and growing segment of prospective clients. By 2027, firms that are invisible to AI will be relying entirely on referrals and existing client relationships for growth — a viable strategy, but one that places a hard ceiling on scale.
+Consider the trajectory. In 2024, AI-assisted search was a curiosity. By 2025, it was a meaningful channel. In 2026, it is becoming a primary channel for a significant and growing segment of prospective clients. By 2027, firms that are invisible to AI will be relying entirely on referrals and existing client relationships for growth. That is a viable strategy, but one that places a hard ceiling on scale.
 
-The firms that will thrive over the next decade are those that recognise AI visibility as a core part of their client acquisition strategy — not a marketing gimmick, but a fundamental shift in how prospective clients discover, evaluate, and choose their financial adviser.
+The firms that will thrive over the next decade are those that recognise AI visibility as a core part of their client acquisition strategy. Not a marketing gimmick, but a fundamental shift in how prospective clients discover, evaluate, and choose their financial adviser.
 
 ## What You Can Do Today
 
@@ -338,13 +338,13 @@ The first step is understanding where you stand. Before investing in content, re
 
 This is not something you can determine by asking ChatGPT about yourself once. AI visibility depends on multiple factors across multiple platforms, and a single query gives you an incomplete and potentially misleading picture.
 
-If you want a clear, data-driven assessment of how your firm appears across ChatGPT, Perplexity, Claude, and Google AI — and where the specific gaps are — you can check your firm's AI visibility score for free at Presenzia. It takes less than 60 seconds, and the results may challenge your assumptions about how visible you truly are.
+If you want a clear, data-driven assessment of how your firm appears across ChatGPT, Perplexity, Claude, and Google AI, and where the specific gaps are, you can check your firm's AI visibility score for free at Presenzia. It takes less than 60 seconds, and the results may challenge your assumptions about how visible you truly are.
     `.trim(),
   },
   {
     slug: 'geo-vs-seo-why-google-rankings-are-no-longer-enough-for-financial-advisers',
     title: "GEO vs SEO: Why Google Rankings Are No Longer Enough for Financial Advisers",
-    description: "There's less than 30% overlap between Google's top results and AI-generated answers for financial queries. A new discipline called GEO is emerging — and most advisers haven't heard of it.",
+    description: "There's less than 30% overlap between Google's top results and AI-generated answers for financial queries. A new discipline called GEO is emerging, and most advisers haven't heard of it.",
     date: '2026-03-07',
     readTime: '9 min read',
     category: 'Strategy',
@@ -353,19 +353,19 @@ If you want a clear, data-driven assessment of how your firm appears across Chat
     content: `
 For the past 15 years, SEO has been the dominant framework for how financial advice firms think about online visibility. Rank well on Google, and clients will find you. It was simple, measurable, and effective. And for many firms, it still generates results.
 
-But a new discipline is emerging that most financial advisers have never heard of: GEO, or Generative Engine Optimisation. It addresses a fundamentally different challenge — how to ensure your firm appears in the answers generated by AI tools like ChatGPT, Perplexity, Claude, and Google's own AI Overviews.
+But a new discipline is emerging that most financial advisers have never heard of: GEO, or Generative Engine Optimisation. It addresses a fundamentally different challenge: how to ensure your firm appears in the answers generated by AI tools like ChatGPT, Perplexity, Claude, and Google's own AI Overviews.
 
 The distinction matters enormously, because research consistently shows there is less than 30% overlap between the sources that rank well on traditional Google search and the sources that AI models cite when generating answers. A firm that ranks number one on Google for "independent financial adviser London" may score zero across every major AI platform.
 
-Understanding the difference between SEO and GEO — and why both now matter — is essential for any IFA or wealth management firm serious about client acquisition in 2026 and beyond.
+Understanding the difference between SEO and GEO, and why both now matter, is essential for any IFA or wealth management firm serious about client acquisition in 2026 and beyond.
 
 ## What Is Generative Engine Optimisation?
 
-GEO is the practice of optimising your firm's digital presence so that AI-powered answer engines — ChatGPT, Perplexity, Claude, Google AI Overviews, and others — reference, cite, or recommend your firm when users ask relevant questions.
+GEO is the practice of optimising your firm's digital presence so that AI-powered answer engines (ChatGPT, Perplexity, Claude, Google AI Overviews, and others) reference, cite, or recommend your firm when users ask relevant questions.
 
 Where SEO focuses on ranking in a list of blue links, GEO focuses on being selected as a source within an AI-generated narrative. The distinction is critical. In a traditional Google search, users see ten results and choose which to click. In an AI-generated answer, the model has already made that choice for them. It has selected which firms, which articles, and which data points to include in its response. If your firm is not selected, there is no "page two" to scroll to. You simply do not exist.
 
-The term GEO was first coined in academic research from Princeton, Georgia Tech, the Allen Institute for AI, and IIT Delhi in late 2023, and has since gained significant traction among digital marketing professionals. But within financial services — particularly among UK IFAs — awareness remains extremely low.
+The term GEO was first coined in academic research from Princeton, Georgia Tech, the Allen Institute for AI, and IIT Delhi in late 2023, and has since gained significant traction among digital marketing professionals. But within financial services, particularly among UK IFAs, awareness remains extremely low.
 
 ## Why Google Rankings and AI Citations Diverge
 
@@ -373,7 +373,7 @@ To understand why a strong Google ranking does not guarantee AI visibility, you 
 
 **Google's ranking algorithm** weighs hundreds of factors, but at its core, it prioritises backlinks (how many other websites link to you), domain authority (the overall strength of your website), technical SEO (page speed, mobile responsiveness, structured data), and keyword relevance. A firm with a well-optimised website and strong backlink profile can rank well even if its content is relatively generic.
 
-**AI models evaluate content differently.** When ChatGPT or Perplexity generates an answer, it is not ranking pages — it is synthesising information from multiple sources into a single coherent response. The factors that influence which sources get cited include:
+**AI models evaluate content differently.** When ChatGPT or Perplexity generates an answer, it is not ranking pages. It is synthesising information from multiple sources into a single coherent response. The factors that influence which sources get cited include:
 
 - **Specificity and depth.** AI models prefer sources that provide detailed, specific information over generic overviews. A 2,000-word guide on "inheritance tax planning for business owners selling a company" is far more likely to be cited than a 400-word page titled "Our Tax Planning Services."
 
@@ -385,7 +385,7 @@ To understand why a strong Google ranking does not guarantee AI visibility, you 
 
 - **Freshness and relevance.** AI models with web access prioritise recent, up-to-date content. A blog post from 2021 about pension rules that have since changed will be deprioritised in favour of current, accurate information.
 
-This divergence in evaluation criteria explains the less-than-30% overlap. A firm might have excellent backlinks and strong technical SEO — enough to rank well on Google — while simultaneously lacking the depth, specificity, and authority signals that AI models require.
+This divergence in evaluation criteria explains the less-than-30% overlap. A firm might have excellent backlinks and strong technical SEO, enough to rank well on Google, while simultaneously lacking the depth, specificity, and authority signals that AI models require.
 
 ## The Practical Differences for Financial Advisers
 
@@ -393,7 +393,7 @@ Let us make this concrete with an example relevant to most IFAs.
 
 **The SEO approach to pension planning content** might involve creating a page titled "Pension Planning Services," optimising it for keywords like "pension adviser" and "retirement planning UK," building backlinks from directories and local business sites, and ensuring the page loads quickly on mobile devices. This approach can absolutely achieve a strong Google ranking.
 
-**The GEO approach to the same topic** would involve publishing a comprehensive guide on "How the 2025/26 pension annual allowance changes affect high earners," including specific calculations, worked examples, and references to HMRC guidance. It would involve being quoted in an industry publication like FTAdviser or Money Marketing on this topic. It would mean publishing original analysis — perhaps aggregated, anonymised data from your own client base showing how many clients are affected by the tapered annual allowance. And it would mean structuring this information so that AI models can easily extract key facts and attribute them to your firm.
+**The GEO approach to the same topic** would involve publishing a comprehensive guide on "How the 2025/26 pension annual allowance changes affect high earners," including specific calculations, worked examples, and references to HMRC guidance. It would involve being quoted in an industry publication like FTAdviser or Money Marketing on this topic. It would mean publishing original analysis, perhaps aggregated, anonymised data from your own client base showing how many clients are affected by the tapered annual allowance. And it would mean structuring this information so that AI models can easily extract key facts and attribute them to your firm.
 
 The SEO approach gets you clicks from Google. The GEO approach gets you cited by AI. In 2026, you need both.
 
@@ -415,13 +415,13 @@ This does not require a six-figure PR budget. Contributing expert commentary to 
 
 **3. Optimise for entities, not just keywords.**
 
-Traditional SEO thinks in terms of keywords — specific phrases that users type into Google. GEO thinks in terms of entities — the people, organisations, concepts, and relationships that AI models understand.
+Traditional SEO thinks in terms of keywords: specific phrases that users type into Google. GEO thinks in terms of entities: the people, organisations, concepts, and relationships that AI models understand.
 
 For a financial advice firm, this means ensuring that AI models understand your firm as an entity: what it does, who it serves, where it operates, who the key people are, and what makes it distinctive. This requires consistent information across your website, LinkedIn profiles, Companies House listing, FCA register entry, directory listings, and any other online presence. Inconsistencies confuse AI models and reduce your chances of being cited.
 
 **4. Publish original data and research.**
 
-Nothing attracts AI citations like original data. If your firm can publish proprietary insights — anonymised trends from your client base, analysis of local property markets, research on retirement spending patterns among your clients — you create content that AI models cannot find anywhere else.
+Nothing attracts AI citations like original data. If your firm can publish proprietary insights (anonymised trends from your client base, analysis of local property markets, research on retirement spending patterns among your clients) you create content that AI models cannot find anywhere else.
 
 This does not need to be academically rigorous. A simple analysis like "We reviewed 200 retirement plans for clients in the South East and found that 67% had not accounted for the impact of inflation on their target income" is the kind of specific, data-driven insight that AI models are designed to surface.
 
@@ -443,7 +443,7 @@ The bad news is that most financial advice firms are currently doing neither wel
 
 One of the challenges with GEO is measurement. With SEO, you can track rankings, traffic, and conversions using well-established tools. GEO measurement is less mature, but it is developing rapidly.
 
-The most direct approach is to systematically query the major AI platforms with the types of questions your prospective clients are likely to ask, and assess whether your firm appears in the responses. This needs to be done across multiple platforms — ChatGPT, Perplexity, Claude, and Google AI Overviews — because each model may surface different sources for the same query.
+The most direct approach is to systematically query the major AI platforms with the types of questions your prospective clients are likely to ask, and assess whether your firm appears in the responses. This needs to be done across multiple platforms (ChatGPT, Perplexity, Claude, and Google AI Overviews) because each model may surface different sources for the same query.
 
 If you want to understand how your firm currently performs across these AI platforms without manually testing dozens of queries, Presenzia offers a free AI visibility score that analyses your firm's presence across the major generative engines. It is a useful starting point for understanding where you stand and where the gaps are before developing your GEO strategy.
     `.trim(),
@@ -460,7 +460,7 @@ If you want to understand how your firm currently performs across these AI platf
     content: `
 There is a quiet crisis unfolding for businesses that depend on website traffic for client acquisition, and most UK financial advisers are not yet aware of it.
 
-The crisis has a name: zero-click search. It refers to searches where the user gets the information they need directly on the search results page — from featured snippets, knowledge panels, or increasingly, AI-generated overviews — without ever clicking through to a website.
+The crisis has a name: zero-click search. It refers to searches where the user gets the information they need directly on the search results page (from featured snippets, knowledge panels, or increasingly, AI-generated overviews) without ever clicking through to a website.
 
 In 2023, approximately 56% of Google searches ended without a click to any website. By late 2025, that figure had risen to 65%. Current estimates for early 2026 place it closer to 69% for informational queries. For financial services queries specifically, the impact is even more pronounced.
 
@@ -468,9 +468,9 @@ This is not a minor trend. It is a structural shift in how search works, and it 
 
 ## What Are Google AI Overviews?
 
-Google AI Overviews — formerly known as Search Generative Experience or SGE — are AI-generated summaries that appear at the top of Google search results for many queries. Rather than presenting a list of links and letting users choose which to visit, Google now synthesises information from multiple sources into a comprehensive answer displayed directly on the results page.
+Google AI Overviews (formerly known as Search Generative Experience or SGE) are AI-generated summaries that appear at the top of Google search results for many queries. Rather than presenting a list of links and letting users choose which to visit, Google now synthesises information from multiple sources into a comprehensive answer displayed directly on the results page.
 
-For a query like "what is the pension annual allowance for 2025/26," Google no longer simply shows links to HMRC, pension providers, and financial advice firms. Instead, it generates a detailed answer that includes the current allowance figure, how tapering works for high earners, and relevant context — all without the user needing to visit any website.
+For a query like "what is the pension annual allowance for 2025/26," Google no longer simply shows links to HMRC, pension providers, and financial advice firms. Instead, it generates a detailed answer that includes the current allowance figure, how tapering works for high earners, and relevant context, all without the user needing to visit any website.
 
 Research from authoritative SEO sources indicates that AI Overviews now appear on approximately 54% of financial FAQ queries in the UK. These include questions about pension rules, ISA allowances, inheritance tax thresholds, capital gains tax rates, and other topics that financial advice firms have traditionally used as entry points to attract website visitors.
 
@@ -482,17 +482,17 @@ This is not a theoretical concern. Website analytics data from across industries
 
 Consider a typical IFA website's content strategy. The firm publishes articles on topics like "How much can I pay into my pension in 2025/26?" or "What is the inheritance tax nil-rate band?" These articles are designed to rank on Google, attract visitors, demonstrate expertise, and convert a percentage of those visitors into enquiry form submissions or phone calls.
 
-When Google AI Overviews answer these questions directly on the search results page, the user has no reason to click through to the firm's website. The firm's article might still rank on page one — but below an AI Overview that has already satisfied the user's query. The click never happens. The visitor never arrives. The enquiry never materialises.
+When Google AI Overviews answer these questions directly on the search results page, the user has no reason to click through to the firm's website. The firm's article might still rank on page one, but below an AI Overview that has already satisfied the user's query. The click never happens. The visitor never arrives. The enquiry never materialises.
 
 For firms that have invested heavily in SEO-driven content marketing, this represents a significant erosion of their primary digital acquisition channel.
 
 ## From "Getting Found" to "Being Cited"
 
-The zero-click phenomenon forces a fundamental rethinking of what online visibility means for financial advisers. In the traditional model, the goal was to get found — to appear in search results so that users would click through to your website. In the emerging model, the goal is to get cited — to be the source that Google AI Overviews, ChatGPT, Perplexity, and other AI systems reference when generating their answers.
+The zero-click phenomenon forces a fundamental rethinking of what online visibility means for financial advisers. In the traditional model, the goal was to get found: to appear in search results so that users would click through to your website. In the emerging model, the goal is to get cited: to be the source that Google AI Overviews, ChatGPT, Perplexity, and other AI systems reference when generating their answers.
 
 This is a crucial distinction. When Google generates an AI Overview about pension planning, it cites specific sources. Those citations appear as small links within the AI-generated text. While these citations generate fewer clicks than traditional search results, they carry significant weight: users who do click through from an AI citation tend to be more engaged, more qualified, and further along in their decision-making process.
 
-More importantly, being cited by AI systems — whether Google's AI Overviews or standalone AI tools like ChatGPT — functions as a form of endorsement. When an AI system references your firm or your content as a source, it signals authority and credibility in a way that a simple search ranking does not.
+More importantly, being cited by AI systems, whether Google's AI Overviews or standalone AI tools like ChatGPT, functions as a form of endorsement. When an AI system references your firm or your content as a source, it signals authority and credibility in a way that a simple search ranking does not.
 
 The firms that will thrive in a zero-click world are those that shift their strategy from "creating content that ranks" to "creating content that AI systems want to cite."
 
@@ -500,7 +500,7 @@ The firms that will thrive in a zero-click world are those that shift their stra
 
 Not all industries are equally impacted by zero-click search. Financial advice is disproportionately affected for several reasons.
 
-**High proportion of informational queries.** Many people searching for financial topics are seeking information, not immediately looking to hire an adviser. Queries like "how does pension drawdown work" or "what is the capital gains tax rate" are purely informational — and these are precisely the queries that AI Overviews handle most effectively.
+**High proportion of informational queries.** Many people searching for financial topics are seeking information, not immediately looking to hire an adviser. Queries like "how does pension drawdown work" or "what is the capital gains tax rate" are purely informational, and these are precisely the queries that AI Overviews handle most effectively.
 
 **Regulatory complexity creates ideal AI Overview territory.** Financial regulations are factual, specific, and relatively straightforward for AI to summarise accurately. Tax thresholds, allowance limits, and regulatory requirements are exactly the type of content that AI Overviews present well, reducing the need for users to visit specialist websites.
 
@@ -526,13 +526,13 @@ When you publish a piece of analysis, ask yourself: "If an AI system were answer
 
 **3. Build authority beyond your own website.**
 
-AI systems — including Google's AI Overviews — weight third-party sources heavily when deciding what to cite. A firm that is mentioned in the Financial Times, quoted in FTAdviser, or referenced in an industry research report is far more likely to be cited in AI-generated answers than a firm whose expertise exists only on its own website.
+AI systems, including Google's AI Overviews, weight third-party sources heavily when deciding what to cite. A firm that is mentioned in the Financial Times, quoted in FTAdviser, or referenced in an industry research report is far more likely to be cited in AI-generated answers than a firm whose expertise exists only on its own website.
 
 Pursue opportunities to contribute expert commentary to trade publications, participate in industry surveys and research, and build a profile for your firm's key people on platforms that AI models monitor. LinkedIn, in particular, has become a significant source for AI systems seeking expert perspectives.
 
 **4. Focus on conversion, not just traffic.**
 
-If overall website traffic is declining due to zero-click search — and it almost certainly is — the response should not be solely to try to recapture that traffic. It should also be to maximise the value of the traffic you do receive.
+If overall website traffic is declining due to zero-click search (and it almost certainly is) the response should not be solely to try to recapture that traffic. It should also be to maximise the value of the traffic you do receive.
 
 Review your website's conversion paths. Are there clear, compelling calls to action on every page? Is it easy for a visitor to request a consultation? Do you offer value exchanges (like downloadable guides or assessment tools) that capture contact details? A 33% decline in traffic is far less damaging if you simultaneously improve your conversion rate from 1% to 3%.
 
@@ -542,17 +542,17 @@ Zero-click search is a reminder that over-reliance on any single acquisition cha
 
 ## The Urgency of Understanding Your Position
 
-The shift to zero-click search is not coming — it is here. Every month that passes sees AI Overviews appearing on more queries, covering more topics, and providing more comprehensive answers. The window for financial advice firms to adapt their strategies is narrowing.
+The shift to zero-click search is not coming. It is here. Every month that passes sees AI Overviews appearing on more queries, covering more topics, and providing more comprehensive answers. The window for financial advice firms to adapt their strategies is narrowing.
 
 The firms that will navigate this transition successfully are those that understand their current position clearly: how much of their traffic comes from queries that AI Overviews now answer, how visible they are across AI platforms, and where the specific opportunities exist to become a cited source rather than a bypassed search result.
 
-If you are unsure where your firm stands in this new landscape, Presenzia's free AI visibility score can help you understand how your firm appears across ChatGPT, Perplexity, Claude, and Google AI — giving you a clear picture of your current position and the areas where improvement would have the greatest impact on your client acquisition pipeline.
+If you are unsure where your firm stands in this new landscape, Presenzia's free AI visibility score can help you understand how your firm appears across ChatGPT, Perplexity, Claude, and Google AI, giving you a clear picture of your current position and the areas where improvement would have the greatest impact on your client acquisition pipeline.
     `.trim(),
   },
   {
     slug: 'the-great-wealth-transfer-why-next-generation-clients-will-find-advisers-through-ai',
     title: "The Great Wealth Transfer: Why the Next Generation Will Find Their Adviser Through AI, Not Google",
-    description: "£7 trillion will change hands over the next 30 years — and two-thirds of heirs plan to switch wealth managers. The next generation of clients won't be googling. They'll be asking ChatGPT.",
+    description: "£7 trillion will change hands over the next 30 years, and two-thirds of heirs plan to switch wealth managers. The next generation of clients won't be googling. They'll be asking ChatGPT.",
     date: '2026-03-12',
     readTime: '8 min read',
     category: 'Strategy',
@@ -573,11 +573,11 @@ When a 55-year-old inherits their parents' estate, they do not behave like their
 
 They ask an AI.
 
-A 2025 study by Capgemini found that Gen X and Millennial high-net-worth individuals are three times more likely than baby boomers to use AI-powered tools when making financial decisions. Separate research from Accenture showed that 67% of affluent consumers under 50 have used a conversational AI tool — such as ChatGPT, Copilot, or Gemini — to research financial services in the past 12 months.
+A 2025 study by Capgemini found that Gen X and Millennial high-net-worth individuals are three times more likely than baby boomers to use AI-powered tools when making financial decisions. Separate research from Accenture showed that 67% of affluent consumers under 50 have used a conversational AI tool (such as ChatGPT, Copilot, or Gemini) to research financial services in the past 12 months.
 
 This is not a future trend. It is current behaviour. And it is accelerating.
 
-When someone asks ChatGPT "Who are the best independent financial advisers in Surrey for inheritance tax planning?", the AI does not return a list of ten blue links. It provides a curated, authoritative answer — typically naming three to five firms with a brief explanation of why each was recommended.
+When someone asks ChatGPT "Who are the best independent financial advisers in Surrey for inheritance tax planning?", the AI does not return a list of ten blue links. It provides a curated, authoritative answer, typically naming three to five firms with a brief explanation of why each was recommended.
 
 If your firm is not among those recommendations, you are invisible to a growing segment of the wealthiest prospective clients in the country.
 
@@ -587,7 +587,7 @@ The traditional advisory model relies heavily on referral networks. A satisfied 
 
 But it is fundamentally inadequate for the wealth transfer.
 
-Consider the dynamics. When an adult child inherits wealth, they are often geographically distant from their parents' adviser. They may live in a different city or even a different country. Their parents' professional network — the solicitor, the accountant, the golf club contact — is not their network.
+Consider the dynamics. When an adult child inherits wealth, they are often geographically distant from their parents' adviser. They may live in a different city or even a different country. Their parents' professional network (the solicitor, the accountant, the golf club contact) is not their network.
 
 More importantly, the inheriting generation has different expectations around how they discover and evaluate professional services. They are accustomed to researching independently before making contact. They read reviews. They compare options online. And now, they consult AI.
 
@@ -628,11 +628,11 @@ Understanding how inheritors search is only half the equation. Understanding wha
 
 Research from EY's 2025 Global Wealth Management Report identified the top priorities for next-generation wealth clients:
 
-1. **Transparency on fees** — they want to understand exactly what they are paying
-2. **Specialisation** — they prefer advisers who demonstrate expertise in their specific situation
-3. **Digital-first communication** — they expect portals, apps, and responsive digital service
-4. **Values alignment** — ESG considerations and ethical investing matter more to younger inheritors
-5. **Evidence of competence** — they want proof, not promises
+1. **Transparency on fees:** they want to understand exactly what they are paying
+2. **Specialisation:** they prefer advisers who demonstrate expertise in their specific situation
+3. **Digital-first communication:** they expect portals, apps, and responsive digital service
+4. **Values alignment:** ESG considerations and ethical investing matter more to younger inheritors
+5. **Evidence of competence:** they want proof, not promises
 
 When these individuals ask an AI for recommendations, the AI evaluates firms against precisely these criteria. A firm whose website clearly explains its fee structure, whose content demonstrates deep expertise in inheritance planning, and whose reviews reference excellent digital service will be recommended repeatedly.
 
@@ -646,13 +646,13 @@ The wealth transfer is not a theoretical future event. It is happening today, an
 
 **2. Build content around inheritance and intergenerational planning.** The clients you want to attract are dealing with specific, complex situations. Content that addresses inheritance tax planning, trust structures, estate consolidation, and the emotional aspects of managing inherited wealth will signal relevance to both AI systems and prospective clients.
 
-**3. Strengthen your review presence.** AI tools weigh client reviews heavily when making recommendations. If you have no reviews — or only a handful — you are at a significant disadvantage. Establish a systematic process for requesting and publishing client testimonials across Google, VouchedFor, and other relevant platforms.
+**3. Strengthen your review presence.** AI tools weigh client reviews heavily when making recommendations. If you have no reviews, or only a handful, you are at a significant disadvantage. Establish a systematic process for requesting and publishing client testimonials across Google, VouchedFor, and other relevant platforms.
 
-**4. Ensure consistency across every digital touchpoint.** AI systems cross-reference information from multiple sources. If your firm name, services, or contact details are inconsistent between your website, Google Business profile, FCA register entry, LinkedIn, and directory listings, the AI's confidence in recommending you decreases. Consistency builds trust — not just with humans, but with algorithms.
+**4. Ensure consistency across every digital touchpoint.** AI systems cross-reference information from multiple sources. If your firm name, services, or contact details are inconsistent between your website, Google Business profile, FCA register entry, LinkedIn, and directory listings, the AI's confidence in recommending you decreases. Consistency builds trust, not just with humans, but with algorithms.
 
 **5. Develop a clear proposition for next-generation clients.** If your website and content speak exclusively to retirees, you will not be recommended to a 45-year-old who has just inherited £500,000. Consider how your messaging, service offering, and digital experience appeal to younger, digitally native clients without alienating your existing base.
 
-## The Window Is Open — But Not Forever
+## The Window Is Open, But Not Forever
 
 The great wealth transfer will unfold over decades, but the window to establish AI visibility advantage is measured in months, not years. AI systems are forming their understanding of the advisory landscape right now. The firms that are visible, authoritative, and well-reviewed today are building compound advantages that will be extremely difficult to replicate later.
 
@@ -660,7 +660,7 @@ This is not about chasing a trend. It is about recognising a fundamental shift i
 
 The firms that do not will be left wondering where the next generation went.
 
-If you want to understand where your firm stands in this new landscape, check your free AI visibility score at Presenzia. It takes 30 seconds and shows you exactly how AI tools like ChatGPT and Gemini currently perceive your firm — and what you can do about it.
+If you want to understand where your firm stands in this new landscape, check your free AI visibility score at Presenzia. It takes 30 seconds and shows you exactly how AI tools like ChatGPT and Gemini currently perceive your firm, and what you can do about it.
     `.trim(),
   },
   {
@@ -673,13 +673,13 @@ If you want to understand where your firm stands in this new landscape, check yo
     heroImage: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&h=630&fit=crop&q=80',
     heroImageAlt: 'Customer rating and review concept with star ratings on digital screen',
     content: `
-When ChatGPT recommends a financial adviser, it does not flip a coin. It does not pick firms at random from the FCA register. It evaluates evidence — and the single most influential type of evidence it considers is client reviews.
+When ChatGPT recommends a financial adviser, it does not flip a coin. It does not pick firms at random from the FCA register. It evaluates evidence, and the single most influential type of evidence it considers is client reviews.
 
 This creates a striking problem for the UK advisory profession. According to analysis of FCA-registered firms, only around 9.3% of independent financial advisers in the UK have published client reviews on any major platform. Fewer than 5% have more than ten reviews.
 
 In an industry where trust is everything, the overwhelming majority of firms have zero publicly visible proof that their clients trust them at all.
 
-For traditional marketing, this was a missed opportunity. For AI visibility, it is a critical gap — and for the small number of firms willing to act, it represents one of the easiest competitive advantages available in financial services today.
+For traditional marketing, this was a missed opportunity. For AI visibility, it is a critical gap, and for the small number of firms willing to act, it represents one of the easiest competitive advantages available in financial services today.
 
 ## Why AI Tools Prioritise Reviews Above Almost Everything Else
 
@@ -695,7 +695,7 @@ These signals include website content, directory listings, professional credenti
 
 **Third, reviews provide specificity.** A firm's website might say "We offer comprehensive financial planning." A review might say "They restructured our pensions, set up a junior ISA for our daughter, and saved us £12,000 in inheritance tax." AI systems favour specific, detailed information over generic claims.
 
-The result is that firms with a strong body of detailed, genuine client reviews are dramatically more likely to appear in AI recommendations than firms without them — regardless of how polished their website might be.
+The result is that firms with a strong body of detailed, genuine client reviews are dramatically more likely to appear in AI recommendations than firms without them, regardless of how polished their website might be.
 
 ## The 9% Opportunity
 
@@ -705,7 +705,7 @@ Consider the maths. If you practise in a city with 200 registered IFAs, roughly 
 
 That strength translates directly into AI visibility. When a prospective client asks an AI for adviser recommendations in your area, the AI will disproportionately favour firms it can verify through third-party evidence. Your reviews become your proof, and in a landscape where proof is scarce, even a modest review presence creates outsized impact.
 
-This will not last forever. As awareness grows, more firms will begin actively collecting reviews. The competitive advantage available today — being among the first in your area to build a serious review presence — will diminish over time. But the firms that move early will benefit from compound effects that are extremely difficult for latecomers to replicate.
+This will not last forever. As awareness grows, more firms will begin actively collecting reviews. The competitive advantage available today, being among the first in your area to build a serious review presence, will diminish over time. But the firms that move early will benefit from compound effects that are extremely difficult for latecomers to replicate.
 
 ## Which Platforms Matter Most
 
@@ -725,7 +725,7 @@ The ideal strategy is to build primary strength on Google and VouchedFor while m
 
 Here is where most guidance on reviews falls short. Getting a review is valuable. Getting the right kind of review is transformative.
 
-A generic review — "Great service, would recommend" — is better than nothing, but it gives AI systems very little to work with. It contains no specific information about what the firm does, who it serves, or what outcomes it delivers.
+A generic review ("Great service, would recommend") is better than nothing, but it gives AI systems very little to work with. It contains no specific information about what the firm does, who it serves, or what outcomes it delivers.
 
 An AI-optimised review naturally includes the details that help AI systems match your firm to relevant queries. Consider the difference:
 
@@ -734,13 +734,13 @@ An AI-optimised review naturally includes the details that help AI systems match
 
 The second review contains multiple signals that an AI system can use: inheritance, IHT planning, pension consolidation, long-term planning, specialism in inherited wealth. When a prospective client asks an AI about advisers who help with inherited wealth, the firm with the second type of review is far more likely to be recommended.
 
-Crucially, this is not about fabricating reviews or coaching clients to use specific keywords. It is about asking the right questions when requesting feedback — questions that naturally prompt detailed, specific responses.
+Crucially, this is not about fabricating reviews or coaching clients to use specific keywords. It is about asking the right questions when requesting feedback, questions that naturally prompt detailed, specific responses.
 
 ## How to Ask Clients for Reviews That Actually Help
 
 The single biggest barrier to collecting reviews is that most advisers either do not ask, or ask in a way that produces minimal results. Here is a practical framework that consistently generates detailed, useful reviews.
 
-**1. Ask at the right moment.** The best time to request a review is immediately after a significant milestone — completing a financial plan, resolving a complex tax issue, finalising a retirement strategy. The client's positive experience is fresh, and they can speak to specific outcomes.
+**1. Ask at the right moment.** The best time to request a review is immediately after a significant milestone: completing a financial plan, resolving a complex tax issue, finalising a retirement strategy. The client's positive experience is fresh, and they can speak to specific outcomes.
 
 **2. Make it personal, not automated.** A personal email or conversation is dramatically more effective than an automated request. "I would really value your honest feedback on our work together" generates far better responses than a generic survey link.
 
@@ -754,7 +754,7 @@ The single biggest barrier to collecting reviews is that most advisers either do
 
 Reviews do not operate in isolation. They create compound effects that strengthen your overall AI visibility in ways that are greater than the sum of their parts.
 
-**Reviews improve your website's relevance.** When AI systems see consistent themes across your reviews and your website content — for example, both referencing retirement planning expertise — the alignment increases confidence in recommending you for those topics.
+**Reviews improve your website's relevance.** When AI systems see consistent themes across your reviews and your website content (for example, both referencing retirement planning expertise) the alignment increases confidence in recommending you for those topics.
 
 **Reviews strengthen your Google Business Profile.** A well-reviewed Google profile ranks higher in local search, which in turn increases the likelihood that AI systems with web access will discover and reference your firm.
 
@@ -770,7 +770,7 @@ Some advisers hesitate to pursue reviews because of concerns about FCA regulatio
 
 Since the FCA's Consumer Duty came into force, the regulator has explicitly acknowledged that client reviews and testimonials can be used in financial promotions, provided they are genuine, not misleading, and accompanied by appropriate context. Google reviews and VouchedFor testimonials, where the client independently shares their experience on a third-party platform, are generally well within acceptable boundaries.
 
-The key requirements are straightforward: do not fabricate or selectively edit reviews, do not incentivise clients to leave positive reviews, and ensure that any reviews used in your own marketing materials comply with financial promotion rules. Genuine, unsolicited client feedback shared on public platforms is not only permissible — it is arguably aligned with the Consumer Duty's emphasis on transparency and consumer empowerment.
+The key requirements are straightforward: do not fabricate or selectively edit reviews, do not incentivise clients to leave positive reviews, and ensure that any reviews used in your own marketing materials comply with financial promotion rules. Genuine, unsolicited client feedback shared on public platforms is not only permissible but arguably aligned with the Consumer Duty's emphasis on transparency and consumer empowerment.
 
 If you have specific concerns, consult your compliance team or professional body. But do not let vague regulatory anxiety prevent you from building what is rapidly becoming the most important component of your digital presence.
 
@@ -782,13 +782,13 @@ Building a meaningful review presence does not require a massive investment of t
 
 **Days 8 to 30:** Identify 15 to 20 long-standing clients with whom you have strong relationships. Send each a personal email explaining that you are building your online presence and would value their honest feedback. Include direct links and the gentle prompts described above.
 
-**Days 31 to 60:** Follow up with clients who have not yet responded. Begin identifying additional clients to approach. Start responding to every review you receive — a brief, genuine acknowledgement is sufficient.
+**Days 31 to 60:** Follow up with clients who have not yet responded. Begin identifying additional clients to approach. Start responding to every review you receive. A brief, genuine acknowledgement is sufficient.
 
-**Days 61 to 90:** Evaluate your progress. Integrate review requests into your standard client process — for example, requesting feedback after every annual review meeting. Set a target of two to three new reviews per month going forward.
+**Days 61 to 90:** Evaluate your progress. Integrate review requests into your standard client process, for example requesting feedback after every annual review meeting. Set a target of two to three new reviews per month going forward.
 
 Within 90 days, most firms can build a review presence that places them in the top 5% of advisers in their area. That positioning will translate directly into AI visibility, and the compound effects will continue to grow long after the initial effort.
 
-## The Opportunity Is Clear — And Temporary
+## The Opportunity Is Clear, And Temporary
 
 The gap between reviewed and unreviewed firms in UK financial advice is one of the most significant competitive asymmetries in any professional services sector. It will not persist indefinitely. As awareness of AI visibility grows, more firms will begin actively collecting reviews, and the bar for standing out will rise.
 
@@ -796,7 +796,7 @@ Right now, the barrier to entry is remarkably low. A handful of genuine, detaile
 
 The question is not whether reviews matter for AI visibility. The evidence is clear that they do. The question is whether you will act while the competitive advantage is still available.
 
-To see exactly how AI tools currently perceive your firm — including how your review presence affects your recommendations — check your free AI visibility score at Presenzia. It takes 30 seconds and provides a clear picture of where you stand and what to prioritise next.
+To see exactly how AI tools currently perceive your firm, including how your review presence affects your recommendations, check your free AI visibility score at Presenzia. It takes 30 seconds and provides a clear picture of where you stand and what to prioritise next.
     `.trim(),
   },
 ];

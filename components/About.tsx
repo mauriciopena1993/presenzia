@@ -75,11 +75,11 @@ export default function About() {
             }}
           >
             Google dominated client discovery for two decades. That era is ending. AI search
-            usage is growing exponentially — across every demographic, from millennials to retirees.
+            usage is growing exponentially, across every demographic, from millennials to retirees.
             When a high-net-worth individual asks ChatGPT for a wealth manager, they trust the
             answer and act on it. The firms that show up win the client. The firms that don&apos;t,
             lose them without ever knowing. Presenzia gives you the data to make sure you&apos;re
-            visible where it matters most — before your competitors get there first.
+            visible where it matters most, before your competitors get there first.
           </p>
         </div>
 
@@ -146,7 +146,7 @@ export default function About() {
             letterSpacing: '0.05em',
           }}
         >
-          Founded in London, 2026 &mdash; a Ketzal LTD company
+          Founded in London, 2026 · a Ketzal LTD company
         </div>
       </div>
     </section>

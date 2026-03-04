@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
           replyTo: 'hello@presenzia.ai',
           to: email,
           subject: `Your ${planLabel} plan cancellation is confirmed`,
-          text: `Hi${client.business_name ? ` ${client.business_name}` : ''},\n\nWe've received your cancellation request. Your ${planLabel} plan will remain active until ${formattedEndDate || 'the end of your billing cycle'}.\n\nYou can undo this anytime from your dashboard before the end date.\n\nIf there's anything we could have done better, we'd genuinely love to hear — just reply to this email.\n\npresenzia.ai`,
+          text: `Hi${client.business_name ? ` ${client.business_name}` : ''},\n\nWe've received your cancellation request. Your ${planLabel} plan will remain active until ${formattedEndDate || 'the end of your billing cycle'}.\n\nYou can undo this anytime from your dashboard before the end date.\n\nIf there's anything we could have done better, we'd genuinely love to hear. Just reply to this email.\n\npresenzia.ai`,
           html: `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center">
@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
     <p style="font-size:14px;color:#555;line-height:1.7;margin:0 0 16px;">Your <strong>${planLabel}</strong> plan${client.business_name ? ` for <strong>${client.business_name}</strong>` : ''} will remain active until <strong>${formattedEndDate || 'the end of your billing cycle'}</strong>. No further payments will be taken after that date.</p>
     <p style="font-size:14px;color:#555;line-height:1.7;margin:0 0 24px;">Changed your mind? You can undo the cancellation anytime from your dashboard before the end date.</p>
     <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;"><tr><td style="background:#0A0A0A;padding:14px 28px;"><a href="https://presenzia.ai/dashboard" style="color:#C9A84C;text-decoration:none;font-size:14px;font-weight:700;">Go to your dashboard</a></td></tr></table>
-    <p style="font-size:13px;color:#888;margin:0;">If there's anything we could have done better, simply reply to this email — we genuinely value your feedback.</p>
+    <p style="font-size:13px;color:#888;margin:0;">If there's anything we could have done better, simply reply to this email. We genuinely value your feedback.</p>
   </td></tr>
   <tr><td style="padding:16px 32px;background:#F9F9F9;border-top:1px solid #E0E0E0;"><p style="font-size:12px;color:#999;margin:0;">presenzia.ai · <a href="mailto:hello@presenzia.ai" style="color:#C9A84C;text-decoration:none;">hello@presenzia.ai</a></p></td></tr>
 </table></td></tr></table></body></html>`,

@@ -5,12 +5,12 @@ import Footer from '@/components/Footer';
 import { PLANS } from '@/lib/plans';
 
 export const metadata: Metadata = {
-  title: 'Pricing — presenzia.ai | AI Visibility for Financial Advisors',
+  title: 'Pricing | presenzia.ai | AI Visibility for Financial Advisors',
   description:
     `AI Visibility Audit from ${PLANS.audit.priceDisplay}. Monthly retainers from ${PLANS.growth.priceDisplay}/mo. See exactly where your firm stands in AI search and what to do about it.`,
   alternates: { canonical: '/pricing' },
   openGraph: {
-    title: 'Pricing — presenzia.ai | AI Visibility Audits & Retainers',
+    title: 'Pricing | presenzia.ai: AI Visibility Audits & Retainers',
     description:
       `AI Visibility Audit from ${PLANS.audit.priceDisplay}. Monthly retainers from ${PLANS.growth.priceDisplay}/mo. See exactly where your firm stands in AI search.`,
     url: 'https://presenzia.ai/pricing',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pricing — presenzia.ai | AI Visibility for Financial Advisors',
+    title: 'Pricing | presenzia.ai: AI Visibility for Financial Advisors',
     description:
       `AI Visibility Audit from ${PLANS.audit.priceDisplay}. Monthly retainers from ${PLANS.growth.priceDisplay}/mo.`,
     images: ['/og-image.png'],

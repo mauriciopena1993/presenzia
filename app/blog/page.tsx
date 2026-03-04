@@ -4,20 +4,20 @@ import type { Metadata } from 'next';
 import { BLOG_POSTS } from '@/lib/blog-posts';
 
 export const metadata: Metadata = {
-  title: 'Blog | presenzia.ai — AI Search Visibility for UK Wealth Managers & IFAs',
-  description: 'Insights on AI search visibility for financial advisors — how ChatGPT, Claude and Perplexity recommend wealth managers, and how UK IFAs can improve their AI presence.',
+  title: 'Blog | presenzia.ai: AI Search Visibility for UK Wealth Managers & IFAs',
+  description: 'Insights on AI search visibility for financial advisors. How ChatGPT, Claude and Perplexity recommend wealth managers, and how UK IFAs can improve their AI presence.',
   alternates: { canonical: '/blog' },
   openGraph: {
-    title: 'Blog | presenzia.ai — AI Search Visibility for UK Wealth Managers & IFAs',
-    description: 'Insights on AI search visibility for financial advisors — how ChatGPT, Claude and Perplexity recommend wealth managers, and how UK IFAs can improve their AI presence.',
+    title: 'Blog | presenzia.ai: AI Search Visibility for UK Wealth Managers & IFAs',
+    description: 'Insights on AI search visibility for financial advisors. How ChatGPT, Claude and Perplexity recommend wealth managers, and how UK IFAs can improve their AI presence.',
     url: 'https://presenzia.ai/blog',
     type: 'website',
     images: ['/og-image.png'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Blog | presenzia.ai — AI Visibility Insights',
-    description: 'Insights on AI search visibility for financial advisors — how AI recommends wealth managers and how to improve your presence.',
+    title: 'Blog | presenzia.ai: AI Visibility Insights',
+    description: 'Insights on AI search visibility for financial advisors. How AI recommends wealth managers and how to improve your presence.',
     images: ['/og-image.png'],
   },
 };

@@ -121,13 +121,13 @@ export const PLANS: Record<string, PlanConfig> = {
     cardFeatures: [
       'Everything in the Audit, plus:',
       'Weekly re-audits with score tracking & trends',
-      'AI audit assistant — ask anything about your results',
+      'AI audit assistant: ask anything about your results',
       'Competitor deep-dive with real-time alerts',
       'Priority email support',
     ],
     detailFeatures: [
       'Weekly re-audits with score tracking & trends',
-      'AI audit assistant — ask anything about your results',
+      'AI audit assistant: ask anything about your results',
       'Competitor deep-dive with real-time alerts',
       'Priority email support',
     ],

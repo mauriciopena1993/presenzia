@@ -76,7 +76,7 @@ function getActionItems(
     const platNames = zeroPlats.map(p => p.platform).join(' or ');
     const toolWord = zeroPlats.length === 1 ? 'tool' : 'tools';
     items.push({
-      title: `${name} isn't appearing on ${platNames} — the most used AI search ${toolWord}`,
+      title: `${name} isn't appearing on ${platNames}, the most used AI search ${toolWord}`,
       priority: 'Critical',
     });
   }
@@ -473,7 +473,7 @@ function ScorePageInner() {
                     onChange={e => setFirmName(e.target.value)}
                     style={inputStyle}
                   />
-                  <div style={hintStyle}>Exactly as it appears on your website — this is what we search for</div>
+                  <div style={hintStyle}>Exactly as it appears on your website. This is what we search for</div>
                 </div>
 
                 {/* Website */}
@@ -941,8 +941,8 @@ function ScorePageInner() {
                   <strong style={{ color: '#E74C3C' }}>&quot;{result.topCompetitor.name}&quot;</strong> appeared in{' '}
                   <strong>{result.topCompetitor.count} of {result.totalPrompts}</strong> searches
                   {result.mentionsCount > 0
-                    ? ` — vs your ${result.mentionsCount}.`
-                    : ` — while ${firmName || 'your firm'} wasn't mentioned at all.`}
+                    ? `, vs your ${result.mentionsCount}.`
+                    : `, while ${firmName || 'your firm'} wasn't mentioned at all.`}
                 </p>
                 {result.topCompetitor.count > result.mentionsCount && (
                   <p style={{ color: '#E74C3C', fontSize: '0.8rem', lineHeight: 1.6, margin: '0.5rem 0 0', fontStyle: 'italic' }}>
@@ -1186,7 +1186,7 @@ function ScorePageInner() {
                 {selectedPlan === 'growth' && (
                   <>
                     <li><strong style={{ color: '#F5F0E8' }}>Weekly re-audits</strong> with score tracking &amp; trends</li>
-                    <li><strong style={{ color: '#F5F0E8' }}>AI audit assistant</strong> — ask anything about your results</li>
+                    <li><strong style={{ color: '#F5F0E8' }}>AI audit assistant</strong>: ask anything about your results</li>
                     <li>Competitor deep-dive with <strong style={{ color: '#F5F0E8' }}>real-time alerts</strong></li>
                   </>
                 )}
@@ -1194,7 +1194,7 @@ function ScorePageInner() {
                   <>
                     <li><strong style={{ color: '#F5F0E8' }}>Daily re-audits</strong> with score tracking &amp; trends</li>
                     <li><strong style={{ color: '#F5F0E8' }}>Dedicated account strategist</strong> &amp; monthly 1-hour strategy call</li>
-                    <li><strong style={{ color: '#F5F0E8' }}>Exclusive territory protection</strong> — one firm per area</li>
+                    <li><strong style={{ color: '#F5F0E8' }}>Exclusive territory protection</strong>: one firm per area</li>
                     <li>4 AI-optimised articles <strong style={{ color: '#F5F0E8' }}>written &amp; published monthly</strong></li>
                   </>
                 )}
@@ -1225,9 +1225,9 @@ function ScorePageInner() {
               {checkingOut ? 'Redirecting to checkout...' : (
                 isAudit
                   ? (result.score < 35
-                    ? `Fix my AI visibility — full audit for ${PLANS.audit.priceDisplay}`
+                    ? `Fix my AI visibility: full audit for ${PLANS.audit.priceDisplay}`
                     : `Unlock my full audit for ${PLANS.audit.priceDisplay}`)
-                  : `Start your ${plan.name} — ${plan.priceWithPeriod}`
+                  : `Start your ${plan.name}: ${plan.priceWithPeriod}`
               )}
             </button>
             <p style={{ textAlign: 'center', fontSize: '0.72rem', color: '#666', margin: '0 0 0.5rem', lineHeight: 1.5 }}>

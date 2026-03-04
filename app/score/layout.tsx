@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Free AI Visibility Score | presenzia.ai — Check Your Firm in 60 Seconds',
+  title: 'Free AI Visibility Score | presenzia.ai: Check Your Firm in 60 Seconds',
   description:
-    'Get a free AI visibility score for your wealth management or IFA firm. See how ChatGPT, Claude, Perplexity, and Google AI rank you — in under 60 seconds.',
+    'Get a free AI visibility score for your wealth management or IFA firm. See how ChatGPT, Claude, Perplexity, and Google AI rank you in under 60 seconds.',
   alternates: { canonical: '/score' },
   openGraph: {
     title: 'Free AI Visibility Score | presenzia.ai',

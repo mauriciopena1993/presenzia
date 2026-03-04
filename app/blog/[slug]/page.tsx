@@ -216,7 +216,7 @@ export default async function BlogPostPage({ params }: Props) {
             Find out where you stand
           </div>
           <p style={{ color: '#F5F0E8', fontSize: '1.05rem', fontWeight: 600, marginBottom: '0.5rem', fontFamily: "var(--font-playfair, 'Playfair Display', serif)" }}>
-            Check your AI visibility score — free, in 60 seconds
+            Check your AI visibility score, free, in 60 seconds
           </p>
           <p style={{ color: '#999', fontSize: '0.875rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
             See how ChatGPT, Claude, Perplexity, and Google AI rank your firm right now. No signup required.
