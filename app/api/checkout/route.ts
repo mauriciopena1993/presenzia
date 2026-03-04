@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       ],
       customer_email: email || undefined,
       success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}&plan=${plan}`,
-      cancel_url: `${appUrl}/onboarding?plan=${plan}`,
+      cancel_url: `${appUrl}/score`,
       metadata: {
         plan,
         business_name: business_name.trim(),

@@ -298,12 +298,111 @@ function CongratsBanner({ plan, onClose }: { plan: string; onClose: () => void }
   );
 }
 
+// ── PromoCodeDisplay: shows retention code for copy ──────────
+function PromoCodeDisplay({
+  code,
+  onKeepPlan,
+  onContinueCancel,
+}: {
+  code: string | null;
+  onKeepPlan: () => void;
+  onContinueCancel: () => void;
+}) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = async () => {
+    if (!code) return;
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      // Fallback for older browsers
+      const el = document.createElement('textarea');
+      el.value = code;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
+  };
+  return (
+    <>
+      <div style={{ fontSize: '0.9rem', color: '#C9A84C', fontWeight: 600, marginBottom: '0.5rem' }}>
+        Here&apos;s your 50% off code
+      </div>
+      <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6, marginBottom: '1rem' }}>
+        Use this code at checkout for <span style={{ color: '#C9A84C', fontWeight: 600 }}>50% off</span> any plan. It&apos;s single-use and valid for 3 months.
+      </p>
+
+      {/* Code box with copy button */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        background: '#111',
+        border: '1px solid #2a2a2a',
+        padding: '0.75rem 1rem',
+        marginBottom: '1rem',
+      }}>
+        <code style={{
+          flex: 1,
+          fontFamily: 'monospace',
+          fontSize: '1.1rem',
+          fontWeight: 700,
+          color: '#F5F0E8',
+          letterSpacing: '0.08em',
+        }}>
+          {code || '—'}
+        </code>
+        <button
+          onClick={handleCopy}
+          style={{
+            background: copied ? '#1a3a1a' : '#1a1a1a',
+            border: `1px solid ${copied ? '#2a5a2a' : '#333'}`,
+            color: copied ? '#5BA88C' : '#999',
+            padding: '0.4rem 0.75rem',
+            fontSize: '0.78rem',
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+            transition: 'all 0.2s',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {copied ? '✓ Copied' : 'Copy'}
+        </button>
+      </div>
+
+      <p style={{ fontSize: '0.78rem', color: '#666', lineHeight: 1.6, marginBottom: '1rem' }}>
+        Paste this code in the promo field at checkout when subscribing to any plan.
+      </p>
+
+      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <button
+          onClick={onKeepPlan}
+          style={{ background: '#C9A84C', color: '#0A0A0A', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
+        >
+          Keep my plan
+        </button>
+        <button
+          onClick={onContinueCancel}
+          style={{ background: 'none', border: '1px solid #333', color: '#888', padding: '0.5rem 1.25rem', fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'inherit' }}
+        >
+          Continue to cancel
+        </button>
+      </div>
+    </>
+  );
+}
+
 // ── CancelFlow: multi-step cancellation funnel ──────────────
 function CancelFlow({
   plan,
   cancelStep,
   setCancelStep,
   retentionEligible,
+  retentionCode,
   actionLoading,
   onAcceptRetention,
   onConfirmCancel,
@@ -316,6 +415,7 @@ function CancelFlow({
   cancelStep: string;
   setCancelStep: (s: 'confirm-loss' | 'downgrade-offer' | 'retention-offer' | 'confirming' | 'done' | 'saved' | 'switched') => void;
   retentionEligible: boolean;
+  retentionCode: string | null;
   actionLoading: boolean;
   onAcceptRetention: () => void;
   onConfirmCancel: () => void;
@@ -538,18 +638,11 @@ function CancelFlow({
       )}
 
       {cancelStep === 'saved' && (
-        <>
-          <div style={{ fontSize: '0.9rem', color: '#C9A84C', fontWeight: 600, marginBottom: '0.5rem' }}>Discount applied!</div>
-          <p style={{ fontSize: '0.85rem', color: '#AAAAAA', lineHeight: 1.6 }}>
-            Your next month is 50% off. We're glad you're staying! Keep implementing the actions from your latest audit and watch your AI visibility improve.
-          </p>
-          <button
-            onClick={onClose}
-            style={{ marginTop: '0.75rem', background: 'none', border: '1px solid #333', color: '#999', padding: '0.4rem 1rem', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'inherit' }}
-          >
-            Close
-          </button>
-        </>
+        <PromoCodeDisplay
+          code={retentionCode}
+          onKeepPlan={onClose}
+          onContinueCancel={() => setCancelStep('confirming')}
+        />
       )}
 
       {cancelStep === 'switched' && (
@@ -1201,6 +1294,7 @@ export default function DashboardPage() {
   const [cancelStep, setCancelStep] = useState<'confirm-loss' | 'downgrade-offer' | 'retention-offer' | 'confirming' | 'done' | 'saved' | 'switched'>('confirm-loss');
   const [actionLoading, setActionLoading] = useState(false);
   const [retentionEligible, setRetentionEligible] = useState(true);
+  const [retentionCode, setRetentionCode] = useState<string | null>(null);
   const [congratsPlan, setCongratsPlan] = useState<string | null>(null);
   const [cancelEndDate, setCancelEndDate] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<string | null>(null);
@@ -1351,7 +1445,8 @@ export default function DashboardPage() {
         body: JSON.stringify({ action: 'accept-offer' }),
       });
       const data = await res.json();
-      if (data.success) {
+      if (data.success && data.promoCode) {
+        setRetentionCode(data.promoCode);
         setCancelStep('saved');
       } else if (data.error) {
         // Offer rejected (cooldown), skip to confirmation
@@ -2211,6 +2306,7 @@ export default function DashboardPage() {
                   cancelStep={cancelStep}
                   setCancelStep={setCancelStep}
                   retentionEligible={retentionEligible}
+                  retentionCode={retentionCode}
                   actionLoading={actionLoading}
                   onAcceptRetention={handleAcceptRetention}
                   onConfirmCancel={handleConfirmCancel}

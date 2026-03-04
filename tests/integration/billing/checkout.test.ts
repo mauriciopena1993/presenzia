@@ -107,7 +107,7 @@ describe('POST /api/checkout', () => {
     expect(params.success_url).toContain('/success');
     expect(params.success_url).toContain('session_id=');
     expect(params.success_url).toContain('plan=audit');
-    expect(params.cancel_url).toContain('/onboarding?plan=audit');
+    expect(params.cancel_url).toContain('/score');
   });
 
   it('enables VAT/tax ID collection', async () => {

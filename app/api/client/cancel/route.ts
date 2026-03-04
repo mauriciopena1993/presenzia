@@ -49,37 +49,44 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ eligible });
     }
 
-    // ── Accept retention offer: 50% off next invoice ──
+    // ── Accept retention offer: generate a 50% off promo code ──
     if (action === 'accept-offer') {
       if (!isRetentionOfferEligible(client.last_retention_offer_at)) {
         return NextResponse.json({
-          error: 'The 50% discount was already used recently.',
+          error: 'The 50% discount was already used recently. You can use it once every 3 months.',
         }, { status: 400 });
       }
 
+      // Create a single-use coupon
       const coupon = await stripe.coupons.create({
         percent_off: 50,
         duration: 'once',
-        name: 'Retention offer: 50% off next month',
+        name: `Retention offer for ${client.business_name || email}`,
         max_redemptions: 1,
       });
 
-      const subscription = await stripe.subscriptions.retrieve(client.stripe_subscription_id);
-      const existingDiscounts = (subscription.discounts || [])
-        .map((d) => (typeof d === 'string' ? null : d.id ? { discount: d.id } : null))
-        .filter((d): d is { discount: string } => d !== null);
+      // Generate a unique promo code string (e.g. STAY-A1B2C3)
+      const suffix = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const codeString = `STAY-${suffix}`;
 
-      await stripe.subscriptions.update(client.stripe_subscription_id, {
-        discounts: [...existingDiscounts, { coupon: coupon.id }],
-        cancel_at_period_end: false,
+      // Create a Stripe Promotion Code — this is what the customer enters at checkout
+      const promoCode = await stripe.promotionCodes.create({
+        promotion: { type: 'coupon', coupon: coupon.id },
+        code: codeString,
+        max_redemptions: 1,
       });
 
+      // Record the timestamp to enforce the 3-month cooldown
       await supabase
         .from('clients')
         .update({ last_retention_offer_at: new Date().toISOString() })
         .eq('id', client.id);
 
-      return NextResponse.json({ success: true, action: 'discount-applied' });
+      return NextResponse.json({
+        success: true,
+        action: 'code-generated',
+        promoCode: promoCode.code,
+      });
     }
 
     // ── Confirm cancellation: cancel at end of billing period ──

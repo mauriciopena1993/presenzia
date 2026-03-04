@@ -145,7 +145,7 @@ export const PLANS: Record<string, PlanConfig> = {
     recurring: true,
     priceId: process.env.STRIPE_PRICE_PREMIUM || '',
     description: 'Dedicated strategist + territory exclusivity + done-for-you content',
-    cta: 'Book a discovery call',
+    cta: 'Get started',
     highlighted: false,
     badge: null,
     marketingDescription: 'We do the work. You get the clients.',

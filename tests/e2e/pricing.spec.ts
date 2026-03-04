@@ -49,17 +49,18 @@ test.describe('Pricing Page', () => {
     await expect(page).toHaveURL(/\/score/);
   });
 
-  test('Growth CTA "Start growing" navigates to /onboarding?plan=growth', async ({ page }) => {
+  test('Growth CTA "Start growing" navigates to /score?plan=growth', async ({ page }) => {
     await page.goto('/pricing');
     const growthCta = page.locator('.pricing-desktop button', { hasText: 'Start growing' });
     await growthCta.click();
-    await expect(page).toHaveURL(/\/onboarding\?plan=growth/);
+    await expect(page).toHaveURL(/\/score\?plan=growth/);
   });
 
-  test('Premium CTA says "Book a discovery call"', async ({ page }) => {
+  test('Premium CTA says "Get started" with discovery call link below', async ({ page }) => {
     await page.goto('/pricing');
-    const premiumCta = page.locator('.pricing-desktop button', { hasText: 'Book a discovery call' });
+    const premiumCta = page.locator('.pricing-desktop button', { hasText: 'Get started' });
     await expect(premiumCta).toBeVisible();
+    await expect(page.locator('.pricing-desktop a', { hasText: /discovery call/i })).toBeVisible();
   });
 
   // ─── Growth Badge ───────────────────────────────────────────
@@ -166,12 +167,12 @@ test.describe('Pricing Page — Mobile', () => {
     await expect(page).toHaveURL(/\/score/);
   });
 
-  test('mobile: Growth CTA navigates to /onboarding', async ({ page }) => {
+  test('mobile: Growth CTA navigates to /score', async ({ page }) => {
     await page.goto('/pricing');
 
     const mobileTabs = page.locator('.pricing-mobile-tabs');
     await mobileTabs.locator('button', { hasText: 'Start growing' }).click();
-    await expect(page).toHaveURL(/\/onboarding\?plan=growth/);
+    await expect(page).toHaveURL(/\/score\?plan=growth/);
   });
 
   test('mobile: desktop grid is hidden', async ({ page }) => {

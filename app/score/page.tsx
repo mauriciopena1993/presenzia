@@ -1117,15 +1117,9 @@ export default function ScorePage() {
                 ? `Fix my AI visibility — full audit for ${PLANS.audit.priceDisplay}`
                 : `Unlock my full audit for ${PLANS.audit.priceDisplay}`}
             </Link>
-            <p style={{ textAlign: 'center', fontSize: '0.72rem', color: '#666', margin: '0 0 0.75rem', lineHeight: 1.5 }}>
+            <p style={{ textAlign: 'center', fontSize: '0.72rem', color: '#666', margin: '0 0 1.5rem', lineHeight: 1.5 }}>
               One-off payment · No subscription required · Results within 24 hours
             </p>
-
-            <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-              <Link href="/pricing" target="_blank" style={{ color: '#888', fontSize: '0.8rem', textDecoration: 'none' }}>
-                Or see subscription plans →
-              </Link>
-            </div>
 
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
               <button

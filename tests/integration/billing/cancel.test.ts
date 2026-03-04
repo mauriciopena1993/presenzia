@@ -37,6 +37,7 @@ const mockSubscriptionRetrieve = vi.fn().mockResolvedValue({
   items: { data: [{ current_period_end: Math.floor(Date.now() / 1000) + 86400 * 30 }] },
 });
 const mockCouponCreate = vi.fn().mockResolvedValue({ id: 'coupon_123' });
+const mockPromoCodeCreate = vi.fn().mockResolvedValue({ id: 'promo_123', code: 'STAY-ABC123' });
 
 vi.mock('@/lib/stripe', () => ({
   stripe: {
@@ -46,6 +47,9 @@ vi.mock('@/lib/stripe', () => ({
     },
     coupons: {
       create: (...args: unknown[]) => mockCouponCreate(...args),
+    },
+    promotionCodes: {
+      create: (...args: unknown[]) => mockPromoCodeCreate(...args),
     },
   },
 }));
@@ -106,17 +110,25 @@ describe('POST /api/client/cancel', () => {
   });
 
   describe('accept-offer', () => {
-    it('creates 50% coupon and applies to subscription', async () => {
+    it('creates 50% coupon and generates a promo code', async () => {
       const req = createCancelRequest({ action: 'accept-offer' });
       const res = await POST(req);
       const data = await res.json();
 
       expect(data.success).toBe(true);
-      expect(data.action).toBe('discount-applied');
+      expect(data.action).toBe('code-generated');
+      expect(data.promoCode).toBe('STAY-ABC123');
       expect(mockCouponCreate).toHaveBeenCalledWith(
-        expect.objectContaining({ percent_off: 50, duration: 'once' })
+        expect.objectContaining({ percent_off: 50, duration: 'once', max_redemptions: 1 })
       );
-      expect(mockSubscriptionUpdate).toHaveBeenCalled();
+      expect(mockPromoCodeCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          coupon: 'coupon_123',
+          max_redemptions: 1,
+        })
+      );
+      // Should NOT auto-apply to subscription (user enters code at checkout)
+      expect(mockSubscriptionUpdate).not.toHaveBeenCalled();
     });
 
     it('rejects if offer was already used recently', async () => {
@@ -124,6 +136,8 @@ describe('POST /api/client/cancel', () => {
       const req = createCancelRequest({ action: 'accept-offer' });
       const res = await POST(req);
       expect(res.status).toBe(400);
+      const data = await res.json();
+      expect(data.error).toContain('already used recently');
     });
   });
 

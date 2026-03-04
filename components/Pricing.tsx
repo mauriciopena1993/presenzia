@@ -77,7 +77,7 @@ function PlanCard({ plan, premiumMailto, handleClick }: {
       </ul>
 
       <button
-        onClick={() => plan.key === 'premium' ? (window.location.href = premiumMailto) : handleClick(plan.key)}
+        onClick={() => handleClick(plan.key)}
         style={{
           display: 'block',
           width: '100%',
@@ -107,15 +107,20 @@ function PlanCard({ plan, premiumMailto, handleClick }: {
         {plan.cta} →
       </button>
       {plan.key === 'premium' && (
-        <p style={{
-          textAlign: 'center',
-          marginTop: '0.75rem',
-          fontSize: '0.78rem',
-          color: '#888',
-          lineHeight: 1.5,
-        }}>
-          15-minute call to discuss your firm&apos;s needs
-        </p>
+        <a
+          href={premiumMailto}
+          style={{
+            display: 'block',
+            textAlign: 'center',
+            marginTop: '0.5rem',
+            fontSize: '0.75rem',
+            color: '#888',
+            textDecoration: 'none',
+            lineHeight: 1.5,
+          }}
+        >
+          Or book a discovery call first →
+        </a>
       )}
     </div>
   );
@@ -128,13 +133,8 @@ export default function Pricing() {
   const [mobileTab, setMobileTab] = useState(1); // Default to Growth (index 1)
 
   const handleClick = (planKey: string) => {
-    if (planKey === 'audit') {
-      // Audit: send to free score first, which upsells to the full audit
-      window.location.href = '/score';
-    } else {
-      // Growth and other plans: go to onboarding form
-      window.location.href = `/onboarding?plan=${planKey}`;
-    }
+    // All plans use the /score page as the single enrolment form
+    window.location.href = `/score?plan=${planKey}`;
   };
 
   const premiumMailto = `mailto:hello@presenzia.ai?subject=Premium%20Plan%20-%20Discovery%20Call%20Request&body=Hi%2C%0A%0AI%20would%20like%20to%20request%20more%20information%20about%20the%20Premium%20plan%20at%20presenzia.ai.%0A%0AName%20of%20company%3A%20%0AName%3A%20%0A%0AKind%20regards%2C`;
