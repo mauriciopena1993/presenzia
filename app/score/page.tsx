@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { PLANS } from '@/lib/plans';
 
 const SPECIALTIES = [
@@ -140,7 +141,8 @@ function loadState(): Record<string, unknown> | null {
   } catch { return null; }
 }
 
-export default function ScorePage() {
+function ScorePageInner() {
+  const searchParams = useSearchParams();
   const saved = useRef(loadState());
   const [step, setStep] = useState<Step>(() => {
     const s = saved.current;
@@ -170,6 +172,45 @@ export default function ScorePage() {
   // Track when results were first completed (for "run new score" cooldown)
   const [completedAt, setCompletedAt] = useState<number>(() => (saved.current?.completedAt as number) || 0);
   const [showRescore, setShowRescore] = useState(false);
+
+  // Plan-aware checkout: read ?plan= from URL (default to audit)
+  const planParam = searchParams.get('plan') || 'audit';
+  const selectedPlan = PLANS[planParam] ? planParam : 'audit';
+  const plan = PLANS[selectedPlan];
+  const isAudit = selectedPlan === 'audit';
+  const [checkingOut, setCheckingOut] = useState(false);
+
+  const handleCheckout = async (overridePlan?: string) => {
+    if (checkingOut) return;
+    setCheckingOut(true);
+    try {
+      const checkoutPlan = overridePlan || selectedPlan;
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan: checkoutPlan,
+          email: email || undefined,
+          business_name: firmName,
+          business_type: specialties[0] || 'Financial Planning',
+          description: firmDescription.trim() || undefined,
+          location: locations.trim() || undefined,
+          website: website.trim() ? `https://${website.trim()}` : undefined,
+          keywords: additionalContext.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setError(data.error || 'Failed to create checkout session');
+        setCheckingOut(false);
+      }
+    } catch {
+      setError('Something went wrong. Please try again.');
+      setCheckingOut(false);
+    }
+  };
 
   // Show "run new score" link after 30 minutes
   useEffect(() => {
@@ -1119,7 +1160,7 @@ export default function ScorePage() {
                 alignItems: 'center',
               }}>
                 <p style={{ color: '#F5F0E8', fontSize: '0.95rem', textAlign: 'center', fontWeight: 600, marginBottom: '0.5rem', lineHeight: 1.5 }}>
-                  Your full audit unlocks everything above
+                  {isAudit ? 'Your full audit unlocks everything above' : `Your ${plan.name} unlocks everything above`}
                 </p>
                 <p style={{ color: '#999', fontSize: '0.8rem', textAlign: 'center', marginBottom: '0.25rem', lineHeight: 1.5 }}>
                   Interactive dashboard · competitor deep-dive · step-by-step action plan · platform recommendations · PDF report
@@ -1135,42 +1176,88 @@ export default function ScorePage() {
               marginBottom: '1rem',
             }}>
               <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#C9A84C', marginBottom: '0.5rem' }}>
-                Your full audit goes further:
+                {isAudit ? 'Your full audit goes further:' : `Your ${plan.name} includes:`}
               </div>
               <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.8rem', color: '#AAAAAA', lineHeight: 1.8 }}>
                 <li>Tests <strong style={{ color: '#F5F0E8' }}>120+ prompts</strong> across all 4 AI platforms (vs {result.totalPrompts} in your free score)</li>
                 <li>In-depth <strong style={{ color: '#F5F0E8' }}>website content analysis</strong> with specific improvement recommendations</li>
                 <li>Complete competitor breakdown with <strong style={{ color: '#F5F0E8' }}>positioning strategy</strong></li>
                 <li>Actionable step-by-step plan, interactive dashboard &amp; downloadable PDF report</li>
+                {selectedPlan === 'growth' && (
+                  <>
+                    <li><strong style={{ color: '#F5F0E8' }}>Weekly re-audits</strong> with score tracking &amp; trends</li>
+                    <li><strong style={{ color: '#F5F0E8' }}>AI audit assistant</strong> — ask anything about your results</li>
+                    <li>Competitor deep-dive with <strong style={{ color: '#F5F0E8' }}>real-time alerts</strong></li>
+                  </>
+                )}
+                {selectedPlan === 'premium' && (
+                  <>
+                    <li><strong style={{ color: '#F5F0E8' }}>Daily re-audits</strong> with score tracking &amp; trends</li>
+                    <li><strong style={{ color: '#F5F0E8' }}>Dedicated account strategist</strong> &amp; monthly 1-hour strategy call</li>
+                    <li><strong style={{ color: '#F5F0E8' }}>Exclusive territory protection</strong> — one firm per area</li>
+                    <li>4 AI-optimised articles <strong style={{ color: '#F5F0E8' }}>written &amp; published monthly</strong></li>
+                  </>
+                )}
               </ul>
             </div>
 
             {/* CTA */}
-            <Link
-              href="/onboarding?plan=audit"
+            <button
+              onClick={() => handleCheckout()}
+              disabled={checkingOut}
               style={{
                 display: 'block',
                 width: '100%',
                 padding: '1rem',
-                background: '#C9A84C',
+                background: checkingOut ? '#5a4a1e' : '#C9A84C',
                 color: '#0A0A0A',
                 fontWeight: 700,
                 fontSize: '1rem',
                 border: 'none',
-                textDecoration: 'none',
                 textAlign: 'center',
                 letterSpacing: '0.02em',
                 marginBottom: '0.5rem',
                 boxSizing: 'border-box',
+                cursor: checkingOut ? 'not-allowed' : 'pointer',
+                fontFamily: 'var(--font-inter, Inter, sans-serif)',
               }}
             >
-              {result.score < 35
-                ? `Fix my AI visibility — full audit for ${PLANS.audit.priceDisplay}`
-                : `Unlock my full audit for ${PLANS.audit.priceDisplay}`}
-            </Link>
-            <p style={{ textAlign: 'center', fontSize: '0.72rem', color: '#666', margin: '0 0 1.5rem', lineHeight: 1.5 }}>
-              One-off payment · No subscription required · Results within 24 hours
+              {checkingOut ? 'Redirecting to checkout...' : (
+                isAudit
+                  ? (result.score < 35
+                    ? `Fix my AI visibility — full audit for ${PLANS.audit.priceDisplay}`
+                    : `Unlock my full audit for ${PLANS.audit.priceDisplay}`)
+                  : `Start your ${plan.name} — ${plan.priceWithPeriod}`
+              )}
+            </button>
+            <p style={{ textAlign: 'center', fontSize: '0.72rem', color: '#666', margin: '0 0 0.5rem', lineHeight: 1.5 }}>
+              {isAudit
+                ? 'One-off payment · No subscription required · Results within 24 hours'
+                : `${plan.periodLabel === '/month' ? 'Monthly subscription' : plan.periodLabel} · Cancel anytime · Results within 24 hours`}
             </p>
+
+            {/* For Growth/Premium: offer one-off audit as alternative */}
+            {!isAudit && (
+              <p style={{ textAlign: 'center', margin: '0 0 1.5rem' }}>
+                <button
+                  onClick={() => handleCheckout('audit')}
+                  disabled={checkingOut}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#555',
+                    fontSize: '0.72rem',
+                    cursor: checkingOut ? 'not-allowed' : 'pointer',
+                    fontFamily: 'var(--font-inter, Inter, sans-serif)',
+                    textDecoration: 'underline',
+                    textUnderlineOffset: '3px',
+                  }}
+                >
+                  Or just pay for a one-off full audit for {PLANS.audit.priceDisplay}
+                </button>
+              </p>
+            )}
+            {isAudit && <div style={{ marginBottom: '1.5rem' }} />}
 
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
               <button
@@ -1245,5 +1332,17 @@ export default function ScorePage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function ScorePage() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight: '100vh', background: '#0A0A0A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ color: '#666', fontSize: '0.9rem' }}>Loading...</div>
+      </div>
+    }>
+      <ScorePageInner />
+    </Suspense>
   );
 }

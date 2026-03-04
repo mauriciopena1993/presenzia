@@ -123,7 +123,7 @@ describe('POST /api/client/cancel', () => {
       );
       expect(mockPromoCodeCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          coupon: 'coupon_123',
+          promotion: { type: 'coupon', coupon: 'coupon_123' },
           max_redemptions: 1,
         })
       );

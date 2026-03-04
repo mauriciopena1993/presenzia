@@ -55,7 +55,7 @@ const pricingSchema = {
       availability: 'https://schema.org/InStock',
       url: 'https://presenzia.ai/pricing',
       description:
-        'Weekly re-audits, weekly dashboard updates, AI audit assistant, and quarterly strategy calls.',
+        'Weekly re-audits, weekly dashboard updates, AI audit assistant, competitor deep-dive with real-time alerts, and priority email support.',
     },
     {
       '@type': 'Offer',

@@ -19,7 +19,7 @@ const faqs = [
   },
   {
     q: 'How quickly will I see results?',
-    a: 'Some quick wins, like updating your website\u2019s structured data and optimising your content for AI readability, can show results within 2\u20134 weeks. More substantial improvements, like building citation authority and publishing thought leadership content, typically take 2\u20133 months to fully register across AI platforms. Your monthly re-audits track every change.',
+    a: 'Some quick wins, like updating your website\u2019s structured data and optimising your content for AI readability, can show results within 2\u20134 weeks. More substantial improvements, like building citation authority and publishing thought leadership content, typically take 2\u20133 months to fully register across AI platforms. Your re-audits track every change \u2014 weekly on Growth, daily on Premium.',
   },
   {
     q: 'Is my data secure?',
