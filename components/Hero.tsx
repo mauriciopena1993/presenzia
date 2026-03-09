@@ -107,12 +107,20 @@ export default function Hero() {
         gap: '3rem',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        padding: '1.75rem 2.5rem',
+        padding: '1.75rem 2.5rem 0.75rem',
         width: '100%',
         maxWidth: '720px',
       }}>
+        {/* 79% stat with research citation */}
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.75rem', color: '#C9A84C', fontWeight: 600 }}>
+            79%
+            <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" style={{ fontSize: '0.65rem', color: '#C9A84C', textDecoration: 'none', verticalAlign: 'super', marginLeft: '2px', opacity: 0.8 }} aria-label="Source: Presenzia research study of 149 UK IFA firms">¹</Link>
+          </div>
+          <div style={{ fontSize: '0.8rem', color: '#999999', letterSpacing: '0.04em', marginTop: '0.3rem' }}>of UK IFA firms not found on ChatGPT</div>
+        </div>
+        {/* Other stats */}
         {[
-          { stat: '79%', label: 'of UK IFA firms not found on ChatGPT' },
           { stat: '120+', label: 'wealth-specific prompts tested' },
           { stat: '4', label: 'AI platforms audited' },
         ].map((item) => (
@@ -121,6 +129,12 @@ export default function Hero() {
             <div style={{ fontSize: '0.8rem', color: '#999999', letterSpacing: '0.04em', marginTop: '0.3rem' }}>{item.label}</div>
           </div>
         ))}
+      </div>
+      {/* Research source line */}
+      <div style={{ marginTop: '0.5rem', textAlign: 'center' }}>
+        <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" style={{ fontSize: '0.65rem', color: '#666', textDecoration: 'none', letterSpacing: '0.03em', transition: 'color 0.2s' }} className="hero-source-link">
+          ¹ Based on our study of 149 UK IFA firms across 10 regions
+        </Link>
       </div>
 
       {/* AI platform badges */}
@@ -144,6 +158,7 @@ export default function Hero() {
         }
         .hero-cta-primary:hover { background: #E8C96A !important; }
         .hero-cta-secondary:hover { border-color: #C9A84C !important; color: #F5F0E8 !important; }
+        .hero-source-link:hover { color: #C9A84C !important; }
         @media (max-width: 768px) {
           .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
           .hero-stats { flex-direction: column; gap: 1.5rem !important; }

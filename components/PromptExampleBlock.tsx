@@ -7,61 +7,25 @@ const examples = [
   {
     prompt: '"Can you recommend a good independent financial adviser in London?"',
     results: [
-      {
-        platform: 'ChatGPT',
-        firms: ['Progeny Wealth', 'Brewin Dolphin', 'Tilney Smith & Williamson', 'Quilter Cheviot'],
-        yourFirm: false,
-      },
-      {
-        platform: 'Perplexity',
-        firms: ['St. James\'s Place', 'Quilter', 'Brewin Dolphin', 'Schroders Personal Wealth'],
-        yourFirm: false,
-      },
-      {
-        platform: 'Google AI',
-        firms: ['Nutmeg', 'Brewin Dolphin', 'Chase de Vere', 'Progeny Wealth'],
-        yourFirm: false,
-      },
+      { platform: 'ChatGPT', firms: ['Progeny Wealth', 'Brewin Dolphin', 'Tilney Smith & Williamson', 'Quilter Cheviot'] },
+      { platform: 'Perplexity', firms: ['St. James\'s Place', 'Quilter', 'Brewin Dolphin', 'Schroders Personal Wealth'] },
+      { platform: 'Google AI', firms: ['Nutmeg', 'Brewin Dolphin', 'Chase de Vere', 'Progeny Wealth'] },
     ],
   },
   {
     prompt: '"Best pension transfer specialist near Manchester"',
     results: [
-      {
-        platform: 'ChatGPT',
-        firms: ['Progeny Wealth', 'Chase de Vere', 'Foster Denovo', 'True Potential'],
-        yourFirm: false,
-      },
-      {
-        platform: 'Perplexity',
-        firms: ['True Potential', 'Chase de Vere', 'Sanlam', 'Foster Denovo'],
-        yourFirm: false,
-      },
-      {
-        platform: 'Google AI',
-        firms: ['Hargreaves Lansdown', 'AJ Bell', 'Interactive Investor', 'True Potential'],
-        yourFirm: false,
-      },
+      { platform: 'ChatGPT', firms: ['Progeny Wealth', 'Chase de Vere', 'Foster Denovo', 'True Potential'] },
+      { platform: 'Perplexity', firms: ['True Potential', 'Chase de Vere', 'Sanlam', 'Foster Denovo'] },
+      { platform: 'Google AI', firms: ['Hargreaves Lansdown', 'AJ Bell', 'Interactive Investor', 'True Potential'] },
     ],
   },
   {
     prompt: '"Who should I speak to about inheritance tax planning in the UK?"',
     results: [
-      {
-        platform: 'ChatGPT',
-        firms: ['Quilter Cheviot', 'St. James\'s Place', 'Schroders Personal Wealth'],
-        yourFirm: false,
-      },
-      {
-        platform: 'Perplexity',
-        firms: ['Brewin Dolphin', 'Quilter', 'Rathbones', 'Charles Stanley'],
-        yourFirm: false,
-      },
-      {
-        platform: 'Google AI',
-        firms: ['Quilter Cheviot', 'Brewin Dolphin', 'Brooks Macdonald'],
-        yourFirm: false,
-      },
+      { platform: 'ChatGPT', firms: ['Quilter Cheviot', 'St. James\'s Place', 'Schroders Personal Wealth'] },
+      { platform: 'Perplexity', firms: ['Brewin Dolphin', 'Quilter', 'Rathbones', 'Charles Stanley'] },
+      { platform: 'Google AI', firms: ['Quilter Cheviot', 'Brewin Dolphin', 'Brooks Macdonald'] },
     ],
   },
 ];
@@ -80,7 +44,7 @@ export default function PromptExampleBlock() {
     }}>
       <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
         <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
-          Real audit data
+          What clients see
         </div>
         <h2 style={{
           fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
@@ -90,10 +54,10 @@ export default function PromptExampleBlock() {
           marginBottom: '1rem',
           lineHeight: 1.2,
         }}>
-          Real results from a recent IFA audit
+          This is what AI recommends right now
         </h2>
         <p style={{ color: '#AAAAAA', fontSize: '1rem', lineHeight: 1.7, maxWidth: '580px', margin: '0 auto' }}>
-          These are actual AI responses to searches your clients are making right now.
+          We tested real prompts across major AI platforms. These are the firms that appear — is yours one of them?
         </p>
       </div>
 
@@ -160,16 +124,17 @@ export default function PromptExampleBlock() {
                     {i + 1}. {firm}
                   </div>
                 ))}
-                {/* Your firm row */}
+                {/* Prompt to check */}
                 <div style={{
-                  fontSize: '0.82rem',
-                  color: '#E57373',
+                  fontSize: '0.78rem',
+                  color: '#C9A84C',
                   padding: '0.5rem 0.6rem',
                   marginTop: '0.5rem',
-                  background: 'rgba(229,115,115,0.08)',
-                  border: '1px solid rgba(229,115,115,0.15)',
+                  background: 'rgba(201,168,76,0.06)',
+                  border: '1px solid rgba(201,168,76,0.15)',
+                  fontStyle: 'italic',
                 }}>
-                  Your firm: Not mentioned
+                  Is your firm here?
                 </div>
               </div>
             ))}

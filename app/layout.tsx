@@ -20,7 +20,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "AI Search Visibility for UK IFAs & Wealth Managers | presenzia.ai",
-  description: "Find out if your IFA firm appears when clients search ChatGPT, Perplexity or Google AI for a financial adviser. Free AI visibility score, no sign-up required.",
+  description: "Find out if your IFA firm appears when clients search ChatGPT, Perplexity or Google AI for a financial adviser. Free AI visibility score in under 60 seconds.",
   keywords: "AI search visibility IFA, ChatGPT financial adviser search, AI SEO for wealth managers, IFA visibility audit, does my firm appear on ChatGPT, AI search visibility for IFAs, presenzia",
   metadataBase: new URL("https://presenzia.ai"),
   alternates: {

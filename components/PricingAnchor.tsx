@@ -3,8 +3,8 @@ import Link from 'next/link';
 export default function PricingAnchor() {
   return (
     <section style={{
-      padding: 'clamp(3rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem)',
-      maxWidth: '700px',
+      padding: 'clamp(3rem, 5vw, 5rem) clamp(1rem, 4vw, 2rem)',
+      maxWidth: '820px',
       margin: '0 auto',
       textAlign: 'center',
     }}>
@@ -16,15 +16,97 @@ export default function PricingAnchor() {
         fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
         color: '#F5F0E8',
         fontWeight: 600,
-        marginBottom: '1rem',
+        marginBottom: '1.75rem',
         lineHeight: 1.2,
       }}>
-        Start free. Upgrade when you&apos;re ready.
+        Start with a free score. Go deeper when you&apos;re ready.
       </h2>
-      <p style={{ color: '#AAAAAA', fontSize: '1rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-        Your first AI visibility score is free, no sign-up required.
-        Paid plans start from <strong style={{ color: '#F5F0E8' }}>£249/month</strong> for ongoing monitoring and reporting.
-      </p>
+
+      {/* Pricing ladder */}
+      <style>{`
+        .pricing-step { transition: border-color 0.2s, background 0.2s; }
+        .pricing-step:hover { border-color: rgba(201,168,76,0.35) !important; background: rgba(201,168,76,0.03) !important; }
+        @media (max-width: 640px) {
+          .pricing-ladder { flex-direction: column !important; }
+          .pricing-step { min-width: 0 !important; }
+        }
+      `}</style>
+      <div className="pricing-ladder" style={{
+        display: 'flex',
+        gap: '1px',
+        background: '#1A1A1A',
+        border: '1px solid #1A1A1A',
+        marginBottom: '1.75rem',
+      }}>
+        {[
+          {
+            label: 'Free Score',
+            price: '£0',
+            desc: 'Instant AI visibility score across 4 platforms',
+            href: '/score',
+            cta: 'Get my free score',
+            highlight: false,
+          },
+          {
+            label: 'Full Audit',
+            price: '£99',
+            desc: 'Complete audit with competitor analysis & action plan',
+            href: '/pricing',
+            cta: 'Learn more',
+            highlight: false,
+          },
+          {
+            label: 'Growth',
+            price: '£249/mo',
+            desc: 'Weekly re-audits, AI assistant & strategy calls',
+            href: '/pricing',
+            cta: 'Learn more',
+            highlight: true,
+          },
+          {
+            label: 'Premium',
+            price: '£599/mo',
+            desc: 'Daily monitoring, dedicated strategist & done-for-you content',
+            href: '/pricing',
+            cta: 'Learn more',
+            highlight: false,
+          },
+        ].map((tier) => (
+          <Link key={tier.label} href={tier.href} className="pricing-step" style={{
+            flex: 1,
+            minWidth: '150px',
+            padding: '1.25rem 1rem',
+            background: tier.highlight ? 'rgba(201,168,76,0.04)' : '#0F0F0F',
+            textDecoration: 'none',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '0.4rem',
+            border: tier.highlight ? '1px solid rgba(201,168,76,0.2)' : '1px solid transparent',
+          }}>
+            {tier.highlight && (
+              <span style={{ fontSize: '0.55rem', fontWeight: 700, color: '#C9A84C', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.1rem' }}>
+                Most popular
+              </span>
+            )}
+            <span style={{ fontSize: '0.7rem', color: '#999', letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 600 }}>
+              {tier.label}
+            </span>
+            <span style={{
+              fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
+              fontSize: '1.35rem',
+              color: tier.price === '£0' ? '#5BA88C' : '#F5F0E8',
+              fontWeight: 600,
+            }}>
+              {tier.price}
+            </span>
+            <span style={{ fontSize: '0.72rem', color: '#888', lineHeight: 1.5, maxWidth: '160px' }}>
+              {tier.desc}
+            </span>
+          </Link>
+        ))}
+      </div>
+
       <Link href="/pricing" style={{
         color: '#C9A84C',
         fontSize: '0.9rem',
@@ -32,7 +114,7 @@ export default function PricingAnchor() {
         fontWeight: 500,
         letterSpacing: '0.02em',
       }}>
-        See full pricing →
+        Compare plans in detail →
       </Link>
     </section>
   );

@@ -19,7 +19,7 @@ export default function MidPageCTA() {
         Find out if your competitors are already ahead of you.
       </h2>
       <p style={{ color: '#AAAAAA', fontSize: '1rem', lineHeight: 1.7, marginBottom: '2rem' }}>
-        Takes under 60 seconds. No sign-up required.
+        Takes under 60 seconds. Just your firm name and location.
       </p>
       <Link href="/score" className="midcta-btn" style={{
         display: 'inline-block',

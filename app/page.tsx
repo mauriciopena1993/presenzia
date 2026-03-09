@@ -1,7 +1,7 @@
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import HowItWorks from '@/components/HowItWorks';
-import PromptExampleBlock from '@/components/PromptExampleBlock';
+// PromptExampleBlock removed — its content overlaps with SampleReport's "Search Prompts" tab
 import SampleReport from '@/components/SampleReport';
 import Testimonials from '@/components/Testimonials';
 import MidPageCTA from '@/components/MidPageCTA';
@@ -107,7 +107,6 @@ export default function Home() {
         <Navbar />
         <Hero />
         <HowItWorks />
-        <PromptExampleBlock />
         <SampleReport />
         <Testimonials />
         <MidPageCTA />

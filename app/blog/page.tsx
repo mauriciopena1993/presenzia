@@ -113,7 +113,7 @@ export default function BlogPage() {
             How visible is your firm to AI right now?
           </p>
           <p style={{ color: '#999', fontSize: '0.875rem', lineHeight: 1.7, marginBottom: '1.5rem', maxWidth: '480px', margin: '0 auto 1.5rem' }}>
-            Get a free instant score across ChatGPT, Claude, Perplexity, and Google AI. Takes 60 seconds, no signup required.
+            Get a free instant score across ChatGPT, Claude, Perplexity, and Google AI. Takes 60 seconds.
           </p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
             <Link href="/score" style={{ display: 'inline-block', padding: '0.75rem 1.75rem', background: '#C9A84C', color: '#0A0A0A', fontWeight: 700, fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em' }}>

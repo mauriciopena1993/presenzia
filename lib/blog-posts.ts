@@ -829,6 +829,736 @@ The question is not whether reviews matter for AI visibility. The evidence is cl
 To see exactly how AI tools currently perceive your firm, including how your review presence affects your recommendations, check your free AI visibility score at Presenzia. It takes 30 seconds and provides a clear picture of where you stand and what to prioritise next.
     `.trim(),
   },
+  {
+    slug: 'ai-visibility-checklist-15-things-every-uk-financial-adviser-should-fix',
+    title: "The AI Visibility Checklist: 15 Things Every UK Financial Adviser Should Fix This Month",
+    description: "A practical, step-by-step checklist of the 15 highest-impact actions IFAs can take right now to improve how ChatGPT, Perplexity, and other AI tools recommend their firm.",
+    date: '2026-03-16',
+    readTime: '9 min read',
+    category: 'Guide',
+    heroImage: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=1200&h=630&fit=crop&q=80',
+    heroImageAlt: 'Checklist on a clipboard with a pen on a clean desk',
+    content: `
+You understand that AI visibility matters. You have read about the shift from Google search to AI recommendations. You know that 79% of UK IFA firms are invisible to ChatGPT. The question you are now asking is: what do I actually do about it?
+
+This checklist gives you the answer. These are the 15 highest-impact actions you can take this month to improve your firm's visibility across ChatGPT, Perplexity, Claude, and Google AI Overviews. They are ordered by impact and difficulty, so you can start at the top and work your way down.
+
+## The Quick Wins (Do This Week)
+
+### 1. Claim and complete your Google Business Profile
+
+This is the single easiest action with the biggest impact. Google Business Profile data feeds directly into multiple AI systems, including ChatGPT's web-search mode and Google's own AI Overviews. If your profile is incomplete or unclaimed, you are invisible to every AI system that references Google's local data.
+
+Ensure your profile includes: your full firm name (exactly as it appears on the FCA register), your office address, phone number, website URL, opening hours, a detailed business description that mentions your specialisms, and at least five high-quality photos of your office and team.
+
+### 2. Match your firm name across every platform
+
+AI models cross-reference information from multiple sources. If you are "Smith & Partners Financial Planning Ltd" on your website, "Smith Financial" on Google, and "S&P Wealth" on VouchedFor, AI systems cannot confidently identify you as the same entity.
+
+Audit your firm name on: your website, Google Business Profile, FCA Register, Companies House, LinkedIn company page, VouchedFor, Unbiased, and any other directories. Make them identical.
+
+### 3. Update your website's meta descriptions
+
+Your homepage and key service pages should have meta descriptions that clearly state who you are, where you operate, and what you specialise in. These descriptions are indexed by search engines and often referenced by AI systems when evaluating your firm.
+
+A meta description like "Independent financial advisers in Manchester specialising in retirement planning, pension transfers, and inheritance tax planning for high-net-worth individuals" is far more useful to AI than "Welcome to our website. We provide financial services."
+
+### 4. Add your FCA registration number to your website footer
+
+This seems minor, but it creates a verifiable link between your website and the FCA Register. AI systems use regulatory registration as an authority signal. Making your FCA number visible and consistent across your website, Google Business Profile, and directory listings reinforces your legitimacy.
+
+### 5. Request three client reviews this week
+
+You do not need 50 reviews to make a difference. Even three genuine, detailed reviews on Google can move you from invisible to visible in AI recommendations for your local area. Identify three long-standing clients with whom you have a strong relationship and send a personal request today.
+
+## The Content Actions (Do This Fortnight)
+
+### 6. Write one detailed guide about your core specialism
+
+AI systems recommend firms that demonstrate expertise. A single 1,500-word guide on a topic you genuinely know well, such as pension drawdown strategies for NHS consultants, or inheritance tax planning for property portfolios, creates a substantial signal that AI can reference.
+
+Write for a reader who is intelligent but not a financial expert. Be specific. Include actual figures, thresholds, and examples. Avoid jargon without explanation.
+
+### 7. Create a clear "About Us" page with named individuals
+
+AI models identify people as entities. A page that names your advisers, lists their qualifications (Chartered Financial Planner, CII Diploma, etc.), mentions their specialisms, and includes their professional experience gives AI models structured information about who is behind your firm.
+
+Generic copy like "Our experienced team of professionals" tells AI nothing. Named individuals with credentials tell AI everything.
+
+### 8. Publish a clear fee structure page
+
+Transparency on fees is one of the most commonly requested pieces of information from prospective clients asking AI for adviser recommendations. AI tools frequently mention fee transparency as a positive when recommending firms.
+
+You do not need to list exact prices if that is not appropriate for your business model. Even stating "We charge an initial advice fee of between 1% and 3% of the funds under consideration, depending on complexity" is significantly more useful than no fee information at all.
+
+### 9. Add a detailed FAQ section to your website
+
+FAQs are structured in a question-and-answer format that AI systems parse exceptionally well. Create a page with 10 to 15 genuine questions that your clients commonly ask, with thorough, honest answers.
+
+Questions like "How much money do I need to work with a financial adviser?", "What is the difference between restricted and independent advice?", and "How often will we meet?" are exactly the types of queries that prospective clients ask AI tools. If your website answers them clearly, AI systems may cite your firm.
+
+## The Authority Builders (Do This Month)
+
+### 10. Complete your VouchedFor profile
+
+VouchedFor is the most widely referenced UK-specific adviser review platform in AI training data. If you do not have a profile, create one. If you have one, ensure it is complete: qualifications, specialisms, a detailed biography, your fee model, and the types of clients you typically work with.
+
+A complete VouchedFor profile with even a handful of reviews can significantly improve your visibility to AI systems making UK-specific adviser recommendations.
+
+### 11. Update your LinkedIn company page and personal profiles
+
+LinkedIn is one of the largest data sources that AI models reference. Your company page should include a clear description of your firm, your specialisms, and your location. Individual adviser profiles should list qualifications, areas of expertise, and professional history.
+
+Importantly, LinkedIn content (articles and posts) published by named individuals at your firm contributes to the authority signals that AI models evaluate. Regular, thoughtful posts about your area of expertise compound over time.
+
+### 12. Ensure your Unbiased profile is current
+
+Like VouchedFor, Unbiased is a UK-specific directory that AI systems reference when generating adviser recommendations. If your profile is outdated or incomplete, update it with your current services, specialisms, minimum portfolio size, and fee structure.
+
+### 13. Add FinancialService schema markup to your website
+
+Schema markup is structured data that you add to your website's code to tell AI systems explicitly what your firm does. FinancialService schema can include your firm name, address, services, areas covered, FCA number, and qualifications.
+
+This is the most technical item on the list, and you will likely need your web developer to implement it. But research suggests that schema markup can improve AI citation rates by over 30%. It is worth the small investment.
+
+### 14. Publish a second piece of thought leadership
+
+If you completed item 6, you have one detailed guide. Now write a second, on a different topic. This could be market commentary, a case study (anonymised), or an analysis of a recent regulatory change and its impact on your clients.
+
+Two substantial content pieces signal to AI systems that your firm produces ongoing thought leadership, not a single one-off effort. Consistency matters.
+
+### 15. Set up a quarterly content calendar
+
+This is not an immediate visibility fix, but it creates the foundation for sustained improvement. Commit to publishing one substantial piece of content per month: a guide, a market commentary, a case study, or an analysis piece.
+
+The firms that will dominate AI recommendations in 12 months are the ones that start a consistent publishing rhythm now. Each piece compounds the authority signals that AI models use to evaluate your firm.
+
+## How to Prioritise
+
+If you can only do five things this month, do these: claim your Google Business Profile (1), match your firm name everywhere (2), get three client reviews (5), write one detailed guide (6), and complete your VouchedFor profile (10). These five actions will have more impact on your AI visibility than anything else you could do with the same time investment.
+
+## Measuring Progress
+
+After completing these actions, give it two to four weeks for changes to be reflected in AI responses. Then test your visibility by asking ChatGPT, Perplexity, and Claude to recommend financial advisers in your area or specialism. Compare the results with what you see today.
+
+If you want an objective measure of where you stand right now and how much progress you have made, Presenzia's free AI visibility score tests your firm across all four major AI platforms in under 60 seconds. It provides a baseline you can track as you work through this checklist, showing you exactly which actions are making the biggest difference.
+    `.trim(),
+  },
+  {
+    slug: 'google-business-profile-is-now-your-chatgpt-profile',
+    title: "Your Google Business Profile Is Now Your ChatGPT Profile: How to Optimise It for AI Search",
+    description: "ChatGPT now pulls directly from Google Business Profile data for local queries. Most IFA profiles are incomplete. Here's exactly how to optimise yours for AI recommendations.",
+    date: '2026-03-18',
+    readTime: '8 min read',
+    category: 'Guide',
+    heroImage: 'https://images.unsplash.com/photo-1553729459-uj68br0e55j0?w=1200&h=630&fit=crop&q=80',
+    heroImageAlt: 'Local business storefront with digital map overlay concept',
+    content: `
+When a prospective client asks ChatGPT "Who are the best financial advisers near me?", the AI does not consult a secret database of advisory firms. It draws on multiple data sources, and one of the most important is Google Business Profile.
+
+Since OpenAI integrated real-time web search into ChatGPT, Google Business Profile data has become a primary input for local recommendations. When ChatGPT needs to recommend businesses in a specific location, it frequently references the same structured data that powers Google Maps and local search results. Your Google Business Profile is, in effect, your ChatGPT profile.
+
+Yet the majority of UK financial advice firms either do not have a Google Business Profile, have one that is unclaimed, or have one that is so incomplete that AI systems cannot extract meaningful information from it.
+
+This guide explains exactly what to do about it.
+
+## Why Google Business Profile Matters More Than Your Website for AI
+
+This might sound counterintuitive, but for local recommendations, your Google Business Profile often carries more weight with AI systems than your firm's website.
+
+There are three reasons for this.
+
+**Structured data.** Google Business Profiles present information in a standardised, structured format: business name, address, phone number, category, services, hours, reviews, photos. AI systems can parse this structured data far more efficiently than they can extract the same information from an unstructured website.
+
+**Trust signals.** Google verifies business ownership and validates addresses. This verification provides AI systems with a baseline level of confidence that the business is real, established, and operating at the stated location.
+
+**Review integration.** Google reviews are directly associated with the Business Profile, creating a combined data package that tells AI systems not just what you do and where you are, but what your clients think of you.
+
+When ChatGPT or Perplexity generates a local recommendation, it is looking for businesses with complete, verified profiles and strong review signals. An IFA with a polished website but no Google Business Profile is at a significant disadvantage compared to an IFA with a basic website but a complete, well-reviewed profile.
+
+## The Seven Fields That Matter Most
+
+Not every field on your Google Business Profile is equally important for AI visibility. Here are the seven that have the greatest impact.
+
+### 1. Business Name
+
+This must match your FCA-registered name exactly. Do not add keywords ("Smith Financial — Best IFA in Manchester"). Google penalises keyword-stuffed names, and AI systems use the name to cross-reference against the FCA register, Companies House, and other data sources. Consistency is critical.
+
+### 2. Business Category
+
+Select "Financial Planner" or "Financial Consultant" as your primary category. You can add secondary categories such as "Pension Fund Manager," "Investment Service," or "Insurance Agency" if relevant to your services. These categories directly influence which queries AI systems match you to.
+
+### 3. Business Description
+
+You have 750 characters. Use every one of them. This description should include: what kind of advice you provide (independent, restricted, specialist), who you typically work with (retirees, business owners, high-net-worth families), where you operate, and what makes you distinctive.
+
+A strong description: "Smith & Partners is a Chartered independent financial planning firm based in Guildford, Surrey. We specialise in retirement income planning, pension transfers, and inheritance tax strategies for professionals and business owners with investable assets above £250,000. Founded in 2005, our team of four Chartered Financial Planners provides ongoing, personalised advice."
+
+A weak description: "We are a financial services company providing financial advice and planning solutions."
+
+### 4. Services
+
+Google allows you to list specific services with descriptions. Add every relevant service: retirement planning, pension transfers, inheritance tax planning, investment management, protection insurance, estate planning, and any specialist areas. Each service is a potential match point for AI queries.
+
+### 5. Photos
+
+Profiles with photos receive significantly more engagement, and AI systems that incorporate visual analysis use photos to validate business legitimacy. Upload at least five photos: your office exterior, reception area, meeting room, and team photos. Avoid stock images, as they undermine authenticity.
+
+### 6. Business Hours
+
+Complete and accurate hours signal an active, operational business. Update these if they change seasonally. An empty hours field suggests an inactive or abandoned listing.
+
+### 7. Q&A Section
+
+Google Business Profiles have a built-in Q&A feature that most IFAs ignore entirely. You can post your own questions and answer them. This creates additional structured content associated with your profile.
+
+Post questions like: "What is the minimum investment amount to work with your firm?", "Do you offer pension transfer advice?", "Are you independent or restricted?", and answer them thoroughly. This content becomes part of the data that AI systems reference.
+
+## The Review Strategy Specific to Google Business Profile
+
+Reviews on Google carry particular weight because they are directly embedded in the structured data that AI systems access. The strategy for maximising their AI impact is specific.
+
+**Quantity establishes relevance.** AI systems are more confident recommending a business with 20 reviews than one with two. Aim for a minimum of 15 reviews as a near-term target.
+
+**Recency signals activity.** A business with 30 reviews from 2022 and none since appears inactive. AI systems favour businesses with recent review activity. Aim for at least one to two new reviews per month to maintain a signal of ongoing client satisfaction.
+
+**Response demonstrates engagement.** Responding to reviews, particularly with substantive replies that add context or express genuine gratitude, creates additional text associated with your profile. AI systems see engaged businesses as more credible than those that collect reviews passively.
+
+**Specificity enables matching.** Reviews that mention specific services ("excellent pension transfer advice," "helped us plan for inheritance tax") allow AI to match your profile to queries about those specific topics. When requesting reviews, gently prompt clients to mention what you worked on together.
+
+## Common Mistakes That Undermine Your Profile
+
+**Using a PO Box or virtual office address.** AI systems and Google itself penalise businesses that do not have a genuine physical location. If you operate remotely, consider using a serviced office address where you genuinely conduct client meetings.
+
+**Leaving the description blank.** A profile without a description provides AI systems with almost nothing to work with beyond your business name and category. This is one of the most common and most damaging omissions.
+
+**Inconsistent NAP data.** NAP stands for Name, Address, Phone number. If these details differ between your Google profile, your website, your FCA register entry, and your directory listings, AI systems struggle to confidently identify you as a single entity. Audit and align all instances.
+
+**Ignoring negative reviews.** Negative reviews are not necessarily harmful if handled well. A thoughtful, professional response to criticism can actually strengthen your profile. Ignoring negative reviews, or responding defensively, damages credibility with both human readers and AI systems.
+
+**Setting up multiple profiles for one location.** Some firms create separate profiles for different advisers at the same office. This confuses both Google and AI systems. One profile per physical location is the correct approach.
+
+## The Integration With Your Broader AI Visibility
+
+Your Google Business Profile does not operate in isolation. It is one component of the entity data that AI systems use to evaluate your firm. For maximum impact, it should be consistent with and reinforced by your website, your VouchedFor profile, your LinkedIn presence, and your FCA register entry.
+
+When all of these sources present consistent, detailed, aligned information about your firm, AI systems develop high confidence in recommending you. When they conflict or when some sources are incomplete, that confidence drops.
+
+Think of your Google Business Profile as the foundation of your local AI visibility. Your website provides depth. Your directory listings provide validation. Your reviews provide social proof. Together, they create a comprehensive digital presence that AI systems can evaluate, understand, and recommend.
+
+## Start Today
+
+Optimising your Google Business Profile takes approximately 45 minutes if you have a profile that needs updating, or roughly 90 minutes if you need to create one from scratch. The return on that time investment, in terms of AI visibility, is potentially the highest of any single action you can take.
+
+If you want to see how your overall AI visibility compares before and after optimising your Google profile, check your free AI visibility score at Presenzia. It tests your firm across ChatGPT, Perplexity, Claude, and Google AI in under 60 seconds, giving you a concrete baseline to measure your progress against.
+    `.trim(),
+  },
+  {
+    slug: 'what-to-write-on-your-website-so-ai-recommends-you',
+    title: "What to Write on Your Website So AI Actually Recommends You: A Content Strategy for IFAs",
+    description: "Generic website copy makes you invisible to AI. Here's a practical content framework that helps ChatGPT, Perplexity, and Claude recognise your firm as the expert to recommend.",
+    date: '2026-03-20',
+    readTime: '9 min read',
+    category: 'Strategy',
+    heroImage: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1200&h=630&fit=crop&q=80',
+    heroImageAlt: 'Person writing content strategy notes with a laptop on a wooden desk',
+    content: `
+There is a line that appears on roughly two-thirds of UK IFA websites. It reads something like: "We provide comprehensive, independent financial planning tailored to your individual needs."
+
+It means nothing.
+
+Not to prospective clients, who have seen the same sentence hundreds of times. And certainly not to AI systems, which have processed that exact phrase (or near-identical variations) from thousands of advisory firm websites and learned to ignore it entirely.
+
+When ChatGPT decides which financial advisers to recommend, it is looking for firms it can distinguish. Firms it can match to a specific query. Firms that have given it a reason to recommend them over the other 5,000 directly authorised advice firms in the UK.
+
+Generic copy makes that impossible. Here is what to write instead.
+
+## The Core Problem: Commoditised Content
+
+Most IFA websites suffer from what might be called the "brochure problem." They were designed to look professional and say the right things to human visitors. But from an AI perspective, they all say the same things. The same service descriptions, the same vague value propositions, the same stock language about "putting clients first."
+
+AI models process content from across the internet. When every financial adviser website contains effectively the same text, none of those websites provides a reason for the AI to recommend one firm over another. The AI either recommends the handful of firms that do differentiate themselves, or it falls back on brand recognition and review volume.
+
+The solution is not to write more content. It is to write different content, content that is genuinely unique to your firm, your expertise, and the clients you serve best.
+
+## The Pillar Content Framework for IFAs
+
+A pillar content framework involves building your website around three to five "pillar" topics where your firm has genuine, deep expertise. Each pillar topic gets a comprehensive guide (1,500 to 2,500 words) supported by related shorter articles that explore specific aspects in more detail.
+
+### Step 1: Identify Your Genuine Specialisms
+
+Every IFA firm has areas where they are genuinely stronger than average. These might be driven by your client base, your qualifications, your professional background, or your geographic location.
+
+Common IFA specialisms that work well for AI differentiation:
+
+- Pension transfers and defined benefit scheme advice
+- Retirement income planning (drawdown, annuities, hybrid strategies)
+- Inheritance tax planning for property-heavy estates
+- Financial planning for NHS doctors and consultants
+- Business exit planning and entrepreneurs' relief
+- Divorce financial planning and pension sharing orders
+- Financial planning for expatriates or returning expats
+- Intergenerational wealth planning for farming families
+- Investment management for charities and trusts
+
+The key is specificity. "We specialise in pensions" does not differentiate you. "We specialise in defined benefit pension transfer advice for scheme members approaching retirement" does.
+
+### Step 2: Write a Pillar Guide for Each Specialism
+
+Each pillar guide should be the most thorough, accurate, and useful resource available online on that specific topic. This sounds ambitious, but for niche financial topics, the bar is surprisingly low. Most existing content on specialist planning topics is either superficial, outdated, or written by generic content marketing agencies with no real financial expertise.
+
+A pillar guide on pension transfers, for example, might cover:
+
+- What a defined benefit pension transfer actually involves
+- The current regulatory framework (FCA requirements, CETV process)
+- Who should and should not consider a transfer (with specific scenarios)
+- The risks and how they are assessed
+- What the advice process looks like in practice
+- Common misconceptions and how to avoid pitfalls
+- Relevant thresholds and figures for the current tax year
+
+Write as if you are explaining this to an intelligent person who has no financial background but has a genuine need for this information. Be specific. Use real numbers and current figures. Reference actual regulations. This is the kind of content that AI systems surface because it is genuinely authoritative.
+
+### Step 3: Create Supporting Content
+
+Each pillar guide should be supported by three to five shorter articles (800 to 1,200 words) that address specific questions related to the pillar topic.
+
+For a pension transfer pillar, supporting articles might include:
+
+- "What happens to my final salary pension if my company goes bust?"
+- "How is the transfer value of a defined benefit pension calculated?"
+- "Can I transfer my pension after I have started drawing benefits?"
+- "Tax implications of pension transfers in 2026/27"
+
+These supporting articles create a cluster of content that signals to AI systems that your firm has comprehensive expertise in this area. They also match the specific questions that prospective clients type into AI tools.
+
+## How to Write for AI Without Sounding Robotic
+
+Writing for AI does not mean writing for robots. The characteristics that AI systems reward, specificity, authority, factual density, clear structure, are exactly the same characteristics that make content useful for human readers.
+
+Here are the practical principles.
+
+**Use clear, descriptive headings.** AI systems use headings to understand content structure. "Understanding Your Options" is vague. "Drawdown vs Annuity: How to Choose Your Retirement Income Strategy" is specific and tells AI exactly what the section covers.
+
+**Include specific figures and thresholds.** "The pension annual allowance is currently £60,000 for the 2025/26 tax year" is a factual statement that AI can cite. "The allowance is subject to change" is meaningless.
+
+**Define technical terms when you first use them.** "A CETV (Cash Equivalent Transfer Value) is the lump sum your pension scheme calculates as the equivalent value of your defined benefit pension" helps AI understand and explain concepts using your content as the source.
+
+**Attribute expertise to named individuals.** "According to James Harrison, Chartered Financial Planner at Smith & Partners" gives AI a named expert to cite. This makes your content more quotable and more likely to be referenced.
+
+**Include practical examples.** "Consider a 57-year-old NHS consultant with 30 years of pensionable service and a CETV offer of £1.2 million" is the kind of worked example that AI systems find highly useful for constructing answers to complex queries.
+
+**Structure content for extraction.** Think about how an AI might extract a single paragraph from your content to answer a user's question. Each paragraph should ideally make a self-contained point. This makes your content more modular and more likely to be cited.
+
+## The Content You Should Stop Writing
+
+Some content types that many IFAs produce are actively unhelpful for AI visibility.
+
+**Generic market commentary.** "Markets were volatile this week" adds nothing. Hundreds of firms and financial publications produce virtually identical commentary. AI has no reason to cite yours.
+
+**Thin blog posts.** A 300-word article titled "Five Tips for Saving Money" competes with thousands of identical pieces across the internet. AI systems ignore commoditised content.
+
+**Keyword-stuffed service pages.** Pages that repeat "financial adviser in Manchester" fifteen times are optimised for a version of Google that no longer exists. They provide no useful information for AI systems.
+
+**Content that is all opinion with no substance.** "We believe in putting clients first" is an opinion that cannot be verified. "Our average client retention rate over the past five years is 97%" is a fact that AI can cite.
+
+Replace these with fewer, better, more specific pieces of content. One excellent pillar guide is worth more than twenty thin blog posts.
+
+## Building a 12-Month Content Calendar
+
+Consistency matters for AI visibility. A burst of content followed by months of silence sends a weaker signal than a steady publishing rhythm. Here is a practical approach.
+
+**Month 1:** Publish your first pillar guide on your primary specialism. This is your most important content investment.
+
+**Months 2 to 3:** Publish two to three supporting articles for your first pillar. Each article should address a specific question related to your specialism.
+
+**Month 4:** Publish your second pillar guide on a different specialism.
+
+**Months 5 to 6:** Supporting articles for pillar two, plus begin collecting and publishing case studies (anonymised) that demonstrate your expertise in practice.
+
+**Months 7 to 12:** Continue the pattern: publish pillar three, supporting content, case studies, and begin adding commentary on regulatory or market developments relevant to your specialisms.
+
+By month 12, you will have three comprehensive pillar guides, 12 to 15 supporting articles, several case studies, and a body of commentary that signals ongoing expertise. This is more substantive content than 95% of IFA firms have ever published, and it creates a significant, durable advantage in AI visibility.
+
+## Measuring Content Impact
+
+The impact of content on AI visibility is not immediate. AI systems need time to index and evaluate new content. Expect to see measurable changes in how AI tools reference your firm within four to eight weeks of publishing substantial content.
+
+Test your visibility regularly by asking AI tools the kinds of questions your target clients would ask. Track whether your firm starts appearing in responses, and note which content pieces are being referenced.
+
+For a structured measurement of your progress, check your AI visibility score at Presenzia before you begin your content strategy and then monthly as you publish. This gives you an objective baseline and a clear view of how your content investment is translating into actual AI recommendations across ChatGPT, Perplexity, Claude, and Google AI.
+    `.trim(),
+  },
+  {
+    slug: 'how-to-test-your-firm-on-chatgpt-and-what-to-do-about-the-answer',
+    title: "How to Test Your Firm on ChatGPT (And What to Do When It Doesn't Recommend You)",
+    description: "A step-by-step guide to testing how ChatGPT, Perplexity, Claude, and Google AI see your firm. Includes the exact prompts to use, how to interpret the results, and what to fix first.",
+    date: '2026-03-22',
+    readTime: '8 min read',
+    category: 'Guide',
+    heroImage: 'https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?w=1200&h=630&fit=crop&q=80',
+    heroImageAlt: 'Person testing AI chatbot interface on a laptop screen',
+    content: `
+Most financial advisers have never asked ChatGPT to recommend them. The ones who have tried it once, seen that they were not mentioned, and moved on without knowing what to do about it.
+
+This guide gives you a systematic method for testing your AI visibility across all four major platforms, interpreting what the results mean, and taking the specific actions most likely to change the outcome.
+
+## The Testing Method
+
+Testing your AI visibility properly requires more than a single query. AI responses vary based on how questions are phrased, what the model has recently processed, and which platform you use. A thorough test covers multiple platforms and multiple query types.
+
+### Platform 1: ChatGPT
+
+Open ChatGPT (the free version works, though GPT-4 gives more detailed responses). Run these five queries, replacing the bracketed text with your actual location and specialisms:
+
+1. "Can you recommend a good independent financial adviser in [your town/city]?"
+2. "Who are the best financial advisers in [your county/region] for [your primary specialism]?"
+3. "I need a financial adviser who specialises in [your primary specialism]. Can you recommend some firms in [your area]?"
+4. "What should I look for in a financial adviser for [specific client scenario you commonly serve]?"
+5. "[Your firm name] — is this a good financial adviser? What can you tell me about them?"
+
+Record whether your firm appears in each response, what the AI says about you (or does not say), and which competitors are mentioned instead.
+
+### Platform 2: Perplexity
+
+Perplexity is distinct because it cites its sources with links. This makes it particularly valuable for testing because you can see exactly which web pages the AI is drawing from. Run the same five queries.
+
+Pay attention to the sources Perplexity cites. If your competitors are appearing, click through to the cited sources to understand why the AI chose them. This often reveals the specific content, directory listing, or review profile that gave them the edge.
+
+### Platform 3: Claude
+
+Claude (made by Anthropic) has a different training dataset and different tendencies. Some firms that appear on ChatGPT are invisible on Claude, and vice versa. Run the same five queries.
+
+Claude tends to be more cautious about making specific recommendations and more likely to describe the characteristics of good advisers rather than naming firms. If Claude does name your firm, it is a strong signal that your digital presence is genuinely authoritative.
+
+### Platform 4: Google AI Overviews
+
+Search Google for the same queries. On many financial advice queries, Google now displays an AI Overview at the top of the results. Note whether your firm is cited in the AI Overview, and whether the Overview links to your content.
+
+Google AI Overviews are powered by a different model than the standalone AI tools, and they draw more heavily from Google's own index. This means your traditional SEO performance has more influence here than on other platforms.
+
+## How to Interpret the Results
+
+After running 20 queries across four platforms, you will have a clear picture of your AI visibility. Here is how to interpret the most common scenarios.
+
+### Scenario A: You appear on zero platforms
+
+This is the most common result for UK IFAs. It means AI systems have insufficient data to confidently recommend your firm. The fix involves building your digital presence from the ground up: Google Business Profile, client reviews, directory listings, and substantive website content. Start with the foundational actions.
+
+### Scenario B: You appear on one platform but not others
+
+This suggests you have some visibility signals but they are not strong or consistent enough to register across all AI systems. Examine which platform shows you and why. If it is Google AI Overviews, your traditional SEO is doing some work but your broader web presence needs strengthening. If it is Perplexity, check which sources it is citing, as that reveals where your strongest signals are.
+
+### Scenario C: You appear but with incorrect or outdated information
+
+This is more common than you might expect. AI systems may reference your firm but describe services you no longer offer, cite an old address, or attribute specialisms you do not have. The fix is to update your information across all platforms and publish current content that AI systems will pick up over time.
+
+### Scenario D: Competitors appear instead of you
+
+This is the most instructive scenario because it tells you exactly what is working in your market. When a competitor appears, investigate why. Check their Google Business Profile (is it more complete than yours?), their reviews (do they have more, or more detailed ones?), their website content (is it more specific and authoritative?), and their directory listings (are they on platforms you are missing?).
+
+The gap between you and a visible competitor often comes down to two or three specific differences that you can address directly.
+
+### Scenario E: You appear consistently across all platforms
+
+Congratulations: you are in the minority. Your focus should shift to strengthening your position and monitoring for competitors who begin closing the gap.
+
+## The Ask-Why Technique
+
+Here is a technique that most advisers do not know about. After testing whether you appear in AI recommendations, you can ask the AI to explain its reasoning.
+
+Try these follow-up prompts:
+
+- "Why did you recommend those firms and not others?"
+- "What would a financial advisory firm need to do to appear in your recommendations for [your area]?"
+- "If I wanted to be recommended by AI tools like you, what should I focus on improving?"
+
+The responses are revealing. AI tools will often explicitly describe the signals they prioritise: review volume, content depth, directory presence, specialism clarity, and consistent citations. This is, in effect, the AI telling you its ranking criteria.
+
+While you should not treat these responses as definitive (AI models can be imprecise about their own reasoning), they provide a useful directional guide for where to focus your efforts.
+
+## The Top Five Actions Based on Your Results
+
+Regardless of which scenario applies to your firm, these five actions address the most common gaps we see across UK IFAs.
+
+**1. Complete your Google Business Profile.** This is consistently the single highest-impact action. A verified, complete profile with accurate information, a detailed description, photos, and services listed creates the foundation for local AI recommendations.
+
+**2. Get 10 or more Google reviews.** Reviews are the most powerful third-party signal for AI. If you have fewer than 10, make this your immediate priority. Personal requests to established clients convert at a much higher rate than automated emails.
+
+**3. Publish one detailed content piece about your primary specialism.** Not a 300-word blog post. A 1,500-word authoritative guide that demonstrates genuine expertise. This gives AI systems substantive content to reference when matching your firm to relevant queries.
+
+**4. Align your information everywhere.** Audit your firm's details across your website, Google Business Profile, FCA Register, Companies House, VouchedFor, Unbiased, and LinkedIn. Make sure the name, address, phone number, and service descriptions are identical. Consistency is an authority signal.
+
+**5. Request FinancialService schema markup on your website.** Ask your web developer to add this structured data. It explicitly tells AI systems what your firm does, where you operate, and your regulatory credentials. The implementation takes a few hours and creates a permanent improvement in how AI systems parse your website.
+
+## When to Retest
+
+After making changes, allow two to four weeks before retesting. AI systems with web access (ChatGPT in search mode, Perplexity, Google AI Overviews) will pick up changes faster. Models that rely more on training data may take longer to reflect improvements.
+
+Test quarterly at minimum, and test immediately after making significant changes to your website content, Google profile, or directory listings.
+
+For a faster and more systematic assessment than manual testing, you can check your AI visibility score at Presenzia. It runs over 120 wealth-specific queries across all four major platforms in under 60 seconds, giving you a comprehensive score, a grade, and a specific action plan based on exactly where your gaps are.
+
+Manual testing is valuable for understanding the qualitative aspects of how AI perceives your firm. An automated assessment is valuable for quantitative tracking of your progress over time. Both have their place.
+    `.trim(),
+  },
+  {
+    slug: 'which-ifa-directories-feed-into-ai-recommendations',
+    title: "The IFA Directory Audit: Which Listings Actually Feed Into AI Recommendations",
+    description: "Not all adviser directories are equal in the eyes of AI. Some directly feed ChatGPT and Perplexity recommendations. Others are invisible. Here's which ones matter and how to optimise them.",
+    date: '2026-03-24',
+    readTime: '8 min read',
+    category: 'Strategy',
+    heroImage: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1200&h=630&fit=crop&q=80',
+    heroImageAlt: 'Business directory listing documents and folders organised on a desk',
+    content: `
+Financial advisers have always known that directory listings matter. A presence on VouchedFor, Unbiased, or the PFS directory has traditionally been about generating direct enquiries from consumers searching those platforms.
+
+But directories now serve a second, increasingly important purpose: they feed data to AI systems. When ChatGPT, Perplexity, or Google AI Overviews construct recommendations for financial advisers, they draw on information from these directories to validate that a firm is legitimate, active, and specialised in the areas a prospective client is asking about.
+
+Not all directories carry equal weight with AI systems. Some are heavily referenced. Others are effectively invisible. Understanding which directories matter, and what information AI systems actually extract from them, allows you to focus your effort where it has the greatest impact.
+
+## How AI Systems Use Directory Data
+
+AI systems do not use directories the way consumers do. A consumer visits VouchedFor to read reviews and compare advisers. An AI system uses VouchedFor data as one of many inputs when forming an opinion about which firms to recommend.
+
+Specifically, AI systems extract three things from directory listings:
+
+**Entity confirmation.** The fact that your firm appears on a reputable directory confirms to the AI that your firm exists, is active, and is regulated. This sounds basic, but for firms with a thin web presence, directory listings may be the primary evidence that the AI has of their existence.
+
+**Service and specialism data.** Directory profiles typically include structured information about what services a firm offers and who it serves. AI systems use this to match firms to specific client queries. A VouchedFor profile that lists "pension transfers" and "inheritance tax planning" as specialisms helps the AI recommend your firm when a user asks about those topics.
+
+**Review and rating data.** Reviews on directories provide the third-party validation that AI systems weight heavily. A firm with 40 five-star reviews on VouchedFor sends a stronger signal than a firm with no reviews anywhere.
+
+## The Directory Tier System
+
+Based on how frequently AI systems reference different directories when generating adviser recommendations, the landscape breaks down into three tiers.
+
+### Tier 1: High AI Impact
+
+These directories are the most frequently referenced by AI systems and should be your top priority.
+
+**Google Business Profile.** Technically not a traditional directory, but it functions as one and is the single most important listing for local AI recommendations. ChatGPT's web search mode, Perplexity, and Google AI Overviews all reference Google Business data extensively.
+
+**VouchedFor.** The UK's largest specialist adviser review platform. VouchedFor profiles are frequently cited by AI systems when recommending UK financial advisers, particularly because of the review data and the structured specialism information they contain. VouchedFor's high domain authority and its recognition as a regulated review platform give it significant weight.
+
+**Unbiased.** One of the longest-established consumer-facing directories for finding financial advisers in the UK. Unbiased profiles appear in AI-generated recommendations with notable frequency, and the platform's search data likely influences how AI models understand which firms serve which areas and specialisms.
+
+**FCA Register.** AI systems reference the FCA Register as an authoritative source for validating that a firm is regulated and authorised. While the Register itself does not contain marketing content, ensuring your Register entry is accurate and up to date prevents discrepancies that could reduce AI confidence in recommending you.
+
+### Tier 2: Moderate AI Impact
+
+These directories contribute to your overall digital footprint and are worth maintaining, though their direct impact on AI recommendations is secondary.
+
+**LinkedIn (Company Page).** LinkedIn profiles are indexed by AI systems and contribute to entity recognition and authority signals. A complete company page with a clear description, location, and employee profiles strengthens the overall picture that AI systems build of your firm.
+
+**PFS (Personal Finance Society) Directory.** As a professional body directory, PFS listings carry authority in the eyes of AI systems, particularly for queries that reference Chartered status or professional credentials.
+
+**CISI (Chartered Institute for Securities & Investment) Directory.** Similar to PFS, CISI listings validate professional credentials and contribute to AI authority signals.
+
+**Trustpilot.** While less commonly associated with financial advice specifically, Trustpilot carries high general domain authority. Reviews here contribute to your firm's overall review profile as seen by AI systems.
+
+### Tier 3: Lower AI Impact but Still Valuable
+
+These directories have less direct influence on AI recommendations but contribute to the broader web presence that AI systems evaluate.
+
+**AdviserBook.** A newer directory that is building recognition. Worth maintaining a profile for completeness and for the incremental value of consistent entity data.
+
+**Yell/Thomson Local.** Traditional business directories with declining consumer usage but still indexed by AI systems for entity validation.
+
+**Local chamber of commerce directories.** These carry local authority signals and can be particularly relevant for AI queries that specify a geographic area.
+
+**Professional Adviser/FTAdviser profiles.** If you have contributed articles or commentary to these trade publications, those listings create high-authority third-party mentions that AI systems reference.
+
+## How to Optimise Each Listing
+
+The value of a directory listing depends entirely on how complete and accurate it is. An incomplete listing can be worse than no listing at all, because it introduces inconsistencies into the data that AI systems evaluate.
+
+For each directory where you maintain a profile, ensure the following:
+
+**Firm name consistency.** Your firm name should be identical across every directory, matching your FCA Register entry and your website. Even minor variations ("& Partners" versus "and Partners") can reduce AI confidence in identifying you as a single entity.
+
+**Complete service descriptions.** Do not leave service fields blank. List every relevant service and specialism. AI systems use this structured data to match your firm to specific queries.
+
+**Geographic information.** Ensure your address and areas served are clearly stated. AI recommendations for local advisers depend heavily on geographic data.
+
+**Qualifications and accreditations.** List Chartered status, CII qualifications, CISI memberships, and any other professional credentials. These are authority signals that AI systems evaluate.
+
+**Up-to-date information.** Review and update your directory profiles at least quarterly. Outdated information, particularly old addresses, discontinued services, or staff who have left, creates data conflicts that reduce AI confidence.
+
+## The Consistency Principle
+
+The most important takeaway from this analysis is not which individual directory matters most. It is that consistency across all directories matters enormously.
+
+AI systems are fundamentally pattern-matching engines. When they find the same firm name, the same address, the same services, and the same description across multiple independent sources, they develop high confidence that this firm is real, established, and credible. When they find inconsistencies, partial information, or conflicting data, that confidence drops.
+
+A firm with consistent, complete profiles across eight directories will almost always be recommended ahead of a firm with a perfect profile on one directory and gaps everywhere else. The aggregate effect is greater than the sum of individual listings.
+
+## The 60-Minute Directory Audit
+
+Here is a practical audit you can complete in about an hour.
+
+**Step 1 (10 minutes):** Create a spreadsheet with columns for each directory listed above. Add rows for: firm name, address, phone, website, services listed, qualifications listed, and number of reviews.
+
+**Step 2 (30 minutes):** Visit each directory where you have a listing and populate the spreadsheet with your current information. Note any gaps or inconsistencies.
+
+**Step 3 (10 minutes):** Identify the most critical gaps. Any Tier 1 directory where you do not have a profile, or where your profile is substantially incomplete, should be your first priority.
+
+**Step 4 (10 minutes):** Create a plan to address the gaps. Which profiles need creating? Which need updating? Which have information that conflicts with other sources?
+
+This audit gives you a clear picture of your directory presence and a specific, actionable plan for improvement. The effort required is modest, but the impact on how AI systems perceive and recommend your firm can be significant.
+
+## Measuring the Impact
+
+After updating your directory profiles, allow two to four weeks for changes to be indexed and reflected in AI recommendations. Then test your visibility using the manual testing method described in our testing guide, or check your comprehensive AI visibility score at Presenzia to see how your improved directory presence has affected your scores across all four major AI platforms.
+
+The firms that maintain complete, consistent, up-to-date profiles across all relevant directories are building a structural advantage in AI visibility that is difficult for less diligent competitors to replicate.
+    `.trim(),
+  },
+  {
+    slug: 'perplexity-claude-gemini-why-optimising-for-chatgpt-alone-is-not-enough',
+    title: "Perplexity, Claude, Gemini: Why Optimising for ChatGPT Alone Is Not Enough",
+    description: "Each AI platform recommends financial advisers differently. A firm visible on ChatGPT may be invisible on Perplexity. Here's how the four major AI platforms differ and what it means for your strategy.",
+    date: '2026-03-26',
+    readTime: '9 min read',
+    category: 'Strategy',
+    heroImage: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&h=630&fit=crop&q=80',
+    heroImageAlt: 'Multiple screens showing different AI interfaces and technology platforms',
+    content: `
+When most financial advisers think about AI visibility, they think about ChatGPT. It is the name they recognise, the platform their clients mention, the tool that dominates headlines.
+
+But ChatGPT is one of four major AI platforms that prospective clients are using to find financial advisers. The others, Perplexity, Claude, and Google's Gemini (including AI Overviews), each evaluate and recommend firms differently. A firm that appears prominently on ChatGPT may be completely invisible on Perplexity. A firm that is missing from ChatGPT may be the top recommendation on Claude.
+
+Optimising for only one platform is like optimising your website for only one browser. You miss a significant portion of your potential audience. Understanding how each platform differs, and what each one prioritises, is essential for a complete AI visibility strategy.
+
+## The Four Platforms and How They Differ
+
+### ChatGPT (OpenAI)
+
+ChatGPT is the most widely used AI assistant globally, with over 300 million weekly active users. When ChatGPT generates recommendations, it draws on two sources: its training data (a massive synthesis of web content) and, when web search is enabled, real-time web results.
+
+**What ChatGPT prioritises:**
+- Brand recognition and frequency of mention across the web
+- Content authority, particularly from well-established websites
+- Google Business Profile data (when web search is active)
+- Review presence, particularly Google reviews
+- Consistent entity information across multiple sources
+
+**ChatGPT's tendencies:**
+ChatGPT tends to recommend larger, nationally recognised firms unless the user specifies a location. It responds well to specific geographic queries and will surface local firms if they have a strong local digital presence. It also tends to provide relatively detailed descriptions of recommended firms, drawing on information from multiple sources.
+
+**What this means for IFAs:**
+To perform well on ChatGPT, you need a strong overall web presence: complete Google Business Profile, consistent directory listings, substantial website content, and visible client reviews. ChatGPT rewards firms that appear credible across multiple data sources.
+
+### Perplexity
+
+Perplexity is growing rapidly among professionals and researchers because of one distinctive feature: it cites its sources. Every claim Perplexity makes is accompanied by a clickable link to the web page it drew from. This makes Perplexity uniquely transparent about why it recommends particular firms.
+
+**What Perplexity prioritises:**
+- Recent, indexable web content (Perplexity searches the web in real time)
+- Source authority and credibility
+- Content that directly answers the user's specific query
+- Pages with clear, well-structured information
+- Recent publication dates (freshness matters more here than on ChatGPT)
+
+**Perplexity's tendencies:**
+Perplexity tends to recommend firms that have recently published relevant content. It also favours firms listed on high-authority directories (VouchedFor, Unbiased) because these platforms appear frequently in its search results. Perplexity is more likely to cite a specific page on your website than to reference your firm generally.
+
+**What this means for IFAs:**
+Perplexity rewards content freshness and specificity. Publishing regular, high-quality content about your specialisms gives you more indexed pages that Perplexity can cite. Having complete profiles on established directories ensures you appear in Perplexity's results even if your own website's domain authority is modest.
+
+### Claude (Anthropic)
+
+Claude approaches recommendations differently from both ChatGPT and Perplexity. It tends to be more cautious, more nuanced, and more focused on providing balanced, well-reasoned responses rather than definitive lists.
+
+**What Claude prioritises:**
+- Depth and quality of content over quantity
+- Balanced, well-reasoned information
+- Specific expertise signals (qualifications, specialisms, regulatory status)
+- Content that demonstrates genuine authority rather than marketing language
+- Professional credentials and regulatory compliance signals
+
+**Claude's tendencies:**
+Claude is less likely to produce a confident "top 5" list and more likely to describe what to look for in a good adviser, occasionally naming firms that exemplify those qualities. When Claude does recommend specific firms, it tends to reference firms with very strong authority signals: detailed content, professional credentials, and substantive third-party mentions.
+
+**What this means for IFAs:**
+Claude rewards genuine expertise. If your website contains deep, authoritative content written by qualified professionals, Claude is more likely to reference your firm. Marketing-style content and keyword-stuffed pages are less effective on Claude than on other platforms. Focus on quality and depth rather than volume.
+
+### Google Gemini and AI Overviews
+
+Google's AI capabilities appear in two forms: Gemini (the standalone AI assistant) and AI Overviews (AI-generated summaries that appear at the top of Google search results). Both draw heavily from Google's existing search index.
+
+**What Google AI prioritises:**
+- Traditional SEO signals (domain authority, backlinks, page quality)
+- Google Business Profile completeness and review quality
+- Structured data (schema markup, particularly FinancialService schema)
+- Content relevance to the specific search query
+- Local search signals (proximity, local backlinks, local reviews)
+
+**Google AI's tendencies:**
+Google AI Overviews lean heavily on the same data sources that power traditional Google search. This means that firms with strong Google SEO performance have an advantage on this platform that they may not have on ChatGPT or Perplexity. Google AI is also the most responsive to schema markup and structured data.
+
+**What this means for IFAs:**
+Google AI is where your traditional SEO investment pays the most dividends for AI visibility. If you have already invested in SEO, you have a head start on this platform. Adding schema markup and maintaining your Google Business Profile will maximise the AI visibility benefit of your existing SEO work.
+
+## Where the Platforms Agree
+
+Despite their differences, all four platforms share some common priorities. Understanding these shared signals helps you build a foundation that works everywhere.
+
+**Reviews matter everywhere.** Every platform weights client reviews when making recommendations. Google reviews and VouchedFor reviews are referenced most frequently across all four platforms.
+
+**Consistency is universal.** All four platforms cross-reference information from multiple sources. Consistent entity data (name, address, services) across your website, Google Business Profile, directories, and social media strengthens your position on every platform.
+
+**Depth outperforms breadth.** All four platforms prefer detailed, authoritative content over thin, generic pages. A single comprehensive guide on your specialism is more valuable than ten superficial blog posts.
+
+**Structured data helps everywhere.** While Google AI benefits most directly from schema markup, all platforms can extract structured information more efficiently than unstructured prose.
+
+## Building a Multi-Platform Strategy
+
+The practical implication is that you should not optimise for one platform at the expense of others. Instead, build a layered strategy:
+
+**Layer 1: Foundation (works across all platforms)**
+- Complete, verified Google Business Profile
+- Consistent firm information across all directories
+- Active review collection on Google and VouchedFor
+- FinancialService schema markup on your website
+- At least three to five detailed content pieces on your specialisms
+
+**Layer 2: ChatGPT-specific**
+- Broad web presence with mentions across multiple sources
+- Complete directory profiles (VouchedFor, Unbiased, PFS)
+- Strong brand consistency across all platforms
+
+**Layer 3: Perplexity-specific**
+- Regular content publication (at least monthly)
+- Well-structured content with clear headings and factual density
+- High-authority directory listings that Perplexity can cite
+
+**Layer 4: Claude-specific**
+- Deep, expert-level content that demonstrates genuine authority
+- Professional credentials clearly stated
+- Content written by named, qualified individuals
+
+**Layer 5: Google AI-specific**
+- Traditional SEO best practices
+- Local SEO signals (local backlinks, local press mentions)
+- Schema markup and structured data
+
+## The Danger of Single-Platform Thinking
+
+Focusing exclusively on one platform creates a fragile visibility position. Platform dynamics change frequently. ChatGPT updates its web search capabilities. Perplexity changes its ranking algorithm. Google modifies how AI Overviews select sources. A firm that is visible on one platform today could become invisible tomorrow if that platform changes its approach.
+
+A multi-platform strategy creates resilience. If your visibility drops on one platform due to an algorithm change, your presence on the other three platforms continues to generate recommendations. This diversification is particularly important for financial advisers, where a single new client relationship can be worth tens of thousands of pounds in lifetime fees.
+
+## Measuring Across Platforms
+
+Understanding your visibility on each individual platform, not just an overall score, allows you to identify specific gaps and target your efforts effectively. You may discover that you perform strongly on Google AI but poorly on Perplexity, which would indicate a need for more recent published content. Or you may find strong Perplexity visibility but weak ChatGPT presence, suggesting your broader web footprint needs strengthening.
+
+Presenzia's free AI visibility score tests your firm across all four major platforms, giving you a separate score for each and an overall grade. This platform-by-platform breakdown shows you exactly where you are strong, where you are weak, and which specific actions will have the greatest impact on each platform. It takes under 60 seconds and provides the multi-platform view that manual testing across four separate AI tools would take hours to replicate.
+
+The firms that will dominate AI-driven client acquisition are those that treat all four platforms as important, building a presence that is visible, authoritative, and consistent across the entire AI landscape that prospective clients are using.
+    `.trim(),
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
