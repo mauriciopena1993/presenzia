@@ -44,51 +44,38 @@ export default function PricingAnchor() {
             price: '£0',
             desc: 'Instant AI visibility score across 4 platforms',
             href: '/score',
-            cta: 'Get my free score',
-            highlight: false,
           },
           {
             label: 'Full Audit',
             price: '£99',
             desc: 'Complete audit with competitor analysis & action plan',
             href: '/pricing',
-            cta: 'Learn more',
-            highlight: false,
           },
           {
             label: 'Growth',
             price: '£249/mo',
             desc: 'Weekly re-audits, AI assistant & strategy calls',
             href: '/pricing',
-            cta: 'Learn more',
-            highlight: true,
           },
           {
             label: 'Premium',
             price: '£599/mo',
             desc: 'Daily monitoring, dedicated strategist & done-for-you content',
             href: '/pricing',
-            cta: 'Learn more',
-            highlight: false,
           },
         ].map((tier) => (
           <Link key={tier.label} href={tier.href} className="pricing-step" style={{
             flex: 1,
             minWidth: '150px',
             padding: '1.25rem 1rem',
-            background: tier.highlight ? 'rgba(201,168,76,0.04)' : '#0F0F0F',
+            background: '#0F0F0F',
             textDecoration: 'none',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             gap: '0.4rem',
-            border: tier.highlight ? '1px solid rgba(201,168,76,0.2)' : '1px solid transparent',
+            border: '1px solid transparent',
           }}>
-            {tier.highlight && (
-              <span style={{ fontSize: '0.55rem', fontWeight: 700, color: '#C9A84C', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.1rem' }}>
-                Most popular
-              </span>
-            )}
             <span style={{ fontSize: '0.7rem', color: '#999', letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 600 }}>
               {tier.label}
             </span>
