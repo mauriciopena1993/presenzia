@@ -115,7 +115,7 @@ export default function Hero() {
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.75rem', color: '#C9A84C', fontWeight: 600 }}>
             79%
-            <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" style={{ fontSize: '0.85rem', color: '#C9A84C', textDecoration: 'none', verticalAlign: 'super', marginLeft: '3px', opacity: 0.9, fontWeight: 400 }} aria-label="Source: Presenzia research study of 149 UK IFA firms">¹</Link>
+            <span style={{ fontSize: '0.85rem', color: '#C9A84C', verticalAlign: 'super', marginLeft: '3px', opacity: 0.9, fontWeight: 400 }}>¹</span>
           </div>
           <div style={{ fontSize: '0.8rem', color: '#999999', letterSpacing: '0.04em', marginTop: '0.3rem' }}>of UK IFA firms not found on ChatGPT</div>
         </div>

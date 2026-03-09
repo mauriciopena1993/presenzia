@@ -101,7 +101,7 @@ export default function HowItWorks() {
       </div>
 
       <style>{`
-        .hiw-step:hover { background: rgba(15,15,15,0.7) !important; }
+        .hiw-step { cursor: default; }
       `}</style>
     </section>
   );

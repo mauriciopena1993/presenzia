@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { ArrowRight, ArrowLeft, CheckCircle, XCircle, Search, Zap, AlertTriangle, TrendingDown, BarChart3, Target, Users, Shield } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { ArrowRight, CheckCircle, XCircle, Search, Zap, AlertTriangle, TrendingDown, BarChart3, Target, Users, Shield } from 'lucide-react';
 
 // ── PDF-matching palette ──
 const W = '#FFFFFF';
@@ -476,15 +476,12 @@ const CARDS = [
 // ── Main component ──
 export default function SampleReport() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('left');
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const goTo = useCallback((index: number, direction?: 'left' | 'right') => {
-    if (isTransitioning) return;
-    const dir = direction || (index > activeIndex ? 'left' : 'right');
-    setSlideDirection(dir);
+  const goTo = useCallback((index: number) => {
+    if (isTransitioning || index === activeIndex) return;
+    setSlideDirection(index > activeIndex ? 'left' : 'right');
     setIsTransitioning(true);
     setTimeout(() => {
       setActiveIndex(index);
@@ -493,30 +490,6 @@ export default function SampleReport() {
       }, 30);
     }, 200);
   }, [activeIndex, isTransitioning]);
-
-  const goNext = useCallback(() => {
-    const next = (activeIndex + 1) % CARDS.length;
-    goTo(next, 'left');
-  }, [activeIndex, goTo]);
-
-  const goPrev = useCallback(() => {
-    const prev = (activeIndex - 1 + CARDS.length) % CARDS.length;
-    goTo(prev, 'right');
-  }, [activeIndex, goTo]);
-
-  // Auto-advance every 7 seconds (longer — more content to read), pauses on hover
-  useEffect(() => {
-    if (isHovered) {
-      if (timerRef.current) clearInterval(timerRef.current);
-      return;
-    }
-    timerRef.current = setInterval(() => {
-      goNext();
-    }, 7000);
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [isHovered, goNext]);
 
   const ActiveCard = CARDS[activeIndex].component;
 
@@ -548,36 +521,7 @@ export default function SampleReport() {
 
         {/* Responsive styles */}
         <style>{`
-          .sr-arrow-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 1px solid ${BORDER};
-            background: ${W};
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: ${TXT2};
-            flex-shrink: 0;
-          }
-          .sr-arrow-btn:hover {
-            background: ${SURFACE2};
-            border-color: ${GOLD};
-            color: ${GOLD};
-          }
-          .sr-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            padding: 0;
-          }
           @media (max-width: 600px) {
-            .sr-nav-arrows { display: none !important; }
             .sr-report-card { margin: 0 -0.5rem !important; }
           }
         `}</style>
@@ -595,8 +539,6 @@ export default function SampleReport() {
             borderRadius: '4px',
             overflow: 'hidden',
           }}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
         >
           {/* "Preview of AI Visibility Audit" label */}
           <div style={{
@@ -709,47 +651,7 @@ export default function SampleReport() {
             }} />
           </div>
 
-          {/* Navigation: arrows + dots */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '1.25rem',
-            padding: '0.85rem 2rem',
-            borderTop: `1px solid ${BORDER}`,
-            background: SURFACE,
-          }}>
-            <button
-              className="sr-arrow-btn sr-nav-arrows"
-              onClick={goPrev}
-              aria-label="Previous card"
-            >
-              <ArrowLeft size={15} />
-            </button>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              {CARDS.map((_, i) => (
-                <button
-                  key={i}
-                  className="sr-dot"
-                  onClick={() => goTo(i)}
-                  aria-label={`Go to card ${i + 1}`}
-                  style={{
-                    background: i === activeIndex ? GOLD : BORDER,
-                    transform: i === activeIndex ? 'scale(1.25)' : 'scale(1)',
-                  }}
-                />
-              ))}
-            </div>
-
-            <button
-              className="sr-arrow-btn sr-nav-arrows"
-              onClick={goNext}
-              aria-label="Next card"
-            >
-              <ArrowRight size={15} />
-            </button>
-          </div>
+          {/* Tabs provide navigation — no duplicate arrows/dots needed */}
 
           {/* CTA bar */}
           <div style={{

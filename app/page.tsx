@@ -4,7 +4,7 @@ import HowItWorks from '@/components/HowItWorks';
 // PromptExampleBlock removed — its content overlaps with SampleReport's "Search Prompts" tab
 import SampleReport from '@/components/SampleReport';
 import Testimonials from '@/components/Testimonials';
-import MidPageCTA from '@/components/MidPageCTA';
+// MidPageCTA removed — reduces CTA fatigue (score CTA already in Navbar, Hero, SampleReport, Footer)
 import PricingAnchor from '@/components/PricingAnchor';
 import FAQ from '@/components/FAQ';
 import Footer from '@/components/Footer';
@@ -109,7 +109,6 @@ export default function Home() {
         <HowItWorks />
         <SampleReport />
         <Testimonials />
-        <MidPageCTA />
         <PricingAnchor />
         <FAQ />
         <Footer />

@@ -103,13 +103,11 @@ export default function AboutPage() {
                 Who we are
               </div>
               <p style={{ color: '#AAAAAA', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '1rem' }}>
-                presenzia.ai was founded by a finance and technology specialist with a decade of experience in fintech strategy and AI at some of the world&apos;s leading companies. Colleagues in financial advisory kept asking how to get found by AI search, and we realised nobody was solving this properly.
+                presenzia.ai was founded by finance and technology specialists with more than a decade of experience in digital strategy at some of the world&apos;s leading fintech and tech companies. Colleagues in financial advisory kept asking us how to get found by AI search, and we realised nobody was solving this problem.
               </p>
               <p style={{ color: '#888888', fontSize: '0.85rem', lineHeight: 1.7, margin: 0 }}>
                 Ketzal LTD, Company No. 14570156, London.<br />
                 <a href="mailto:hello@presenzia.ai" style={{ color: '#C9A84C', textDecoration: 'none' }}>hello@presenzia.ai</a>
-                {' '}&middot;{' '}
-                <a href="https://linkedin.com/in/mauricio-pena-garibay" target="_blank" rel="noopener noreferrer" style={{ color: '#C9A84C', textDecoration: 'none' }}>linkedin.com/in/mauricio-pena-garibay</a>
               </p>
             </div>
 

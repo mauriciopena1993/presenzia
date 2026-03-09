@@ -2,6 +2,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { BLOG_POSTS } from '@/lib/blog-posts';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'Blog | presenzia.ai: AI Search Visibility for UK Wealth Managers & IFAs',
@@ -31,14 +33,8 @@ export default function BlogPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'rgba(10,10,10,0.97)', fontFamily: 'var(--font-inter, Inter, sans-serif)', position: 'relative', zIndex: 1 }}>
-      <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1.25rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', color: '#F5F0E8', textDecoration: 'none' }}>
-          presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
-        </Link>
-        <Link href="/" style={{ color: '#999', fontSize: '0.85rem', textDecoration: 'none' }}>← Back to home</Link>
-      </div>
-
-      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '4rem 2rem' }}>
+      <Navbar />
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '4rem 2rem', paddingTop: 'calc(72px + 4rem)' }}>
         <div style={{ marginBottom: '3rem' }}>
           <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
             Insights
@@ -125,6 +121,7 @@ export default function BlogPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

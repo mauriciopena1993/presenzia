@@ -37,7 +37,6 @@ export default function Footer() {
           <div>
             <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>Services</div>
             {[
-              { label: 'Free AI visibility score', href: '/score' },
               { label: 'How it works', href: '/#how-it-works' },
               { label: 'Sample audit', href: '/#sample-report' },
               { label: 'Pricing', href: '/pricing' },
@@ -102,7 +101,7 @@ export default function Footer() {
           <p style={{ fontSize: '0.8rem', color: '#777777', lineHeight: 1.7 }}>
             Built by{' '}
             <Link href="/about" style={{ color: '#C9A84C', textDecoration: 'none' }}>
-              a finance and technology specialist who got tired of watching great IFA firms lose clients to competitors they&apos;d never heard of
+              finance and technology specialists who got tired of watching great IFA firms lose clients to competitors they&apos;d never heard of
             </Link>
             . London, UK.
           </p>

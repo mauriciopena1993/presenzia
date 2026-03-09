@@ -22,10 +22,7 @@ export default function PricingAnchor() {
         Start with a free score. Go deeper when you&apos;re ready.
       </h2>
 
-      {/* Pricing ladder */}
       <style>{`
-        .pricing-step { transition: border-color 0.2s, background 0.2s; }
-        .pricing-step:hover { border-color: rgba(201,168,76,0.35) !important; background: rgba(201,168,76,0.03) !important; }
         @media (max-width: 640px) {
           .pricing-ladder { flex-direction: column !important; }
           .pricing-step { min-width: 0 !important; }
@@ -39,42 +36,20 @@ export default function PricingAnchor() {
         marginBottom: '1.75rem',
       }}>
         {[
-          {
-            label: 'Free Score',
-            price: '£0',
-            desc: 'Instant AI visibility score across 4 platforms',
-            href: '/score',
-          },
-          {
-            label: 'Full Audit',
-            price: '£99',
-            desc: 'Complete audit with competitor analysis & action plan',
-            href: '/pricing',
-          },
-          {
-            label: 'Growth',
-            price: '£249/mo',
-            desc: 'Weekly re-audits, AI assistant & strategy calls',
-            href: '/pricing',
-          },
-          {
-            label: 'Premium',
-            price: '£599/mo',
-            desc: 'Daily monitoring, dedicated strategist & done-for-you content',
-            href: '/pricing',
-          },
+          { label: 'Free Score', price: '£0', desc: 'Instant AI visibility score across 4 platforms' },
+          { label: 'Full Audit', price: '£99', desc: 'Complete audit with competitor analysis & action plan' },
+          { label: 'Growth', price: '£249/mo', desc: 'Weekly re-audits, AI assistant & strategy calls' },
+          { label: 'Premium', price: '£599/mo', desc: 'Daily monitoring, dedicated strategist & done-for-you content' },
         ].map((tier) => (
-          <Link key={tier.label} href={tier.href} className="pricing-step" style={{
+          <div key={tier.label} className="pricing-step" style={{
             flex: 1,
             minWidth: '150px',
             padding: '1.25rem 1rem',
             background: '#0F0F0F',
-            textDecoration: 'none',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             gap: '0.4rem',
-            border: '1px solid transparent',
           }}>
             <span style={{ fontSize: '0.7rem', color: '#999', letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 600 }}>
               {tier.label}
@@ -90,7 +65,7 @@ export default function PricingAnchor() {
             <span style={{ fontSize: '0.72rem', color: '#888', lineHeight: 1.5, maxWidth: '160px' }}>
               {tier.desc}
             </span>
-          </Link>
+          </div>
         ))}
       </div>
 
