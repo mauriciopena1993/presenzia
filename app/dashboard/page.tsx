@@ -105,7 +105,7 @@ const TIER_COLORS: Record<string, string> = {
 const PLAN_FEATURES: Record<string, string[]> = {
   audit: ['Complete AI visibility audit (4 platforms)', 'Personalised action plan with recommendations', 'Competitor analysis & positioning insights', 'Online dashboard + PDF report'],
   starter: ['Monthly AI visibility audit', 'Delivered by email (report)'], // legacy
-  growth: ['Everything in Audit', 'Weekly re-audits with score tracking & trends', 'AI audit assistant', 'Competitor deep-dive with real-time alerts', 'Priority email support'],
+  growth: ['Everything in Audit', 'Weekly re-audits with score tracking & trends', 'AI audit assistant', 'Quarterly 30-minute strategy call', 'Competitor deep-dive with real-time alerts', 'Priority email support'],
   premium: ['Everything in Growth', 'Daily re-audits (vs weekly in Growth)', 'Dedicated account strategist', 'Monthly 1-hour strategy call', 'Exclusive territory protection', '4 AI-optimised articles written & published monthly'],
 };
 
@@ -115,7 +115,7 @@ const PLAN_LOSSES: Record<string, string[]> = {
   audit: ['AI visibility audit report', 'Score tracking', 'Action plan recommendations'],
   starter: ['Monthly AI visibility audits', 'Email reports with action plans', 'Score tracking over time'], // legacy
   growth: ['Weekly re-audits', 'Online dashboard with weekly updates', 'AI audit assistant', 'Competitor deep-dive analysis', 'Priority email support'],
-  premium: ['Daily dashboard updates', 'Dedicated account manager', 'Monthly 1:1 strategy calls', 'Territory exclusivity', 'Done-for-you content', 'Custom prompt testing', 'Industry benchmarking'],
+  premium: ['Daily dashboard updates', 'Dedicated account strategist', 'Monthly 1-hour strategy calls', 'Territory exclusivity', 'Done-for-you content', 'Custom prompt testing', 'Industry benchmarking'],
 };
 
 // Premium strategy call booking link — replace with Calendly/Cal.com URL when ready
@@ -271,7 +271,7 @@ function CongratsBanner({ plan, onClose }: { plan: string; onClose: () => void }
         }}>
           {plan === 'growth'
             ? 'Your online dashboard is now unlocked. Access your full audit report, competitor insights, and AI assistant, all in one place.'
-            : 'You now have access to everything: daily updates, your dedicated account manager, and monthly strategy calls. We\'re excited to work with you.'}
+            : 'You now have access to everything: daily updates, your dedicated account strategist, and monthly strategy calls. We\'re excited to work with you.'}
         </p>
 
         <div style={{
@@ -1152,6 +1152,15 @@ function PlatformCard({ platform }: { platform: PlatformScore }) {
   );
 }
 
+const SUGGESTED_QUESTIONS = [
+  'What should I do first to improve my score?',
+  'Why are competitors ranking above me?',
+  'Which platform should I focus on?',
+  'How do I improve my Google AI visibility?',
+  'What kind of content should I publish?',
+  'How important are client reviews for AI visibility?',
+];
+
 function ChatPane({ jobId, businessName }: { jobId: string; businessName: string }) {
   const [messages, setMessages] = useState<ChatMessage[]>([{
     role: 'assistant',
@@ -1159,16 +1168,51 @@ function ChatPane({ jobId, businessName }: { jobId: string; businessName: string
   }]);
   const [input, setInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  const sendQuestion = (question: string) => {
+    setInput(question);
+    setShowSuggestions(false);
+    // Use setTimeout to let state update before sending
+    setTimeout(() => {
+      const newMsgs: ChatMessage[] = [...messages, { role: 'user', content: question }];
+      setMessages(newMsgs);
+      setChatLoading(true);
+      fetch('/api/client/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: newMsgs, jobId }),
+      })
+        .then(res => res.json())
+        .then(data => {
+          setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: data.message || 'Sorry, something went wrong. Email hello@presenzia.ai for help.',
+          }]);
+        })
+        .catch(() => {
+          setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: 'Connection error. Please try again.',
+          }]);
+        })
+        .finally(() => {
+          setChatLoading(false);
+          setInput('');
+        });
+    }, 0);
+  };
+
   const send = async () => {
     const text = input.trim();
     if (!text || chatLoading) return;
 
+    setShowSuggestions(false);
     const newMessages: ChatMessage[] = [...messages, { role: 'user', content: text }];
     setMessages(newMessages);
     setInput('');
@@ -1233,6 +1277,32 @@ function ChatPane({ jobId, businessName }: { jobId: string; businessName: string
             </div>
           </div>
         ))}
+        {/* Suggested questions */}
+        {showSuggestions && messages.length <= 1 && !chatLoading && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', padding: '0.25rem 0' }}>
+            {SUGGESTED_QUESTIONS.map((q, i) => (
+              <button
+                key={i}
+                onClick={() => sendQuestion(q)}
+                style={{
+                  background: '#161616',
+                  border: '1px solid #2a2a2a',
+                  color: '#AAAAAA',
+                  fontSize: '0.75rem',
+                  padding: '0.4rem 0.75rem',
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-inter, Inter, sans-serif)',
+                  transition: 'all 0.2s',
+                  lineHeight: 1.4,
+                }}
+                onMouseEnter={e => { (e.currentTarget).style.borderColor = '#C9A84C'; (e.currentTarget).style.color = '#C9A84C'; }}
+                onMouseLeave={e => { (e.currentTarget).style.borderColor = '#2a2a2a'; (e.currentTarget).style.color = '#AAAAAA'; }}
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+        )}
         {chatLoading && (
           <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
             <div style={{ padding: '0.625rem 0.875rem', background: '#161616', border: '1px solid #222', color: '#888', fontSize: '0.85rem' }}>
@@ -1618,12 +1688,109 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Premium: Strategy call booking */}
+        {/* Premium: Full Premium dashboard section */}
         {client?.plan === 'premium' && client?.status !== 'cancelled' && (
+          <div style={{ marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+              {/* Strategist card */}
+              <div style={{
+                flex: 1,
+                minWidth: 'min(280px, 100%)',
+                padding: '1.25rem',
+                background: 'rgba(155,107,204,0.05)',
+                border: '1px solid rgba(155,107,204,0.2)',
+                borderTop: '3px solid #9b6bcc',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                  <div style={{ width: '32px', height: '32px', background: '#9b6bcc', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', color: '#fff', fontWeight: 700, flexShrink: 0 }}>
+                    AS
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.85rem', color: '#F5F0E8', fontWeight: 600 }}>Your Account Strategist</div>
+                    <div style={{ fontSize: '0.72rem', color: '#999' }}>Dedicated to your firm&apos;s AI visibility</div>
+                  </div>
+                </div>
+                <p style={{ fontSize: '0.78rem', color: '#AAAAAA', lineHeight: 1.6, margin: '0 0 0.75rem' }}>
+                  Your strategist reviews every audit, monitors competitor movements, and prepares personalised recommendations before each strategy call.
+                </p>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <a
+                    href={BOOKING_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ display: 'inline-block', padding: '0.4rem 1rem', background: '#9b6bcc', color: '#0A0A0A', fontSize: '0.78rem', fontWeight: 600, textDecoration: 'none' }}
+                  >
+                    Book strategy call
+                  </a>
+                  <a
+                    href="mailto:hello@presenzia.ai?subject=Question for my account strategist"
+                    style={{ display: 'inline-block', padding: '0.4rem 1rem', background: 'transparent', border: '1px solid rgba(155,107,204,0.4)', color: '#9b6bcc', fontSize: '0.78rem', fontWeight: 500, textDecoration: 'none' }}
+                  >
+                    Message strategist
+                  </a>
+                </div>
+              </div>
+
+              {/* Territory protection card */}
+              <div style={{
+                flex: 1,
+                minWidth: 'min(280px, 100%)',
+                padding: '1.25rem',
+                background: 'rgba(155,107,204,0.03)',
+                border: '1px solid rgba(155,107,204,0.15)',
+              }}>
+                <div style={{ fontSize: '0.7rem', color: '#9b6bcc', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.5rem', fontWeight: 600 }}>
+                  Territory Protection
+                </div>
+                <div style={{ fontSize: '0.85rem', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.35rem' }}>
+                  {client?.location || 'Your area'} is exclusively yours
+                </div>
+                <p style={{ fontSize: '0.78rem', color: '#AAAAAA', lineHeight: 1.6, margin: '0 0 0.75rem' }}>
+                  No other presenzia.ai client in your territory. You are the only firm we optimise for AI visibility in your area, giving you an uncontested advantage.
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ width: '6px', height: '6px', background: '#4a9e6a', borderRadius: '50%' }} />
+                  <span style={{ fontSize: '0.72rem', color: '#4a9e6a', fontWeight: 500 }}>Territory active and protected</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Content hub */}
+            <div style={{
+              padding: '1rem 1.25rem',
+              background: 'rgba(155,107,204,0.03)',
+              border: '1px solid rgba(155,107,204,0.15)',
+              marginBottom: '1rem',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                <div>
+                  <div style={{ fontSize: '0.7rem', color: '#9b6bcc', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600 }}>
+                    Done-For-You Content
+                  </div>
+                  <div style={{ fontSize: '0.82rem', color: '#F5F0E8', fontWeight: 500, marginTop: '0.25rem' }}>
+                    4 AI-optimised articles per month
+                  </div>
+                </div>
+                <a
+                  href="mailto:hello@presenzia.ai?subject=Content request"
+                  style={{ fontSize: '0.75rem', color: '#9b6bcc', textDecoration: 'none', fontWeight: 500 }}
+                >
+                  Request content topic
+                </a>
+              </div>
+              <p style={{ fontSize: '0.78rem', color: '#AAAAAA', lineHeight: 1.6, margin: 0 }}>
+                We write and publish thought leadership articles designed to increase your firm&apos;s mentions across AI platforms. Topics are selected based on your audit results and competitor gaps. Your strategist will discuss upcoming topics on your next call.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Growth: Strategy call booking */}
+        {client?.plan === 'growth' && client?.status !== 'cancelled' && (
           <div style={{
             padding: '1rem 1.25rem',
-            background: 'rgba(155,107,204,0.06)',
-            border: '1px solid rgba(155,107,204,0.2)',
+            background: 'rgba(91,168,140,0.06)',
+            border: '1px solid rgba(91,168,140,0.2)',
             marginBottom: '1.5rem',
             display: 'flex',
             alignItems: 'center',
@@ -1632,10 +1799,10 @@ export default function DashboardPage() {
             flexWrap: 'wrap',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div style={{ width: '8px', height: '8px', background: '#9b6bcc', borderRadius: '50%', flexShrink: 0 }} />
+              <div style={{ width: '8px', height: '8px', background: '#5BA88C', borderRadius: '50%', flexShrink: 0 }} />
               <div>
-                <div style={{ fontSize: '0.875rem', color: '#F5F0E8', fontWeight: 500 }}>Monthly strategy call</div>
-                <div style={{ fontSize: '0.75rem', color: '#999' }}>Book your 1:1 with your account manager</div>
+                <div style={{ fontSize: '0.875rem', color: '#F5F0E8', fontWeight: 500 }}>Quarterly strategy call</div>
+                <div style={{ fontSize: '0.75rem', color: '#999' }}>30-minute call to review your AI visibility progress</div>
               </div>
             </div>
             <a
@@ -1645,7 +1812,7 @@ export default function DashboardPage() {
               style={{
                 display: 'inline-block',
                 padding: '0.5rem 1.25rem',
-                background: '#9b6bcc',
+                background: '#5BA88C',
                 color: '#0A0A0A',
                 fontSize: '0.8rem',
                 fontWeight: 600,
@@ -1654,7 +1821,7 @@ export default function DashboardPage() {
                 flexShrink: 0,
               }}
             >
-              Book a slot →
+              Book a slot
             </a>
           </div>
         )}
@@ -1855,6 +2022,12 @@ export default function DashboardPage() {
                   plan: client?.plan || 'growth',
                 }}
                 onDownload={handleDownloadReport}
+                previousScore={(() => {
+                  const completed = history
+                    .filter(r => r.status === 'completed' && r.overall_score !== null && r.id !== latestJob.id)
+                    .sort((a, b) => new Date(b.completed_at || b.created_at).getTime() - new Date(a.completed_at || a.created_at).getTime());
+                  return completed.length > 0 ? completed[0].overall_score : null;
+                })()}
               />
 
               {/* Rate your audit prompt */}
@@ -1897,43 +2070,142 @@ export default function DashboardPage() {
               )}
 
               {/* Score trend graph — Growth/Premium only (needs 2+ audits) */}
-              {isGrowthOrAbove && history.filter(r => r.status === 'completed' && r.overall_score !== null).length >= 2 && (
-                <div style={{
-                  background: '#0D0D0D',
-                  border: `1px solid ${TIER_COLORS[client?.plan || 'audit']}30`,
-                  padding: 'clamp(1rem, 2vw, 1.5rem)',
-                  marginTop: '1.25rem',
-                }}>
+              {isGrowthOrAbove && (() => {
+                const completedReports = history
+                  .filter(r => r.status === 'completed' && r.overall_score !== null)
+                  .sort((a, b) => new Date(b.completed_at || b.created_at).getTime() - new Date(a.completed_at || a.created_at).getTime());
+                if (completedReports.length < 2) return null;
+
+                const latestScore = completedReports[0].overall_score!;
+                const previousScore = completedReports[1].overall_score!;
+                const delta = latestScore - previousScore;
+                const deltaColor = delta > 0 ? '#4a9e6a' : delta < 0 ? '#cc4444' : '#888';
+                const deltaPrefix = delta > 0 ? '+' : '';
+                const tierColor = TIER_COLORS[client?.plan || 'audit'];
+
+                // Calculate overall change from first to latest
+                const firstScore = completedReports[completedReports.length - 1].overall_score!;
+                const totalDelta = latestScore - firstScore;
+
+                return (
                   <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginBottom: '0.75rem',
+                    background: '#0D0D0D',
+                    border: `1px solid ${tierColor}30`,
+                    padding: 'clamp(1rem, 2vw, 1.5rem)',
+                    marginTop: '1.25rem',
                   }}>
                     <div style={{
-                      fontSize: '0.7rem',
-                      color: '#666',
-                      letterSpacing: '0.12em',
-                      textTransform: 'uppercase',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '0.75rem',
+                      flexWrap: 'wrap',
+                      gap: '0.5rem',
                     }}>
-                      Score Evolution
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{
+                          fontSize: '0.7rem',
+                          color: '#666',
+                          letterSpacing: '0.12em',
+                          textTransform: 'uppercase',
+                        }}>
+                          Score Evolution
+                        </div>
+                        {/* Score delta badge */}
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          padding: '2px 8px',
+                          background: delta !== 0 ? `${deltaColor}15` : 'transparent',
+                          border: `1px solid ${delta !== 0 ? `${deltaColor}40` : '#2a2a2a'}`,
+                        }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: deltaColor }}>
+                            {deltaPrefix}{delta}
+                          </span>
+                          <span style={{ fontSize: '0.6rem', color: '#888' }}>
+                            since last audit
+                          </span>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        {completedReports.length > 2 && totalDelta !== delta && (
+                          <span style={{ fontSize: '0.6rem', color: totalDelta >= 0 ? '#4a9e6a' : '#cc4444', fontWeight: 500 }}>
+                            {totalDelta > 0 ? '+' : ''}{totalDelta} overall
+                          </span>
+                        )}
+                        <span style={{
+                          fontSize: '0.6rem',
+                          padding: '2px 8px',
+                          background: `${tierColor}18`,
+                          border: `1px solid ${tierColor}40`,
+                          color: tierColor,
+                          fontWeight: 600,
+                          letterSpacing: '0.08em',
+                          textTransform: 'uppercase',
+                        }}>
+                          Updated {client?.plan === 'premium' ? 'daily' : 'weekly'}
+                        </span>
+                      </div>
                     </div>
-                    <span style={{
-                      fontSize: '0.6rem',
-                      padding: '2px 8px',
-                      background: `${TIER_COLORS[client?.plan || 'audit']}18`,
-                      border: `1px solid ${TIER_COLORS[client?.plan || 'audit']}40`,
-                      color: TIER_COLORS[client?.plan || 'audit'],
-                      fontWeight: 600,
-                      letterSpacing: '0.08em',
-                      textTransform: 'uppercase',
-                    }}>
-                      Updated {client?.plan === 'premium' ? 'daily' : 'weekly'}
-                    </span>
+                    <ScoreTrendGraph reports={history} plan={client?.plan || 'growth'} />
+
+                    {/* Per-platform change summary */}
+                    {latestJob?.platforms_json && completedReports[1] && (() => {
+                      // Try to find the previous report's platform data
+                      const prevReport = completedReports[1] as AuditJob;
+                      const prevPlatforms = prevReport.platforms_json;
+                      if (!prevPlatforms) return null;
+
+                      const changes = (latestJob.platforms_json || []).map(curr => {
+                        const prev = prevPlatforms.find(p => p.platform === curr.platform);
+                        if (!prev) return null;
+                        return {
+                          platform: curr.platform,
+                          currentScore: curr.score,
+                          prevScore: prev.score,
+                          delta: curr.score - prev.score,
+                          currentFound: curr.promptsMentioned,
+                          prevFound: prev.promptsMentioned,
+                        };
+                      }).filter(Boolean);
+
+                      if (changes.length === 0 || changes.every(c => c!.delta === 0)) return null;
+
+                      return (
+                        <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid #1a1a1a' }}>
+                          <div style={{ fontSize: '0.65rem', color: '#666', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+                            Platform changes since last audit
+                          </div>
+                          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                            {changes.map(c => {
+                              if (!c) return null;
+                              const pColor = c.delta > 0 ? '#4a9e6a' : c.delta < 0 ? '#cc4444' : '#888';
+                              return (
+                                <div key={c.platform} style={{
+                                  flex: 1,
+                                  minWidth: '100px',
+                                  padding: '0.5rem 0.75rem',
+                                  background: '#111',
+                                  border: '1px solid #1a1a1a',
+                                }}>
+                                  <div style={{ fontSize: '0.72rem', color: '#999', marginBottom: '0.2rem' }}>{c.platform}</div>
+                                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.35rem' }}>
+                                    <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#F5F0E8' }}>{c.currentScore}</span>
+                                    <span style={{ fontSize: '0.7rem', fontWeight: 600, color: pColor }}>
+                                      {c.delta > 0 ? '+' : ''}{c.delta}
+                                    </span>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
-                  <ScoreTrendGraph reports={history} plan={client?.plan || 'growth'} />
-                </div>
-              )}
+                );
+              })()}
 
 
               {/* Audit tier: re-purchase + upsell options */}

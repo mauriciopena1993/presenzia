@@ -96,6 +96,7 @@ interface Props {
   job: InteractiveReportJob;
   client: InteractiveReportClient;
   onDownload: (jobId: string) => void;
+  previousScore?: number | null;
 }
 
 // ── Helpers ────────────────────────────────────────────────────
@@ -171,22 +172,62 @@ function StatBox({ value, label, color }: { value: string | number; label: strin
   );
 }
 
-function ExpandableCard({ title, badge, badgeColor, isHighPriority, children, defaultOpen = false }: {
+function ExpandableCard({ title, badge, badgeColor, isHighPriority, children, defaultOpen = false, onCheck, isChecked }: {
   title: string;
   badge: string;
   badgeColor: string;
   isHighPriority?: boolean;
   children: React.ReactNode;
   defaultOpen?: boolean;
+  onCheck?: () => void;
+  isChecked?: boolean;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div style={{
-      background: isHighPriority ? '#0F0D08' : '#0D0D0D',
-      border: `1px solid ${isHighPriority ? '#33280d' : '#1a1a1a'}`,
-      borderLeft: isHighPriority ? '3px solid #C9A84C' : undefined,
+      background: isChecked ? 'rgba(74,158,106,0.04)' : isHighPriority ? '#0F0D08' : '#0D0D0D',
+      border: `1px solid ${isChecked ? 'rgba(74,158,106,0.2)' : isHighPriority ? '#33280d' : '#1a1a1a'}`,
+      borderLeft: isChecked ? '3px solid #4a9e6a' : isHighPriority ? '3px solid #C9A84C' : undefined,
       marginBottom: 8,
+      opacity: isChecked ? 0.75 : 1,
+      transition: 'all 0.3s',
     }}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        {/* Completion checkbox */}
+        {onCheck && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onCheck(); }}
+            style={{
+              width: '36px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '0.875rem 0 0.875rem 0.75rem',
+              flexShrink: 0,
+            }}
+            title={isChecked ? 'Mark as not done' : 'Mark as done'}
+          >
+            <div style={{
+              width: '16px',
+              height: '16px',
+              borderRadius: '3px',
+              border: isChecked ? '2px solid #4a9e6a' : '2px solid #444',
+              background: isChecked ? '#4a9e6a' : 'transparent',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s',
+              fontSize: '10px',
+              color: '#fff',
+              fontWeight: 700,
+            }}>
+              {isChecked ? '✓' : ''}
+            </div>
+          </button>
+        )}
       <button
         onClick={() => setOpen(!open)}
         style={{
@@ -194,7 +235,7 @@ function ExpandableCard({ title, badge, badgeColor, isHighPriority, children, de
           alignItems: 'center',
           gap: '0.5rem',
           width: '100%',
-          padding: '0.875rem 1rem',
+          padding: onCheck ? '0.875rem 1rem 0.875rem 0.25rem' : '0.875rem 1rem',
           background: 'none',
           border: 'none',
           cursor: 'pointer',
@@ -208,6 +249,7 @@ function ExpandableCard({ title, badge, badgeColor, isHighPriority, children, de
         <span style={{ fontSize: '0.85rem', color: '#F5F0E8', fontWeight: 600, flex: 1, lineHeight: 1.4 }}>{title}</span>
         <span style={{ color: '#666', fontSize: '0.85rem', flexShrink: 0, transition: 'transform 0.2s', transform: open ? 'rotate(90deg)' : 'none' }}>›</span>
       </button>
+      </div>
       {open && (
         <div style={{ padding: '0 1rem 1rem', animation: 'fadeIn 0.15s ease' }}>
           {children}
@@ -239,7 +281,7 @@ function PlatformTooltip({ platform, children }: { platform: string; children: R
 
 // ── Tab: Overview ──────────────────────────────────────────────
 
-function OverviewTab({ job, client, onTabChange }: { job: InteractiveReportJob; client: InteractiveReportClient; onTabChange: (t: ReportTab) => void }) {
+function OverviewTab({ job, client, onTabChange, previousScore }: { job: InteractiveReportJob; client: InteractiveReportClient; onTabChange: (t: ReportTab) => void; previousScore?: number | null }) {
   const score = job.overall_score || 0;
   const grade = job.grade || '?';
   const color = scoreColor(score);
@@ -282,6 +324,19 @@ function OverviewTab({ job, client, onTabChange }: { job: InteractiveReportJob; 
             {score}
           </div>
           <div style={{ fontSize: '0.75rem', color: '#999', marginTop: 2 }}>out of 100</div>
+          {/* Score delta badge */}
+          {previousScore != null && previousScore !== score && (() => {
+            const delta = score - previousScore;
+            const deltaColor = delta > 0 ? '#4a9e6a' : '#cc4444';
+            return (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.35rem', marginTop: 6 }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: deltaColor }}>
+                  {delta > 0 ? '+' : ''}{delta}
+                </span>
+                <span style={{ fontSize: '0.65rem', color: '#888' }}>vs last audit</span>
+              </div>
+            );
+          })()}
           <div style={{
             display: 'inline-block',
             marginTop: 8,
@@ -631,6 +686,33 @@ function SearchesTab({ job }: { job: InteractiveReportJob }) {
 
 function ActionPlanTab({ job }: { job: InteractiveReportJob }) {
   const insights = job.insights_json;
+  const storageKey = `presenzia_actions_${job.id}`;
+
+  // Track completed actions via localStorage
+  const [completedActions, setCompletedActions] = useState<Set<number>>(() => {
+    if (typeof window === 'undefined') return new Set<number>();
+    try {
+      const stored = localStorage.getItem(storageKey);
+      return stored ? new Set(JSON.parse(stored)) : new Set<number>();
+    } catch {
+      return new Set<number>();
+    }
+  });
+
+  const toggleAction = (index: number) => {
+    setCompletedActions(prev => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      try {
+        localStorage.setItem(storageKey, JSON.stringify([...next]));
+      } catch { /* ignore */ }
+      return next;
+    });
+  };
 
   if (!insights || insights.actions.length === 0) {
     return (
@@ -646,9 +728,51 @@ function ActionPlanTab({ job }: { job: InteractiveReportJob }) {
   const actions = insights.actions;
   const topActions = actions.slice(0, 2);
   const moreActions = actions.slice(2, 5);
+  const totalActions = Math.min(actions.length, 5);
+  const completedCount = [...completedActions].filter(i => i < totalActions).length;
 
   return (
     <div>
+      {/* Progress summary */}
+      {totalActions > 0 && (
+        <div style={{
+          padding: '0.875rem 1rem',
+          background: completedCount === totalActions ? 'rgba(74,158,106,0.08)' : '#0D0D0D',
+          border: `1px solid ${completedCount === totalActions ? 'rgba(74,158,106,0.3)' : '#1a1a1a'}`,
+          marginBottom: '1rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
+        }}>
+          <div>
+            <div style={{ fontSize: '0.82rem', color: '#F5F0E8', fontWeight: 600, marginBottom: 2 }}>
+              {completedCount === totalActions
+                ? 'All actions completed!'
+                : `${completedCount} of ${totalActions} actions completed`}
+            </div>
+            <div style={{ fontSize: '0.7rem', color: '#888' }}>
+              {completedCount === totalActions
+                ? 'Your next audit will show the impact of your work'
+                : 'Check off actions as you complete them'}
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 3 }}>
+            {Array.from({ length: totalActions }).map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  width: 24, height: 4, borderRadius: 2,
+                  background: completedActions.has(i) ? '#4a9e6a' : '#2a2a2a',
+                  transition: 'background 0.3s',
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Top priorities */}
       <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid #222', paddingBottom: 6, marginBottom: 12 }}>
         <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#cc4444', letterSpacing: '0.08em' }}>THIS MONTH&apos;S PRIORITIES</span>
@@ -659,10 +783,12 @@ function ActionPlanTab({ job }: { job: InteractiveReportJob }) {
         <ExpandableCard
           key={`pri-${i}`}
           title={`${i + 1}. ${action.title}`}
-          badge="HIGH PRIORITY"
-          badgeColor="#cc4444"
-          isHighPriority
+          badge={completedActions.has(i) ? 'DONE' : 'HIGH PRIORITY'}
+          badgeColor={completedActions.has(i) ? '#4a9e6a' : '#cc4444'}
+          isHighPriority={!completedActions.has(i)}
           defaultOpen={i === 0}
+          onCheck={() => toggleAction(i)}
+          isChecked={completedActions.has(i)}
         >
           {action.context && (
             <div style={{ fontSize: '0.78rem', color: '#F5F0E8', fontWeight: 600, marginBottom: 6, lineHeight: 1.5 }}>{action.context}</div>
@@ -701,8 +827,10 @@ function ActionPlanTab({ job }: { job: InteractiveReportJob }) {
             <ExpandableCard
               key={`rec-${i}`}
               title={`${i + 3}. ${action.title}`}
-              badge="RECOMMENDED"
-              badgeColor="#C9A84C"
+              badge={completedActions.has(i + 2) ? 'DONE' : 'RECOMMENDED'}
+              badgeColor={completedActions.has(i + 2) ? '#4a9e6a' : '#C9A84C'}
+              onCheck={() => toggleAction(i + 2)}
+              isChecked={completedActions.has(i + 2)}
             >
               {action.context && (
                 <div style={{ fontSize: '0.78rem', color: '#F5F0E8', fontWeight: 600, marginBottom: 6, lineHeight: 1.5 }}>{action.context}</div>
@@ -746,7 +874,7 @@ function ActionPlanTab({ job }: { job: InteractiveReportJob }) {
 
 // ── Main Component ─────────────────────────────────────────────
 
-export default function InteractiveReport({ job, client, onDownload }: Props) {
+export default function InteractiveReport({ job, client, onDownload, previousScore }: Props) {
   const [activeTab, setActiveTab] = useState<ReportTab>('overview');
   const [lockedToast, setLockedToast] = useState(false);
   const hasInsights = !!job.insights_json;
@@ -835,7 +963,7 @@ export default function InteractiveReport({ job, client, onDownload }: Props) {
       </div>
 
       {/* Tab content */}
-      {activeTab === 'overview' && <OverviewTab job={job} client={client} onTabChange={setActiveTab} />}
+      {activeTab === 'overview' && <OverviewTab job={job} client={client} onTabChange={setActiveTab} previousScore={previousScore} />}
       {activeTab === 'platforms' && <PlatformsTab job={job} />}
       {activeTab === 'searches' && <SearchesTab job={job} />}
       {activeTab === 'actions' && <ActionPlanTab job={job} />}

@@ -7,7 +7,7 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-import { FROM_EMAIL } from '@/lib/email/templates';
+import { FROM_EMAIL, REPLY_TO } from '@/lib/email/templates';
 
 const ADMIN_EMAIL = 'hello@presenzia.ai';
 
@@ -217,6 +217,80 @@ export async function POST(req: NextRequest) {
             ['Audit job', job.id],
           ])
         );
+
+        // ✉️ Welcome email to client
+        if (process.env.RESEND_API_KEY) {
+          const isPremium = plan === 'premium';
+          const isGrowth = plan === 'growth';
+          const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://presenzia.ai'}/dashboard/login`;
+          const planName = PLAN_LABELS[plan] || plan;
+
+          const welcomeHtml = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;">
+<tr><td align="center">
+<table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e0e0e0;max-width:560px;width:100%;">
+  <tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;">
+    <span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span>
+  </td></tr>
+  <tr><td style="padding:32px;">
+    <h1 style="font-size:22px;color:#111111;margin:0 0 8px;font-weight:700;">Welcome to presenzia.ai</h1>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Hi${businessName ? ` ${businessName}` : ''},</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Thank you for choosing <strong style="color:#111;">${planName}</strong>. Your AI visibility audit is running right now across ChatGPT, Claude, Perplexity, and Google AI.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 8px;line-height:1.7;"><strong style="color:#111;">What happens next:</strong></p>
+    <ol style="font-size:14px;color:#555555;margin:0 0 20px;padding-left:20px;line-height:1.9;">
+      <li>Your audit tests <strong>120+ wealth-specific prompts</strong> across 4 AI platforms</li>
+      <li>Results are typically ready within <strong>10-15 minutes</strong></li>
+      <li>You'll receive your scored report by email with a PDF attachment</li>
+      <li>Your interactive dashboard will be available at the link below</li>
+    </ol>
+    <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+      <tr><td style="background:#0A0A0A;padding:12px 24px;">
+        <a href="${dashboardUrl}" style="color:#C9A84C;text-decoration:none;font-size:13px;font-weight:700;">Open your dashboard &rarr;</a>
+      </td></tr>
+    </table>
+    ${isGrowth || isPremium ? `<div style="background:#F7F7F5;border:1px solid #E0E0E0;padding:16px 20px;margin:0 0 20px;">
+      <p style="font-size:13px;color:#111;font-weight:700;margin:0 0 6px;">Your ${planName} includes:</p>
+      <ul style="font-size:13px;color:#555;margin:0;padding-left:18px;line-height:1.8;">
+        ${isGrowth ? `<li>Weekly re-audits with score tracking and trends</li>
+        <li>AI audit assistant to ask anything about your results</li>
+        <li>Quarterly 30-minute strategy call</li>
+        <li>Competitor deep-dive with real-time alerts</li>
+        <li>Priority email support</li>` : ''}
+        ${isPremium ? `<li>Daily re-audits with trend tracking</li>
+        <li>Dedicated account strategist</li>
+        <li>Monthly 1-hour strategy call</li>
+        <li>Exclusive territory protection (one firm per area)</li>
+        <li>4 AI-optimised articles written and published monthly</li>` : ''}
+      </ul>
+    </div>` : ''}
+    ${isPremium ? `<p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Your dedicated account strategist will be in touch within 24 hours to introduce themselves and schedule your first strategy call.</p>` : ''}
+    <p style="font-size:14px;color:#555555;margin:0 0 4px;line-height:1.7;">Questions? Reply to this email or reach us at <a href="mailto:hello@presenzia.ai" style="color:#C9A84C;text-decoration:none;">hello@presenzia.ai</a>.</p>
+    <p style="font-size:14px;color:#555555;margin:0;line-height:1.7;">We're looking forward to helping you get found by AI.</p>
+  </td></tr>
+  <tr><td style="padding:16px 32px;background:#F9F9F9;border-top:1px solid #E0E0E0;">
+    <p style="font-size:12px;color:#999999;margin:0;">presenzia.ai &middot; Ketzal LTD (Co. No. 14570156) &middot; <a href="mailto:hello@presenzia.ai" style="color:#C9A84C;text-decoration:none;">hello@presenzia.ai</a></p>
+  </td></tr>
+</table>
+</td></tr>
+</table>
+</body></html>`;
+
+          try {
+            await resend.emails.send({
+              from: FROM_EMAIL,
+              replyTo: REPLY_TO,
+              to: email,
+              subject: `Welcome to presenzia.ai: your AI visibility audit is running`,
+              html: welcomeHtml,
+            });
+            console.log(`📧 Welcome email sent to ${email}`);
+          } catch (err) {
+            console.error('Failed to send welcome email:', err);
+          }
+        }
 
         // Fire-and-forget: trigger the audit processor
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
