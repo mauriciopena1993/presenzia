@@ -51,7 +51,57 @@ function renderContent(content: string) {
   while (i < lines.length) {
     const line = lines[i];
 
-    if (line.startsWith('## ')) {
+    // Markdown table detection
+    if (line.startsWith('|') && line.includes('|')) {
+      const tableRows: string[] = [line];
+      while (i + 1 < lines.length && lines[i + 1].startsWith('|')) {
+        i++;
+        tableRows.push(lines[i]);
+      }
+      // Filter out separator rows (|---|---|)
+      const dataRows = tableRows.filter(r => !/^\|[\s-:|]+\|$/.test(r));
+      if (dataRows.length > 0) {
+        const headerCells = dataRows[0].split('|').filter(c => c.trim() !== '').map(c => c.trim());
+        const bodyRows = dataRows.slice(1).map(r => r.split('|').filter(c => c.trim() !== '').map(c => c.trim()));
+        elements.push(
+          <div key={i} style={{ overflowX: 'auto', marginBottom: '1.25rem' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+              <thead>
+                <tr>
+                  {headerCells.map((cell, ci) => (
+                    <th key={ci} style={{ padding: '0.5rem 0.75rem', borderBottom: '2px solid #333', color: '#F5F0E8', fontWeight: 600, textAlign: 'left', whiteSpace: 'nowrap' }}>{cell}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {bodyRows.map((row, ri) => (
+                  <tr key={ri}>
+                    {row.map((cell, ci) => {
+                      const boldParts = cell.split(/\*\*(.*?)\*\*/g);
+                      return (
+                        <td key={ci} style={{ padding: '0.4rem 0.75rem', borderBottom: '1px solid #1A1A1A', color: '#AAAAAA' }}>
+                          {boldParts.map((part, k) => k % 2 === 1 ? <strong key={k} style={{ color: '#F5F0E8' }}>{part}</strong> : part)}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      }
+      i++;
+      continue;
+    }
+
+    if (line.startsWith('### ')) {
+      elements.push(
+        <h3 key={i} style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.15rem', color: '#F5F0E8', fontWeight: 600, marginTop: '2rem', marginBottom: '0.5rem', lineHeight: 1.3 }}>
+          {line.slice(4)}
+        </h3>
+      );
+    } else if (line.startsWith('## ')) {
       elements.push(
         <h2 key={i} style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.4rem', color: '#F5F0E8', fontWeight: 600, marginTop: '2.5rem', marginBottom: '0.75rem', lineHeight: 1.3 }}>
           {line.slice(3)}

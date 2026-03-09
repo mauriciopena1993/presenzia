@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Is your IFA firm invisible to AI search? | presenzia.ai",
-    description: "94% of UK IFA firms don't appear when clients ask ChatGPT for a financial adviser. Find out where your firm stands with a free AI visibility audit.",
+    description: "79% of UK IFA firms don't appear when clients ask ChatGPT for a financial adviser. Find out where your firm stands with a free AI visibility audit.",
     url: "https://presenzia.ai",
     siteName: "presenzia.ai",
     type: "website",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Is your IFA firm invisible to AI search? | presenzia.ai",
-    description: "94% of UK IFA firms don't appear when clients ask ChatGPT for a financial adviser. Get your free AI visibility score.",
+    description: "79% of UK IFA firms don't appear when clients ask ChatGPT for a financial adviser. Get your free AI visibility score.",
     images: ["/og-image.png"],
   },
   robots: {

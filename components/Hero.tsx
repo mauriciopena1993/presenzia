@@ -8,7 +8,9 @@ export default function Hero() {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: 'clamp(4rem, 7vw, 7rem) clamp(1rem, 4vw, 2rem) clamp(3rem, 5vw, 5rem)',
+      padding: 'clamp(4rem, 7vw, 7rem) clamp(1.5rem, 5vw, 2rem) clamp(3rem, 5vw, 5rem)',
+      boxSizing: 'border-box',
+      width: '100%',
       position: 'relative',
       overflow: 'hidden',
       textAlign: 'center',
@@ -34,11 +36,11 @@ export default function Hero() {
       {/* Headline */}
       <h1 style={{
         fontFamily: "'Playfair Display', serif",
-        fontSize: 'clamp(2.5rem, 6vw, 5rem)',
+        fontSize: 'clamp(2rem, 5vw, 5rem)',
         fontWeight: 600,
         color: '#F5F0E8',
         lineHeight: 1.1,
-        maxWidth: '900px',
+        maxWidth: '100%',
         marginBottom: '1.5rem',
         letterSpacing: '-0.02em',
       }}>
@@ -110,7 +112,7 @@ export default function Hero() {
         maxWidth: '720px',
       }}>
         {[
-          { stat: '94%', label: 'of UK IFA firms not found on ChatGPT' },
+          { stat: '79%', label: 'of UK IFA firms not found on ChatGPT' },
           { stat: '120+', label: 'wealth-specific prompts tested' },
           { stat: '4', label: 'AI platforms audited' },
         ].map((item) => (

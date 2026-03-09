@@ -13,72 +13,102 @@ export interface BlogPost {
 
 export const BLOG_POSTS: BlogPost[] = [
   {
-    slug: 'we-tested-50-uk-ifa-firms-on-chatgpt-only-3-were-recommended',
-    title: "We Tested 50 UK IFA Firms on ChatGPT. Only 3 Were Recommended.",
-    description: "We audited 50 UK financial advisory firms across ChatGPT, Claude, Perplexity, and Google AI. The results were stark: 94% of firms were invisible. Here's what we found.",
-    date: '2026-02-18',
-    readTime: '7 min read',
+    slug: 'we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible',
+    title: "We Tested 149 UK IFA Firms on ChatGPT. 79% Were Invisible.",
+    description: "We asked GPT-4o to recommend financial advisers across 10 UK regions. Of 149 real IFA firms, only 32 were ever mentioned. Here's the full breakdown by region.",
+    date: '2026-03-09',
+    readTime: '8 min read',
     category: 'Research',
     heroImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=630&fit=crop&q=80',
     heroImageAlt: 'Data analytics dashboard showing charts and metrics',
     content: `
-We recently ran a comprehensive AI visibility audit across 50 UK financial advisory firms. We tested each firm against ChatGPT, Claude, Perplexity, and Google AI using prompts that real prospective clients actually type: "best financial advisor in [city]", "pension transfer specialist near me", and "who should I speak to about inheritance tax planning in [city]?"
+We ran 30 real queries against GPT-4o, asking it to recommend independent financial advisers across 10 UK regions. We tested 149 real, FCA-registered IFA firms to see which ones AI would actually mention.
 
 The results were stark.
 
-## The Numbers
+## The headline number
 
-Of 50 firms tested across four AI platforms:
+**79% of UK IFA firms are invisible to AI.**
 
-- **Only 3 firms** were consistently recommended by at least two platforms
-- **6 firms** appeared at least once across all tests
-- **41 firms** were completely invisible, with not a single AI mention across any platform
-- The average visibility score was **14 out of 100**
+Of 149 firms tested, only 32 were ever mentioned in any response. The remaining 117 firms never appeared once, no matter how we phrased the question.
 
-To put that in context: when a high-net-worth individual asks ChatGPT to recommend a financial advisor in their area, 94% of firms will never be mentioned. The same few names appear repeatedly, while the vast majority of qualified, experienced advisors are simply invisible.
+## How we tested
 
-## What the Top 3 Had in Common
+We used three prompt variants for each of 10 UK regions (30 queries total):
 
-The three firms that consistently appeared in AI recommendations shared clear characteristics:
+1. "Can you recommend a good independent financial adviser in [region]?"
+2. "Who are the best independent financial advisers in [region]?"
+3. "I'm looking for a trusted financial adviser in [region]. Can you suggest some reputable IFA firms?"
 
-**1. Strong, specific website content**
-Not just a services page, but genuine thought leadership. Articles about pension transfers, inheritance tax planning, and retirement strategies. FAQ pages answering the exact questions prospective clients ask.
+These are the kinds of questions real prospective clients type into ChatGPT every day. We recorded every response and checked whether each of our 149 firms was mentioned.
 
-**2. Consistent citations across authoritative platforms**
-Complete profiles on VouchedFor, Unbiased, FTAdviser, and Google Business Profile. The same firm name, address, and services described consistently everywhere.
+## Results by region
 
-**3. Structured data on their websites**
-FinancialService schema markup that tells AI systems exactly what services they offer, where they are located, and their regulatory credentials.
+The regional breakdown reveals a clear pattern: the further from London, the worse the visibility.
 
-**4. Client reviews mentioning specialties**
-Not just "great advisor", but reviews that mention specific services: "helped us with our pension transfer", "brilliant inheritance tax planning advice." This teaches AI to match the firm with specific queries.
+| Region | Firms tested | Found by AI | Invisible |
+|--------|-------------|-------------|-----------|
+| London | 25 | 13 | 48% invisible |
+| Scotland | 15 | 5 | 67% invisible |
+| North East | 7 | 2 | 71% invisible |
+| South East | 20 | 4 | 80% invisible |
+| South West | 15 | 3 | 80% invisible |
+| North West | 18 | 2 | 89% invisible |
+| Wales | 10 | 1 | 90% invisible |
+| Yorkshire | 15 | 1 | 93% invisible |
+| Midlands | 15 | 1 | 93% invisible |
+| East Anglia | 9 | 0 | 100% invisible |
 
-## What the Invisible 41 Had in Common
+East Anglia had zero firms recognised. Not one. The Midlands and Yorkshire were barely better at 93% invisible. Even in London, the most visible region, nearly half of firms were never mentioned.
 
-The pattern was equally clear for firms that scored zero:
+## The winner-takes-all problem
 
-- **Generic website copy:** "We provide comprehensive financial planning solutions" could describe any firm in the country
-- **No VouchedFor or Unbiased presence**, or thin profiles with minimal reviews
-- **No content beyond a services page:** no articles, no guides, no FAQs
-- **Inconsistent or incomplete Google Business Profile:** missing service categories, no reviews, outdated information
+A handful of large national firms dominate AI recommendations. Chase de Vere appeared in 15 out of 30 queries, half of all responses. Brewin Dolphin appeared in 7. Charles Stanley in 4.
 
-## Why This Matters Now
+Meanwhile, well-established firms like Investec Wealth, Schroders Personal Wealth, Cazenove Capital, AJ Bell, Mattioli Woods, and Canaccord Genuity were completely invisible. These are not small firms. They manage billions in client assets. Yet AI does not mention them.
 
-AI search is not a future trend. Over 15 million UK adults now use AI assistants regularly, and that number is growing rapidly. For high-net-worth individuals (exactly the clients IFA firms want to attract) AI adoption is even higher.
+This is the winner-takes-all dynamic of AI search. Unlike Google, where you can appear on page two or three, AI gives a short list of recommendations and nothing else. If you are not on that list, you do not exist.
 
-When a prospective client worth tens of thousands in lifetime fees asks AI for a financial advisor recommendation, the firms that appear get the call. The firms that don't get nothing. There is no page two in AI search.
+## What the visible firms had in common
 
-## The Opportunity
+The firms that appeared consistently shared clear characteristics:
 
-The good news is that the barrier to entry is currently low. Because so few IFA firms have optimised for AI visibility, the firms that start now can establish a dominant position in their area relatively quickly.
+**1. National brand recognition.** Chase de Vere, Brewin Dolphin, and St. James's Place have the kind of brand presence that appears across hundreds of web sources. AI models absorb this.
 
-The window won't stay open forever. As awareness grows, competition will increase. The firms that move first will have an advantage that is very difficult to overcome, because AI systems are conservative: once they form a view of which firms to recommend, it takes sustained new evidence to change it.
+**2. Strong content footprint.** Firms that publish thought leadership, guides, and commentary give AI models more material to draw from when forming recommendations.
 
-## What You Should Do
+**3. Consistent citations across platforms.** Complete profiles on directories, industry publications, and review sites. The same firm name and description everywhere.
+
+**4. Structured data and schema markup.** FinancialService schema that tells AI systems exactly what services they offer, where they operate, and their regulatory credentials.
+
+## What the invisible firms had in common
+
+The pattern was equally clear:
+
+- **Generic website copy.** "We provide comprehensive financial planning solutions" could describe any firm in the country. AI cannot distinguish you if you sound like everyone else.
+- **Thin or absent directory presence.** No VouchedFor profile, no Unbiased listing, or profiles with minimal information and no reviews.
+- **No published content beyond a services page.** No articles, no guides, no FAQs. Nothing for AI to learn from.
+- **Regional firms without national signals.** A firm that operates only in one city has far fewer web mentions than a national brand. Without deliberate effort to build online authority, regional firms are structurally disadvantaged.
+
+## Why this matters now
+
+AI search is not a future trend. Over 15 million UK adults already use AI assistants regularly, and adoption among high-net-worth individuals is even higher.
+
+When a prospective client asks ChatGPT for a financial adviser recommendation, the firms that appear get the enquiry. The firms that do not get nothing. There is no page two in AI search.
+
+A single high-net-worth client is worth tens of thousands in lifetime fees. The cost of being invisible is not theoretical. It is real clients going to competitors you have never heard of, simply because AI recommends them and not you.
+
+## The opportunity
+
+The good news: the barrier to entry is currently low. Because so few IFA firms have optimised for AI visibility, the firms that start now can establish a dominant position in their area relatively quickly.
+
+The window will not stay open forever. As awareness grows, competition will increase. AI systems are conservative: once they form a view of which firms to recommend, it takes sustained new evidence to change it. The firms that move first will have an advantage that is very difficult to overcome.
+
+## What you should do
 
 Start by understanding where you stand. A free AI visibility score takes 60 seconds and shows you whether AI platforms are currently recommending your firm.
 
-If you score below 30 (and based on our research, most firms will) the full AI Visibility Audit provides a complete breakdown across all four platforms with a specific, prioritised action plan.
+If you score below 30 (and based on our research, most firms will), the full AI Visibility Audit provides a complete breakdown across all four platforms with a specific, prioritised action plan.
 
 The firms that take this seriously in 2026 will own their local market in AI search for years to come.
     `.trim(),
