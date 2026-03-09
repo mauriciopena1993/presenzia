@@ -60,7 +60,7 @@ interface ChatMessage {
 }
 
 const PLATFORM_TOOLTIPS: Record<string, string> = {
-  'ChatGPT': 'Used by 200M+ people daily. When someone asks ChatGPT to recommend a financial advisor, this score shows how often your firm appears.',
+  'ChatGPT': 'Used by 200M+ people daily. When someone asks ChatGPT to recommend a financial adviser, this score shows how often your firm appears.',
   'Claude': 'Anthropic\'s AI assistant, growing rapidly in professional use. A high score here means Claude is recommending your firm.',
   'Perplexity': 'An AI-powered search engine replacing Google for many users. High visibility here drives direct, high-intent traffic to your firm.',
   'Google AI': 'Google\'s AI Overview appears at the top of search results. Critical for discovery, this is the highest-impact platform.',

@@ -100,7 +100,7 @@ export default function RootLayout({
               name: "presenzia.ai",
               legalName: "Ketzal LTD",
               url: "https://presenzia.ai",
-              description: "AI search visibility for UK wealth managers and financial advisors. We audit how AI platforms like ChatGPT, Claude, Perplexity and Google AI see your firm.",
+              description: "AI search visibility for UK wealth managers and financial advisers. We audit how AI platforms like ChatGPT, Claude, Perplexity and Google AI see your firm.",
               foundingDate: "2026",
               email: "hello@presenzia.ai",
               address: {

@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'About | presenzia.ai',
-  description: 'presenzia.ai audits how AI search engines see your firm. Built for UK wealth managers and financial advisors navigating the shift to AI-powered search.',
+  description: 'presenzia.ai audits how AI search engines see your firm. Built for UK wealth managers and financial advisers navigating the shift to AI-powered search.',
   alternates: {
     canonical: '/about',
   },
@@ -73,7 +73,7 @@ export default function AboutPage() {
 
             <p style={{ color: '#AAAAAA', fontSize: '1.05rem', lineHeight: 1.8, marginBottom: '1.5rem' }}>
               Something changed in 2024. Millions of people stopped typing into Google and started asking ChatGPT,
-              Claude, and Perplexity for recommendations instead. &ldquo;Who is the best financial advisor in my area?&rdquo;
+              Claude, and Perplexity for recommendations instead. &ldquo;Who is the best financial adviser in my area?&rdquo;
               &ldquo;Pension transfer specialist near me.&rdquo; &ldquo;Can you recommend a wealth manager in Surrey?&rdquo;
             </p>
 
@@ -83,7 +83,7 @@ export default function AboutPage() {
             </p>
 
             <p style={{ color: '#AAAAAA', fontSize: '1.05rem', lineHeight: 1.8, marginBottom: '1.5rem' }}>
-              We built presenzia to give wealth managers and financial advisors that answer. We test over 120 wealth-specific prompts across four
+              We built presenzia to give wealth managers and financial advisers that answer. We test over 120 wealth-specific prompts across four
               major AI platforms and measure exactly how visible your firm is. You get a scored audit, a breakdown
               by platform, a list of competitors being recommended instead of you, and a prioritised action plan to fix it.
             </p>

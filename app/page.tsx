@@ -19,7 +19,7 @@ const faqSchema = {
       name: 'What is AI search visibility, and why does it matter for IFAs?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "When potential clients ask ChatGPT, Claude, Perplexity, or Google AI to recommend a financial advisor, AI generates a response based on its training data and web knowledge. Firms with strong AI visibility appear in these recommendations. Firms without it are invisible to a rapidly growing discovery channel. With over 15 million UK adults now using AI assistants regularly, this is becoming as important as Google rankings.",
+        text: "When potential clients ask ChatGPT, Claude, Perplexity, or Google AI to recommend a financial adviser, AI generates a response based on its training data and web knowledge. Firms with strong AI visibility appear in these recommendations. Firms without it are invisible to a rapidly growing discovery channel. With over 15 million UK adults now using AI assistants regularly, this is becoming as important as Google rankings.",
       },
     },
     {
@@ -35,7 +35,7 @@ const faqSchema = {
       name: 'How does presenzia.ai test my visibility?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "We run 100+ carefully crafted search prompts across four major AI platforms \u2014 ChatGPT, Claude, Perplexity, and Google AI. These prompts mirror what real clients actually ask: 'best financial advisor in [your city]', 'pension transfer specialist near me', 'who should I speak to about inheritance tax planning'. We record every response, noting where your firm appears, where it doesn't, and which competitors are being recommended instead.",
+        text: "We run 120+ carefully crafted search prompts across four major AI platforms \u2014 ChatGPT, Claude, Perplexity, and Google AI. These prompts mirror what real clients actually ask: 'best financial adviser in [your city]', 'pension transfer specialist near me', 'who should I speak to about inheritance tax planning'. We record every response, noting where your firm appears, where it doesn't, and which competitors are being recommended instead.",
       },
     },
     {

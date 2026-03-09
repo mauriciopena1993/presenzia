@@ -115,8 +115,8 @@ The firms that take this seriously in 2026 will own their local market in AI sea
   },
   {
     slug: 'what-makes-ai-recommend-one-financial-advisor-over-another',
-    title: "What Makes AI Recommend One Financial Advisor Over Another?",
-    description: "AI platforms don't recommend financial advisors randomly. There are specific signals that determine which firms appear. Here's what actually matters and how to build it.",
+    title: "What Makes AI Recommend One Financial Adviser Over Another?",
+    description: "AI platforms don't recommend financial advisers randomly. There are specific signals that determine which firms appear. Here's what actually matters and how to build it.",
     date: '2026-02-25',
     readTime: '8 min read',
     category: 'Strategy',
@@ -165,7 +165,7 @@ Schema markup should include: your firm name, address, services offered, areas s
 
 ### 5. Third-Party Mentions
 
-Being mentioned by authoritative third parties carries more weight than anything you say about yourself. For financial advisors, this means:
+Being mentioned by authoritative third parties carries more weight than anything you say about yourself. For financial advisers, this means:
 
 - Features or listings in FTAdviser, Money Marketing, or Professional Adviser
 - Mentions in local newspaper business sections
@@ -201,7 +201,7 @@ The signals are clear. The question is whether your firm will act on them before
   {
     slug: 'ai-search-vs-google-why-your-seo-strategy-wont-save-you',
     title: "AI Search vs Google: Why Your SEO Strategy Won't Save You",
-    description: "You can rank #1 on Google and still be invisible to ChatGPT. AI search works differently. Here's what every financial advisor needs to understand.",
+    description: "You can rank #1 on Google and still be invisible to ChatGPT. AI search works differently. Here's what every financial adviser needs to understand.",
     date: '2026-03-04',
     readTime: '7 min read',
     category: 'Strategy',

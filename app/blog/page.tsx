@@ -5,11 +5,11 @@ import { BLOG_POSTS } from '@/lib/blog-posts';
 
 export const metadata: Metadata = {
   title: 'Blog | presenzia.ai: AI Search Visibility for UK Wealth Managers & IFAs',
-  description: 'Insights on AI search visibility for financial advisors. How ChatGPT, Claude and Perplexity recommend wealth managers, and how UK IFAs can improve their AI presence.',
+  description: 'Insights on AI search visibility for financial advisers. How ChatGPT, Claude and Perplexity recommend wealth managers, and how UK IFAs can improve their AI presence.',
   alternates: { canonical: '/blog' },
   openGraph: {
     title: 'Blog | presenzia.ai: AI Search Visibility for UK Wealth Managers & IFAs',
-    description: 'Insights on AI search visibility for financial advisors. How ChatGPT, Claude and Perplexity recommend wealth managers, and how UK IFAs can improve their AI presence.',
+    description: 'Insights on AI search visibility for financial advisers. How ChatGPT, Claude and Perplexity recommend wealth managers, and how UK IFAs can improve their AI presence.',
     url: 'https://presenzia.ai/blog',
     type: 'website',
     images: ['/og-image.png'],
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Blog | presenzia.ai: AI Visibility Insights',
-    description: 'Insights on AI search visibility for financial advisors. How AI recommends wealth managers and how to improve your presence.',
+    description: 'Insights on AI search visibility for financial advisers. How AI recommends wealth managers and how to improve your presence.',
     images: ['/og-image.png'],
   },
 };
@@ -47,7 +47,7 @@ export default function BlogPage() {
             AI Visibility for UK Wealth Managers
           </h1>
           <p style={{ color: '#AAAAAA', fontSize: '1rem', lineHeight: 1.7 }}>
-            Insights on how AI platforms recommend financial advisors, and what your firm can do about it.
+            Insights on how AI platforms recommend financial advisers, and what your firm can do about it.
           </p>
         </div>
 

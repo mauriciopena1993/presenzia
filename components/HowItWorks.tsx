@@ -12,7 +12,7 @@ export default function HowItWorks() {
     {
       number: '02',
       title: 'We run the audit',
-      description: 'Our engine tests 100+ wealth-specific prompts across ChatGPT, Claude, Perplexity, and Google AI. We record exactly where your firm appears, where it doesn\'t, and which competitors are being recommended instead.',
+      description: 'Our engine tests 120+ wealth-specific prompts across ChatGPT, Claude, Perplexity, and Google AI. We record exactly where your firm appears, where it doesn\'t, and which competitors are being recommended instead.',
       icon: Cpu,
     },
     {

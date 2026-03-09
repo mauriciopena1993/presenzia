@@ -25,7 +25,7 @@ export default function Footer() {
               presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
             </div>
             <p style={{ color: '#888888', fontSize: '0.825rem', lineHeight: 1.7, maxWidth: '220px' }}>
-              AI search visibility for UK wealth managers and financial advisors. Know where you stand. Fix what&apos;s broken.
+              AI search visibility for UK wealth managers and financial advisers. Know where you stand. Fix what&apos;s broken.
             </p>
             <div style={{ marginTop: '1.5rem', fontSize: '0.75rem', color: '#999999', lineHeight: 1.6 }}>
               Trading name of Ketzal LTD<br />

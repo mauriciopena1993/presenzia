@@ -3,7 +3,7 @@ import FAQAccordion from './FAQAccordion';
 const faqs = [
   {
     q: 'What is AI search visibility, and why does it matter for IFAs?',
-    a: 'AI search is replacing Google as the way people find services, and it\u2019s happening faster than anyone expected. Over 15 million UK adults already use AI assistants regularly, and that number is growing exponentially across all age groups. When a prospective client asks ChatGPT or Claude to recommend a financial advisor, they trust the answer and act on it. Firms that appear in these responses get the enquiry. Firms that don\u2019t are invisible to an entire generation of high-net-worth clients. This isn\u2019t a future trend. It\u2019s happening now.',
+    a: 'AI search is replacing Google as the way people find services, and it\u2019s happening faster than anyone expected. Over 15 million UK adults already use AI assistants regularly, and that number is growing exponentially across all age groups. When a prospective client asks ChatGPT or Claude to recommend a financial adviser, they trust the answer and act on it. Firms that appear in these responses get the enquiry. Firms that don\u2019t are invisible to an entire generation of high-net-worth clients. This isn\u2019t a future trend. It\u2019s happening now.',
   },
   {
     q: "I don't have time to implement recommendations myself. Can you do it for me?",
@@ -11,7 +11,7 @@ const faqs = [
   },
   {
     q: 'How does presenzia.ai test my visibility?',
-    a: 'We run 100+ carefully crafted search prompts across four major AI platforms: ChatGPT, Claude, Perplexity, and Google AI. These prompts mirror what real clients actually ask: \u201Cbest financial advisor in [your city]\u201D, \u201Cpension transfer specialist near me\u201D, \u201Cwho should I speak to about inheritance tax planning\u201D. We record every response, noting where your firm appears, where it doesn\u2019t, and which competitors are being recommended instead. Results are delivered via your online dashboard and a downloadable PDF report.',
+    a: 'We run 120+ carefully crafted search prompts across four major AI platforms: ChatGPT, Claude, Perplexity, and Google AI. These prompts mirror what real clients actually ask: \u201Cbest financial adviser in [your city]\u201D, \u201Cpension transfer specialist near me\u201D, \u201Cwho should I speak to about inheritance tax planning\u201D. We record every response, noting where your firm appears, where it doesn\u2019t, and which competitors are being recommended instead. Results are delivered via your online dashboard and a downloadable PDF report.',
   },
   {
     q: 'How is this different from traditional SEO?',

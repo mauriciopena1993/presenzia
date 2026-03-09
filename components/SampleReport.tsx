@@ -60,7 +60,7 @@ function ScoreCard() {
             }}>GRADE F</span>
           </div>
           <p style={{ color: TXT2, fontSize: '0.75rem', lineHeight: 1.6, margin: '0 0 0.6rem' }}>
-            Found in only 7 of 120 AI searches across 4 platforms. Your firm is nearly invisible to AI-powered search. Most prospective clients asking AI for a financial advisor will never see your name.
+            Found in only 7 of 120 AI searches across 4 platforms. Your firm is nearly invisible to AI-powered search. Most prospective clients asking AI for a financial adviser will never see your name.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <TrendingDown size={12} style={{ color: RED }} />
@@ -270,7 +270,7 @@ function PlatformCard() {
 
 function PromptsCard() {
   const prompts = [
-    { prompt: '\u201CBest financial advisor in Guildford\u201D', found: false, platform: 'ChatGPT', position: '\u2014', competitor: 'Sterling Financial Planning (1st), Meridian Wealth (2nd)', category: 'Direct' },
+    { prompt: '\u201CBest financial adviser in Guildford\u201D', found: false, platform: 'ChatGPT', position: '\u2014', competitor: 'Sterling Financial Planning (1st), Meridian Wealth (2nd)', category: 'Direct' },
     { prompt: '\u201CRecommend a pension transfer specialist near GU1\u201D', found: true, platform: 'Perplexity', position: '4th', competitor: 'Sterling Financial Planning (1st)', category: 'Specialty' },
     { prompt: '\u201CWho should I speak to about inheritance tax planning in Surrey?\u201D', found: false, platform: 'Claude', position: '\u2014', competitor: 'Meridian Wealth (1st), Oakwood Financial (2nd)', category: 'Problem' },
     { prompt: '\u201CIFA for high-net-worth individuals in Surrey\u201D', found: true, platform: 'Perplexity', position: '3rd', competitor: 'Sterling Financial Planning (1st)', category: 'Specialty' },
@@ -373,7 +373,7 @@ function ActionPlanCard() {
       timeframe: 'Week 1–2',
       items: [
         { title: 'Add FinancialService schema markup to your website', impact: 'High', desc: 'Implement structured data (JSON-LD) using the FinancialService schema type. Include firm name, address, services offered, FCA number, and qualifications. Sterling Financial Planning already does this, which is why they appear in 22/30 ChatGPT searches.' },
-        { title: 'Optimise your Google Business Profile', impact: 'High', desc: 'Your profile is missing a detailed description and has only 3 reviews. Add a 200+ word description mentioning "financial advisor Guildford", upload professional team photos, and request reviews from satisfied clients. Aim for 20+ reviews.' },
+        { title: 'Optimise your Google Business Profile', impact: 'High', desc: 'Your profile is missing a detailed description and has only 3 reviews. Add a 200+ word description mentioning "financial adviser Guildford", upload professional team photos, and request reviews from satisfied clients. Aim for 20+ reviews.' },
         { title: 'Ensure consistent listings on VouchedFor, Unbiased & FTAdviser', impact: 'Medium', desc: 'Perplexity cited VouchedFor as a source in 12 of 30 responses. Meridian Wealth has 38 VouchedFor reviews, and Claude cited them in 14/30 searches because of review authority.' },
       ],
     },

@@ -1128,7 +1128,7 @@ function ScorePageInner() {
                     'ChatGPT': '~200M weekly users · Highest volume AI search tool',
                     'Google AI': 'AI Overviews on Google Search · Dominant search engine',
                     'Perplexity': 'Fastest-growing AI search · Cited source answers',
-                    'Claude': 'Anthropic\'s AI · Popular with professionals & advisors',
+                    'Claude': 'Anthropic\'s AI · Popular with professionals & advisers',
                   };
                   return (
                     <div key={i} style={{ padding: '0.5rem 0', borderBottom: '1px solid #1A1A1A' }}>

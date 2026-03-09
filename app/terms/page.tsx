@@ -63,7 +63,7 @@ export default function TermsPage() {
         <div style={sectionStyle}>
           <h2 style={headingStyle}>1. Our Service</h2>
           <p style={textStyle}>
-            presenzia.ai provides AI search visibility auditing services for UK wealth managers and financial advisors. We query major AI platforms
+            presenzia.ai provides AI search visibility auditing services for UK wealth managers and financial advisers. We query major AI platforms
             (including ChatGPT, Claude, Perplexity, and Google AI) to assess how often and how prominently your
             firm appears in AI-generated recommendations, and deliver a scored audit with actionable insights.
           </p>

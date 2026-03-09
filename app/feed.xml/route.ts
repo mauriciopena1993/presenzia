@@ -26,7 +26,7 @@ export async function GET() {
   <channel>
     <title>presenzia.ai Blog</title>
     <link>${SITE_URL}/blog</link>
-    <description>Insights on AI search visibility for UK wealth managers and financial advisors.</description>
+    <description>Insights on AI search visibility for UK wealth managers and financial advisers.</description>
     <language>en-gb</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml"/>
