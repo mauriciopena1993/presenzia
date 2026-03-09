@@ -102,9 +102,14 @@ export default function AboutPage() {
               <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
                 Who we are
               </div>
-              <p style={{ color: '#AAAAAA', fontSize: '0.95rem', lineHeight: 1.7, margin: 0 }}>
-                We come from backgrounds in finance and AI strategy consulting at major technology companies. Colleagues in financial advisory kept asking us how to get found by AI search engines, and we realised nobody was solving this properly. presenzia.ai is a trading name of Ketzal LTD (Company No. 14570156), based in London. Reach us at{' '}
-                <a href="mailto:hello@presenzia.ai" style={{ color: '#C9A84C', textDecoration: 'none' }}>hello@presenzia.ai</a>.
+              <p style={{ color: '#AAAAAA', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '1rem' }}>
+                presenzia.ai was founded by a finance and technology specialist with a decade of experience in fintech strategy and AI at some of the world&apos;s leading companies. Colleagues in financial advisory kept asking how to get found by AI search, and we realised nobody was solving this properly.
+              </p>
+              <p style={{ color: '#888888', fontSize: '0.85rem', lineHeight: 1.7, margin: 0 }}>
+                Ketzal LTD, Company No. 14570156, London.<br />
+                <a href="mailto:hello@presenzia.ai" style={{ color: '#C9A84C', textDecoration: 'none' }}>hello@presenzia.ai</a>
+                {' '}&middot;{' '}
+                <a href="https://linkedin.com/in/mauricio-pena-garibay" target="_blank" rel="noopener noreferrer" style={{ color: '#C9A84C', textDecoration: 'none' }}>linkedin.com/in/mauricio-pena-garibay</a>
               </p>
             </div>
 

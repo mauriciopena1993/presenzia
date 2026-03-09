@@ -63,7 +63,8 @@ export default function Hero() {
         lineHeight: 1.75,
         fontWeight: 300,
       }}>
-        AI search is replacing Google, and it&apos;s happening fast. Millions already use ChatGPT, Claude, and Perplexity to find financial advisors, and that number is growing exponentially across every age group. If your firm isn&apos;t showing up, your competitors are. Are you prepared?
+        Clients are finding financial advisers on ChatGPT and Perplexity, not Google.
+        Find out if your firm shows up, or if your competitors do instead.
       </p>
 
       {/* CTA Buttons */}
@@ -98,7 +99,7 @@ export default function Hero() {
       </div>
 
       {/* Social proof strip */}
-      <div style={{
+      <div className="hero-stats" style={{
         display: 'flex',
         alignItems: 'center',
         gap: '3rem',
@@ -110,7 +111,7 @@ export default function Hero() {
       }}>
         {[
           { stat: '94%', label: 'of UK IFA firms not found on ChatGPT' },
-          { stat: '100+', label: 'wealth-specific prompts tested' },
+          { stat: '120+', label: 'wealth-specific prompts tested' },
           { stat: '4', label: 'AI platforms audited' },
         ].map((item) => (
           <div key={item.stat} style={{ textAlign: 'center' }}>
@@ -141,6 +142,10 @@ export default function Hero() {
         }
         .hero-cta-primary:hover { background: #E8C96A !important; }
         .hero-cta-secondary:hover { border-color: #C9A84C !important; color: #F5F0E8 !important; }
+        @media (max-width: 768px) {
+          .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
+          .hero-stats { flex-direction: column; gap: 1.5rem !important; }
+        }
       `}</style>
     </section>
   );

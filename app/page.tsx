@@ -1,8 +1,11 @@
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import HowItWorks from '@/components/HowItWorks';
+import PromptExampleBlock from '@/components/PromptExampleBlock';
 import SampleReport from '@/components/SampleReport';
 import Testimonials from '@/components/Testimonials';
+import MidPageCTA from '@/components/MidPageCTA';
+import PricingAnchor from '@/components/PricingAnchor';
 import FAQ from '@/components/FAQ';
 import Footer from '@/components/Footer';
 // AmbientBackground is rendered globally in layout.tsx
@@ -17,6 +20,14 @@ const faqSchema = {
       acceptedAnswer: {
         '@type': 'Answer',
         text: "When potential clients ask ChatGPT, Claude, Perplexity, or Google AI to recommend a financial advisor, AI generates a response based on its training data and web knowledge. Firms with strong AI visibility appear in these recommendations. Firms without it are invisible to a rapidly growing discovery channel. With over 15 million UK adults now using AI assistants regularly, this is becoming as important as Google rankings.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: "I don't have time to implement recommendations myself. Can you do it for me?",
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "Yes. Our Premium plan includes a dedicated strategist and done-for-you content creation, so you get the visibility gains without any implementation work from your team. Most Premium clients see their first improvements within 2\u20133 weeks of onboarding.",
       },
     },
     {
@@ -62,6 +73,25 @@ const faqSchema = {
   ],
 };
 
+const softwareAppSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'presenzia.ai',
+  applicationCategory: 'BusinessApplication',
+  description: 'AI search visibility audits for UK independent financial advisers and wealth managers.',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'GBP',
+    description: 'Free AI visibility score',
+  },
+  provider: {
+    '@type': 'Organization',
+    name: 'Ketzal LTD',
+    url: 'https://presenzia.ai',
+  },
+};
+
 export default function Home() {
   return (
     <main style={{ background: 'rgba(10,10,10,0.88)', minHeight: '100vh', position: 'relative' }}>
@@ -69,12 +99,19 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareAppSchema) }}
+      />
       <div style={{ position: 'relative', zIndex: 1 }}>
         <Navbar />
         <Hero />
         <HowItWorks />
+        <PromptExampleBlock />
         <SampleReport />
         <Testimonials />
+        <MidPageCTA />
+        <PricingAnchor />
         <FAQ />
         <Footer />
       </div>

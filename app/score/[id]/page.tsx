@@ -74,6 +74,9 @@ export async function generateMetadata({
   return {
     title,
     description,
+    alternates: {
+      canonical: `/score/${id}`,
+    },
     openGraph: {
       title,
       description,

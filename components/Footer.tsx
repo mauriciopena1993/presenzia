@@ -71,9 +71,12 @@ export default function Footer() {
 
           {/* CTA */}
           <div>
-            <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>Get started</div>
-            <p style={{ color: '#888888', fontSize: '0.825rem', lineHeight: 1.7, marginBottom: '1.25rem' }}>
-              Find out where you rank. Then climb.
+            <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>Still reading?</div>
+            <p style={{ color: '#888888', fontSize: '0.825rem', lineHeight: 1.7, marginBottom: '0.5rem' }}>
+              Your competitors probably aren&apos;t.
+            </p>
+            <p style={{ color: '#666666', fontSize: '0.75rem', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+              Every week without an AI visibility audit is a week your competitors get recommended instead.
             </p>
             <Link href="/score" className="footer-cta" style={{
               display: 'inline-block',
@@ -89,9 +92,25 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom bar */}
+        {/* Founder credibility */}
         <div style={{
           paddingTop: '2rem',
+          borderTop: '1px solid rgba(255,255,255,0.04)',
+          textAlign: 'center',
+          marginBottom: '1.5rem',
+        }}>
+          <p style={{ fontSize: '0.8rem', color: '#777777', lineHeight: 1.7 }}>
+            Built by{' '}
+            <Link href="/about" style={{ color: '#C9A84C', textDecoration: 'none' }}>
+              a finance and technology specialist who got tired of watching great IFA firms lose clients to competitors they&apos;d never heard of
+            </Link>
+            . London, UK.
+          </p>
+        </div>
+
+        {/* Bottom bar */}
+        <div style={{
+          paddingTop: '1rem',
           borderTop: '1px solid rgba(255,255,255,0.04)',
           display: 'flex',
           justifyContent: 'space-between',
@@ -103,7 +122,7 @@ export default function Footer() {
             © 2026 Ketzal LTD t/a presenzia.ai. All rights reserved.
           </div>
           <div style={{ fontSize: '0.8rem', color: '#888888' }}>
-            Built in London, UK.
+            London, UK.
           </div>
         </div>
       </div>

@@ -5,7 +5,7 @@ const values: { icon: LucideIcon; label: string; description: string }[] = [
   {
     icon: Cpu,
     label: '4 AI Platforms',
-    description: 'We test across ChatGPT, Claude, Perplexity and Google AI. The platforms shaping how clients discover advisors.',
+    description: 'We test across ChatGPT, Claude, Perplexity and Google AI. The platforms shaping how clients discover financial advisers.',
   },
   {
     icon: Globe,

@@ -19,9 +19,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "presenzia.ai | AI Search Visibility for UK Wealth Managers & IFAs",
-  description: "Is your firm invisible to AI search? We audit how ChatGPT, Claude, Perplexity and Google AI see your financial advisory firm. 100+ wealth-specific prompts tested.",
-  keywords: "AI search visibility, IFA AI visibility, financial advisor ChatGPT, wealth manager AI search, AI audit financial advisors, presenzia, AI recommendations IFA",
+  title: "AI Search Visibility for UK IFAs & Wealth Managers | presenzia.ai",
+  description: "Find out if your IFA firm appears when clients search ChatGPT, Perplexity or Google AI for a financial adviser. Free AI visibility score, no sign-up required.",
+  keywords: "AI search visibility IFA, ChatGPT financial adviser search, AI SEO for wealth managers, IFA visibility audit, does my firm appear on ChatGPT, AI search visibility for IFAs, presenzia",
   metadataBase: new URL("https://presenzia.ai"),
   alternates: {
     canonical: "/",
@@ -30,8 +30,8 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "presenzia.ai | AI Search Visibility for UK Wealth Managers & IFAs",
-    description: "Is your firm invisible to AI search? We audit how ChatGPT, Claude, Perplexity and Google AI see your financial advisory firm.",
+    title: "Is your IFA firm invisible to AI search? | presenzia.ai",
+    description: "94% of UK IFA firms don't appear when clients ask ChatGPT for a financial adviser. Find out where your firm stands with a free AI visibility audit.",
     url: "https://presenzia.ai",
     siteName: "presenzia.ai",
     type: "website",
@@ -41,14 +41,14 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "presenzia.ai - AI Search Visibility for UK Wealth Managers & IFAs",
+        alt: "presenzia.ai - AI Search Visibility for UK IFAs & Wealth Managers",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "presenzia.ai | AI Search Visibility for UK Wealth Managers & IFAs",
-    description: "Is your firm invisible to AI search? We audit how AI platforms see your financial advisory firm.",
+    title: "Is your IFA firm invisible to AI search? | presenzia.ai",
+    description: "94% of UK IFA firms don't appear when clients ask ChatGPT for a financial adviser. Get your free AI visibility score.",
     images: ["/og-image.png"],
   },
   robots: {

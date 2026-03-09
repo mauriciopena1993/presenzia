@@ -663,6 +663,12 @@ function ScorePageInner() {
                   </div>
                 )}
 
+                {!coverageType && (
+                  <div style={{ fontSize: '0.8rem', color: '#C9A84C', textAlign: 'center' }}>
+                    Please select a coverage type above to continue
+                  </div>
+                )}
+
                 <button
                   type="submit"
                   disabled={!coverageType}

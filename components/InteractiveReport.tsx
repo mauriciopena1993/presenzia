@@ -262,7 +262,7 @@ function OverviewTab({ job, client, onTabChange }: { job: InteractiveReportJob; 
             fontWeight: 600,
             marginBottom: 4,
           }}>
-            {client.business_name || 'Your Business'}
+            {client.business_name || 'Your Firm'}
           </div>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: 8 }}>
             {client.business_type && <span style={{ fontSize: '0.7rem', padding: '3px 8px', background: '#111', border: '1px solid #222', color: '#888' }}>{client.business_type}</span>}

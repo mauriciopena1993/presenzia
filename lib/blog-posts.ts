@@ -458,7 +458,7 @@ If you want to understand how your firm currently performs across these AI platf
     heroImage: 'https://images.unsplash.com/photo-1573804633927-bfcbcd909acd?w=1200&h=630&fit=crop&q=80',
     heroImageAlt: 'Person using smartphone to search for information online',
     content: `
-There is a quiet crisis unfolding for businesses that depend on website traffic for client acquisition, and most UK financial advisers are not yet aware of it.
+There is a quiet crisis unfolding for firms that depend on website traffic for client acquisition, and most UK financial advisers are not yet aware of it.
 
 The crisis has a name: zero-click search. It refers to searches where the user gets the information they need directly on the search results page (from featured snippets, knowledge panels, or increasingly, AI-generated overviews) without ever clicking through to a website.
 

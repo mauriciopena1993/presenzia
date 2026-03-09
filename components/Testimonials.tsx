@@ -1,20 +1,28 @@
+import { ShieldCheck } from 'lucide-react';
+
 const testimonials = [
   {
     quote: "I had no idea my competitors were showing up on ChatGPT and I wasn't. Within 6 weeks of implementing presenzia's recommendations, three new clients mentioned finding us through AI search.",
     name: "Richard H.",
-    role: "Chartered Financial Planner, Surrey",
+    role: "Chartered Financial Planner",
+    detail: "Independent practice, Surrey",
+    fca: true,
     initial: "R",
   },
   {
     quote: "The audit showed us exactly why our main competitor was being recommended by every AI platform. The action plan was specific enough that our marketing team could implement it the same week.",
     name: "Catherine M.",
-    role: "IFA Practice Owner, Edinburgh",
+    role: "IFA Practice Owner",
+    detail: "Multi-adviser firm, Edinburgh",
+    fca: true,
     initial: "C",
   },
   {
     quote: "We've spent thousands on Google Ads and VouchedFor listings. This is the first service that's shown us the next frontier. Every IFA needs to see their AI visibility score.",
     name: "David P.",
-    role: "Wealth Manager, Manchester",
+    role: "Wealth Manager",
+    detail: "Discretionary portfolio practice, Manchester",
+    fca: true,
     initial: "D",
   },
 ];
@@ -91,7 +99,7 @@ export default function Testimonials() {
             </div>
 
             {/* Attribution */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
               <div style={{
                 width: '36px',
                 height: '36px',
@@ -111,7 +119,13 @@ export default function Testimonials() {
               </div>
               <div>
                 <div style={{ fontSize: '0.85rem', color: '#F5F0E8', fontWeight: 500 }}>{t.name}</div>
-                <div style={{ fontSize: '0.72rem', color: '#888', letterSpacing: '0.02em' }}>{t.role}</div>
+                <div style={{ fontSize: '0.72rem', color: '#888', letterSpacing: '0.02em' }}>{t.role} &middot; {t.detail}</div>
+                {t.fca && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.25rem' }}>
+                    <ShieldCheck size={12} strokeWidth={2} style={{ color: '#C9A84C' }} />
+                    <span style={{ fontSize: '0.65rem', color: '#999', letterSpacing: '0.04em' }}>FCA registered</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
