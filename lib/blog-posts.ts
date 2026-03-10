@@ -951,8 +951,8 @@ If you want an objective measure of where you stand right now and how much progr
     date: '2026-03-18',
     readTime: '8 min read',
     category: 'Guide',
-    heroImage: 'https://images.unsplash.com/photo-1553729459-uj68br0e55j0?w=1200&h=630&fit=crop&q=80',
-    heroImageAlt: 'Local business storefront with digital map overlay concept',
+    heroImage: 'https://images.unsplash.com/photo-1548345680-f5475ea5df84?w=1200&h=630&fit=crop&q=80',
+    heroImageAlt: 'Person holding phone showing Google Maps local business listing with reviews',
     content: `
 When a prospective client asks ChatGPT "Who are the best financial advisers near me?", the AI does not consult a secret database of advisory firms. It draws on multiple data sources, and one of the most important is Google Business Profile.
 
