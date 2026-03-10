@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Pricing from '@/components/Pricing';
 import Footer from '@/components/Footer';
@@ -81,6 +82,15 @@ export default function PricingPage() {
       <div style={{ position: 'relative', zIndex: 1 }}>
         <Navbar />
         <div style={{ paddingTop: '72px' }}>
+          <style>{`
+            .pricing-back-link { color: #999; transition: color 0.2s; }
+            .pricing-back-link:hover { color: #F5F0E8; }
+          `}</style>
+          <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '1.5rem clamp(1rem, 3vw, 2rem) 0' }}>
+            <Link href="/" className="pricing-back-link" style={{ fontSize: '0.85rem', textDecoration: 'none' }}>
+              ← Back to home
+            </Link>
+          </div>
           <Pricing />
         </div>
         <Footer />
