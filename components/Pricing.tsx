@@ -208,7 +208,7 @@ export default function Pricing() {
                 fontSize: '0.8rem',
                 fontWeight: i === mobileTab ? 600 : 400,
                 letterSpacing: '0.05em',
-                padding: '0.75rem 0.5rem',
+                padding: '0.875rem 0.5rem',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
                 fontFamily: 'var(--font-inter, Inter, sans-serif)',

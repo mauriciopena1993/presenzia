@@ -86,7 +86,7 @@ export default function Navbar() {
       {/* Mobile hamburger */}
       <button
         onClick={() => setMenuOpen(!menuOpen)}
-        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem' }}
+        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.75rem', minWidth: '44px', minHeight: '44px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
         className="mobile-menu-btn"
       >
         <div style={{ width: '22px', height: '2px', background: '#F5F0E8', marginBottom: '5px', transition: 'all 0.2s', transform: menuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none' }} />
@@ -117,7 +117,7 @@ export default function Navbar() {
           right: 0,
           background: '#0A0A0A',
           borderBottom: '1px solid #1F1F1F',
-          padding: '1.5rem 2rem',
+          padding: '1.5rem clamp(1rem, 4vw, 2rem)',
           display: 'flex',
           flexDirection: 'column',
           gap: '1.25rem',

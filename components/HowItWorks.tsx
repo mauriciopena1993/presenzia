@@ -102,6 +102,9 @@ export default function HowItWorks() {
 
       <style>{`
         .hiw-step { cursor: default; }
+        @media (max-width: 480px) {
+          .hiw-step { padding: 1.5rem 1rem !important; }
+        }
       `}</style>
     </section>
   );
