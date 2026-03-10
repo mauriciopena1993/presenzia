@@ -240,6 +240,34 @@ export default function Pricing() {
         All prices exclude VAT. Retainers billed monthly. Cancel anytime with 30 days notice.
       </p>
 
+      {/* ── Main CTA ── */}
+      <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+        <button
+          onClick={() => handleClick('audit')}
+          className="pricing-main-cta"
+          style={{
+            display: 'inline-block',
+            padding: '1rem 2.5rem',
+            background: '#C9A84C',
+            color: '#0A0A0A',
+            fontWeight: 700,
+            fontSize: '1rem',
+            border: 'none',
+            cursor: 'pointer',
+            letterSpacing: '0.02em',
+            transition: 'background 0.2s',
+            fontFamily: 'var(--font-inter, Inter, sans-serif)',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#E8C96A'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#C9A84C'; }}
+        >
+          Get started with my free score →
+        </button>
+        <p style={{ color: '#666', fontSize: '0.75rem', marginTop: '0.75rem' }}>
+          Free instant score. No payment required.
+        </p>
+      </div>
+
       {/* ── Compare plans toggle ── */}
       <div style={{ textAlign: 'center', marginTop: '3rem' }}>
         <button

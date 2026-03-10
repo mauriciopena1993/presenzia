@@ -38,7 +38,7 @@ export default function PricingAnchor() {
         {[
           { label: 'Free Score', price: '£0', desc: 'Instant AI visibility score across 4 platforms' },
           { label: 'Full Audit', price: '£99', desc: 'Complete audit with competitor analysis & action plan' },
-          { label: 'Growth', price: '£249/mo', desc: 'Weekly re-audits, AI assistant & strategy calls' },
+          { label: 'Growth', price: '£249/mo', desc: 'Weekly re-audits, AI assistant & competitor alerts' },
           { label: 'Premium', price: '£599/mo', desc: 'Daily monitoring, dedicated strategist & done-for-you content' },
         ].map((tier) => (
           <div key={tier.label} className="pricing-step" style={{

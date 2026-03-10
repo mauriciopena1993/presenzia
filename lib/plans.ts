@@ -122,14 +122,12 @@ export const PLANS: Record<string, PlanConfig> = {
       'Everything in the Audit, plus:',
       'Weekly re-audits with score tracking & trends',
       'AI audit assistant: ask anything about your results',
-      'Quarterly 30-minute strategy call',
       'Competitor deep-dive with real-time alerts',
       'Priority email support',
     ],
     detailFeatures: [
       'Weekly re-audits with score tracking & trends',
       'AI audit assistant: ask anything about your results',
-      'Quarterly 30-minute strategy call',
       'Competitor deep-dive with real-time alerts',
       'Priority email support',
     ],
@@ -225,7 +223,7 @@ export const COMPARISON_ROWS = [
   // Differentiators first (features that vary between plans)
   { feature: 'Recurring re-audits with trend tracking',    audit: false as boolean | string, growth: 'Weekly' as boolean | string, premium: 'Daily' as boolean | string },
   { feature: 'AI audit assistant',                         audit: false,       growth: true,              premium: true },
-  { feature: 'Strategy calls',                             audit: false,       growth: 'Quarterly 30m',   premium: 'Monthly 1hr' },
+  { feature: 'Strategy calls',                             audit: false,       growth: false,             premium: 'Monthly 1hr' },
   { feature: 'Dedicated account strategist',               audit: false,       growth: false,             premium: true },
   { feature: 'Exclusive territory protection',             audit: false,       growth: false,             premium: true },
   { feature: 'Done-for-you content (4 articles/month)',    audit: false,       growth: false,             premium: '4/month' },

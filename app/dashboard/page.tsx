@@ -105,7 +105,7 @@ const TIER_COLORS: Record<string, string> = {
 const PLAN_FEATURES: Record<string, string[]> = {
   audit: ['Complete AI visibility audit (4 platforms)', 'Personalised action plan with recommendations', 'Competitor analysis & positioning insights', 'Online dashboard + PDF report'],
   starter: ['Monthly AI visibility audit', 'Delivered by email (report)'], // legacy
-  growth: ['Everything in Audit', 'Weekly re-audits with score tracking & trends', 'AI audit assistant', 'Quarterly 30-minute strategy call', 'Competitor deep-dive with real-time alerts', 'Priority email support'],
+  growth: ['Everything in Audit', 'Weekly re-audits with score tracking & trends', 'AI audit assistant', 'Competitor deep-dive with real-time alerts', 'Priority email support'],
   premium: ['Everything in Growth', 'Daily re-audits (vs weekly in Growth)', 'Dedicated account strategist', 'Monthly 1-hour strategy call', 'Exclusive territory protection', '4 AI-optimised articles written & published monthly'],
 };
 
@@ -1785,46 +1785,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Growth: Strategy call booking */}
-        {client?.plan === 'growth' && client?.status !== 'cancelled' && (
-          <div style={{
-            padding: '1rem 1.25rem',
-            background: 'rgba(91,168,140,0.06)',
-            border: '1px solid rgba(91,168,140,0.2)',
-            marginBottom: '1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1rem',
-            flexWrap: 'wrap',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div style={{ width: '8px', height: '8px', background: '#5BA88C', borderRadius: '50%', flexShrink: 0 }} />
-              <div>
-                <div style={{ fontSize: '0.875rem', color: '#F5F0E8', fontWeight: 500 }}>Quarterly strategy call</div>
-                <div style={{ fontSize: '0.75rem', color: '#999' }}>30-minute call to review your AI visibility progress</div>
-              </div>
-            </div>
-            <a
-              href={BOOKING_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: 'inline-block',
-                padding: '0.5rem 1.25rem',
-                background: '#5BA88C',
-                color: '#0A0A0A',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                textDecoration: 'none',
-                letterSpacing: '0.02em',
-                flexShrink: 0,
-              }}
-            >
-              Book a slot
-            </a>
-          </div>
-        )}
+        {/* Growth strategy call section removed — Growth plan does not include calls */}
 
         {/* Audit running banner */}
         {pendingJob && (

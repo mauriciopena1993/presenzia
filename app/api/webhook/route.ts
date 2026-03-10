@@ -256,7 +256,6 @@ export async function POST(req: NextRequest) {
       <ul style="font-size:13px;color:#555;margin:0;padding-left:18px;line-height:1.8;">
         ${isGrowth ? `<li>Weekly re-audits with score tracking and trends</li>
         <li>AI audit assistant to ask anything about your results</li>
-        <li>Quarterly 30-minute strategy call</li>
         <li>Competitor deep-dive with real-time alerts</li>
         <li>Priority email support</li>` : ''}
         ${isPremium ? `<li>Daily re-audits with trend tracking</li>

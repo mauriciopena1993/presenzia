@@ -24,7 +24,7 @@ export default function HowItWorks() {
     {
       number: '04',
       title: 'Track, improve, repeat',
-      description: 'Growth retainer clients get weekly re-audits, a live dashboard, AI audit assistant, and quarterly strategy calls. Premium adds daily monitoring, a dedicated strategist, monthly calls, and done-for-you content.',
+      description: 'Growth retainer clients get weekly re-audits, a live dashboard, AI audit assistant, and competitor alerts. Premium adds daily monitoring, a dedicated strategist, monthly strategy calls, and done-for-you content.',
       icon: TrendingUp,
     },
   ];

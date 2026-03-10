@@ -13,7 +13,7 @@ Every client gets an AI visibility audit with:
 
 ## Plans and pricing
 - **AI Visibility Audit** (£99, one-off): full audit across 120 prompts on 4 AI platforms, scored report with action plan, delivered by email (PDF)
-- **Growth Retainer** (£249/month): everything in the Audit plus weekly re-audits, live dashboard with weekly updates, AI audit assistant, quarterly 30-minute strategy call, competitor deep-dive, priority support
+- **Growth Retainer** (£249/month): everything in the Audit plus weekly re-audits, live dashboard with weekly updates, AI audit assistant, competitor deep-dive with real-time alerts, priority email support
 - **Premium** (£599/month): everything in Growth plus dedicated account strategist, monthly 1-hour strategy call, daily dashboard updates, territory exclusivity, 4 AI-optimised articles written & published monthly
 
 The Audit is a one-off purchase. Growth and Premium are monthly subscriptions. Cancel any time with 30 days' notice.
