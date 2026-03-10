@@ -101,12 +101,7 @@ export default function Hero() {
       </div>
 
       {/* Single dominant stat */}
-      <div className="hero-proof" style={{
-        textAlign: 'center',
-        width: '100%',
-        maxWidth: '720px',
-      }}>
-        {/* 79% — dominant visual */}
+      <div style={{ textAlign: 'center', width: '100%' }}>
         <div style={{
           fontFamily: "'Playfair Display', serif",
           fontSize: 'clamp(3rem, 8vw, 4.5rem)',
@@ -115,23 +110,14 @@ export default function Hero() {
           lineHeight: 1,
           letterSpacing: '-0.02em',
         }}>
-          79%
-          <span style={{ fontSize: '0.45em', verticalAlign: 'super', marginLeft: '3px', opacity: 0.8, fontWeight: 400 }}>¹</span>
+          79%<span style={{ fontSize: '0.4em', verticalAlign: 'super', marginLeft: '2px', opacity: 0.7, fontWeight: 400 }}>¹</span>
         </div>
-        {/* Label */}
-        <div style={{ fontSize: '0.8rem', color: '#999999', letterSpacing: '0.04em', marginTop: '0.5rem' }}>
+        <div style={{ fontSize: '0.85rem', color: '#999999', letterSpacing: '0.04em', marginTop: '0.75rem' }}>
           of UK IFA firms not found on ChatGPT
         </div>
-        {/* Supporting text — collapses 120+ and 4 into one line */}
-        <div style={{ fontSize: '0.75rem', color: '#666666', marginTop: '0.6rem', letterSpacing: '0.02em' }}>
-          Tested across 120+ wealth-specific prompts on 4 AI platforms
-        </div>
-        {/* Footnote citation */}
-        <div style={{ marginTop: '0.5rem' }}>
-          <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" style={{ fontSize: '0.6875rem', color: '#555555', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s', fontStyle: 'italic' }} className="hero-source-link">
-            ¹ presenzia.ai (2025). &ldquo;We Tested 149 UK IFA Firms on ChatGPT&rdquo;. AI Visibility Research, 10-region study.
-          </Link>
-        </div>
+        <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ display: 'inline-block', fontSize: '0.65rem', color: '#555555', textDecoration: 'none', marginTop: '0.5rem', transition: 'color 0.2s', fontStyle: 'italic' }}>
+          ¹ 149-firm study, presenzia.ai (2025)
+        </Link>
       </div>
 
       {/* AI platform badges */}
