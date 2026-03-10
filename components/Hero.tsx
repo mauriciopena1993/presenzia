@@ -21,7 +21,7 @@ export default function Hero() {
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        padding: 'clamp(4rem, 7vw, 7rem) 0 clamp(2rem, 4vw, 3rem)',
+        padding: 'clamp(5rem, 8vw, 7rem) 0 clamp(3rem, 5vw, 4rem)',
         boxSizing: 'border-box',
       }}>
         {/* Badge */}
@@ -131,7 +131,7 @@ export default function Hero() {
       </div>
 
       {/* AI platform badges — below the fold */}
-      <div className="hero-platform-tags" style={{ padding: '2rem 0 clamp(2rem, 4vw, 3rem)', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+      <div className="hero-platform-tags" style={{ padding: '1rem 0 clamp(1.5rem, 3vw, 2rem)', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
         <span className="platform-label" style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.1em', textTransform: 'uppercase', marginRight: '0.25rem' }}>Audited across</span>
         {['ChatGPT', 'Claude', 'Perplexity', 'Google AI'].map((ai) => (
           <span key={ai} style={{

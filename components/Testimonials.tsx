@@ -31,7 +31,7 @@ export default function Testimonials() {
       maxWidth: '1100px',
       margin: '0 auto',
     }}>
-      <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+      <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
         <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
           What clients say
         </div>
@@ -57,6 +57,9 @@ export default function Testimonials() {
           .testimonials-grid {
             grid-template-columns: 1fr;
           }
+          .testimonial-card {
+            min-height: auto !important;
+          }
         }
       `}</style>
 
@@ -64,6 +67,7 @@ export default function Testimonials() {
         {testimonials.map((t) => (
           <div
             key={t.name}
+            className="testimonial-card"
             style={{
               background: '#0F0F0F',
               padding: 'clamp(1.5rem, 3vw, 2.25rem)',

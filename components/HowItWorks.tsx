@@ -73,16 +73,17 @@ export default function HowItWorks() {
             position: 'relative',
             transition: 'background 0.3s',
           }}>
-            <step.icon size={24} strokeWidth={1.5} style={{ color: '#C9A84C', marginBottom: '1rem', display: 'block' }} />
-            <div style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: '3rem',
-              color: 'rgba(201,168,76,0.2)',
-              fontWeight: 700,
-              lineHeight: 1,
-              marginBottom: '1.5rem',
-            }}>
-              {step.number}
+            <div className="hiw-step-header" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+              <step.icon size={20} strokeWidth={1.5} style={{ color: '#C9A84C', flexShrink: 0 }} />
+              <span style={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: '1.5rem',
+                color: 'rgba(201,168,76,0.3)',
+                fontWeight: 700,
+                lineHeight: 1,
+              }}>
+                {step.number}
+              </span>
             </div>
             <h3 style={{
               fontFamily: "'Playfair Display', serif",
@@ -103,7 +104,7 @@ export default function HowItWorks() {
       <style>{`
         .hiw-step { cursor: default; }
         @media (max-width: 480px) {
-          .hiw-step { padding: 1.5rem 1rem !important; }
+          .hiw-step { padding: 1.25rem 1rem !important; }
         }
       `}</style>
     </section>
