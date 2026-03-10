@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { ArrowRight, CheckCircle, XCircle, Search, Zap, AlertTriangle, TrendingDown, BarChart3, Target, Users, Shield } from 'lucide-react';
+import { ArrowRight, CheckCircle, XCircle, Search, AlertTriangle, TrendingDown, BarChart3, Target, Users, Shield } from 'lucide-react';
 
 // ── PDF-matching palette ──
 const W = '#FFFFFF';
@@ -103,6 +103,42 @@ function ScoreCard() {
             <div style={{ fontSize: '0.55rem', color: MUTED, letterSpacing: '0.06em', textTransform: 'uppercase' }}>{stat.label}</div>
           </div>
         ))}
+      </div>
+
+      {/* Score band visual */}
+      <div style={{ marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', gap: 2, height: 5, marginBottom: 5 }}>
+          {[
+            { color: RED, active: true },
+            { color: AMBER, active: false },
+            { color: GOLD, active: false },
+            { color: GREEN, active: false },
+            { color: '#3a8a5a', active: false },
+          ].map((b, i) => (
+            <div key={i} style={{ flex: 1, borderRadius: 3, background: b.active ? b.color : `${BORDER}` }} />
+          ))}
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          {['Not Visible', 'Weak', 'Moderate', 'Strong', 'Excellent'].map(l => (
+            <span key={l} style={{ fontSize: '0.5rem', color: MUTED }}>{l}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* What this means */}
+      <div style={{
+        padding: '0.75rem 0.85rem',
+        background: `${RED}06`,
+        borderLeft: `3px solid ${RED}`,
+        border: `1px solid ${RED}15`,
+        marginBottom: '1.25rem',
+      }}>
+        <div style={{ fontSize: '0.7rem', fontWeight: 600, color: RED, marginBottom: '0.2rem' }}>
+          Not Visible &middot; Immediate action required
+        </div>
+        <div style={{ fontSize: '0.68rem', color: TXT2, lineHeight: 1.6 }}>
+          AI assistants are not currently recommending your firm. Prospective clients searching for recommendations in your category are finding your competitors instead.
+        </div>
       </div>
 
       {/* Score breakdown by category */}
@@ -264,6 +300,26 @@ function PlatformCard() {
           </div>
         </div>
       ))}
+
+      {/* Competitors summary */}
+      <div style={{ marginTop: '1.25rem' }}>
+        <div style={{ fontSize: '0.72rem', fontWeight: 600, color: TXT, marginBottom: '0.5rem' }}>Competitors Being Recommended Instead</div>
+        <div style={{ fontSize: '0.63rem', color: MUTED, marginBottom: '0.6rem' }}>6 competitors found. Sterling Financial Planning appeared 22 times.</div>
+        {[
+          { name: 'Sterling Financial Planning', count: 22 },
+          { name: 'Meridian Wealth Advisors', count: 18 },
+          { name: 'Oakwood Financial', count: 14 },
+        ].map((comp, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '0.35rem 0', borderBottom: i < 2 ? `1px solid ${BORDER}40` : 'none' }}>
+            <span style={{ fontSize: '0.6rem', color: MUTED, fontWeight: 600, width: '18px' }}>#{i + 1}</span>
+            <span style={{ flex: 1, fontSize: '0.7rem', color: TXT2 }}>{comp.name}</span>
+            <div style={{ width: '60px', height: '3px', background: BORDER, borderRadius: '2px', marginRight: '8px' }}>
+              <div style={{ height: '100%', width: `${Math.round((comp.count / 22) * 100)}%`, background: 'rgba(204,68,68,0.4)', borderRadius: '2px' }} />
+            </div>
+            <span style={{ fontSize: '0.6rem', color: MUTED, width: '55px', textAlign: 'right' }}>{comp.count} mentions</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -364,41 +420,14 @@ function PromptsCard() {
 }
 
 function ActionPlanCard() {
-  const phases = [
-    {
-      number: '1',
-      title: 'Quick Wins',
-      label: 'START HERE',
-      labelColor: RED,
-      timeframe: 'Week 1–2',
-      items: [
-        { title: 'Add FinancialService schema markup to your website', impact: 'High', desc: 'Implement structured data (JSON-LD) using the FinancialService schema type. Include firm name, address, services offered, FCA number, and qualifications. Sterling Financial Planning already does this, which is why they appear in 22/30 ChatGPT searches.' },
-        { title: 'Optimise your Google Business Profile', impact: 'High', desc: 'Your profile is missing a detailed description and has only 3 reviews. Add a 200+ word description mentioning "financial adviser Guildford", upload professional team photos, and request reviews from satisfied clients. Aim for 20+ reviews.' },
-        { title: 'Ensure consistent listings on VouchedFor, Unbiased & FTAdviser', impact: 'Medium', desc: 'Perplexity cited VouchedFor as a source in 12 of 30 responses. Meridian Wealth has 38 VouchedFor reviews, and Claude cited them in 14/30 searches because of review authority.' },
-      ],
-    },
-    {
-      number: '2',
-      title: 'Content Authority',
-      label: 'WEEKS 3–6',
-      labelColor: AMBER,
-      timeframe: 'Week 3–6',
-      items: [
-        { title: 'Publish a thought leadership article on pension transfers in Surrey', impact: 'High', desc: 'Sterling Financial Planning were cited by 3 of 4 AI platforms partly because FTAdviser quoted them in a recent article. Getting featured in trade publications can shift your visibility within weeks.' },
-        { title: 'Create a comprehensive FAQ page covering common client questions', impact: 'High', desc: 'Claude and Perplexity favour content that directly answers questions. Your site has no FAQ page. Publish detailed answers covering fees, investment philosophy, pension transfer process, and inheritance tax planning.' },
-      ],
-    },
-    {
-      number: '3',
-      title: 'Ongoing Growth',
-      label: 'MONTHLY',
-      labelColor: GREEN,
-      timeframe: 'Ongoing',
-      items: [
-        { title: 'Build review presence on VouchedFor and Google', impact: 'Medium', desc: 'You have 3 Google reviews (avg 4.5\u2605). Meridian Wealth has 38 VouchedFor reviews (avg 4.8\u2605). AI platforms weight review volume and recency. Aim for 20+ reviews within 3 months. Implement a systematic review request process.' },
-        { title: 'Publish monthly thought leadership on your website blog', impact: 'Medium', desc: 'Your last blog post is from 2024. AI models deprioritise stale websites. A 600+ word monthly article on topics like "pension transfer considerations" or "inheritance tax planning strategies" signals ongoing authority.' },
-      ],
-    },
+  const actions = [
+    { title: 'Add FinancialService schema markup to your website', priority: 'HIGH', phase: 1, timeline: 'Week 1', desc: 'Implement structured data (JSON-LD) using the FinancialService schema type. Sterling Financial Planning already does this, which is why they appear in 22/30 ChatGPT searches.' },
+    { title: 'Optimise your Google Business Profile', priority: 'HIGH', phase: 1, timeline: 'Week 1', desc: 'Your profile has only 3 reviews. Add a 200+ word description, upload professional photos, and request reviews. Aim for 20+ reviews.' },
+    { title: 'Ensure consistent listings on VouchedFor, Unbiased & FTAdviser', priority: 'HIGH', phase: 1, timeline: 'Week 2', desc: 'Perplexity cited VouchedFor as a source in 12 of 30 responses. Meridian Wealth has 38 VouchedFor reviews — that is why Claude cited them in 14/30 searches.' },
+    { title: 'Publish thought leadership on pension transfers in Surrey', priority: 'HIGH', phase: 2, timeline: 'Week 3–4', desc: 'Sterling were cited by 3 of 4 AI platforms partly because FTAdviser quoted them. Getting featured in trade publications can shift your visibility within weeks.' },
+    { title: 'Create a comprehensive FAQ page covering common client questions', priority: 'MEDIUM', phase: 2, timeline: 'Week 4–6', desc: 'Claude and Perplexity favour content that directly answers questions. Your site has no FAQ page.' },
+    { title: 'Build review presence on VouchedFor and Google', priority: 'MEDIUM', phase: 3, timeline: 'Ongoing', desc: 'You have 3 Google reviews. Meridian Wealth has 38 VouchedFor reviews. AI platforms weight review volume and recency.' },
+    { title: 'Publish monthly thought leadership on your website blog', priority: 'MEDIUM', phase: 3, timeline: 'Monthly', desc: 'Your last blog post is from 2024. AI models deprioritise stale websites.' },
   ];
 
   return (
@@ -407,60 +436,60 @@ function ActionPlanCard() {
         <div style={{ fontSize: '0.85rem', color: TXT, fontWeight: 600 }}>Your Personalised Action Plan</div>
         <Shield size={14} style={{ color: GOLD }} />
       </div>
-      <div style={{ fontSize: '0.65rem', color: MUTED, marginBottom: '1.25rem', lineHeight: 1.5 }}>
-        7 prioritised actions across 3 phases, ordered by impact. The full audit includes detailed step-by-step implementation guides for each.
+      <div style={{ fontSize: '0.65rem', color: MUTED, marginBottom: '0.5rem', lineHeight: 1.5 }}>
+        7 prioritised actions ordered by impact. Focus on the top 2 first. The full audit includes step-by-step implementation guides.
       </div>
 
-      {phases.map((phase, pi) => (
-        <div key={phase.number} style={{ marginBottom: pi < phases.length - 1 ? '1.25rem' : '0' }}>
-          {/* Phase header */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            marginBottom: '0.65rem',
-            paddingBottom: '0.4rem',
-            borderBottom: `1px solid ${BORDER}`,
-          }}>
-            <Zap size={12} style={{ color: phase.labelColor }} />
-            <span style={{ fontSize: '0.62rem', fontWeight: 700, color: phase.labelColor, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-              Phase {phase.number}: {phase.label}
-            </span>
-            <span style={{ fontSize: '0.58rem', color: MUTED, marginLeft: 'auto' }}>{phase.title}</span>
-          </div>
-
-          {/* Action items */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {phase.items.map((item, ii) => (
-              <div key={ii} style={{
+      {/* Priority-numbered list matching the real report format */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+        {actions.map((act, i) => {
+          const isTop = i < 2;
+          const phaseColor = act.phase === 1 ? RED : act.phase === 2 ? AMBER : GREEN;
+          return (
+            <div key={i} style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '0.6rem',
+              padding: '0.6rem 0.75rem',
+              background: isTop ? SURFACE2 : 'transparent',
+              border: isTop ? `1px solid ${BORDER_LIGHT}` : `1px solid ${BORDER}50`,
+              borderLeft: `3px solid ${isTop ? GOLD : phaseColor}`,
+            }}>
+              {/* Priority number */}
+              <div style={{
+                width: '20px',
+                height: '20px',
+                background: isTop ? RED : GOLD,
                 display: 'flex',
-                alignItems: 'flex-start',
-                gap: '0.6rem',
-                padding: '0.6rem 0.75rem',
-                background: pi === 0 && ii === 0 ? SURFACE2 : 'transparent',
-                border: pi === 0 && ii === 0 ? `1px solid ${BORDER_LIGHT}` : `1px solid ${BORDER}50`,
-                borderLeft: `3px solid ${pi === 0 ? GOLD : pi === 1 ? AMBER : GREEN}`,
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                marginTop: '1px',
               }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem', flexWrap: 'wrap' }}>
-                    <span style={{
-                      fontSize: '0.55rem',
-                      fontWeight: 700,
-                      color: item.impact === 'High' ? GOLD : MUTED,
-                      letterSpacing: '0.06em',
-                      textTransform: 'uppercase',
-                    }}>{item.impact} IMPACT</span>
-                    <span style={{ fontSize: '0.72rem', color: TXT, fontWeight: 600 }}>{item.title}</span>
-                  </div>
-                  <div style={{ fontSize: '0.64rem', color: TXT2, lineHeight: 1.5 }}>
-                    {item.desc}
-                  </div>
+                <span style={{ fontSize: '0.65rem', color: W, fontWeight: 700 }}>{i + 1}</span>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.15rem', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.72rem', color: isTop ? TXT : TXT3, fontWeight: 600 }}>{act.title}</span>
+                  {isTop && (
+                    <span style={{ fontSize: '0.5rem', color: RED, fontWeight: 700, letterSpacing: '0.05em' }}>DO THIS FIRST</span>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', marginBottom: '0.15rem' }}>
+                  <span style={{ fontSize: '0.52rem', fontWeight: 700, color: act.priority === 'HIGH' ? GOLD : MUTED, letterSpacing: '0.06em' }}>{act.priority} IMPACT</span>
+                  <span style={{ fontSize: '0.52rem', color: MUTED }}>&middot;</span>
+                  <span style={{ fontSize: '0.52rem', color: phaseColor, fontWeight: 600 }}>Phase {act.phase}</span>
+                  <span style={{ fontSize: '0.52rem', color: MUTED }}>&middot;</span>
+                  <span style={{ fontSize: '0.52rem', color: MUTED }}>{act.timeline}</span>
+                </div>
+                <div style={{ fontSize: '0.64rem', color: TXT2, lineHeight: 1.5 }}>
+                  {act.desc}
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      ))}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -583,7 +612,7 @@ export default function SampleReport() {
               Hartfield Wealth Management
             </div>
             <div style={{ fontSize: '0.6rem', color: '#888', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: '0.2rem' }}>
-              AI Visibility Audit &middot; February 2026
+              AI Visibility Audit &middot; March 2026
             </div>
           </div>
 
@@ -661,7 +690,7 @@ export default function SampleReport() {
             borderTop: `1px solid ${BORDER}`,
           }}>
             <p style={{ fontSize: '0.7rem', color: MUTED, marginBottom: '0.6rem', lineHeight: 1.6, margin: '0 0 0.6rem' }}>
-              You&apos;re viewing selected highlights. The full audit includes all 120 search results, complete competitor analysis, detailed implementation guides, and a priority-ordered roadmap.
+              You&apos;re viewing a preview. The full audit includes all 120 search results, complete competitor analysis, step-by-step implementation guides, and a priority-ordered action plan.
             </p>
             <a
               href="/score"

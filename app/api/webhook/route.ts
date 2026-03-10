@@ -7,7 +7,7 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-import { FROM_EMAIL, REPLY_TO } from '@/lib/email/templates';
+import { FROM_EMAIL, REPLY_TO, paymentFailedNotice } from '@/lib/email/templates';
 
 const ADMIN_EMAIL = 'hello@presenzia.ai';
 
@@ -483,6 +483,23 @@ export async function POST(req: NextRequest) {
                 '#cc4444'
               )
             );
+
+            // ✉️ Notify customer about failed payment
+            try {
+              const planName = PLAN_LABELS[client.plan] || client.plan;
+              const emailContent = paymentFailedNotice(client.business_name || '', planName, amount, client.email);
+              await resend.emails.send({
+                from: FROM_EMAIL,
+                replyTo: REPLY_TO,
+                to: client.email,
+                subject: emailContent.subject,
+                html: emailContent.html,
+                text: emailContent.text,
+              });
+              console.log(`📧 Payment failed email sent to ${client.email}`);
+            } catch (err) {
+              console.error('Failed to send payment failed email to customer:', err);
+            }
           }
         }
         break;

@@ -7,7 +7,6 @@ const testimonials = [
     role: "Chartered Financial Planner",
     detail: "Independent practice, Surrey",
     fca: true,
-    initial: "R",
   },
   {
     quote: "The audit showed us exactly why our main competitor was being recommended by every AI platform. The action plan was specific enough that our marketing team could implement it the same week.",
@@ -15,7 +14,6 @@ const testimonials = [
     role: "IFA Practice Owner",
     detail: "Multi-adviser firm, Edinburgh",
     fca: true,
-    initial: "C",
   },
   {
     quote: "We've spent thousands on Google Ads and VouchedFor listings. This is the first service that's shown us the next frontier. Every IFA needs to see their AI visibility score.",
@@ -23,7 +21,6 @@ const testimonials = [
     role: "Wealth Manager",
     detail: "Discretionary portfolio practice, Manchester",
     fca: true,
-    initial: "D",
   },
 ];
 
@@ -99,34 +96,15 @@ export default function Testimonials() {
             </div>
 
             {/* Attribution */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
-              <div style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, rgba(201,168,76,0.15) 0%, rgba(201,168,76,0.06) 100%)',
-                border: '1px solid rgba(201,168,76,0.2)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '0.8rem',
-                color: '#C9A84C',
-                fontWeight: 600,
-                fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
-                flexShrink: 0,
-              }}>
-                {t.initial}
-              </div>
-              <div>
-                <div style={{ fontSize: '0.85rem', color: '#F5F0E8', fontWeight: 500 }}>{t.name}</div>
-                <div style={{ fontSize: '0.72rem', color: '#888', letterSpacing: '0.02em' }}>{t.role} &middot; {t.detail}</div>
-                {t.fca && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.25rem' }}>
-                    <ShieldCheck size={12} strokeWidth={2} style={{ color: '#C9A84C' }} />
-                    <span style={{ fontSize: '0.65rem', color: '#999', letterSpacing: '0.04em' }}>FCA registered</span>
-                  </div>
-                )}
-              </div>
+            <div>
+              <div style={{ fontSize: '0.85rem', color: '#F5F0E8', fontWeight: 500 }}>{t.name}</div>
+              <div style={{ fontSize: '0.72rem', color: '#888', letterSpacing: '0.02em' }}>{t.role} &middot; {t.detail}</div>
+              {t.fca && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.25rem' }}>
+                  <ShieldCheck size={12} strokeWidth={2} style={{ color: '#C9A84C' }} />
+                  <span style={{ fontSize: '0.65rem', color: '#999', letterSpacing: '0.04em' }}>FCA registered</span>
+                </div>
+              )}
             </div>
           </div>
         ))}

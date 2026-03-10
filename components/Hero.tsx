@@ -115,7 +115,7 @@ export default function Hero() {
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.75rem', color: '#C9A84C', fontWeight: 600 }}>
             79%
-            <span style={{ fontSize: '0.85rem', color: '#C9A84C', verticalAlign: 'super', marginLeft: '3px', opacity: 0.9, fontWeight: 400 }}>¹</span>
+            <span style={{ fontSize: '1.1rem', color: '#C9A84C', verticalAlign: 'super', marginLeft: '3px', opacity: 0.9, fontWeight: 400 }}>¹</span>
           </div>
           <div style={{ fontSize: '0.8rem', color: '#999999', letterSpacing: '0.04em', marginTop: '0.3rem' }}>of UK IFA firms not found on ChatGPT</div>
         </div>
@@ -132,8 +132,8 @@ export default function Hero() {
       </div>
       {/* Research source line */}
       <div style={{ marginTop: '0.5rem', textAlign: 'center' }}>
-        <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" style={{ fontSize: '0.65rem', color: '#666', textDecoration: 'none', letterSpacing: '0.03em', transition: 'color 0.2s' }} className="hero-source-link">
-          ¹ Based on our study of 149 UK IFA firms across 10 regions
+        <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" style={{ fontSize: '0.65rem', color: '#666', textDecoration: 'none', letterSpacing: '0.03em', transition: 'color 0.2s', fontStyle: 'italic' }} className="hero-source-link">
+          ¹ presenzia.ai (2025). &ldquo;We Tested 149 UK IFA Firms on ChatGPT&rdquo;. AI Visibility Research, 10-region study.
         </Link>
       </div>
 

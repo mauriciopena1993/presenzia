@@ -82,6 +82,36 @@ export async function POST(req: NextRequest) {
         .update({ last_retention_offer_at: new Date().toISOString() })
         .eq('id', client.id);
 
+      // ✉️ Email the retention offer so they don't lose it
+      if (process.env.RESEND_API_KEY) {
+        const planLabel = PLAN_LABELS[client.plan] || client.plan;
+        resend.emails.send({
+          from: 'presenzia.ai <reports@presenzia.ai>',
+          replyTo: 'hello@presenzia.ai',
+          to: email,
+          subject: `Your exclusive 50% discount code: ${promoCode.code}`,
+          text: `Hi${client.business_name ? ` ${client.business_name}` : ''},\n\nBefore you go — here's your exclusive 50% off code for your next billing cycle:\n\n${promoCode.code}\n\nApply it in your dashboard at ${process.env.NEXT_PUBLIC_APP_URL || 'https://presenzia.ai'}/dashboard to keep your ${planLabel} plan at half price.\n\nThis code expires after one use.\n\npresenzia.ai`,
+          html: `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center">
+<table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e0e0e0;max-width:560px;width:100%;">
+  <tr><td style="padding:28px 32px;border-bottom:2px solid #4a9e6a;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span></td></tr>
+  <tr><td style="padding:32px;">
+    <h1 style="font-size:20px;color:#111;margin:0 0 16px;">We'd love you to stay</h1>
+    <p style="font-size:14px;color:#555;line-height:1.7;margin:0 0 16px;">We noticed you're thinking of leaving. Before you go, here's an exclusive <strong style="color:#111;">50% off</strong> your next billing cycle for your <strong>${planLabel}</strong> plan:</p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;"><tr><td style="padding:20px;background:#F9F9F9;border:2px dashed #C9A84C;text-align:center;">
+      <div style="font-size:28px;font-weight:700;color:#0A0A0A;letter-spacing:0.05em;font-family:monospace;">${promoCode.code}</div>
+      <div style="font-size:12px;color:#888;margin-top:6px;">Single use · Applies to your next billing cycle</div>
+    </td></tr></table>
+    <p style="font-size:14px;color:#555;line-height:1.7;margin:0 0 24px;">Stay on your plan and keep tracking your AI visibility — at half the price.</p>
+    <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;"><tr><td style="background:#0A0A0A;padding:14px 28px;"><a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://presenzia.ai'}/dashboard" style="color:#C9A84C;text-decoration:none;font-size:14px;font-weight:700;">Keep my plan →</a></td></tr></table>
+    <p style="font-size:13px;color:#888;margin:0;">Questions? Reply to this email — we're happy to help.</p>
+  </td></tr>
+  <tr><td style="padding:16px 32px;background:#F9F9F9;border-top:1px solid #E0E0E0;"><p style="font-size:12px;color:#999;margin:0;">presenzia.ai · <a href="mailto:hello@presenzia.ai" style="color:#C9A84C;text-decoration:none;">hello@presenzia.ai</a></p></td></tr>
+</table></td></tr></table></body></html>`,
+        }).catch(err => console.error('Failed to send retention offer email:', err));
+      }
+
       return NextResponse.json({
         success: true,
         action: 'code-generated',

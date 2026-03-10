@@ -36,6 +36,7 @@ export default function BlogPage() {
       <Navbar />
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '4rem 2rem', paddingTop: 'calc(72px + 4rem)' }}>
         <div style={{ marginBottom: '3rem' }}>
+          <Link href="/" style={{ color: '#999', fontSize: '0.85rem', textDecoration: 'none', display: 'inline-block', marginBottom: '1.5rem' }}>← Back to home</Link>
           <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
             Insights
           </div>

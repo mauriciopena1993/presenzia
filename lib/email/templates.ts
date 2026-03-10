@@ -119,6 +119,46 @@ export function ratingRequest(businessName: string, jobId: string, score: number
 }
 
 // ════════════════════════════════════════════════════════════════════════
+// CAMPAIGN 2b: Audit → Growth/Premium Upsell (one-off audit customers)
+// ════════════════════════════════════════════════════════════════════════
+
+export function auditUpsell1(businessName: string, score: number, email: string) {
+  const prefsUrl = `${APP_URL}/email-preferences?email=${encodeURIComponent(email)}`;
+  const subject = `Your competitors' AI visibility could change this week, ${businessName}`;
+  const html = emailWrapper(`
+    <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">AI visibility shifts every week</h1>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Hi ${businessName},</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Your one-off audit scored <strong style="color:#111;">${score}/100</strong> — but AI platforms update their recommendations constantly. Your competitors could overtake you this week without you knowing.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">With our <strong style="color:#111;">Growth plan</strong>, you'd get:</p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
+      <tr><td style="padding:10px 16px;border-left:3px solid #C9A84C;background:#FAFAF8;font-size:13px;color:#555;">Weekly automated re-audits — always know your score</td></tr>
+      <tr><td style="padding:10px 16px;border-left:3px solid #C9A84C;background:#FAFAF8;font-size:13px;color:#555;border-top:1px solid #eee;">Competitor tracking — see who's gaining ground</td></tr>
+      <tr><td style="padding:10px 16px;border-left:3px solid #C9A84C;background:#FAFAF8;font-size:13px;color:#555;border-top:1px solid #eee;">Updated action plans — specific recommendations each week</td></tr>
+    </table>
+    ${ctaButton('Explore Growth plan →', `${APP_URL}/pricing`)}
+    <p style="font-size:12px;color:#999999;margin:24px 0 0;line-height:1.6;"><a href="${prefsUrl}" style="color:#C9A84C;text-decoration:none;">Email preferences</a></p>
+  `.replace('{{email}}', email), { preheader: 'Your competitors could overtake you this week.' });
+
+  return { subject, html, text: `AI visibility shifts every week. Your score was ${score}/100 — see how Growth monitoring keeps you ahead: ${APP_URL}/pricing` };
+}
+
+export function auditUpsell2(businessName: string, email: string) {
+  const prefsUrl = `${APP_URL}/email-preferences?email=${encodeURIComponent(email)}`;
+  const subject = `Final thought: weekly monitoring vs. guessing, ${businessName}`;
+  const html = emailWrapper(`
+    <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">One audit is good. Continuous monitoring is better.</h1>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Hi ${businessName},</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">We see it all the time: firms run one audit, implement the recommendations, and then lose ground within weeks because they stop tracking.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">The firms winning in AI search are the ones who treat visibility like a metric — tracking it weekly, adjusting their strategy, and staying ahead.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Our Growth and Premium plans do the heavy lifting for you. We'd love to help you stay visible.</p>
+    ${ctaButton('See monitoring plans →', `${APP_URL}/pricing`)}
+    <p style="font-size:12px;color:#999999;margin:24px 0 0;line-height:1.6;"><a href="${prefsUrl}" style="color:#C9A84C;text-decoration:none;">Email preferences</a></p>
+  `.replace('{{email}}', email), { preheader: 'The firms winning in AI search track visibility weekly.' });
+
+  return { subject, html, text: `One audit is good. Continuous monitoring is better. See plans: ${APP_URL}/pricing` };
+}
+
+// ════════════════════════════════════════════════════════════════════════
 // CAMPAIGN 3: Happy Customer (4-5★) → Referral, Review, Social
 // ════════════════════════════════════════════════════════════════════════
 
@@ -219,6 +259,56 @@ export function winBack2(businessName: string, email: string) {
 }
 
 // ════════════════════════════════════════════════════════════════════════
+// TRANSACTIONAL: Payment Failed Notification
+// ════════════════════════════════════════════════════════════════════════
+
+export function paymentFailedNotice(businessName: string, planName: string, amount: string, email: string) {
+  const subject = `Action required: payment failed for your presenzia.ai subscription`;
+  const html = emailWrapper(`
+    <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">Your payment didn't go through</h1>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Hi${businessName ? ` ${businessName}` : ''},</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">We were unable to process your ${amount} payment for your <strong style="color:#111;">${planName}</strong> subscription.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">This can happen if your card has expired, your bank declined the charge, or there were insufficient funds. Don't worry — we'll automatically retry in a few days.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 8px;line-height:1.7;"><strong style="color:#111;">To avoid any interruption to your service:</strong></p>
+    <ul style="font-size:14px;color:#555555;margin:0 0 24px;padding-left:20px;line-height:1.8;">
+      <li>Check that your card details are up to date</li>
+      <li>Ensure sufficient funds are available</li>
+      <li>Contact your bank if the issue persists</li>
+    </ul>
+    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Your dashboard and audit history remain accessible while we resolve this. If your payment isn't updated, your subscription may be paused.</p>
+    ${ctaButton('Update payment details →', `${APP_URL}/dashboard`)}
+    <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Need help? Reply to this email or contact us at <a href="mailto:hello@presenzia.ai" style="color:#C9A84C;text-decoration:none;">hello@presenzia.ai</a>.</p>
+  `.replace('{{email}}', email), { preheader: 'Your payment didn\'t go through. Please update your card details.' });
+
+  return { subject, html, text: `Your ${amount} payment for ${planName} failed. Please update your payment details at ${APP_URL}/dashboard or contact hello@presenzia.ai for help.` };
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// CAMPAIGN 6: Renewal Reminder (7 days before billing)
+// ════════════════════════════════════════════════════════════════════════
+
+export function renewalReminder(businessName: string, planName: string, amount: string, renewalDate: string, email: string) {
+  const subject = `Your presenzia.ai subscription renews on ${renewalDate}`;
+  const html = emailWrapper(`
+    <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">Subscription renewal reminder</h1>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Hi${businessName ? ` ${businessName}` : ''},</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Just a heads-up: your <strong style="color:#111;">${planName}</strong> subscription will automatically renew on <strong style="color:#111;">${renewalDate}</strong> for ${amount}.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">No action is needed if you'd like to continue. Your AI visibility monitoring, re-audits, and dashboard access will continue uninterrupted.</p>
+    <div style="background:#F7F7F5;border:1px solid #E0E0E0;padding:16px 20px;margin:0 0 24px;">
+      <table style="width:100%;border-collapse:collapse;font-size:14px;">
+        <tr><td style="color:#888;padding:4px 0;width:120px;">Plan</td><td style="color:#111;font-weight:600;">${planName}</td></tr>
+        <tr><td style="color:#888;padding:4px 0;">Amount</td><td style="color:#111;font-weight:600;">${amount}</td></tr>
+        <tr><td style="color:#888;padding:4px 0;">Renewal date</td><td style="color:#111;font-weight:600;">${renewalDate}</td></tr>
+      </table>
+    </div>
+    ${ctaButton('View your dashboard →', `${APP_URL}/dashboard`)}
+    <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Want to change or cancel your plan? Visit your <a href="${APP_URL}/dashboard" style="color:#C9A84C;text-decoration:none;">dashboard settings</a> or reply to this email.</p>
+  `.replace('{{email}}', email), { preheader: `Your ${planName} subscription renews on ${renewalDate} for ${amount}.` });
+
+  return { subject, html, text: `Your ${planName} subscription renews on ${renewalDate} for ${amount}. No action needed to continue. Manage your plan at ${APP_URL}/dashboard.` };
+}
+
+// ════════════════════════════════════════════════════════════════════════
 // Admin notification for dissatisfied customer
 // ════════════════════════════════════════════════════════════════════════
 
@@ -244,4 +334,109 @@ export function adminDissatisfiedAlert(clientEmail: string, businessName: string
   </div>`;
 
   return { subject, html };
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// Admin notification for ALL ratings (happy included)
+// ════════════════════════════════════════════════════════════════════════
+
+export function adminRatingAlert(clientEmail: string, businessName: string, rating: number, comment: string | null, plan: string | null = null) {
+  const tierLabel = plan ? (plan.charAt(0).toUpperCase() + plan.slice(1)) : 'Unknown';
+  const tierColor = plan === 'premium' ? '#9b6bcc' : plan === 'growth' ? '#5BA88C' : '#C9A84C';
+  const isHappy = rating >= 4;
+  const emoji = isHappy ? '⭐' : '⚠️';
+  const borderColor = isHappy ? '#4a9e6a' : '#cc4444';
+  const ratingColor = isHappy ? '#4a9e6a' : '#cc4444';
+  const label = isHappy ? 'Positive review' : 'Dissatisfied client alert';
+  const subject = `${emoji} ${businessName || clientEmail} rated ${rating}★ [${tierLabel}]`;
+  const html = `<div style="font-family:Inter,sans-serif;max-width:560px;margin:0 auto;background:#0A0A0A;color:#F5F0E8;padding:40px;">
+    <div style="font-size:18px;font-weight:600;margin-bottom:4px;border-bottom:2px solid ${borderColor};padding-bottom:12px;margin-bottom:24px;">
+      presenzia<span style="color:#C9A84C;">.ai</span> <span style="color:#888;font-size:12px;font-weight:400;">${label}</span>
+    </div>
+    <div style="background:#111;border:1px solid rgba(${isHappy ? '74,158,106' : '204,68,68'},0.3);padding:20px;">
+      <table style="width:100%;border-collapse:collapse;">
+        <tr><td style="color:#999;font-size:12px;padding:6px 0;width:130px;">Client</td><td style="color:#F5F0E8;font-size:13px;">${businessName || '—'}</td></tr>
+        <tr><td style="color:#999;font-size:12px;padding:6px 0;">Email</td><td style="color:#F5F0E8;font-size:13px;">${clientEmail}</td></tr>
+        <tr><td style="color:#999;font-size:12px;padding:6px 0;">Plan</td><td style="font-size:13px;font-weight:600;color:${tierColor};">${tierLabel}</td></tr>
+        <tr><td style="color:#999;font-size:12px;padding:6px 0;">Rating</td><td style="color:${ratingColor};font-size:13px;font-weight:600;">${rating}/5</td></tr>
+        ${comment ? `<tr><td style="color:#999;font-size:12px;padding:6px 0;">Comment</td><td style="color:#F5F0E8;font-size:13px;">${comment}</td></tr>` : ''}
+        ${!isHappy ? `<tr><td style="color:#999;font-size:12px;padding:6px 0;">Action</td><td style="color:#cc8833;font-size:13px;">Marketing suppressed. Personal outreach email scheduled.</td></tr>` : ''}
+      </table>
+    </div>
+    ${isHappy
+      ? `<p style="color:#888;font-size:12px;margin-top:16px;">Great news! Consider reaching out to thank them and ask for a testimonial.</p>`
+      : `<p style="color:#888;font-size:12px;margin-top:16px;">Please follow up personally with this client within 24 hours.</p>`
+    }
+  </div>`;
+
+  return { subject, html };
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// Admin notification for free score completed
+// ════════════════════════════════════════════════════════════════════════
+
+export function adminFreeScoreAlert(firmName: string, score: number, grade: string, city: string, specialty: string) {
+  const scoreColor = score >= 70 ? '#4a9e6a' : score >= 45 ? '#C9A84C' : score >= 25 ? '#cc8833' : '#cc4444';
+  const subject = `🆓 New free score: ${firmName} — ${score}/100 (${grade})`;
+  const html = `<div style="font-family:Inter,sans-serif;max-width:560px;margin:0 auto;background:#0A0A0A;color:#F5F0E8;padding:40px;">
+    <div style="font-size:18px;font-weight:600;margin-bottom:4px;border-bottom:2px solid #C9A84C;padding-bottom:12px;margin-bottom:24px;">
+      presenzia<span style="color:#C9A84C;">.ai</span> <span style="color:#888;font-size:12px;font-weight:400;">New free score</span>
+    </div>
+    <div style="background:#111;border:1px solid rgba(201,168,76,0.3);padding:20px;">
+      <table style="width:100%;border-collapse:collapse;">
+        <tr><td style="color:#999;font-size:12px;padding:6px 0;width:130px;">Firm</td><td style="color:#F5F0E8;font-size:13px;font-weight:600;">${firmName}</td></tr>
+        <tr><td style="color:#999;font-size:12px;padding:6px 0;">Location</td><td style="color:#F5F0E8;font-size:13px;">${city || '—'}</td></tr>
+        <tr><td style="color:#999;font-size:12px;padding:6px 0;">Specialty</td><td style="color:#F5F0E8;font-size:13px;">${specialty || '—'}</td></tr>
+        <tr><td style="color:#999;font-size:12px;padding:6px 0;">Score</td><td style="font-size:13px;font-weight:600;color:${scoreColor};">${score}/100 (Grade ${grade})</td></tr>
+      </table>
+    </div>
+    <p style="color:#888;font-size:12px;margin-top:16px;">This lead has not yet provided an email. They may return to enter their details for the nurture sequence.</p>
+  </div>`;
+
+  return { subject, html };
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// Gentle reminder: new re-audit report is available (monthly digest)
+// ════════════════════════════════════════════════════════════════════════
+
+export function reauditReportReminder(businessName: string, score: number, grade: string, previousScore: number | null, email: string) {
+  const scoreColor = score >= 70 ? '#4a9e6a' : score >= 45 ? '#C9A84C' : score >= 25 ? '#cc8833' : '#cc4444';
+  const prefsUrl = `${APP_URL}/email-preferences?email=${encodeURIComponent(email)}`;
+
+  let trendHtml = '';
+  if (previousScore != null) {
+    const delta = score - previousScore;
+    const arrow = delta > 0 ? '↑' : delta < 0 ? '↓' : '→';
+    const trendColor = delta > 0 ? '#4a9e6a' : delta < 0 ? '#cc4444' : '#888888';
+    const trendWord = delta > 0 ? 'improved' : delta < 0 ? 'declined' : 'unchanged';
+    trendHtml = `<p style="font-size:14px;color:${trendColor};margin:0 0 16px;line-height:1.7;font-weight:600;">${arrow} ${Math.abs(delta)} points ${trendWord} since your last report</p>`;
+  }
+
+  const subject = `Your latest AI visibility report is ready — ${score}/100`;
+  const html = emailWrapper(`
+    <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">Your new report is ready</h1>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Hi${businessName ? ` ${businessName}` : ''},</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 20px;line-height:1.7;">We've completed your latest AI visibility audit. Here's a quick snapshot:</p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F9F9F9;border:1px solid #E0E0E0;margin:0 0 20px;">
+      <tr><td style="padding:20px;text-align:center;">
+        <div style="font-size:42px;font-weight:700;color:${scoreColor};line-height:1;font-family:Arial,sans-serif;">${score}</div>
+        <div style="font-size:12px;color:#888888;margin:4px 0 0;">/ 100 · Grade ${grade}</div>
+      </td></tr>
+    </table>
+
+    ${trendHtml}
+
+    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Log in to your dashboard to see the full breakdown, competitor analysis, and updated recommendations.</p>
+
+    ${ctaButton('View your report →', `${APP_URL}/dashboard`)}
+
+    <p style="font-size:12px;color:#999999;margin:24px 0 0;line-height:1.6;">You're receiving this because you're on an active monitoring plan. <a href="${prefsUrl}" style="color:#C9A84C;text-decoration:none;">Email preferences</a></p>
+  `.replace('{{email}}', email), { preheader: `Your AI visibility score is ${score}/100. View your latest report.` });
+
+  const text = `Your new AI visibility report is ready.\n\nScore: ${score}/100 (Grade ${grade})${previousScore != null ? `\nChange: ${score > previousScore ? '+' : ''}${score - previousScore} points` : ''}\n\nView your report: ${APP_URL}/dashboard\n\npresenzia.ai`;
+
+  return { subject, html, text };
 }

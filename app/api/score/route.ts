@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { Resend } from 'resend';
+import { adminFreeScoreAlert, FROM_EMAIL } from '@/lib/email/templates';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // ── System prompt for all AI platforms ──
 const SYSTEM_PROMPT =
@@ -787,6 +791,16 @@ export async function POST(req: NextRequest) {
         utm_medium: null,
         utm_campaign: null,
       });
+      // ✉️ Notify admin about new free score
+      if (process.env.RESEND_API_KEY) {
+        const alert = adminFreeScoreAlert(firmName, score, grade, displayCity, specialties[0] || '');
+        resend.emails.send({
+          from: FROM_EMAIL,
+          to: 'hello@presenzia.ai',
+          subject: alert.subject,
+          html: alert.html,
+        }).catch(err => console.error('Failed to send admin free score alert:', err));
+      }
     } catch (dbErr) {
       console.error('Failed to store free score:', dbErr);
     }

@@ -6,9 +6,12 @@
  *
  * 1. Free Score → Full Audit nurture (3 emails over 7 days)
  * 2. Post-Audit → Rating request (1 email, 48h after report)
+ * 2b. Audit → Growth/Premium upsell (2 emails, days 3+7 after one-off audit)
  * 3. Happy Customer → Review, Referral, Social (3 emails over 7 days)
  * 4. Dissatisfied Customer → Company outreach (24h after negative rating)
  * 5. Win-back → Cancelled clients (2 emails: 7 days, 30 days)
+ * 6. Renewal Reminder → Active subscribers (1 email, 7 days before billing)
+ * 7. Re-audit Report Reminder → Monitoring clients (monthly gentle nudge)
  *
  * Uses Hormozi "Money Models" framework:
  * - Value-first messaging
@@ -18,6 +21,8 @@
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { stripe } from '@/lib/stripe';
+import { PLAN_LABELS } from '@/lib/plans';
 import { Resend } from 'resend';
 import {
   FROM_EMAIL,
@@ -26,12 +31,16 @@ import {
   freeScoreNurture2,
   freeScoreNurture3,
   ratingRequest,
+  auditUpsell1,
+  auditUpsell2,
   happyReviewRequest,
   happyReferralRequest,
   happySocialFollow,
   dissatisfiedOutreach,
   winBack1,
   winBack2,
+  renewalReminder,
+  reauditReportReminder,
 } from '@/lib/email/templates';
 
 export const maxDuration = 60;
@@ -208,6 +217,46 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    // ─── CAMPAIGN 2b: Audit → Growth/Premium Upsell ───────────────────────
+    // Target: one-off audit customers who haven't upgraded to a subscription
+    const { data: auditClients } = await supabase
+      .from('clients')
+      .select('id, email, business_name, plan, marketing_suppressed')
+      .eq('plan', 'audit')
+      .limit(200);
+
+    if (auditClients) {
+      for (const client of auditClients) {
+        if (!client.email || client.marketing_suppressed) continue;
+
+        // Find their completed audit
+        const { data: completedAudit } = await supabase
+          .from('audit_jobs')
+          .select('id, overall_score, completed_at')
+          .eq('client_id', client.id)
+          .eq('status', 'completed')
+          .order('completed_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (!completedAudit?.completed_at) continue;
+        const days = daysSince(completedAudit.completed_at);
+
+        // Upsell 1: 3 days after audit
+        if (days >= 3 && days < 7) {
+          const email = auditUpsell1(client.business_name || '', completedAudit.overall_score || 0, client.email);
+          const sent = await sendCampaignEmail(client.email, `audit_upsell_1_${client.id}`, email);
+          sent ? stats.sent++ : stats.skipped++;
+        }
+        // Upsell 2: 7 days after audit
+        else if (days >= 7 && days < 14) {
+          const email = auditUpsell2(client.business_name || '', client.email);
+          const sent = await sendCampaignEmail(client.email, `audit_upsell_2_${client.id}`, email);
+          sent ? stats.sent++ : stats.skipped++;
+        }
+      }
+    }
+
     // ─── CAMPAIGN 3: Happy Customer → Review, Referral, Social ────────────
     const { data: happyRatings } = await supabase
       .from('report_ratings')
@@ -294,6 +343,121 @@ export async function GET(req: NextRequest) {
           const sent = await sendCampaignEmail(client.email, `winback_2_${client.id}`, email);
           sent ? stats.sent++ : stats.skipped++;
         }
+      }
+    }
+
+    // ─── CAMPAIGN 6: Renewal Reminder (7 days before billing) ─────────
+    const { data: activeSubscribers } = await supabase
+      .from('clients')
+      .select('id, email, business_name, plan, stripe_customer_id, marketing_suppressed')
+      .in('plan', ['growth', 'premium', 'starter'])
+      .eq('status', 'active')
+      .limit(200);
+
+    if (activeSubscribers) {
+      for (const client of activeSubscribers) {
+        if (!client.email || !client.stripe_customer_id || client.marketing_suppressed) continue;
+
+        // Use a per-month campaign key so we only remind once per billing cycle
+        const monthKey = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+        const campaignKey = `renewal_reminder_${client.id}_${monthKey}`;
+        const alreadySent = await wasSent(client.email, campaignKey);
+        if (alreadySent) { stats.skipped++; continue; }
+
+        try {
+          // Retrieve upcoming invoice to get next payment date and amount
+          const upcomingInvoice = await stripe.invoices.createPreview({
+            customer: client.stripe_customer_id,
+          });
+
+          if (!upcomingInvoice.next_payment_attempt) continue;
+
+          const renewalDate = new Date(upcomingInvoice.next_payment_attempt * 1000);
+          const daysUntilRenewal = (renewalDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+
+          // Send reminder 5-8 days before renewal
+          if (daysUntilRenewal >= 5 && daysUntilRenewal <= 8) {
+            const planName = PLAN_LABELS[client.plan] || client.plan;
+            const amount = upcomingInvoice.amount_due
+              ? `£${(upcomingInvoice.amount_due / 100).toFixed(0)}`
+              : '';
+            const formattedDate = renewalDate.toLocaleDateString('en-GB', {
+              day: 'numeric', month: 'long', year: 'numeric',
+            });
+
+            const emailContent = renewalReminder(
+              client.business_name || '',
+              planName,
+              amount,
+              formattedDate,
+              client.email,
+            );
+            const sent = await sendCampaignEmail(client.email, campaignKey, emailContent);
+            sent ? stats.sent++ : stats.skipped++;
+          }
+        } catch {
+          // Stripe lookup failed — skip silently (subscription may not exist anymore)
+          stats.errors++;
+        }
+      }
+    }
+
+    // ─── CAMPAIGN 7: Monthly Re-audit Report Reminder ─────────────────
+    // Gentle nudge for Growth/Premium clients whose latest report they haven't
+    // received by email (because the full PDF email is throttled to ~monthly).
+    const { data: monitoringClients } = await supabase
+      .from('clients')
+      .select('id, email, business_name, plan, marketing_suppressed')
+      .in('plan', ['growth', 'premium'])
+      .eq('status', 'active')
+      .limit(200);
+
+    if (monitoringClients) {
+      for (const client of monitoringClients) {
+        if (!client.email || client.marketing_suppressed) continue;
+
+        // Get latest completed audit
+        const { data: latestAudit } = await supabase
+          .from('audit_jobs')
+          .select('id, overall_score, grade, completed_at')
+          .eq('client_id', client.id)
+          .eq('status', 'completed')
+          .order('completed_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (!latestAudit?.completed_at) continue;
+
+        const daysSinceAudit = daysSince(latestAudit.completed_at);
+        // Only remind about audits completed in the last 7 days (recent enough to be relevant)
+        if (daysSinceAudit > 7) continue;
+
+        // Use monthly key so we only send once per month
+        const monthKey = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+        const campaignKey = `reaudit_reminder_${client.id}_${monthKey}`;
+        const alreadySent = await wasSent(client.email, campaignKey);
+        if (alreadySent) { stats.skipped++; continue; }
+
+        // Get previous audit score for trend comparison
+        const { data: prevAudit } = await supabase
+          .from('audit_jobs')
+          .select('overall_score')
+          .eq('client_id', client.id)
+          .eq('status', 'completed')
+          .neq('id', latestAudit.id)
+          .order('completed_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        const emailContent = reauditReportReminder(
+          client.business_name || '',
+          latestAudit.overall_score || 0,
+          latestAudit.grade || 'N/A',
+          prevAudit?.overall_score ?? null,
+          client.email,
+        );
+        const sent = await sendCampaignEmail(client.email, campaignKey, emailContent);
+        sent ? stats.sent++ : stats.skipped++;
       }
     }
 

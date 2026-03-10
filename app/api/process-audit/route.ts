@@ -151,7 +151,32 @@ export async function POST(req: NextRequest) {
     console.log(`✅ Audit complete for ${config.businessName}: ${score.overall}/100 (${score.grade})`);
 
     // Send report by email
-    if (client.email && process.env.RESEND_API_KEY) {
+    // For re-audits: only send the full PDF email for the first audit or once per ~30 days.
+    // The monthly "new report reminder" campaign handles gentle nudges in between.
+    const isReaudit = !!previousAudit;
+    let shouldEmail = true;
+
+    if (isReaudit && client.email) {
+      // Check when we last emailed this client a report
+      const { data: lastEmailRecord } = await supabase
+        .from('campaign_emails')
+        .select('sent_at')
+        .eq('recipient_email', client.email)
+        .like('campaign_key', 'report_email_%')
+        .order('sent_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (lastEmailRecord?.sent_at) {
+        const daysSinceLastEmail = (Date.now() - new Date(lastEmailRecord.sent_at).getTime()) / (1000 * 60 * 60 * 24);
+        if (daysSinceLastEmail < 28) {
+          shouldEmail = false;
+          console.log(`📧 Skipping report email for ${client.email} — last sent ${Math.round(daysSinceLastEmail)}d ago (monthly throttle)`);
+        }
+      }
+    }
+
+    if (shouldEmail && client.email && process.env.RESEND_API_KEY) {
       await sendReportEmail(
         client.email,
         config.businessName,
@@ -163,6 +188,18 @@ export async function POST(req: NextRequest) {
         score.topCompetitors[0]?.name,
         previousAudit?.overallScore,
       );
+
+      // Record that we sent a report email (for monthly throttling)
+      await supabase
+        .from('campaign_emails')
+        .insert({
+          recipient_email: client.email,
+          campaign_key: `report_email_${jobId}`,
+          sent_at: new Date().toISOString(),
+        })
+        .then(({ error: recErr }) => {
+          if (recErr) console.warn('Failed to record report email send:', recErr.message);
+        });
     }
 
     return NextResponse.json({ status: 'completed', score: score.overall, grade: score.grade });

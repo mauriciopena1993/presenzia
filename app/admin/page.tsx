@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -738,6 +738,20 @@ export default function AdminDashboard() {
   const [detailLead, setDetailLead] = useState<Lead | null>(null);
   const [detailScore, setDetailScore] = useState<FreeScore | null>(null);
 
+  // Filters
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [planFilter, setPlanFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  // Delete
+  const [deleteConfirm, setDeleteConfirm] = useState<{ type: 'client' | 'lead' | 'score'; id: string; name: string } | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [deleteToast, setDeleteToast] = useState('');
+
+  // Bulk selection
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
   useEffect(() => {
     const load = async () => {
       try {
@@ -795,10 +809,91 @@ export default function AdminDashboard() {
     setDetailScore(null);
   };
 
+  // ── Filtered data ──
+  const filteredClients = useMemo(() => {
+    return clients.filter(c => {
+      if (planFilter !== 'all' && c.plan !== planFilter) return false;
+      if (statusFilter !== 'all' && c.status !== statusFilter) return false;
+      if (dateFrom && new Date(c.created_at) < new Date(dateFrom)) return false;
+      if (dateTo && new Date(c.created_at) > new Date(dateTo + 'T23:59:59')) return false;
+      return true;
+    });
+  }, [clients, planFilter, statusFilter, dateFrom, dateTo]);
+
+  const filteredLeads = useMemo(() => {
+    return leads.filter(l => {
+      if (planFilter !== 'all' && l.plan !== planFilter) return false;
+      if (dateFrom && new Date(l.created_at) < new Date(dateFrom)) return false;
+      if (dateTo && new Date(l.created_at) > new Date(dateTo + 'T23:59:59')) return false;
+      return true;
+    });
+  }, [leads, planFilter, dateFrom, dateTo]);
+
+  const filteredScores = useMemo(() => {
+    return scores.filter(s => {
+      if (dateFrom && new Date(s.created_at) < new Date(dateFrom)) return false;
+      if (dateTo && new Date(s.created_at) > new Date(dateTo + 'T23:59:59')) return false;
+      return true;
+    });
+  }, [scores, dateFrom, dateTo]);
+
+  // ── Delete handler ──
+  const handleDelete = useCallback(async (type: 'client' | 'lead' | 'score', id: string) => {
+    setDeleting(id);
+    try {
+      const endpoint = type === 'client' ? 'clients' : type === 'lead' ? 'leads' : 'free-scores';
+      const res = await fetch(`/api/admin/${endpoint}/${id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || 'Delete failed');
+        return;
+      }
+      // Remove from local state
+      if (type === 'client') setClients(prev => prev.filter(c => c.id !== id));
+      else if (type === 'lead') setLeads(prev => prev.filter(l => l.id !== id));
+      else setScores(prev => prev.filter(s => s.id !== id));
+      setDeleteToast('Deleted successfully');
+      setTimeout(() => setDeleteToast(''), 2000);
+    } catch {
+      setError('Delete failed — check connection');
+    } finally {
+      setDeleting(null);
+      setDeleteConfirm(null);
+    }
+  }, []);
+
+  // ── Bulk delete handler ──
+  const handleBulkDelete = useCallback(async () => {
+    const ids = Array.from(selectedIds);
+    const type = tab === 'clients' ? 'client' : tab === 'leads' ? 'lead' : 'score';
+    for (const id of ids) {
+      await handleDelete(type, id);
+    }
+    setSelectedIds(new Set());
+  }, [selectedIds, tab, handleDelete]);
+
+  const toggleSelection = useCallback((id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const clearFilters = () => {
+    setDateFrom('');
+    setDateTo('');
+    setPlanFilter('all');
+    setStatusFilter('all');
+  };
+
+  const hasActiveFilters = dateFrom || dateTo || planFilter !== 'all' || statusFilter !== 'all';
+
   const handleExport = () => {
-    if (tab === 'clients') exportClients(clients);
-    else if (tab === 'leads') exportLeads(leads);
-    else exportFreeScores(scores);
+    if (tab === 'clients') exportClients(filteredClients);
+    else if (tab === 'leads') exportLeads(filteredLeads);
+    else exportFreeScores(filteredScores);
   };
 
   /* Stats */
@@ -807,6 +902,9 @@ export default function AdminDashboard() {
   const unconvertedLeads = leads.filter(l => !l.converted_at).length;
   const pendingAudits = clients.flatMap(c => c.audit_jobs).filter(j => j.status === 'pending' || j.status === 'running').length;
   const freeScoresWithEmail = scores.filter(s => s.email).length;
+  const auditClients = clients.filter(c => c.plan === 'audit').length;
+  const growthClients = clients.filter(c => c.plan === 'growth').length;
+  const premiumClients = clients.filter(c => c.plan === 'premium').length;
 
   /* Styles */
   const s = {
@@ -853,6 +951,16 @@ export default function AdminDashboard() {
         .admin-view-btn:hover { border-color: #C9A84C !important; color: #C9A84C !important; }
         .admin-export-btn:hover { background: #C9A84C !important; color: #0A0A0A !important; }
         .admin-row:hover { background: #0D0D0D; }
+        .admin-delete-btn { opacity: 0.3; transition: opacity 0.2s; }
+        .admin-delete-btn:hover { opacity: 1 !important; }
+        .admin-filter-input { background: #111; border: 1px solid #222; color: #CCC; padding: 0.35rem 0.5rem; font-size: 0.75rem; font-family: inherit; outline: none; }
+        .admin-filter-input:focus { border-color: #C9A84C; }
+        .admin-filter-select { background: #111; border: 1px solid #222; color: #CCC; padding: 0.35rem 0.5rem; font-size: 0.75rem; font-family: inherit; outline: none; appearance: auto; }
+        .admin-filter-select:focus { border-color: #C9A84C; }
+        .admin-clear-btn:hover { color: #C9A84C !important; border-color: #C9A84C !important; }
+        .admin-toast { position: fixed; bottom: 2rem; right: 2rem; background: #1a3a1a; color: #5acc5a; border: 1px solid #2a5a2a; padding: 0.75rem 1.25rem; font-size: 0.82rem; z-index: 300; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .admin-checkbox { accent-color: #C9A84C; cursor: pointer; width: 14px; height: 14px; }
       `}</style>
 
       {/* Detail modals */}
@@ -871,6 +979,44 @@ export default function AdminDashboard() {
           <FreeScoreDetail score={detailScore} />
         </DetailModal>
       )}
+
+      {/* Delete confirmation modal */}
+      {deleteConfirm && (
+        <div
+          onClick={() => setDeleteConfirm(null)}
+          style={{ position: 'fixed', inset: 0, zIndex: 250, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <div onClick={e => e.stopPropagation()} style={{ background: '#111', border: '1px solid #222', padding: '2rem', maxWidth: '400px', width: '90vw' }}>
+            <div style={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: '#cc4444', textTransform: 'uppercase', marginBottom: '1rem' }}>Confirm deletion</div>
+            <p style={{ color: '#CCC', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+              Delete <strong style={{ color: '#F5F0E8' }}>{deleteConfirm.name}</strong>?
+            </p>
+            <p style={{ color: '#888', fontSize: '0.75rem', marginBottom: '1.5rem' }}>
+              {deleteConfirm.type === 'client'
+                ? 'This will also delete all audit history, ratings, and campaign emails for this client. This cannot be undone.'
+                : 'This cannot be undone.'}
+            </p>
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                style={{ padding: '0.5rem 1rem', background: 'none', border: '1px solid #333', color: '#999', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(deleteConfirm.type, deleteConfirm.id)}
+                disabled={deleting === deleteConfirm.id}
+                style={{ padding: '0.5rem 1rem', background: '#cc4444', border: 'none', color: '#fff', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem', fontWeight: 600, opacity: deleting ? 0.6 : 1 }}
+              >
+                {deleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success toast */}
+      {deleteToast && <div className="admin-toast">{deleteToast}</div>}
 
       <div style={s.nav}>
         <Link href="/" style={s.brand}>
@@ -916,17 +1062,87 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {/* Plan breakdown */}
+        <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem', fontSize: '0.75rem', color: '#888', flexWrap: 'wrap' }}>
+          <span>Plans: <span style={{ color: '#3a7d44' }}>Audit {auditClients}</span> · <span style={{ color: '#1a6fa8' }}>Growth {growthClients}</span> · <span style={{ color: '#9b6b00' }}>Premium {premiumClients}</span></span>
+          <span>Leads: <span style={{ color: '#F5F0E8' }}>{leads.length}</span> total · <span style={{ color: '#3a7d44' }}>{leads.filter(l => l.converted_at).length}</span> converted · <span style={{ color: '#9b4a00' }}>{unconvertedLeads}</span> unconverted</span>
+          <span>Scores: <span style={{ color: '#F5F0E8' }}>{scores.length}</span> total · <span style={{ color: '#1a6fa8' }}>{freeScoresWithEmail}</span> with email · <span style={{ color: '#3a7d44' }}>{scores.filter(s => s.converted_to_audit).length}</span> converted</span>
+        </div>
+
+        {/* Filter bar */}
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <span style={{ fontSize: '0.68rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.08em', marginRight: '0.25rem' }}>Filter</span>
+          <input
+            type="date"
+            className="admin-filter-input"
+            value={dateFrom}
+            onChange={e => setDateFrom(e.target.value)}
+            placeholder="From"
+            title="From date"
+          />
+          <span style={{ color: '#555', fontSize: '0.75rem' }}>to</span>
+          <input
+            type="date"
+            className="admin-filter-input"
+            value={dateTo}
+            onChange={e => setDateTo(e.target.value)}
+            placeholder="To"
+            title="To date"
+          />
+          {(tab === 'clients' || tab === 'leads') && (
+            <select className="admin-filter-select" value={planFilter} onChange={e => setPlanFilter(e.target.value)}>
+              <option value="all">All plans</option>
+              <option value="audit">Audit</option>
+              <option value="growth">Growth</option>
+              <option value="premium">Premium</option>
+            </select>
+          )}
+          {tab === 'clients' && (
+            <select className="admin-filter-select" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+              <option value="all">All statuses</option>
+              <option value="active">Active</option>
+              <option value="trialing">Trialing</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="past_due">Past due</option>
+            </select>
+          )}
+          {hasActiveFilters && (
+            <button className="admin-clear-btn" onClick={clearFilters} style={{ fontSize: '0.72rem', background: 'none', border: '1px solid #333', color: '#888', padding: '0.35rem 0.75rem', cursor: 'pointer', fontFamily: 'inherit' }}>
+              Clear filters
+            </button>
+          )}
+        </div>
+
+        {/* Bulk actions */}
+        {selectedIds.size > 0 && (
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginBottom: '0.75rem', padding: '0.5rem 0.75rem', background: 'rgba(204,68,68,0.08)', border: '1px solid rgba(204,68,68,0.2)' }}>
+            <span style={{ fontSize: '0.78rem', color: '#cc4444' }}>{selectedIds.size} selected</span>
+            <button
+              onClick={handleBulkDelete}
+              style={{ fontSize: '0.72rem', padding: '0.3rem 0.75rem', background: '#cc4444', border: 'none', color: '#fff', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 600 }}
+            >
+              Delete selected
+            </button>
+            <button
+              onClick={() => setSelectedIds(new Set())}
+              style={{ fontSize: '0.72rem', padding: '0.3rem 0.75rem', background: 'none', border: '1px solid #333', color: '#888', cursor: 'pointer', fontFamily: 'inherit' }}
+            >
+              Clear selection
+            </button>
+          </div>
+        )}
+
         {/* Tabs + Export */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '1rem', flexWrap: 'wrap' }}>
           <div style={s.tabs}>
-            <button style={s.tab(tab === 'clients')} onClick={() => setTab('clients')}>
-              Clients ({clients.length})
+            <button style={s.tab(tab === 'clients')} onClick={() => { setTab('clients'); setSelectedIds(new Set()); }}>
+              Clients ({hasActiveFilters ? `${filteredClients.length}/${clients.length}` : clients.length})
             </button>
-            <button style={s.tab(tab === 'leads')} onClick={() => setTab('leads')}>
-              Leads ({unconvertedLeads} unconverted)
+            <button style={s.tab(tab === 'leads')} onClick={() => { setTab('leads'); setSelectedIds(new Set()); }}>
+              Leads ({hasActiveFilters ? `${filteredLeads.length}/${leads.length}` : leads.length})
             </button>
-            <button style={s.tab(tab === 'scores')} onClick={() => setTab('scores')}>
-              Free Scores ({scores.length})
+            <button style={s.tab(tab === 'scores')} onClick={() => { setTab('scores'); setSelectedIds(new Set()); }}>
+              Free Scores ({hasActiveFilters ? `${filteredScores.length}/${scores.length}` : scores.length})
             </button>
           </div>
           <button
@@ -958,6 +1174,17 @@ export default function AdminDashboard() {
               <table style={s.table}>
                 <thead>
                   <tr>
+                    <th style={s.th}>
+                      <input
+                        type="checkbox"
+                        className="admin-checkbox"
+                        checked={filteredClients.length > 0 && filteredClients.every(c => selectedIds.has(c.id))}
+                        onChange={e => {
+                          if (e.target.checked) setSelectedIds(new Set(filteredClients.map(c => c.id)));
+                          else setSelectedIds(new Set());
+                        }}
+                      />
+                    </th>
                     <th style={s.th}>Business</th>
                     <th style={s.th}>Email</th>
                     <th style={s.th}>Plan</th>
@@ -970,14 +1197,17 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {clients.length === 0 ? (
-                    <tr><td colSpan={9} style={{ ...s.td, textAlign: 'center', color: '#888', padding: '3rem' }}>No clients yet</td></tr>
-                  ) : clients.map(client => {
+                  {filteredClients.length === 0 ? (
+                    <tr><td colSpan={10} style={{ ...s.td, textAlign: 'center', color: '#888', padding: '3rem' }}>{hasActiveFilters ? 'No clients match filters' : 'No clients yet'}</td></tr>
+                  ) : filteredClients.map(client => {
                     const latestJob = client.audit_jobs
                       ?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
 
                     return (
                       <tr key={client.id} className="admin-row" style={{ cursor: 'pointer' }} onClick={() => setDetailClient(client)}>
+                        <td style={s.td} onClick={e => e.stopPropagation()}>
+                          <input type="checkbox" className="admin-checkbox" checked={selectedIds.has(client.id)} onChange={() => toggleSelection(client.id)} />
+                        </td>
                         <td style={s.td}>
                           <div style={{ color: '#F5F0E8', fontWeight: 500 }}>{client.business_name || '(unnamed)'}</div>
                           {client.location && <div style={{ fontSize: '0.7rem', color: '#888', marginTop: '2px' }}>{client.location}</div>}
@@ -1033,13 +1263,22 @@ export default function AdminDashboard() {
                           {fmt(client.created_at)}
                         </td>
                         <td style={s.td}>
-                          <button
-                            className="admin-view-btn"
-                            onClick={e => { e.stopPropagation(); setDetailClient(client); }}
-                            style={s.viewBtn}
-                          >
-                            View
-                          </button>
+                          <div style={{ display: 'flex', gap: '0.3rem' }}>
+                            <button
+                              className="admin-view-btn"
+                              onClick={e => { e.stopPropagation(); setDetailClient(client); }}
+                              style={s.viewBtn}
+                            >
+                              View
+                            </button>
+                            <button
+                              className="admin-delete-btn"
+                              onClick={e => { e.stopPropagation(); setDeleteConfirm({ type: 'client', id: client.id, name: client.business_name || client.email }); }}
+                              style={{ ...s.viewBtn, color: '#cc4444', borderColor: '#441a1a' }}
+                            >
+                              ✕
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -1050,9 +1289,9 @@ export default function AdminDashboard() {
 
             {/* Mobile cards */}
             <div className="admin-cards-mobile">
-              {clients.length === 0 ? (
-                <div style={{ color: '#888', textAlign: 'center', padding: '3rem' }}>No clients yet</div>
-              ) : clients.map(client => {
+              {filteredClients.length === 0 ? (
+                <div style={{ color: '#888', textAlign: 'center', padding: '3rem' }}>{hasActiveFilters ? 'No clients match filters' : 'No clients yet'}</div>
+              ) : filteredClients.map(client => {
                 const latestJob = client.audit_jobs?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
                 return (
                   <div key={client.id} style={{ padding: '1rem', borderBottom: '1px solid #1a1a1a', cursor: 'pointer' }} onClick={() => setDetailClient(client)}>
@@ -1061,7 +1300,10 @@ export default function AdminDashboard() {
                         <div style={{ color: '#F5F0E8', fontWeight: 500, fontSize: '0.9rem' }}>{client.business_name || '(unnamed)'}</div>
                         <div style={{ fontSize: '0.75rem', color: '#888' }}>{client.email}</div>
                       </div>
-                      <button className="admin-view-btn" onClick={e => { e.stopPropagation(); setDetailClient(client); }} style={s.viewBtn}>View</button>
+                      <div style={{ display: 'flex', gap: '0.3rem' }}>
+                        <button className="admin-view-btn" onClick={e => { e.stopPropagation(); setDetailClient(client); }} style={s.viewBtn}>View</button>
+                        <button className="admin-delete-btn" onClick={e => { e.stopPropagation(); setDeleteConfirm({ type: 'client', id: client.id, name: client.business_name || client.email }); }} style={{ ...s.viewBtn, color: '#cc4444', borderColor: '#441a1a' }}>✕</button>
+                      </div>
                     </div>
                     <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
                       <Badge label={client.plan} color={PLAN_COLORS[client.plan] || '#555'} />
@@ -1080,6 +1322,9 @@ export default function AdminDashboard() {
               <table style={s.table}>
                 <thead>
                   <tr>
+                    <th style={s.th}>
+                      <input type="checkbox" className="admin-checkbox" checked={filteredLeads.length > 0 && filteredLeads.every(l => selectedIds.has(l.id))} onChange={e => { if (e.target.checked) setSelectedIds(new Set(filteredLeads.map(l => l.id))); else setSelectedIds(new Set()); }} />
+                    </th>
                     <th style={s.th}>Business</th>
                     <th style={s.th}>Contact</th>
                     <th style={s.th}>Email</th>
@@ -1092,10 +1337,13 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {leads.length === 0 ? (
-                    <tr><td colSpan={9} style={{ ...s.td, textAlign: 'center', color: '#888', padding: '3rem' }}>No leads yet</td></tr>
-                  ) : leads.map(lead => (
+                  {filteredLeads.length === 0 ? (
+                    <tr><td colSpan={10} style={{ ...s.td, textAlign: 'center', color: '#888', padding: '3rem' }}>{hasActiveFilters ? 'No leads match filters' : 'No leads yet'}</td></tr>
+                  ) : filteredLeads.map(lead => (
                     <tr key={lead.id} className="admin-row" style={{ cursor: 'pointer' }} onClick={() => setDetailLead(lead)}>
+                      <td style={s.td} onClick={e => e.stopPropagation()}>
+                        <input type="checkbox" className="admin-checkbox" checked={selectedIds.has(lead.id)} onChange={() => toggleSelection(lead.id)} />
+                      </td>
                       <td style={s.td}>
                         <div style={{ color: '#F5F0E8', fontWeight: 500 }}>{lead.business_name}</div>
                         <div style={{ fontSize: '0.7rem', color: '#888', marginTop: '2px' }}>{lead.business_type}</div>
@@ -1122,13 +1370,10 @@ export default function AdminDashboard() {
                         {fmt(lead.created_at)}
                       </td>
                       <td style={s.td}>
-                        <button
-                          className="admin-view-btn"
-                          onClick={e => { e.stopPropagation(); setDetailLead(lead); }}
-                          style={s.viewBtn}
-                        >
-                          View
-                        </button>
+                        <div style={{ display: 'flex', gap: '0.3rem' }}>
+                          <button className="admin-view-btn" onClick={e => { e.stopPropagation(); setDetailLead(lead); }} style={s.viewBtn}>View</button>
+                          <button className="admin-delete-btn" onClick={e => { e.stopPropagation(); setDeleteConfirm({ type: 'lead', id: lead.id, name: lead.business_name }); }} style={{ ...s.viewBtn, color: '#cc4444', borderColor: '#441a1a' }}>✕</button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -1138,16 +1383,19 @@ export default function AdminDashboard() {
 
             {/* Mobile cards */}
             <div className="admin-cards-mobile">
-              {leads.length === 0 ? (
-                <div style={{ color: '#888', textAlign: 'center', padding: '3rem' }}>No leads yet</div>
-              ) : leads.map(lead => (
+              {filteredLeads.length === 0 ? (
+                <div style={{ color: '#888', textAlign: 'center', padding: '3rem' }}>{hasActiveFilters ? 'No leads match filters' : 'No leads yet'}</div>
+              ) : filteredLeads.map(lead => (
                 <div key={lead.id} style={{ padding: '1rem', borderBottom: '1px solid #1a1a1a', cursor: 'pointer' }} onClick={() => setDetailLead(lead)}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
                     <div>
                       <div style={{ color: '#F5F0E8', fontWeight: 500, fontSize: '0.9rem' }}>{lead.business_name}</div>
                       <div style={{ fontSize: '0.75rem', color: '#888' }}>{lead.email || 'No email'}</div>
                     </div>
-                    <button className="admin-view-btn" onClick={e => { e.stopPropagation(); setDetailLead(lead); }} style={s.viewBtn}>View</button>
+                    <div style={{ display: 'flex', gap: '0.3rem' }}>
+                      <button className="admin-view-btn" onClick={e => { e.stopPropagation(); setDetailLead(lead); }} style={s.viewBtn}>View</button>
+                      <button className="admin-delete-btn" onClick={e => { e.stopPropagation(); setDeleteConfirm({ type: 'lead', id: lead.id, name: lead.business_name }); }} style={{ ...s.viewBtn, color: '#cc4444', borderColor: '#441a1a' }}>✕</button>
+                    </div>
                   </div>
                   <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                     <Badge label={lead.plan} color={PLAN_COLORS[lead.plan] || '#555'} />
@@ -1164,6 +1412,9 @@ export default function AdminDashboard() {
               <table style={s.table}>
                 <thead>
                   <tr>
+                    <th style={s.th}>
+                      <input type="checkbox" className="admin-checkbox" checked={filteredScores.length > 0 && filteredScores.every(s2 => selectedIds.has(s2.id))} onChange={e => { if (e.target.checked) setSelectedIds(new Set(filteredScores.map(s2 => s2.id))); else setSelectedIds(new Set()); }} />
+                    </th>
                     <th style={s.th}>Firm</th>
                     <th style={s.th}>Email</th>
                     <th style={s.th}>Location</th>
@@ -1176,10 +1427,13 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {scores.length === 0 ? (
-                    <tr><td colSpan={9} style={{ ...s.td, textAlign: 'center', color: '#888', padding: '3rem' }}>No free scores yet</td></tr>
-                  ) : scores.map(score => (
+                  {filteredScores.length === 0 ? (
+                    <tr><td colSpan={10} style={{ ...s.td, textAlign: 'center', color: '#888', padding: '3rem' }}>{hasActiveFilters ? 'No scores match filters' : 'No free scores yet'}</td></tr>
+                  ) : filteredScores.map(score => (
                     <tr key={score.id} className="admin-row" style={{ cursor: 'pointer' }} onClick={() => setDetailScore(score)}>
+                      <td style={s.td} onClick={e => e.stopPropagation()}>
+                        <input type="checkbox" className="admin-checkbox" checked={selectedIds.has(score.id)} onChange={() => toggleSelection(score.id)} />
+                      </td>
                       <td style={s.td}>
                         <div style={{ color: '#F5F0E8', fontWeight: 500 }}>{score.firm_name}</div>
                         {score.specialty && <div style={{ fontSize: '0.7rem', color: '#888', marginTop: '2px' }}>{score.specialty}</div>}
@@ -1215,13 +1469,10 @@ export default function AdminDashboard() {
                         {fmt(score.created_at)}
                       </td>
                       <td style={s.td}>
-                        <button
-                          className="admin-view-btn"
-                          onClick={e => { e.stopPropagation(); setDetailScore(score); }}
-                          style={s.viewBtn}
-                        >
-                          View
-                        </button>
+                        <div style={{ display: 'flex', gap: '0.3rem' }}>
+                          <button className="admin-view-btn" onClick={e => { e.stopPropagation(); setDetailScore(score); }} style={s.viewBtn}>View</button>
+                          <button className="admin-delete-btn" onClick={e => { e.stopPropagation(); setDeleteConfirm({ type: 'score', id: score.id, name: score.firm_name }); }} style={{ ...s.viewBtn, color: '#cc4444', borderColor: '#441a1a' }}>✕</button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -1231,16 +1482,19 @@ export default function AdminDashboard() {
 
             {/* Mobile cards */}
             <div className="admin-cards-mobile">
-              {scores.length === 0 ? (
-                <div style={{ color: '#888', textAlign: 'center', padding: '3rem' }}>No free scores yet</div>
-              ) : scores.map(score => (
+              {filteredScores.length === 0 ? (
+                <div style={{ color: '#888', textAlign: 'center', padding: '3rem' }}>{hasActiveFilters ? 'No scores match filters' : 'No free scores yet'}</div>
+              ) : filteredScores.map(score => (
                 <div key={score.id} style={{ padding: '1rem', borderBottom: '1px solid #1a1a1a', cursor: 'pointer' }} onClick={() => setDetailScore(score)}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
                     <div>
                       <div style={{ color: '#F5F0E8', fontWeight: 500, fontSize: '0.9rem' }}>{score.firm_name}</div>
                       <div style={{ fontSize: '0.75rem', color: '#888' }}>{score.email || 'No email'} {score.city && ` | ${score.city}`}</div>
                     </div>
-                    <button className="admin-view-btn" onClick={e => { e.stopPropagation(); setDetailScore(score); }} style={s.viewBtn}>View</button>
+                    <div style={{ display: 'flex', gap: '0.3rem' }}>
+                      <button className="admin-view-btn" onClick={e => { e.stopPropagation(); setDetailScore(score); }} style={s.viewBtn}>View</button>
+                      <button className="admin-delete-btn" onClick={e => { e.stopPropagation(); setDeleteConfirm({ type: 'score', id: score.id, name: score.firm_name }); }} style={{ ...s.viewBtn, color: '#cc4444', borderColor: '#441a1a' }}>✕</button>
+                    </div>
                   </div>
                   <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
                     <Badge label={`${score.score}/100`} color={score.score >= 50 ? '#3a7d44' : score.score >= 25 ? '#C9A84C' : '#cc4444'} />

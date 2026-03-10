@@ -4,7 +4,7 @@ import { verifySessionToken, SESSION_COOKIE } from '@/lib/client-auth';
 import { Resend } from 'resend';
 import {
   FROM_EMAIL,
-  adminDissatisfiedAlert,
+  adminRatingAlert,
 } from '@/lib/email/templates';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -171,17 +171,6 @@ export async function POST(req: NextRequest) {
       });
 
     // Outreach email to the client is sent 24h later by the campaign cron
-    // Alert admin immediately so they can follow up
-    if (process.env.RESEND_API_KEY) {
-      const adminAlert = adminDissatisfiedAlert(email, businessName, rating, comment?.trim() || null, client.plan || null);
-      resend.emails.send({
-        from: FROM_EMAIL,
-        to: 'hello@presenzia.ai',
-        subject: adminAlert.subject,
-        html: adminAlert.html,
-      }).catch(err => console.error('Failed to send admin dissatisfied alert:', err));
-    }
-
     console.log(`⚠️ Dissatisfied client flagged: ${businessName || email} (${rating}★) — marketing suppressed`);
 
   } else if (rating >= 4) {
@@ -196,6 +185,17 @@ export async function POST(req: NextRequest) {
           console.warn('Could not clear marketing_suppressed:', updateErr.message);
         }
       });
+  }
+
+  // ✉️ Alert admin for ALL ratings (happy and dissatisfied)
+  if (process.env.RESEND_API_KEY) {
+    const adminAlert = adminRatingAlert(email, businessName, rating, comment?.trim() || null, client.plan || null);
+    resend.emails.send({
+      from: FROM_EMAIL,
+      to: 'hello@presenzia.ai',
+      subject: adminAlert.subject,
+      html: adminAlert.html,
+    }).catch(err => console.error('Failed to send admin rating alert:', err));
   }
 
   return NextResponse.json({ rating: upserted });
