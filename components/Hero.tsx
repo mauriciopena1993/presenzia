@@ -65,7 +65,7 @@ export default function Hero() {
         lineHeight: 1.75,
         fontWeight: 300,
       }}>
-        Clients are finding financial advisers on ChatGPT and Perplexity, not Google.
+        Clients are finding financial advisers on ChatGPT and AI search, not Google.
         Find out if your firm shows up, or if your competitors do instead.
       </p>
 
