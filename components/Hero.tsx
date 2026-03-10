@@ -70,7 +70,7 @@ export default function Hero() {
       </p>
 
       {/* CTA Buttons */}
-      <div className="hero-cta-row" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '3.5rem' }}>
+      <div className="hero-cta-row" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}>
         <Link href="/score" className="hero-cta-primary" style={{
           padding: '0.875rem 2rem',
           background: '#C9A84C',
@@ -100,41 +100,38 @@ export default function Hero() {
         </Link>
       </div>
 
-      {/* Social proof strip */}
-      <div className="hero-stats" style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '3rem',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        padding: '1.75rem 2.5rem 0.75rem',
+      {/* Single dominant stat */}
+      <div className="hero-proof" style={{
+        textAlign: 'center',
         width: '100%',
         maxWidth: '720px',
       }}>
-        {/* 79% stat with research citation */}
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.75rem', color: '#C9A84C', fontWeight: 600 }}>
-            79%
-            <span style={{ fontSize: '1.1rem', color: '#C9A84C', verticalAlign: 'super', marginLeft: '3px', opacity: 0.9, fontWeight: 400 }}>¹</span>
-          </div>
-          <div style={{ fontSize: '0.8rem', color: '#999999', letterSpacing: '0.04em', marginTop: '0.3rem' }}>of UK IFA firms not found on ChatGPT</div>
+        {/* 79% — dominant visual */}
+        <div style={{
+          fontFamily: "'Playfair Display', serif",
+          fontSize: 'clamp(3rem, 8vw, 4.5rem)',
+          color: '#C9A84C',
+          fontWeight: 600,
+          lineHeight: 1,
+          letterSpacing: '-0.02em',
+        }}>
+          79%
+          <span style={{ fontSize: '0.45em', verticalAlign: 'super', marginLeft: '3px', opacity: 0.8, fontWeight: 400 }}>¹</span>
         </div>
-        {/* Other stats */}
-        {[
-          { stat: '120+', label: 'wealth-specific prompts tested' },
-          { stat: '4', label: 'AI platforms audited' },
-        ].map((item) => (
-          <div key={item.stat} style={{ textAlign: 'center' }}>
-            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.75rem', color: '#C9A84C', fontWeight: 600 }}>{item.stat}</div>
-            <div style={{ fontSize: '0.8rem', color: '#999999', letterSpacing: '0.04em', marginTop: '0.3rem' }}>{item.label}</div>
-          </div>
-        ))}
-      </div>
-      {/* Research source line */}
-      <div style={{ marginTop: '0.5rem', textAlign: 'center' }}>
-        <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" style={{ fontSize: '0.65rem', color: '#666', textDecoration: 'none', letterSpacing: '0.03em', transition: 'color 0.2s', fontStyle: 'italic' }} className="hero-source-link">
-          ¹ presenzia.ai (2025). &ldquo;We Tested 149 UK IFA Firms on ChatGPT&rdquo;. AI Visibility Research, 10-region study.
-        </Link>
+        {/* Label */}
+        <div style={{ fontSize: '0.8rem', color: '#999999', letterSpacing: '0.04em', marginTop: '0.5rem' }}>
+          of UK IFA firms not found on ChatGPT
+        </div>
+        {/* Supporting text — collapses 120+ and 4 into one line */}
+        <div style={{ fontSize: '0.75rem', color: '#666666', marginTop: '0.6rem', letterSpacing: '0.02em' }}>
+          Tested across 120+ wealth-specific prompts on 4 AI platforms
+        </div>
+        {/* Footnote citation */}
+        <div style={{ marginTop: '0.5rem' }}>
+          <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" style={{ fontSize: '0.6875rem', color: '#555555', textDecoration: 'none', letterSpacing: '0.02em', transition: 'color 0.2s', fontStyle: 'italic' }} className="hero-source-link">
+            ¹ presenzia.ai (2025). &ldquo;We Tested 149 UK IFA Firms on ChatGPT&rdquo;. AI Visibility Research, 10-region study.
+          </Link>
+        </div>
       </div>
 
       {/* AI platform badges */}
@@ -163,11 +160,10 @@ export default function Hero() {
         .hero-source-link:hover { color: #C9A84C !important; }
         @media (max-width: 768px) {
           .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
-          .hero-stats { flex-direction: column; gap: 1rem !important; padding-top: 1rem !important; }
           .hero-badge { margin-bottom: 1.25rem !important; }
           .hero-headline { margin-bottom: 1rem !important; }
           .hero-subheadline { margin-bottom: 1.5rem !important; }
-          .hero-cta-row { margin-bottom: 2rem !important; }
+          .hero-cta-row { margin-bottom: 2.5rem !important; }
           .hero-platform-tags { display: grid !important; grid-template-columns: 1fr 1fr; gap: 0.5rem !important; justify-items: center; margin-top: 1.25rem !important; }
           .hero-platform-tags .platform-label { grid-column: 1 / -1; }
         }
