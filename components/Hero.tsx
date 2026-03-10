@@ -116,7 +116,7 @@ export default function Hero() {
           of UK IFA firms not found on ChatGPT
         </div>
         <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ display: 'inline-block', fontSize: '0.65rem', color: '#555555', textDecoration: 'none', marginTop: '0.5rem', transition: 'color 0.2s', fontStyle: 'italic' }}>
-          ¹ 149-firm study, presenzia.ai (2025)
+          ¹ 149-firm study, presenzia.ai (2026)
         </Link>
       </div>
 
