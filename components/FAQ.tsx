@@ -42,7 +42,7 @@ export default function FAQ() {
       maxWidth: '800px',
       margin: '0 auto',
     }}>
-      <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+      <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
         <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '1rem' }}>
           FAQs
         </div>

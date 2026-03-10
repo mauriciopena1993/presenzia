@@ -215,7 +215,7 @@ export default function Pricing() {
                 position: 'relative',
               }}
             >
-              {plan.name}
+              {plan.key === 'audit' ? 'Full Audit' : plan.name}
               {plan.highlighted && (
                 <span style={{
                   display: 'block',

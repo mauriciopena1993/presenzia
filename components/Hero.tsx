@@ -16,7 +16,7 @@ export default function Hero() {
       textAlign: 'center',
     }}>
       {/* Badge */}
-      <div style={{
+      <div className="hero-badge" style={{
         display: 'inline-flex',
         alignItems: 'center',
         gap: '0.5rem',
@@ -34,7 +34,7 @@ export default function Hero() {
       </div>
 
       {/* Headline */}
-      <h1 style={{
+      <h1 className="hero-headline" style={{
         fontFamily: "'Playfair Display', serif",
         fontSize: 'clamp(2rem, 5vw, 5rem)',
         fontWeight: 600,
@@ -57,7 +57,7 @@ export default function Hero() {
       </h1>
 
       {/* Subheadline */}
-      <p style={{
+      <p className="hero-subheadline" style={{
         fontSize: 'clamp(1rem, 2vw, 1.2rem)',
         color: '#AAAAAA',
         maxWidth: '620px',
@@ -70,7 +70,7 @@ export default function Hero() {
       </p>
 
       {/* CTA Buttons */}
-      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '3.5rem' }}>
+      <div className="hero-cta-row" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '3.5rem' }}>
         <Link href="/score" className="hero-cta-primary" style={{
           padding: '0.875rem 2rem',
           background: '#C9A84C',
@@ -138,8 +138,8 @@ export default function Hero() {
       </div>
 
       {/* AI platform badges */}
-      <div style={{ marginTop: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-        <span style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.1em', textTransform: 'uppercase', marginRight: '0.25rem' }}>Audited across</span>
+      <div className="hero-platform-tags" style={{ marginTop: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <span className="platform-label" style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.1em', textTransform: 'uppercase', marginRight: '0.25rem' }}>Audited across</span>
         {['ChatGPT', 'Claude', 'Perplexity', 'Google AI'].map((ai) => (
           <span key={ai} style={{
             padding: '0.3rem 0.75rem',
@@ -147,6 +147,8 @@ export default function Hero() {
             fontSize: '0.75rem',
             color: '#999999',
             letterSpacing: '0.05em',
+            textAlign: 'center',
+            minWidth: '90px',
           }}>{ai}</span>
         ))}
       </div>
@@ -161,7 +163,13 @@ export default function Hero() {
         .hero-source-link:hover { color: #C9A84C !important; }
         @media (max-width: 768px) {
           .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
-          .hero-stats { flex-direction: column; gap: 1.5rem !important; }
+          .hero-stats { flex-direction: column; gap: 1rem !important; padding-top: 1rem !important; }
+          .hero-badge { margin-bottom: 1.25rem !important; }
+          .hero-headline { margin-bottom: 1rem !important; }
+          .hero-subheadline { margin-bottom: 1.5rem !important; }
+          .hero-cta-row { margin-bottom: 2rem !important; }
+          .hero-platform-tags { display: grid !important; grid-template-columns: 1fr 1fr; gap: 0.5rem !important; justify-items: center; margin-top: 1.25rem !important; }
+          .hero-platform-tags .platform-label { grid-column: 1 / -1; }
         }
       `}</style>
     </section>

@@ -26,7 +26,7 @@ export default function FAQAccordion({ faqs }: { faqs: FAQItem[] }) {
             style={{
               width: '100%',
               textAlign: 'left',
-              padding: '1.5rem 0',
+              padding: '1.1rem 0',
               background: 'none',
               border: 'none',
               cursor: 'pointer',
@@ -64,7 +64,7 @@ export default function FAQAccordion({ faqs }: { faqs: FAQItem[] }) {
               color: '#AAAAAA',
               fontSize: '0.9rem',
               lineHeight: 1.8,
-              paddingBottom: '1.5rem',
+              paddingBottom: '1.1rem',
               margin: 0,
             }}>
               {faq.a}

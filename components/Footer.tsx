@@ -11,9 +11,12 @@ export default function Footer() {
         .footer-link:hover { color: #F5F0E8; }
         .footer-cta { transition: background 0.2s; }
         .footer-cta:hover { background: #E8C96A !important; }
+        @media (max-width: 480px) {
+          .footer-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+        }
       `}</style>
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        <div style={{
+        <div className="footer-grid" style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
           gap: '3rem',
