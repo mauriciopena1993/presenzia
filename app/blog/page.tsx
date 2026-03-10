@@ -48,6 +48,12 @@ export default function BlogPage() {
           </p>
         </div>
 
+        <style>{`
+          @media (max-width: 480px) {
+            .blog-thumb { display: none !important; }
+            .blog-post-row { gap: 1rem !important; }
+          }
+        `}</style>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
           {posts.map((post, i) => (
             <Link
@@ -61,9 +67,9 @@ export default function BlogPage() {
                 borderBottom: i === posts.length - 1 ? '1px solid #1A1A1A' : 'none',
               }}
             >
-              <div style={{ display: 'flex', gap: '1.75rem', alignItems: 'flex-start' }}>
-                {/* Thumbnail */}
-                <div style={{
+              <div className="blog-post-row" style={{ display: 'flex', gap: '1.75rem', alignItems: 'flex-start' }}>
+                {/* Thumbnail — hidden on mobile */}
+                <div className="blog-thumb" style={{
                   width: '140px',
                   height: '74px',
                   position: 'relative',

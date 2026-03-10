@@ -434,15 +434,24 @@ function ScorePageInner() {
       color: '#F5F0E8',
       position: 'relative',
     }}>
+      {/* Mobile responsive overrides */}
+      <style>{`
+        @media (max-width: 480px) {
+          .score-header { padding: 1rem 1rem !important; }
+          .score-container { padding: 2rem 1rem !important; }
+          .score-coverage-grid { grid-template-columns: 1fr !important; }
+          .score-proof-badges { gap: 0.75rem !important; flex-wrap: wrap !important; }
+        }
+      `}</style>
       {/* Header */}
-      <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1.25rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="score-header" style={{ borderBottom: '1px solid #1A1A1A', padding: '1.25rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', color: '#F5F0E8', textDecoration: 'none' }}>
           presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
         </Link>
         <Link href="/" style={{ color: '#999', fontSize: '0.85rem', textDecoration: 'none' }}>Back to home</Link>
       </div>
 
-      <div style={{ maxWidth: '560px', margin: '0 auto', padding: '3rem 1.5rem' }}>
+      <div className="score-container" style={{ maxWidth: '560px', margin: '0 auto', padding: '3rem 1.5rem' }}>
 
         {/* STEP 1: FORM */}
         {step === 'form' && (
@@ -512,7 +521,7 @@ function ScorePageInner() {
                 {/* Coverage Type */}
                 <div>
                   <label style={labelStyle}>Client reach <span style={{ color: '#C9A84C' }}>*</span></label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                  <div className="score-coverage-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
                     {COVERAGE_TYPES.map(ct => (
                       <button
                         key={ct.value}
@@ -691,7 +700,7 @@ function ScorePageInner() {
               </div>
             </form>
 
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginTop: '1.5rem', fontSize: '0.8rem', color: '#666' }}>
+            <div className="score-proof-badges" style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginTop: '1.5rem', fontSize: '0.8rem', color: '#666' }}>
               <span>✓ Completely free</span>
               <span>✓ Real AI data</span>
               <span>✓ No credit card</span>
