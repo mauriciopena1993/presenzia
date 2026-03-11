@@ -14,13 +14,13 @@ export default function Hero() {
       textAlign: 'center',
     }}>
       <div className="hero-wrapper" style={{
-        minHeight: 'calc(100vh - 4rem)',
+        minHeight: 'calc(82vh - 4rem)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        padding: 'clamp(0rem, 3vw, 5rem) 0 clamp(1rem, 2vw, 2rem)',
+        padding: 'clamp(0rem, 3vw, 4rem) 0 clamp(1rem, 2vw, 2rem)',
         boxSizing: 'border-box',
       }}>
 

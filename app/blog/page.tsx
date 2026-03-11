@@ -29,7 +29,10 @@ function fmtDate(d: string) {
 }
 
 export default function BlogPage() {
-  const posts = [...BLOG_POSTS].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const FEATURED_SLUG = 'we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible';
+  const allSorted = [...BLOG_POSTS].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const featured = allSorted.find(p => p.slug === FEATURED_SLUG);
+  const posts = allSorted.filter(p => p.slug !== FEATURED_SLUG);
 
   return (
     <div style={{ minHeight: '100vh', background: 'rgba(10,10,10,0.97)', fontFamily: 'var(--font-inter, Inter, sans-serif)', position: 'relative', zIndex: 1 }}>
@@ -52,8 +55,79 @@ export default function BlogPage() {
           @media (max-width: 480px) {
             .blog-thumb { display: none !important; }
             .blog-post-row { gap: 1rem !important; }
+            .featured-thumb { height: 160px !important; }
           }
         `}</style>
+
+        {/* Featured post — always pinned at top */}
+        {featured && (
+          <Link
+            href={`/blog/${featured.slug}`}
+            style={{
+              display: 'block',
+              marginBottom: '2.5rem',
+              textDecoration: 'none',
+              border: '1px solid rgba(201,168,76,0.2)',
+              background: 'rgba(201,168,76,0.03)',
+              overflow: 'hidden',
+              transition: 'border-color 0.2s',
+            }}
+            className="featured-post-link"
+          >
+            <div className="featured-thumb" style={{
+              position: 'relative',
+              width: '100%',
+              height: '220px',
+              overflow: 'hidden',
+            }}>
+              <Image
+                src={featured.heroImage}
+                alt={featured.heroImageAlt}
+                fill
+                style={{ objectFit: 'cover' }}
+                sizes="(max-width: 800px) 100vw, 800px"
+                priority
+              />
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(to top, rgba(10,10,10,0.7) 0%, transparent 60%)',
+                pointerEvents: 'none',
+              }} />
+              <div style={{
+                position: 'absolute',
+                top: '0.75rem',
+                left: '0.75rem',
+                padding: '0.25rem 0.6rem',
+                background: '#C9A84C',
+                color: '#0A0A0A',
+                fontSize: '0.65rem',
+                fontWeight: 700,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+              }}>
+                Featured
+              </div>
+            </div>
+            <div style={{ padding: '1.25rem 1.5rem' }}>
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginBottom: '0.5rem', flexWrap: 'wrap' as const }}>
+                <span style={{ fontSize: '0.7rem', color: '#C9A84C', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>
+                  {featured.category}
+                </span>
+                <span style={{ fontSize: '0.7rem', color: '#999' }}>{fmtDate(featured.date)}</span>
+                <span style={{ fontSize: '0.7rem', color: '#999' }}>{featured.readTime}</span>
+              </div>
+              <h2 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)', color: '#F5F0E8', fontWeight: 600, marginBottom: '0.5rem', lineHeight: 1.3 }}>
+                {featured.title}
+              </h2>
+              <p style={{ color: '#999', fontSize: '0.875rem', lineHeight: 1.65, margin: 0 }}>
+                {featured.description}
+              </p>
+            </div>
+          </Link>
+        )}
+
+        {/* All other posts */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
           {posts.map((post, i) => (
             <Link

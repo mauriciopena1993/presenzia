@@ -43,6 +43,59 @@ function fmtDate(d: string) {
   return new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
+/** Parse inline markdown: **bold** and [links](url) */
+function parseInline(text: string, keyPrefix: string = ''): React.ReactNode[] {
+  // First split by bold markers, then handle links within each segment
+  const boldParts = text.split(/\*\*(.*?)\*\*/g);
+  const nodes: React.ReactNode[] = [];
+  let nodeIdx = 0;
+
+  for (let k = 0; k < boldParts.length; k++) {
+    const segment = boldParts[k];
+    const isBold = k % 2 === 1;
+
+    // Split segment by markdown links [text](url)
+    const linkParts = segment.split(/\[([^\]]+)\]\(([^)]+)\)/g);
+    // linkParts pattern: [before, linkText, linkUrl, after, linkText, linkUrl, after, ...]
+
+    for (let m = 0; m < linkParts.length; m++) {
+      if (m % 3 === 0) {
+        // Plain text
+        if (linkParts[m]) {
+          if (isBold) {
+            nodes.push(<strong key={`${keyPrefix}-${nodeIdx++}`} style={{ color: '#F5F0E8' }}>{linkParts[m]}</strong>);
+          } else {
+            nodes.push(linkParts[m]);
+          }
+        }
+      } else if (m % 3 === 1) {
+        // Link text — next part (m+1) is the URL
+        const linkText = linkParts[m];
+        const linkUrl = linkParts[m + 1] || '#';
+        const isInternal = linkUrl.startsWith('/');
+        if (isBold) {
+          nodes.push(
+            <strong key={`${keyPrefix}-${nodeIdx++}`} style={{ color: '#F5F0E8' }}>
+              <Link href={linkUrl} style={{ color: '#C9A84C', textDecoration: 'underline', textUnderlineOffset: '2px' }} {...(!isInternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+                {linkText}
+              </Link>
+            </strong>
+          );
+        } else {
+          nodes.push(
+            <Link key={`${keyPrefix}-${nodeIdx++}`} href={linkUrl} style={{ color: '#C9A84C', textDecoration: 'underline', textUnderlineOffset: '2px' }} {...(!isInternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+              {linkText}
+            </Link>
+          );
+        }
+      }
+      // m % 3 === 2 is the URL, already consumed above
+    }
+  }
+
+  return nodes;
+}
+
 function renderContent(content: string) {
   const lines = content.split('\n');
   const elements: React.ReactNode[] = [];
@@ -69,21 +122,18 @@ function renderContent(content: string) {
               <thead>
                 <tr>
                   {headerCells.map((cell, ci) => (
-                    <th key={ci} style={{ padding: '0.5rem 0.75rem', borderBottom: '2px solid #333', color: '#F5F0E8', fontWeight: 600, textAlign: 'left', whiteSpace: 'nowrap' }}>{cell}</th>
+                    <th key={ci} style={{ padding: '0.5rem 0.75rem', borderBottom: '2px solid #333', color: '#F5F0E8', fontWeight: 600, textAlign: 'left', whiteSpace: 'nowrap' }}>{parseInline(cell, `th-${i}-${ci}`)}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {bodyRows.map((row, ri) => (
                   <tr key={ri}>
-                    {row.map((cell, ci) => {
-                      const boldParts = cell.split(/\*\*(.*?)\*\*/g);
-                      return (
-                        <td key={ci} style={{ padding: '0.4rem 0.75rem', borderBottom: '1px solid #1A1A1A', color: '#AAAAAA' }}>
-                          {boldParts.map((part, k) => k % 2 === 1 ? <strong key={k} style={{ color: '#F5F0E8' }}>{part}</strong> : part)}
-                        </td>
-                      );
-                    })}
+                    {row.map((cell, ci) => (
+                      <td key={ci} style={{ padding: '0.4rem 0.75rem', borderBottom: '1px solid #1A1A1A', color: '#AAAAAA' }}>
+                        {parseInline(cell, `td-${i}-${ri}-${ci}`)}
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
@@ -98,19 +148,19 @@ function renderContent(content: string) {
     if (line.startsWith('### ')) {
       elements.push(
         <h3 key={i} style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.15rem', color: '#F5F0E8', fontWeight: 600, marginTop: '2rem', marginBottom: '0.5rem', lineHeight: 1.3 }}>
-          {line.slice(4)}
+          {parseInline(line.slice(4), `h3-${i}`)}
         </h3>
       );
     } else if (line.startsWith('## ')) {
       elements.push(
         <h2 key={i} style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.4rem', color: '#F5F0E8', fontWeight: 600, marginTop: '2.5rem', marginBottom: '0.75rem', lineHeight: 1.3 }}>
-          {line.slice(3)}
+          {parseInline(line.slice(3), `h2-${i}`)}
         </h2>
       );
     } else if (line.startsWith('**') && line.endsWith('**')) {
       elements.push(
         <p key={i} style={{ color: '#F5F0E8', fontWeight: 600, fontSize: '1rem', lineHeight: 1.7, marginBottom: '0.5rem' }}>
-          {line.slice(2, -2)}
+          {parseInline(line.slice(2, -2), `bold-${i}`)}
         </p>
       );
     } else if (line.startsWith('- ')) {
@@ -121,14 +171,11 @@ function renderContent(content: string) {
       }
       elements.push(
         <ul key={i} style={{ paddingLeft: '1.5rem', marginBottom: '1.25rem' }}>
-          {items.map((item, j) => {
-            const parts = item.split(/\*\*(.*?)\*\*/g);
-            return (
-              <li key={j} style={{ color: '#AAAAAA', fontSize: '1rem', lineHeight: 1.7, marginBottom: '0.4rem' }}>
-                {parts.map((part, k) => k % 2 === 1 ? <strong key={k} style={{ color: '#F5F0E8' }}>{part}</strong> : part)}
-              </li>
-            );
-          })}
+          {items.map((item, j) => (
+            <li key={j} style={{ color: '#AAAAAA', fontSize: '1rem', lineHeight: 1.7, marginBottom: '0.4rem' }}>
+              {parseInline(item, `ul-${i}-${j}`)}
+            </li>
+          ))}
         </ul>
       );
     } else if (/^\d+\.\s/.test(line)) {
@@ -140,24 +187,20 @@ function renderContent(content: string) {
       }
       elements.push(
         <ol key={i} style={{ paddingLeft: '1.5rem', marginBottom: '1.25rem' }}>
-          {items.map((item, j) => {
-            const parts = item.split(/\*\*(.*?)\*\*/g);
-            return (
-              <li key={j} style={{ color: '#AAAAAA', fontSize: '1rem', lineHeight: 1.7, marginBottom: '0.4rem' }}>
-                {parts.map((part, k) => k % 2 === 1 ? <strong key={k} style={{ color: '#F5F0E8' }}>{part}</strong> : part)}
-              </li>
-            );
-          })}
+          {items.map((item, j) => (
+            <li key={j} style={{ color: '#AAAAAA', fontSize: '1rem', lineHeight: 1.7, marginBottom: '0.4rem' }}>
+              {parseInline(item, `ol-${i}-${j}`)}
+            </li>
+          ))}
         </ol>
       );
     } else if (line.trim() === '') {
       // skip blank lines
     } else {
-      // Regular paragraph — handle **bold** inline
-      const parts = line.split(/\*\*(.*?)\*\*/g);
+      // Regular paragraph — handle **bold** and [links](url) inline
       elements.push(
         <p key={i} style={{ color: '#AAAAAA', fontSize: '1rem', lineHeight: 1.75, marginBottom: '1.25rem' }}>
-          {parts.map((part, k) => k % 2 === 1 ? <strong key={k} style={{ color: '#F5F0E8' }}>{part}</strong> : part)}
+          {parseInline(line, `p-${i}`)}
         </p>
       );
     }
@@ -174,17 +217,22 @@ export default async function BlogPostPage({ params }: Props) {
   if (!post) notFound();
 
   const url = `https://presenzia.ai/blog/${slug}`;
+  const wordCount = post.content.split(/\s+/).filter(Boolean).length;
   const blogPostingSchema = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.description,
     datePublished: post.date,
+    dateModified: post.date,
+    wordCount,
     url,
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
-    author: post.author
-      ? { '@type': 'Person', name: post.author }
-      : { '@type': 'Organization', name: 'presenzia.ai', url: 'https://presenzia.ai' },
+    author: {
+      '@type': 'Person',
+      name: post.author || 'Presenzia Team',
+      url: 'https://presenzia.ai/about',
+    },
     publisher: {
       '@type': 'Organization',
       name: 'presenzia.ai',
@@ -194,11 +242,25 @@ export default async function BlogPostPage({ params }: Props) {
     image: `https://presenzia.ai/blog/${slug}/opengraph-image`,
   };
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://presenzia.ai' },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://presenzia.ai/blog' },
+      { '@type': 'ListItem', position: 3, name: post.title, item: url },
+    ],
+  };
+
   return (
     <div style={{ minHeight: '100vh', background: 'rgba(10,10,10,0.97)', fontFamily: 'var(--font-inter, Inter, sans-serif)', position: 'relative', zIndex: 1 }}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <Navbar />
 

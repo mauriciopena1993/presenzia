@@ -5,6 +5,7 @@ import HowItWorks from '@/components/HowItWorks';
 import SampleReport from '@/components/SampleReport';
 import Testimonials from '@/components/Testimonials';
 import MidPageCTA from '@/components/MidPageCTA';
+import LatestInsights from '@/components/LatestInsights';
 import PricingAnchor from '@/components/PricingAnchor';
 import FAQ from '@/components/FAQ';
 import Footer from '@/components/Footer';
@@ -109,6 +110,7 @@ export default function Home() {
         <HowItWorks />
         <SampleReport />
         <Testimonials />
+        <LatestInsights />
         <PricingAnchor />
         <FAQ />
         <MidPageCTA />

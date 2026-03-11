@@ -752,6 +752,10 @@ export default function AdminDashboard() {
   // Bulk selection
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
+  // IndexNow
+  const [indexing, setIndexing] = useState(false);
+  const [indexResult, setIndexResult] = useState('');
+
   useEffect(() => {
     const load = async () => {
       try {
@@ -894,6 +898,25 @@ export default function AdminDashboard() {
     if (tab === 'clients') exportClients(filteredClients);
     else if (tab === 'leads') exportLeads(filteredLeads);
     else exportFreeScores(filteredScores);
+  };
+
+  const handleIndexNow = async () => {
+    setIndexing(true);
+    setIndexResult('');
+    try {
+      const res = await fetch('/api/admin/index-now', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        const okCount = data.results.filter((r: { ok: boolean }) => r.ok).length;
+        setIndexResult(`✓ ${data.urlCount} URLs submitted to ${okCount}/${data.results.length} search engines`);
+      } else {
+        setIndexResult(`✗ ${data.error || 'Failed'}`);
+      }
+    } catch {
+      setIndexResult('✗ Network error');
+    }
+    setIndexing(false);
+    setTimeout(() => setIndexResult(''), 8000);
   };
 
   /* Stats */
@@ -1145,24 +1168,43 @@ export default function AdminDashboard() {
               Free Scores ({hasActiveFilters ? `${filteredScores.length}/${scores.length}` : scores.length})
             </button>
           </div>
-          <button
-            className="admin-export-btn"
-            onClick={handleExport}
-            style={{
-              background: 'none',
-              border: '1px solid #333',
-              color: '#999',
-              padding: '0.4rem 1rem',
-              fontSize: '0.78rem',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-              marginBottom: '1rem',
-              transition: 'all 0.2s',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Export to CSV
-          </button>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '1rem' }}>
+            <button
+              className="admin-export-btn"
+              onClick={handleExport}
+              style={{
+                background: 'none',
+                border: '1px solid #333',
+                color: '#999',
+                padding: '0.4rem 1rem',
+                fontSize: '0.78rem',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                transition: 'all 0.2s',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Export to CSV
+            </button>
+            <button
+              onClick={handleIndexNow}
+              disabled={indexing}
+              style={{
+                background: 'none',
+                border: '1px solid #333',
+                color: indexResult.startsWith('✓') ? '#4ade80' : indexResult.startsWith('✗') ? '#f87171' : '#999',
+                padding: '0.4rem 1rem',
+                fontSize: '0.78rem',
+                cursor: indexing ? 'wait' : 'pointer',
+                fontFamily: 'inherit',
+                transition: 'all 0.2s',
+                whiteSpace: 'nowrap',
+                opacity: indexing ? 0.6 : 1,
+              }}
+            >
+              {indexing ? 'Submitting…' : indexResult || '📡 Submit to Search Engines'}
+            </button>
+          </div>
         </div>
 
         {loading ? (
