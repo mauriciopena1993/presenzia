@@ -6,19 +6,19 @@ export default function Hero() {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      padding: '0 clamp(1.5rem, 5vw, 2rem)',
+      padding: '72px clamp(1.5rem, 5vw, 2rem) 0',
       boxSizing: 'border-box',
       width: '100%',
       position: 'relative',
-      overflow: 'hidden',
       textAlign: 'center',
+      zIndex: 2,
     }}>
       <div className="hero-wrapper" style={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         width: '100%',
-        padding: 'clamp(3rem, 8vw, 7rem) 0 clamp(1rem, 2vw, 1.5rem)',
+        padding: 'clamp(1.25rem, 2vw, 2rem) 0 clamp(1rem, 2vw, 1.5rem)',
         boxSizing: 'border-box',
       }}>
 
@@ -134,6 +134,18 @@ export default function Hero() {
 
       </div>
 
+      {/* Bottom fade overlay — extends below hero, covers the peek of next section */}
+      <div style={{
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: '25vh',
+        background: 'linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.5) 25%, rgba(10,10,10,0.88) 60%, #0A0A0A 100%)',
+        pointerEvents: 'none',
+        transform: 'translateY(100%)',
+      }} />
+
       <style>{`
         @keyframes pulse {
           0%, 100% { opacity: 1; }
@@ -143,7 +155,7 @@ export default function Hero() {
         .hero-cta-secondary:hover { border-color: #C9A84C !important; color: #F5F0E8 !important; }
         .hero-source-link:hover { color: #C9A84C !important; }
         @media (max-width: 768px) {
-          .hero-wrapper { padding-top: 2rem !important; padding-bottom: 0 !important; }
+          .hero-wrapper { padding-top: 1.25rem !important; padding-bottom: 0 !important; }
           .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
           .hero-badge { margin-bottom: 1rem !important; }
           .hero-headline { margin-bottom: 1rem !important; }

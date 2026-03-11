@@ -33,7 +33,7 @@ export default function Navbar() {
       }}
     >
       {/* Logo */}
-      <Link href="/" style={{ textDecoration: 'none' }}>
+      <Link href="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} style={{ textDecoration: 'none' }}>
         <span style={{
           fontFamily: "'Playfair Display', serif",
           fontSize: '1.4rem',
