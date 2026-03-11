@@ -52,6 +52,7 @@ export default function Hero() {
           maxWidth: '100%',
           marginBottom: 'clamp(1.25rem, 3vw, 2rem)',
           letterSpacing: '-0.02em',
+          textWrap: 'balance' as any,
         }}>
           Is your firm{' '}
           <span style={{
@@ -80,7 +81,7 @@ export default function Hero() {
           <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.04em', maxWidth: '380px', lineHeight: 1.6, margin: '0.75rem auto 0', textWrap: 'balance' as any }}>
             of UK IFA firms are not found on ChatGPT, Claude, Google AI, and Perplexity
           </div>
-          <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ display: 'inline-block', fontSize: '0.65rem', color: '#555555', textDecoration: 'none', marginTop: '0.5rem', transition: 'color 0.2s', fontStyle: 'italic' }}>
+          <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ display: 'inline-block', fontSize: '0.65rem', color: '#555555', textDecoration: 'none', marginTop: '0.5rem', transition: 'color 0.2s', fontStyle: 'italic', textWrap: 'balance' as any }}>
             ¹ 149-firm study, presenzia.ai (2026)
           </Link>
         </div>
