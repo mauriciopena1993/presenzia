@@ -66,7 +66,20 @@ export default function Hero() {
           to AI search?
         </h1>
 
-        {/* 79% stat — the answer */}
+        {/* Bridge text — now before the stat */}
+        <p className="hero-subheadline" style={{
+          fontSize: 'clamp(0.95rem, 1.8vw, 1.1rem)',
+          color: '#AAAAAA',
+          maxWidth: '520px',
+          marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)',
+          lineHeight: 1.75,
+          fontWeight: 300,
+          textWrap: 'balance' as any,
+        }}>
+          Clients are finding their financial advisers through AI. Are they finding you or your competitors?
+        </p>
+
+        {/* 79% stat — the proof */}
         <div className="hero-stat-block" style={{ textAlign: 'center', width: '100%', marginBottom: 'clamp(1.25rem, 3vw, 2rem)' }}>
           <div style={{
             fontFamily: "'Playfair Display', serif",
@@ -79,25 +92,12 @@ export default function Hero() {
             79%<span style={{ fontSize: '0.4em', verticalAlign: 'super', marginLeft: '2px', opacity: 0.7, fontWeight: 400 }}>¹</span>
           </div>
           <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.04em', maxWidth: '380px', lineHeight: 1.6, margin: '0.75rem auto 0', textWrap: 'balance' as any }}>
-            of UK IFA firms are not found on ChatGPT, Claude, Google AI, and Perplexity
+            of UK IFA firms are not found on AI searches
           </div>
           <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ display: 'inline-block', fontSize: '0.65rem', color: '#555555', textDecoration: 'none', marginTop: '0.5rem', transition: 'color 0.2s', fontStyle: 'italic', textWrap: 'balance' as any }}>
             ¹ 149-firm study, presenzia.ai (2026)
           </Link>
         </div>
-
-        {/* Bridge text — pushes to action */}
-        <p className="hero-subheadline" style={{
-          fontSize: 'clamp(0.95rem, 1.8vw, 1.1rem)',
-          color: '#AAAAAA',
-          maxWidth: '520px',
-          marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)',
-          lineHeight: 1.75,
-          fontWeight: 300,
-          textWrap: 'balance' as any,
-        }}>
-          Clients are finding their Financial Advisers through AI. Are they finding you or your competitors?
-        </p>
 
         {/* CTA Buttons */}
         <div className="hero-cta-row" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -129,6 +129,17 @@ export default function Hero() {
             See a sample IFA audit
           </Link>
         </div>
+
+        {/* Audited platforms — fills bottom space */}
+        <div className="hero-audited" style={{
+          marginTop: 'clamp(2.5rem, 5vw, 4rem)',
+          fontSize: '0.7rem',
+          color: '#666666',
+          letterSpacing: '0.06em',
+          textWrap: 'balance' as any,
+        }}>
+          Audited on ChatGPT, Claude, Google AI, and Perplexity
+        </div>
       </div>
 
       <style>{`
@@ -145,8 +156,9 @@ export default function Hero() {
           .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
           .hero-badge { margin-bottom: 1rem !important; }
           .hero-headline { margin-bottom: 1rem !important; }
-          .hero-stat-block { margin-bottom: 3.5rem !important; }
-          .hero-subheadline { margin-bottom: 2.5rem !important; }
+          .hero-subheadline { margin-bottom: 2rem !important; }
+          .hero-stat-block { margin-bottom: 2rem !important; }
+          .hero-audited { margin-top: 2rem !important; }
         }
       `}</style>
     </section>
