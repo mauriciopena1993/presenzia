@@ -78,7 +78,7 @@ export default function Hero() {
             79%<span style={{ fontSize: '0.4em', verticalAlign: 'super', marginLeft: '2px', opacity: 0.7, fontWeight: 400 }}>¹</span>
           </div>
           <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.04em', maxWidth: '380px', lineHeight: 1.6, margin: '0.75rem auto 0' }}>
-            of UK IFA firms not found on ChatGPT, Claude, Google AI, and Perplexity
+            of UK IFA firms are not found on ChatGPT, Claude, Google AI, and Perplexity
           </div>
           <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ display: 'inline-block', fontSize: '0.65rem', color: '#555555', textDecoration: 'none', marginTop: '0.5rem', transition: 'color 0.2s', fontStyle: 'italic' }}>
             ¹ 149-firm study, presenzia.ai (2026)
