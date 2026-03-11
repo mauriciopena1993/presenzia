@@ -141,6 +141,7 @@ export default function Hero() {
         .hero-source-link:hover { color: #C9A84C !important; }
         @media (max-width: 768px) {
           .hero-wrapper { justify-content: flex-start !important; padding-top: 18vh !important; padding-bottom: 0 !important; }
+          .hero-cta-row { gap: 1.25rem !important; }
           .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
           .hero-badge { margin-bottom: 1rem !important; }
           .hero-headline { margin-bottom: 1rem !important; }
