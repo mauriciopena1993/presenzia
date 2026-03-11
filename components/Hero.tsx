@@ -13,7 +13,6 @@ export default function Hero() {
       overflow: 'hidden',
       textAlign: 'center',
     }}>
-      {/* Main hero content — vertically centered, fills viewport */}
       <div className="hero-wrapper" style={{
         minHeight: '100vh',
         display: 'flex',
@@ -21,10 +20,11 @@ export default function Hero() {
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        padding: 'clamp(0rem, 3vw, 5rem) 0 clamp(3rem, 5vw, 4rem)',
+        padding: 'clamp(0rem, 3vw, 5rem) 0 clamp(2rem, 3vw, 3rem)',
         boxSizing: 'border-box',
       }}>
-        {/* Badge */}
+
+        {/* 1. Badge */}
         <div className="hero-badge" style={{
           display: 'inline-flex',
           alignItems: 'center',
@@ -42,7 +42,7 @@ export default function Hero() {
           AI Visibility for IFAs and Wealth Managers
         </div>
 
-        {/* Headline — the question */}
+        {/* 2. Headline */}
         <h1 className="hero-headline" style={{
           fontFamily: "'Playfair Display', serif",
           fontSize: 'clamp(2rem, 5vw, 5rem)',
@@ -66,80 +66,75 @@ export default function Hero() {
           to AI search?
         </h1>
 
-        {/* Bridge text — now before the stat */}
+        {/* 3. Subheadline (79% stat embedded) */}
         <p className="hero-subheadline" style={{
           fontSize: 'clamp(0.95rem, 1.8vw, 1.1rem)',
           color: '#AAAAAA',
           maxWidth: '520px',
-          marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)',
+          marginBottom: '0.75rem',
           lineHeight: 1.75,
           fontWeight: 300,
           textWrap: 'balance' as any,
         }}>
-          Clients are finding their financial advisers through AI. Are they finding you or your competitors?
+          79%<Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ fontSize: '0.6em', verticalAlign: 'super', color: '#555555', textDecoration: 'none', transition: 'color 0.2s' }}><sup>¹</sup></Link> of UK IFA firms aren&apos;t found when clients ask ChatGPT, Claude, or Perplexity for a recommendation. Are you one of them?
         </p>
 
-        {/* 79% stat — the proof */}
-        <div className="hero-stat-block" style={{ textAlign: 'center', width: '100%', marginBottom: 'clamp(1.25rem, 3vw, 2rem)' }}>
-          <div style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: 'clamp(3rem, 8vw, 4.5rem)',
-            color: '#C9A84C',
-            fontWeight: 600,
-            lineHeight: 1,
-            letterSpacing: '-0.02em',
-          }}>
-            79%<span style={{ fontSize: '0.4em', verticalAlign: 'super', marginLeft: '2px', opacity: 0.7, fontWeight: 400 }}>¹</span>
-          </div>
-          <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.04em', maxWidth: '380px', lineHeight: 1.6, margin: '0.75rem auto 0', textWrap: 'balance' as any }}>
-            of UK IFA firms are not found on AI searches
-          </div>
-          <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ display: 'inline-block', fontSize: '0.65rem', color: '#555555', textDecoration: 'none', marginTop: '0.5rem', transition: 'color 0.2s', fontStyle: 'italic', textWrap: 'balance' as any }}>
+        {/* 4. Footnote */}
+        <div className="hero-footnote" style={{
+          fontSize: '0.6875rem',
+          color: '#555555',
+          fontStyle: 'italic',
+          marginBottom: 'clamp(2rem, 4vw, 3rem)',
+          textWrap: 'balance' as any,
+        }}>
+          <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ color: '#555555', textDecoration: 'none', transition: 'color 0.2s' }}>
             ¹ 149-firm study, presenzia.ai (2026)
           </Link>
         </div>
 
-        {/* CTA Buttons */}
-        <div className="hero-cta-row" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <Link href="/score" className="hero-cta-primary" style={{
-            padding: '0.875rem 2rem',
-            background: '#C9A84C',
-            color: '#0A0A0A',
-            fontWeight: 600,
-            fontSize: '0.9rem',
-            textDecoration: 'none',
-            letterSpacing: '0.02em',
-            transition: 'all 0.2s',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-          }}>
-            Get my free visibility score →
-          </Link>
-          <Link href="#sample-report" className="hero-cta-secondary" style={{
-            padding: '0.875rem 2rem',
-            background: 'transparent',
-            color: '#CCCCCC',
-            fontWeight: 400,
-            fontSize: '0.9rem',
-            textDecoration: 'none',
-            border: '1px solid #555555',
-            transition: 'all 0.2s',
-          }}>
-            See a sample IFA audit
-          </Link>
-        </div>
+        {/* 5. Primary CTA */}
+        <Link href="/score" className="hero-cta-primary" style={{
+          padding: '0.875rem 2rem',
+          background: '#C9A84C',
+          color: '#0A0A0A',
+          fontWeight: 600,
+          fontSize: '0.9rem',
+          textDecoration: 'none',
+          letterSpacing: '0.02em',
+          transition: 'all 0.2s',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          marginBottom: '1rem',
+        }}>
+          Get my free visibility score →
+        </Link>
 
-        {/* Audited platforms — fills bottom space */}
-        <div className="hero-audited" style={{
-          marginTop: 'clamp(2.5rem, 5vw, 4rem)',
+        {/* 6. Secondary CTA */}
+        <Link href="#sample-report" className="hero-cta-secondary" style={{
+          padding: '0.875rem 2rem',
+          background: 'transparent',
+          color: '#CCCCCC',
+          fontWeight: 400,
+          fontSize: '0.9rem',
+          textDecoration: 'none',
+          border: '1px solid #555555',
+          transition: 'all 0.2s',
+          marginBottom: 'clamp(2rem, 4vw, 3rem)',
+        }}>
+          See a sample IFA audit
+        </Link>
+
+        {/* 7. Platform trust line */}
+        <div className="hero-platforms" style={{
           fontSize: '0.7rem',
-          color: '#666666',
-          letterSpacing: '0.06em',
+          color: '#555555',
+          letterSpacing: '0.04em',
           textWrap: 'balance' as any,
         }}>
-          Audited on ChatGPT, Claude, Google AI, and Perplexity
+          Audited across ChatGPT, Claude, Google AI, and Perplexity
         </div>
+
       </div>
 
       <style>{`
@@ -151,14 +146,15 @@ export default function Hero() {
         .hero-cta-secondary:hover { border-color: #C9A84C !important; color: #F5F0E8 !important; }
         .hero-source-link:hover { color: #C9A84C !important; }
         @media (max-width: 768px) {
-          .hero-wrapper { justify-content: flex-start !important; padding-top: 18vh !important; padding-bottom: 0 !important; }
-          .hero-cta-row { gap: 1.25rem !important; }
+          .hero-wrapper { justify-content: flex-start !important; padding-top: 14vh !important; padding-bottom: 0 !important; }
           .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
           .hero-badge { margin-bottom: 1rem !important; }
           .hero-headline { margin-bottom: 1rem !important; }
-          .hero-subheadline { margin-bottom: 2rem !important; }
-          .hero-stat-block { margin-bottom: 2rem !important; }
-          .hero-audited { margin-top: 2rem !important; }
+          .hero-subheadline { margin-bottom: 0.5rem !important; }
+          .hero-footnote { margin-bottom: 2rem !important; }
+          .hero-cta-primary { margin-bottom: 0.75rem !important; }
+          .hero-cta-secondary { margin-bottom: 1.5rem !important; }
+          .hero-platforms { margin-bottom: 1rem !important; }
         }
       `}</style>
     </section>
