@@ -144,7 +144,7 @@ export default function Hero() {
           .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
           .hero-badge { margin-bottom: 1rem !important; }
           .hero-headline { margin-bottom: 1rem !important; }
-          .hero-subheadline { margin-bottom: 1.25rem !important; font-size: 0.85rem !important; }
+          .hero-subheadline { margin-bottom: 0.75rem !important; font-size: 0.85rem !important; }
         }
       `}</style>
     </section>
