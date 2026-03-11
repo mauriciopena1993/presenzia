@@ -11,14 +11,13 @@ export default function Hero() {
       width: '100%',
       position: 'relative',
       textAlign: 'center',
-      zIndex: 2,
     }}>
       <div className="hero-wrapper" style={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         width: '100%',
-        padding: 'clamp(1.25rem, 2vw, 2rem) 0 clamp(1rem, 2vw, 1.5rem)',
+        padding: 'clamp(2.5rem, 4vw, 4rem) 0 clamp(3rem, 6vw, 5rem)',
         boxSizing: 'border-box',
       }}>
 
@@ -30,7 +29,7 @@ export default function Hero() {
           padding: '0.375rem 1rem',
           border: '1px solid rgba(201,168,76,0.35)',
           background: 'rgba(201,168,76,0.06)',
-          marginBottom: '1.25rem',
+          marginBottom: 'clamp(1.5rem, 2.5vw, 2rem)',
           fontSize: '0.75rem',
           letterSpacing: '0.1em',
           color: '#C9A84C',
@@ -48,7 +47,7 @@ export default function Hero() {
           color: '#F5F0E8',
           lineHeight: 1.1,
           maxWidth: '100%',
-          marginBottom: 'clamp(1.25rem, 3vw, 2rem)',
+          marginBottom: 'clamp(1.75rem, 3.5vw, 2.5rem)',
           letterSpacing: '-0.02em',
           textWrap: 'balance' as any,
         }}>
@@ -69,7 +68,7 @@ export default function Hero() {
           fontSize: 'clamp(0.95rem, 1.8vw, 1.1rem)',
           color: '#AAAAAA',
           maxWidth: '520px',
-          marginBottom: '0.75rem',
+          marginBottom: '1rem',
           lineHeight: 1.75,
           fontWeight: 300,
           textWrap: 'balance' as any,
@@ -82,7 +81,7 @@ export default function Hero() {
           fontSize: '0.6875rem',
           color: '#888888',
           fontStyle: 'italic',
-          marginBottom: 'clamp(2rem, 4vw, 3rem)',
+          marginBottom: 'clamp(2.5rem, 5vw, 3.5rem)',
           textWrap: 'balance' as any,
         }}>
           <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ color: '#888888', textDecoration: 'none', transition: 'color 0.2s' }}>
@@ -103,7 +102,7 @@ export default function Hero() {
           display: 'inline-flex',
           alignItems: 'center',
           gap: '0.5rem',
-          marginBottom: '0.5rem',
+          marginBottom: '0.75rem',
         }}>
           Get my free visibility score →
         </Link>
@@ -112,7 +111,7 @@ export default function Hero() {
         <div style={{
           fontSize: '0.75rem',
           color: '#999999',
-          marginBottom: '1.25rem',
+          marginBottom: '1.75rem',
           textWrap: 'balance' as any,
         }}>
           No credit card. A real AI audit of your firm in under 60 seconds.
@@ -134,18 +133,6 @@ export default function Hero() {
 
       </div>
 
-      {/* Bottom fade overlay — extends below hero, covers the peek of next section */}
-      <div style={{
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: '25vh',
-        background: 'linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.5) 25%, rgba(10,10,10,0.88) 60%, #0A0A0A 100%)',
-        pointerEvents: 'none',
-        transform: 'translateY(100%)',
-      }} />
-
       <style>{`
         @keyframes pulse {
           0%, 100% { opacity: 1; }
@@ -155,13 +142,13 @@ export default function Hero() {
         .hero-cta-secondary:hover { border-color: #C9A84C !important; color: #F5F0E8 !important; }
         .hero-source-link:hover { color: #C9A84C !important; }
         @media (max-width: 768px) {
-          .hero-wrapper { padding-top: 1.25rem !important; padding-bottom: 0 !important; }
+          .hero-wrapper { padding-top: 3rem !important; padding-bottom: 6.5rem !important; }
           .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
-          .hero-badge { margin-bottom: 1rem !important; }
-          .hero-headline { margin-bottom: 1rem !important; }
-          .hero-subheadline { margin-bottom: 0.5rem !important; }
-          .hero-footnote { margin-bottom: 2rem !important; }
-          .hero-cta-primary { margin-bottom: 0.35rem !important; }
+          .hero-badge { margin-bottom: 1.5rem !important; }
+          .hero-headline { margin-bottom: 2rem !important; }
+          .hero-subheadline { margin-bottom: 1rem !important; }
+          .hero-footnote { margin-bottom: 3rem !important; }
+          .hero-cta-primary { margin-bottom: 0.625rem !important; }
         }
       `}</style>
     </section>
