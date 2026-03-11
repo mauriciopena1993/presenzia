@@ -21,7 +21,7 @@ export default function Hero() {
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        padding: 'clamp(5rem, 8vw, 7rem) 0 clamp(3rem, 5vw, 4rem)',
+        padding: 'clamp(4rem, 6vw, 5rem) 0 clamp(3rem, 5vw, 4rem)',
         boxSizing: 'border-box',
       }}>
         {/* Badge */}
@@ -32,7 +32,7 @@ export default function Hero() {
           padding: '0.375rem 1rem',
           border: '1px solid rgba(201,168,76,0.35)',
           background: 'rgba(201,168,76,0.06)',
-          marginBottom: '2rem',
+          marginBottom: '1.25rem',
           fontSize: '0.75rem',
           letterSpacing: '0.1em',
           color: '#C9A84C',
@@ -121,29 +121,13 @@ export default function Hero() {
           }}>
             79%<span style={{ fontSize: '0.4em', verticalAlign: 'super', marginLeft: '2px', opacity: 0.7, fontWeight: 400 }}>¹</span>
           </div>
-          <div style={{ fontSize: '0.85rem', color: '#999999', letterSpacing: '0.04em', marginTop: '0.75rem' }}>
-            of UK IFA firms not found on AI search
+          <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.04em', maxWidth: '380px', lineHeight: 1.6, margin: '0.75rem auto 0' }}>
+            of UK IFA firms not found on ChatGPT, Claude, Google AI, and Perplexity
           </div>
           <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ display: 'inline-block', fontSize: '0.65rem', color: '#555555', textDecoration: 'none', marginTop: '0.5rem', transition: 'color 0.2s', fontStyle: 'italic' }}>
             ¹ 149-firm study, presenzia.ai (2026)
           </Link>
         </div>
-      </div>
-
-      {/* AI platform badges — below the fold */}
-      <div className="hero-platform-tags" style={{ padding: '1rem 0 clamp(1.5rem, 3vw, 2rem)', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-        <span className="platform-label" style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.1em', textTransform: 'uppercase', marginRight: '0.25rem' }}>Audited across</span>
-        {['ChatGPT', 'Claude', 'Perplexity', 'Google AI'].map((ai) => (
-          <span key={ai} style={{
-            padding: '0.3rem 0.75rem',
-            border: '1px solid #2A2A2A',
-            fontSize: '0.75rem',
-            color: '#999999',
-            letterSpacing: '0.05em',
-            textAlign: 'center',
-            minWidth: '90px',
-          }}>{ai}</span>
-        ))}
       </div>
 
       <style>{`
@@ -156,12 +140,10 @@ export default function Hero() {
         .hero-source-link:hover { color: #C9A84C !important; }
         @media (max-width: 768px) {
           .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
-          .hero-badge { margin-bottom: 1.25rem !important; }
+          .hero-badge { margin-bottom: 1rem !important; }
           .hero-headline { margin-bottom: 1rem !important; }
           .hero-subheadline { margin-bottom: 1.5rem !important; }
           .hero-cta-row { margin-bottom: 2.5rem !important; }
-          .hero-platform-tags { display: grid !important; grid-template-columns: 1fr 1fr; gap: 0.5rem !important; justify-items: center; }
-          .hero-platform-tags .platform-label { grid-column: 1 / -1; }
         }
       `}</style>
     </section>

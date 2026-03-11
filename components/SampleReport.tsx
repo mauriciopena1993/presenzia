@@ -421,13 +421,13 @@ function PromptsCard() {
 
 function ActionPlanCard() {
   const actions = [
-    { title: 'Add FinancialService schema markup to your website', priority: 'HIGH', phase: 1, timeline: 'Week 1', desc: 'Implement structured data (JSON-LD) using the FinancialService schema type. Sterling Financial Planning already does this, which is why they appear in 22/30 ChatGPT searches.' },
-    { title: 'Optimise your Google Business Profile', priority: 'HIGH', phase: 1, timeline: 'Week 1', desc: 'Your profile has only 3 reviews. Add a 200+ word description, upload professional photos, and request reviews. Aim for 20+ reviews.' },
-    { title: 'Ensure consistent listings on VouchedFor, Unbiased & FTAdviser', priority: 'HIGH', phase: 1, timeline: 'Week 2', desc: 'Perplexity cited VouchedFor as a source in 12 of 30 responses. Meridian Wealth has 38 VouchedFor reviews — that is why Claude cited them in 14/30 searches.' },
-    { title: 'Publish thought leadership on pension transfers in Surrey', priority: 'HIGH', phase: 2, timeline: 'Week 3–4', desc: 'Sterling were cited by 3 of 4 AI platforms partly because FTAdviser quoted them. Getting featured in trade publications can shift your visibility within weeks.' },
-    { title: 'Create a comprehensive FAQ page covering common client questions', priority: 'MEDIUM', phase: 2, timeline: 'Week 4–6', desc: 'Claude and Perplexity favour content that directly answers questions. Your site has no FAQ page.' },
-    { title: 'Build review presence on VouchedFor and Google', priority: 'MEDIUM', phase: 3, timeline: 'Ongoing', desc: 'You have 3 Google reviews. Meridian Wealth has 38 VouchedFor reviews. AI platforms weight review volume and recency.' },
-    { title: 'Publish monthly thought leadership on your website blog', priority: 'MEDIUM', phase: 3, timeline: 'Monthly', desc: 'Your last blog post is from 2024. AI models deprioritise stale websites.' },
+    { title: 'Add structured data markup to your website', priority: 'HIGH', phase: 1, timeline: 'Week 1', desc: 'AI platforms like ChatGPT rely on structured data to understand what your firm offers. Sterling Financial Planning already has this, which is why they appear in 22/30 ChatGPT searches.' },
+    { title: 'Optimise your Google Business Profile', priority: 'HIGH', phase: 1, timeline: 'Week 1', desc: 'Your profile has only 3 reviews and a thin description. A fully optimised profile with 20+ reviews and professional photos is critical for AI visibility.' },
+    { title: 'Strengthen your VouchedFor, Unbiased & FTAdviser listings', priority: 'HIGH', phase: 1, timeline: 'Week 2', desc: 'AI platforms cite these directories heavily. Meridian Wealth has 38 VouchedFor reviews, which is why they keep getting recommended over you.' },
+    { title: 'Publish thought leadership on pension transfers in Surrey', priority: 'HIGH', phase: 2, timeline: 'Week 3–4', desc: 'Sterling were cited by 3 of 4 AI platforms partly because FTAdviser quoted them. Getting featured in trade press can shift your visibility within weeks.' },
+    { title: 'Create an FAQ page covering common client questions', priority: 'MEDIUM', phase: 2, timeline: 'Week 4–6', desc: 'Claude and Perplexity favour content that directly answers questions. Your site currently has no FAQ page, making this a quick win.' },
+    { title: 'Build review volume on VouchedFor and Google', priority: 'MEDIUM', phase: 3, timeline: 'Ongoing', desc: 'You have 3 Google reviews vs. competitors with 38+. AI platforms weight review volume and recency when making recommendations.' },
+    { title: 'Publish monthly content on your website blog', priority: 'MEDIUM', phase: 3, timeline: 'Monthly', desc: 'Your last blog post is from 2024. AI models deprioritise stale websites, so regular publishing signals authority and relevance.' },
   ];
 
   return (
@@ -436,8 +436,8 @@ function ActionPlanCard() {
         <div style={{ fontSize: '0.85rem', color: TXT, fontWeight: 600 }}>Your Personalised Action Plan</div>
         <Shield size={14} style={{ color: GOLD }} />
       </div>
-      <div style={{ fontSize: '0.65rem', color: MUTED, marginBottom: '0.5rem', lineHeight: 1.5 }}>
-        7 prioritised actions ordered by impact. Focus on the top 2 first. The full audit includes step-by-step implementation guides.
+      <div style={{ fontSize: '0.65rem', color: MUTED, marginBottom: '0.75rem', lineHeight: 1.5 }}>
+        7 prioritised actions ordered by impact. Focus on the top 2 first. <span style={{ color: GOLD, fontWeight: 600 }}>We guide you through every step</span>.
       </div>
 
       {/* Priority-numbered list matching the real report format */}
@@ -484,6 +484,19 @@ function ActionPlanCard() {
                 </div>
                 <div style={{ fontSize: '0.64rem', color: TXT2, lineHeight: 1.5 }}>
                   {act.desc}
+                </div>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                  marginTop: '0.4rem',
+                  fontSize: '0.58rem',
+                  fontWeight: 600,
+                  color: GOLD,
+                  cursor: 'default',
+                  opacity: 0.85,
+                }}>
+                  View full guide <ArrowRight size={10} />
                 </div>
               </div>
             </div>

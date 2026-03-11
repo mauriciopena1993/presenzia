@@ -9,8 +9,6 @@ export default function Footer() {
       <style>{`
         .footer-link { color: #888888; font-size: 0.85rem; text-decoration: none; transition: color 0.2s; }
         .footer-link:hover { color: #F5F0E8; }
-        .footer-cta { transition: background 0.2s; }
-        .footer-cta:hover { background: #E8C96A !important; }
         @media (max-width: 480px) {
           .footer-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
         }
@@ -71,27 +69,6 @@ export default function Footer() {
             ))}
           </div>
 
-          {/* CTA */}
-          <div>
-            <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>Still reading?</div>
-            <p style={{ color: '#888888', fontSize: '0.825rem', lineHeight: 1.7, marginBottom: '0.5rem' }}>
-              Your competitors probably aren&apos;t.
-            </p>
-            <p style={{ color: '#666666', fontSize: '0.75rem', lineHeight: 1.6, marginBottom: '1.25rem' }}>
-              Every week without an AI visibility audit is a week your competitors get recommended instead.
-            </p>
-            <Link href="/score" className="footer-cta" style={{
-              display: 'inline-block',
-              padding: '0.75rem 1.5rem',
-              background: '#C9A84C',
-              color: '#0A0A0A',
-              fontSize: '0.825rem',
-              fontWeight: 600,
-              textDecoration: 'none',
-            }}>
-              Get my free score →
-            </Link>
-          </div>
         </div>
 
         {/* Founder credibility */}
