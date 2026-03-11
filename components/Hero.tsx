@@ -14,13 +14,13 @@ export default function Hero() {
       textAlign: 'center',
     }}>
       <div className="hero-wrapper" style={{
-        minHeight: 'calc(100vh - 2rem)',
+        minHeight: 'calc(100vh - 4rem)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        padding: 'clamp(0rem, 3vw, 5rem) 0 clamp(2rem, 3vw, 3rem)',
+        padding: 'clamp(0rem, 3vw, 5rem) 0 clamp(1rem, 2vw, 2rem)',
         boxSizing: 'border-box',
       }}>
 
@@ -130,20 +130,9 @@ export default function Hero() {
           textDecoration: 'none',
           border: '1px solid #555555',
           transition: 'all 0.2s',
-          marginBottom: 'clamp(2rem, 4vw, 3rem)',
         }}>
-          See a sample IFA audit
+          See a sample audit →
         </Link>
-
-        {/* 7. Platform trust line */}
-        <div className="hero-platforms" style={{
-          fontSize: '0.7rem',
-          color: '#555555',
-          letterSpacing: '0.04em',
-          textWrap: 'balance' as any,
-        }}>
-          Audited across ChatGPT, Claude, Google AI, and Perplexity
-        </div>
 
       </div>
 
@@ -156,15 +145,13 @@ export default function Hero() {
         .hero-cta-secondary:hover { border-color: #C9A84C !important; color: #F5F0E8 !important; }
         .hero-source-link:hover { color: #C9A84C !important; }
         @media (max-width: 768px) {
-          .hero-wrapper { justify-content: flex-start !important; padding-top: 14vh !important; padding-bottom: 0 !important; }
+          .hero-wrapper { justify-content: flex-start !important; padding-top: 10vh !important; padding-bottom: 0 !important; }
           .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
           .hero-badge { margin-bottom: 1rem !important; }
           .hero-headline { margin-bottom: 1rem !important; }
           .hero-subheadline { margin-bottom: 0.5rem !important; }
           .hero-footnote { margin-bottom: 2rem !important; }
           .hero-cta-primary { margin-bottom: 0.35rem !important; }
-          .hero-cta-secondary { margin-bottom: 1rem !important; }
-          .hero-platforms { margin-bottom: 0 !important; }
         }
       `}</style>
     </section>

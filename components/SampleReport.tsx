@@ -554,10 +554,10 @@ export default function SampleReport() {
             marginBottom: '1rem',
             lineHeight: 1.2,
           }}>
-            This is what your audit reveals
+            A representative example of our AI audit
           </h2>
           <p style={{ color: '#AAAAAA', fontSize: '0.95rem', lineHeight: 1.8, maxWidth: '600px', margin: '0 auto' }}>
-            A real audit for a UK wealth management firm. Every data point comes from actual AI search queries — the same prompts your clients are using right now.
+            A sample audit based on real AI search queries — the same prompts your prospective clients are using right now.
           </p>
         </div>
 
