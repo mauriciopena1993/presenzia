@@ -96,8 +96,7 @@ export default function Hero() {
           fontWeight: 300,
           textWrap: 'balance' as any,
         }}>
-          Clients are asking AI for financial adviser recommendations.
-          Are they finding you, or your competitors?
+          Clients ask AI for adviser recommendations. Are they finding you or your competitors?
         </p>
 
         {/* CTA Buttons */}
