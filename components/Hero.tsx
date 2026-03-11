@@ -96,7 +96,7 @@ export default function Hero() {
           fontWeight: 300,
           textWrap: 'balance' as any,
         }}>
-          Clients are asking AI for financial adviser recommendations. Are they finding you or your competitors?
+          Clients are finding their Financial Advisers through AI. Are they finding you or your competitors?
         </p>
 
         {/* CTA Buttons */}
@@ -144,7 +144,7 @@ export default function Hero() {
           .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
           .hero-badge { margin-bottom: 1rem !important; }
           .hero-headline { margin-bottom: 1rem !important; }
-          .hero-subheadline { margin-bottom: 0.75rem !important; font-size: 0.85rem !important; }
+          .hero-subheadline { margin-bottom: 0.75rem !important; }
         }
       `}</style>
     </section>
