@@ -67,7 +67,7 @@ export default function Hero() {
         </h1>
 
         {/* 79% stat — the answer */}
-        <div style={{ textAlign: 'center', width: '100%', marginBottom: 'clamp(1.25rem, 3vw, 2rem)' }}>
+        <div className="hero-stat-block" style={{ textAlign: 'center', width: '100%', marginBottom: 'clamp(1.25rem, 3vw, 2rem)' }}>
           <div style={{
             fontFamily: "'Playfair Display', serif",
             fontSize: 'clamp(3rem, 8vw, 4.5rem)',
@@ -144,6 +144,7 @@ export default function Hero() {
           .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
           .hero-badge { margin-bottom: 1rem !important; }
           .hero-headline { margin-bottom: 1rem !important; }
+          .hero-stat-block { margin-bottom: 2rem !important; }
           .hero-subheadline { margin-bottom: 2.5rem !important; }
         }
       `}</style>
