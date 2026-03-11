@@ -110,10 +110,10 @@ export default function Home() {
         <HowItWorks />
         <SampleReport />
         <Testimonials />
-        <LatestInsights />
         <PricingAnchor />
         <FAQ />
         <MidPageCTA />
+        <LatestInsights />
         <Footer />
       </div>
     </main>
