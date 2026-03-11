@@ -14,7 +14,7 @@ export default function Hero() {
       textAlign: 'center',
     }}>
       <div className="hero-wrapper" style={{
-        minHeight: '100vh',
+        minHeight: 'calc(100vh - 2rem)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -105,10 +105,20 @@ export default function Hero() {
           display: 'inline-flex',
           alignItems: 'center',
           gap: '0.5rem',
-          marginBottom: '1rem',
+          marginBottom: '0.5rem',
         }}>
           Get my free visibility score →
         </Link>
+
+        {/* Reassurance line */}
+        <div style={{
+          fontSize: '0.75rem',
+          color: '#777777',
+          marginBottom: '1.25rem',
+          textWrap: 'balance' as any,
+        }}>
+          No credit card. A real AI audit of your firm in under 60 seconds.
+        </div>
 
         {/* 6. Secondary CTA */}
         <Link href="#sample-report" className="hero-cta-secondary" style={{
@@ -152,9 +162,9 @@ export default function Hero() {
           .hero-headline { margin-bottom: 1rem !important; }
           .hero-subheadline { margin-bottom: 0.5rem !important; }
           .hero-footnote { margin-bottom: 2rem !important; }
-          .hero-cta-primary { margin-bottom: 0.75rem !important; }
-          .hero-cta-secondary { margin-bottom: 1.5rem !important; }
-          .hero-platforms { margin-bottom: 1rem !important; }
+          .hero-cta-primary { margin-bottom: 0.35rem !important; }
+          .hero-cta-secondary { margin-bottom: 1rem !important; }
+          .hero-platforms { margin-bottom: 0 !important; }
         }
       `}</style>
     </section>
