@@ -78,7 +78,7 @@ export default function Footer() {
           textAlign: 'center',
           marginBottom: '1.5rem',
         }}>
-          <p style={{ fontSize: '0.8rem', color: '#777777', lineHeight: 1.7 }}>
+          <p style={{ fontSize: '0.8rem', color: '#999999', lineHeight: 1.7 }}>
             Built by{' '}
             <Link href="/about" style={{ color: '#C9A84C', textDecoration: 'none' }}>
               finance and technology specialists who got tired of watching great IFA firms lose clients to competitors they&apos;d never heard of

@@ -86,6 +86,7 @@ export default function Navbar() {
       {/* Mobile hamburger */}
       <button
         onClick={() => setMenuOpen(!menuOpen)}
+        aria-label={menuOpen ? 'Close menu' : 'Open menu'}
         style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.75rem', minWidth: '44px', minHeight: '44px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
         className="mobile-menu-btn"
       >

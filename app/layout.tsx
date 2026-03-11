@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import AmbientBackground from "@/components/AmbientBackground";
 
@@ -72,25 +73,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <head>
-        {/* Google Analytics 4 */}
-        {process.env.NEXT_PUBLIC_GA_ID && (
-          <>
-            <script async src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`} />
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
-                    page_title: document.title,
-                    send_page_view: true
-                  });
-                `,
-              }}
-            />
-          </>
-        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -134,6 +116,26 @@ export default function RootLayout({
       <body className="antialiased" suppressHydrationWarning style={{ fontFamily: "var(--font-inter, Inter, sans-serif)" }}>
         <AmbientBackground />
         {children}
+        {/* Google Analytics 4 — loaded after page is interactive */}
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-config" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
+                  page_title: document.title,
+                  send_page_view: true
+                });
+              `}
+            </Script>
+          </>
+        )}
       </body>
     </html>
   );

@@ -76,18 +76,18 @@ export default function Hero() {
           fontWeight: 300,
           textWrap: 'balance' as any,
         }}>
-          79%<Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ fontSize: '0.6em', verticalAlign: 'super', color: '#555555', textDecoration: 'none', transition: 'color 0.2s' }}><sup>¹</sup></Link> of UK IFA firms aren&apos;t found when clients ask ChatGPT, Claude, or Perplexity for a recommendation. Are you one of them?
+          79%<Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ fontSize: '0.6em', verticalAlign: 'super', color: '#888888', textDecoration: 'none', transition: 'color 0.2s' }}><sup>¹</sup></Link> of UK IFA firms aren&apos;t found when clients ask ChatGPT, Claude, or Perplexity for a recommendation. Are you one of them?
         </p>
 
         {/* 4. Footnote */}
         <div className="hero-footnote" style={{
           fontSize: '0.6875rem',
-          color: '#555555',
+          color: '#888888',
           fontStyle: 'italic',
           marginBottom: 'clamp(2rem, 4vw, 3rem)',
           textWrap: 'balance' as any,
         }}>
-          <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ color: '#555555', textDecoration: 'none', transition: 'color 0.2s' }}>
+          <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ color: '#888888', textDecoration: 'none', transition: 'color 0.2s' }}>
             ¹ 149-firm study, presenzia.ai (2026)
           </Link>
         </div>
@@ -113,7 +113,7 @@ export default function Hero() {
         {/* Reassurance line */}
         <div style={{
           fontSize: '0.75rem',
-          color: '#777777',
+          color: '#999999',
           marginBottom: '1.25rem',
           textWrap: 'balance' as any,
         }}>

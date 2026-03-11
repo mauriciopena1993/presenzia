@@ -78,7 +78,7 @@ export default function HowItWorks() {
               <span style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '1.5rem',
-                color: 'rgba(201,168,76,0.3)',
+                color: 'rgba(201,168,76,0.55)',
                 fontWeight: 700,
                 lineHeight: 1,
               }}>
