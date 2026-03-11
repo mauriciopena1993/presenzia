@@ -96,8 +96,8 @@ export default function Hero() {
           fontWeight: 300,
           textWrap: 'balance' as any,
         }}>
-          Clients are now asking AI for financial advisors, not just Google.
-          Find out if they&apos;re finding you, or your competitors.
+          Clients are asking AI for financial adviser recommendations.
+          Are they finding you, or your competitors?
         </p>
 
         {/* CTA Buttons */}
