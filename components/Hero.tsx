@@ -14,14 +14,14 @@ export default function Hero() {
       textAlign: 'center',
     }}>
       {/* Main hero content — vertically centered, fills viewport */}
-      <div style={{
+      <div className="hero-wrapper" style={{
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        padding: 'clamp(0rem, 3vw, 5rem) 0 clamp(8rem, 12vw, 8rem)',
+        padding: 'clamp(0rem, 3vw, 5rem) 0 clamp(3rem, 5vw, 4rem)',
         boxSizing: 'border-box',
       }}>
         {/* Badge */}
@@ -141,6 +141,7 @@ export default function Hero() {
         .hero-cta-secondary:hover { border-color: #C9A84C !important; color: #F5F0E8 !important; }
         .hero-source-link:hover { color: #C9A84C !important; }
         @media (max-width: 768px) {
+          .hero-wrapper { justify-content: flex-start !important; padding-top: 5rem !important; }
           .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
           .hero-badge { margin-bottom: 1rem !important; }
           .hero-headline { margin-bottom: 1rem !important; }
