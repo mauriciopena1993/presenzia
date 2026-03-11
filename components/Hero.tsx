@@ -21,7 +21,7 @@ export default function Hero() {
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        padding: 'clamp(4rem, 6vw, 5rem) 0 clamp(3rem, 5vw, 4rem)',
+        padding: 'clamp(2.5rem, 5vw, 5rem) 0 clamp(3rem, 5vw, 4rem)',
         boxSizing: 'border-box',
       }}>
         {/* Badge */}
