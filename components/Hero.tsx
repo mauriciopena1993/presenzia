@@ -39,7 +39,7 @@ export default function Hero() {
           textTransform: 'uppercase',
         }}>
           <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#C9A84C', display: 'inline-block', animation: 'pulse 2s infinite' }} />
-          AI Visibility for Wealth Managers
+          AI Visibility for IFAs and Wealth Managers
         </div>
 
         {/* Headline */}
