@@ -42,7 +42,7 @@ export default function Hero() {
           AI Visibility for IFAs and Wealth Managers
         </div>
 
-        {/* Headline */}
+        {/* Headline — the question */}
         <h1 className="hero-headline" style={{
           fontFamily: "'Playfair Display', serif",
           fontSize: 'clamp(2rem, 5vw, 5rem)',
@@ -50,7 +50,7 @@ export default function Hero() {
           color: '#F5F0E8',
           lineHeight: 1.1,
           maxWidth: '100%',
-          marginBottom: '1.5rem',
+          marginBottom: 'clamp(1.25rem, 3vw, 2rem)',
           letterSpacing: '-0.02em',
         }}>
           Is your firm{' '}
@@ -65,21 +65,8 @@ export default function Hero() {
           to AI search?
         </h1>
 
-        {/* Subheadline */}
-        <p className="hero-subheadline" style={{
-          fontSize: 'clamp(1rem, 2vw, 1.2rem)',
-          color: '#AAAAAA',
-          maxWidth: '620px',
-          marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)',
-          lineHeight: 1.75,
-          fontWeight: 300,
-        }}>
-          Clients are finding financial advisers on ChatGPT and AI search, not Google.
-          Find out if your firm shows up, or if your competitors do instead.
-        </p>
-
-        {/* Single dominant stat */}
-        <div style={{ textAlign: 'center', width: '100%', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
+        {/* 79% stat — the answer */}
+        <div style={{ textAlign: 'center', width: '100%', marginBottom: 'clamp(1.25rem, 3vw, 2rem)' }}>
           <div style={{
             fontFamily: "'Playfair Display', serif",
             fontSize: 'clamp(3rem, 8vw, 4.5rem)',
@@ -97,6 +84,19 @@ export default function Hero() {
             ¹ 149-firm study, presenzia.ai (2026)
           </Link>
         </div>
+
+        {/* Bridge text — pushes to action */}
+        <p className="hero-subheadline" style={{
+          fontSize: 'clamp(0.95rem, 1.8vw, 1.1rem)',
+          color: '#AAAAAA',
+          maxWidth: '520px',
+          marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)',
+          lineHeight: 1.75,
+          fontWeight: 300,
+        }}>
+          Clients are asking AI for financial advice, not searching Google.
+          Find out if they&apos;re finding you, or your competitors.
+        </p>
 
         {/* CTA Buttons */}
         <div className="hero-cta-row" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -142,8 +142,7 @@ export default function Hero() {
           .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
           .hero-badge { margin-bottom: 1rem !important; }
           .hero-headline { margin-bottom: 1rem !important; }
-          .hero-subheadline { margin-bottom: 1.5rem !important; }
-          .hero-cta-row { margin-bottom: 2.5rem !important; }
+          .hero-subheadline { margin-bottom: 1.25rem !important; }
         }
       `}</style>
     </section>
