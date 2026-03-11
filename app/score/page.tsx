@@ -360,16 +360,27 @@ function ScorePageInner() {
     }
   };
 
+  const [emailError, setEmailError] = useState('');
+
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!result?.id) return;
+    setEmailError('');
 
     try {
-      await fetch(`/api/score/${result.id}`, {
+      const res = await fetch(`/api/score/${result.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, name }),
       });
+
+      if (!res.ok) {
+        const data = await res.json();
+        if (data.error === 'email_in_use') {
+          setEmailError('This email is already linked to an existing account. Please use a different email, or log in to your dashboard.');
+          return;
+        }
+      }
     } catch {
       // Non-blocking — still show results
     }
@@ -788,9 +799,18 @@ function ScorePageInner() {
                     placeholder="you@yourfirm.co.uk"
                     required
                     value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    style={inputStyle}
+                    onChange={e => { setEmail(e.target.value); setEmailError(''); }}
+                    style={{
+                      ...inputStyle,
+                      ...(emailError ? { borderColor: '#E74C3C' } : {}),
+                    }}
                   />
+                  {emailError && (
+                    <p style={{ color: '#E74C3C', fontSize: '0.8rem', marginTop: '0.5rem', lineHeight: 1.5 }}>
+                      {emailError}{' '}
+                      <a href="/dashboard" style={{ color: '#C9A84C', textDecoration: 'underline' }}>Go to dashboard →</a>
+                    </p>
+                  )}
                 </div>
                 <button
                   type="submit"

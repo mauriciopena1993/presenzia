@@ -52,6 +52,43 @@ function ctaButton(text: string, url: string, color = '#0A0A0A', textColor = '#C
 }
 
 // ════════════════════════════════════════════════════════════════════════
+// TRANSACTIONAL: Immediate Score Delivery (sent on email gate submission)
+// ════════════════════════════════════════════════════════════════════════
+
+export function freeScoreDelivery(firmName: string, score: number, grade: string, shareId: string, email: string) {
+  const scoreColor = score >= 70 ? '#4a9e6a' : score >= 45 ? '#C9A84C' : score >= 25 ? '#cc8833' : '#cc4444';
+  const resultsUrl = `${APP_URL}/score/${shareId}`;
+
+  const subject = `Your AI visibility score: ${score}/100 — ${firmName}`;
+  const html = emailWrapper(`
+    <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">Your AI visibility score is ready</h1>
+    <p style="font-size:14px;color:#555555;margin:0 0 20px;line-height:1.7;">Here are the results for <strong style="color:#111;">${firmName}</strong>:</p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F9F9F9;border:1px solid #E0E0E0;margin:0 0 20px;">
+      <tr><td style="padding:24px;text-align:center;">
+        <div style="font-size:48px;font-weight:700;color:${scoreColor};line-height:1;font-family:Arial,sans-serif;">${score}</div>
+        <div style="font-size:13px;color:#888888;margin:6px 0 0;">out of 100 · Grade ${grade}</div>
+      </td></tr>
+    </table>
+
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">This score reflects how often ${firmName} appears when potential clients ask AI assistants like ChatGPT, Claude, and Perplexity to recommend a financial adviser.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">${score >= 50 ? 'You have some AI visibility, but there is room for significant improvement. Your competitors may be appearing more often.' : 'Your firm is largely invisible to AI search. When clients ask AI for a recommendation, your competitors are being suggested instead.'}</p>
+
+    ${ctaButton('View your full results →', resultsUrl)}
+
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;"><strong style="color:#111;">Want the full picture?</strong> Our comprehensive audit tests <strong>120+ wealth-specific prompts</strong> across 4 AI platforms and gives you a step-by-step action plan.</p>
+
+    ${ctaButton(`Get your full AI audit for ${PLANS.audit.priceDisplay} →`, `${APP_URL}/score?plan=audit`)}
+
+    <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Questions? Reply to this email — we read every one.</p>
+  `.replace('{{email}}', email), { preheader: `${firmName} scored ${score}/100 on AI visibility. See your full results.` });
+
+  const text = `Your AI visibility score for ${firmName}: ${score}/100 (Grade ${grade}). View results: ${resultsUrl}`;
+
+  return { subject, html, text };
+}
+
+// ════════════════════════════════════════════════════════════════════════
 // CAMPAIGN 1: Free Score → Full Audit Nurture
 // ════════════════════════════════════════════════════════════════════════
 

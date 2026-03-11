@@ -1171,8 +1171,12 @@ function ChatPane({ jobId, businessName }: { jobId: string; businessName: string
   const [showSuggestions, setShowSuggestions] = useState(true);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  // Only auto-scroll within the chat container, not the whole page
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const container = bottomRef.current?.parentElement;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
   }, [messages]);
 
   const sendQuestion = (question: string) => {

@@ -232,6 +232,7 @@ export async function POST(req: NextRequest) {
         const session = await stripe.checkout.sessions.create({
           customer: client.stripe_customer_id,
           mode: 'payment',
+          allow_promotion_codes: true,
           payment_intent_data: {
             metadata: {
               type: 'plan_upgrade',
