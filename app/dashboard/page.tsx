@@ -1356,6 +1356,108 @@ function ChatPane({ jobId, businessName }: { jobId: string; businessName: string
   );
 }
 
+function AccountDeletedScreen() {
+  const [countdown, setCountdown] = useState(10);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          window.location.href = '/';
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: '#0A0A0A',
+      fontFamily: 'var(--font-inter, Inter, sans-serif)',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '2rem',
+      color: '#F5F0E8',
+    }}>
+      <div style={{ maxWidth: '440px', textAlign: 'center' }}>
+        <div style={{
+          width: '64px',
+          height: '64px',
+          borderRadius: '50%',
+          background: 'rgba(201, 168, 76, 0.1)',
+          border: '2px solid rgba(201, 168, 76, 0.3)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '0 auto 1.5rem',
+          fontSize: '1.75rem',
+        }}>
+          ✓
+        </div>
+
+        <h1 style={{
+          fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
+          fontSize: '1.75rem',
+          fontWeight: 600,
+          marginBottom: '0.75rem',
+          lineHeight: 1.3,
+        }}>
+          Account deleted
+        </h1>
+
+        <p style={{
+          color: '#999',
+          fontSize: '0.95rem',
+          lineHeight: 1.7,
+          marginBottom: '0.5rem',
+        }}>
+          Your account and all associated data have been permanently removed. Your Stripe subscription has been cancelled.
+        </p>
+
+        <p style={{
+          color: '#888',
+          fontSize: '0.9rem',
+          lineHeight: 1.7,
+          marginBottom: '2rem',
+        }}>
+          We&apos;re sorry to see you go. If you ever want to come back, you&apos;re always welcome.
+        </p>
+
+        <a
+          href="/"
+          style={{
+            display: 'inline-block',
+            padding: '0.875rem 2rem',
+            background: '#C9A84C',
+            color: '#0A0A0A',
+            fontWeight: 700,
+            fontSize: '0.9rem',
+            textDecoration: 'none',
+            letterSpacing: '0.02em',
+            marginBottom: '1rem',
+          }}
+        >
+          Back to homepage
+        </a>
+
+        <p style={{ color: '#666', fontSize: '0.8rem' }}>
+          Redirecting in {countdown}s
+        </p>
+
+        <p style={{ color: '#555', fontSize: '0.75rem', marginTop: '1.5rem' }}>
+          Questions? <a href="mailto:hello@presenzia.ai" style={{ color: '#888', textDecoration: 'none' }}>hello@presenzia.ai</a>
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const router = useRouter();
   const [client, setClient] = useState<ClientData | null>(null);
@@ -1375,6 +1477,7 @@ export default function DashboardPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showReauditChoice, setShowReauditChoice] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [accountDeleted, setAccountDeleted] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -1392,6 +1495,14 @@ export default function DashboardPage() {
 
       if (meRes.status === 401) {
         router.push('/dashboard/login');
+        return;
+      }
+
+      // Client record no longer exists (deleted or orphaned session)
+      if (meRes.status === 404) {
+        // Clear the orphaned session cookie server-side
+        try { await fetch('/api/client/signout', { method: 'POST' }); } catch {}
+        router.push('/dashboard/login?reason=not_found');
         return;
       }
 
@@ -1429,7 +1540,9 @@ export default function DashboardPage() {
         body: JSON.stringify({ confirm: true }),
       });
       if (res.ok) {
-        router.push('/?deleted=1');
+        // Show the "account deleted" confirmation screen instead of redirecting
+        setAccountDeleted(true);
+        setDeleteLoading(false);
       } else {
         const data = await res.json();
         alert(data.error || 'Failed to delete account. Please contact hello@presenzia.ai');
@@ -1598,6 +1711,11 @@ export default function DashboardPage() {
         <div style={{ color: '#C9A84C', fontSize: '0.875rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Loading…</div>
       </div>
     );
+  }
+
+  // ── Account Deleted confirmation screen ──
+  if (accountDeleted) {
+    return <AccountDeletedScreen />;
   }
 
   // Tier flags — all tiers now use the unified dashboard

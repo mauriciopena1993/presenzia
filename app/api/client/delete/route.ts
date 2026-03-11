@@ -13,6 +13,8 @@ import { verifySessionToken, SESSION_COOKIE } from '@/lib/client-auth';
  * - Deletes report_ratings linked to audit_jobs
  * - Deletes audit_jobs
  * - Deletes campaign_emails
+ * - Deletes free_scores
+ * - Deletes leads
  * - Deletes the client record
  * - Clears the session cookie
  */
@@ -82,13 +84,25 @@ export async function POST(req: NextRequest) {
       .delete()
       .eq('recipient_email', email);
 
-    // 7. Delete the client record
+    // 7. Delete free scores linked to this email
+    await supabase
+      .from('free_scores')
+      .delete()
+      .eq('email', email);
+
+    // 8. Delete leads linked to this email
+    await supabase
+      .from('leads')
+      .delete()
+      .eq('email', email);
+
+    // 9. Delete the client record
     await supabase
       .from('clients')
       .delete()
       .eq('id', client.id);
 
-    // 8. Clear session cookie
+    // 10. Clear session cookie
     const response = NextResponse.json({ success: true });
     response.cookies.set(SESSION_COOKIE, '', {
       httpOnly: true,

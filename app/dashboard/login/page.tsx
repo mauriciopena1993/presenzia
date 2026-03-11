@@ -7,6 +7,7 @@ import Link from 'next/link';
 function LoginContent() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect');
+  const reason = searchParams.get('reason');
 
   const [step, setStep] = useState<'email' | 'code'>('email');
   const [email, setEmail] = useState('');
@@ -16,6 +17,13 @@ function LoginContent() {
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [error, setError] = useState('');
+  const [infoBanner, setInfoBanner] = useState<string | null>(
+    reason === 'not_found'
+      ? 'No account found with that email. It may have been deleted.'
+      : reason === 'deleted'
+        ? 'Your account has been successfully deleted.'
+        : null
+  );
   const [resendCountdown, setResendCountdown] = useState(0);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -175,6 +183,30 @@ function LoginContent() {
                 : `We sent a 6-digit code to ${email}. Check your inbox.`}
             </p>
           </div>
+
+          {/* Info banner for redirects (account deleted, not found) */}
+          {infoBanner && step === 'email' && (
+            <div style={{
+              padding: '0.75rem 1rem',
+              background: reason === 'deleted' ? 'rgba(201,168,76,0.06)' : 'rgba(255,136,136,0.06)',
+              border: `1px solid ${reason === 'deleted' ? 'rgba(201,168,76,0.2)' : 'rgba(255,136,136,0.2)'}`,
+              color: reason === 'deleted' ? '#C9A84C' : '#ff8888',
+              fontSize: '0.85rem',
+              lineHeight: 1.6,
+              marginBottom: '0.5rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              gap: '0.75rem',
+            }}>
+              <span>{infoBanner}</span>
+              <button
+                onClick={() => { setInfoBanner(null); window.history.replaceState({}, '', '/dashboard/login'); }}
+                style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: '1rem', padding: 0, lineHeight: 1, flexShrink: 0 }}
+                aria-label="Dismiss"
+              >×</button>
+            </div>
+          )}
 
           {step === 'email' ? (
             <form onSubmit={handleSendCode} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
