@@ -3,6 +3,7 @@ import { Playfair_Display, Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import AmbientBackground from "@/components/AmbientBackground";
+import GrainOverlay from "@/components/GrainOverlay";
 
 
 const playfair = Playfair_Display({
@@ -118,6 +119,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased" suppressHydrationWarning style={{ fontFamily: "var(--font-inter, Inter, sans-serif)" }}>
         <AmbientBackground />
+        <GrainOverlay />
         {children}
         {/* Google Analytics 4 — loaded after page is interactive */}
         {process.env.NEXT_PUBLIC_GA_ID && (

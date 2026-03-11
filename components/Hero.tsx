@@ -11,7 +11,21 @@ export default function Hero() {
       width: '100%',
       position: 'relative',
       textAlign: 'center',
+      overflow: 'hidden',
     }}>
+      {/* Radial gold glow behind headline */}
+      <div className="hero-gold-glow" style={{
+        position: 'absolute',
+        top: '35%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '600px',
+        height: '300px',
+        background: 'radial-gradient(ellipse, rgba(201, 168, 76, 0.10) 0%, transparent 70%)',
+        pointerEvents: 'none',
+        zIndex: 0,
+      }} />
+
       <div className="hero-wrapper" style={{
         display: 'flex',
         flexDirection: 'column',
@@ -19,6 +33,8 @@ export default function Hero() {
         width: '100%',
         padding: 'clamp(2.5rem, 4vw, 4rem) 0 clamp(3rem, 6vw, 5rem)',
         boxSizing: 'border-box',
+        position: 'relative',
+        zIndex: 1,
       }}>
 
         {/* 1. Badge */}
