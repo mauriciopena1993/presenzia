@@ -269,7 +269,7 @@ export default async function BlogPostPage({ params }: Props) {
             Check your AI visibility score, free, in 60 seconds
           </p>
           <p style={{ color: '#999', fontSize: '0.875rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-            See how ChatGPT, Claude, Perplexity, and Google AI rank your firm right now. Just your firm name and location.
+            See how ChatGPT, Claude, Perplexity, and Google AI rank your firm right now. No credit card required.
           </p>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <Link href="/score" style={{ display: 'inline-block', padding: '0.75rem 1.75rem', background: '#C9A84C', color: '#0A0A0A', fontWeight: 700, fontSize: '0.875rem', textDecoration: 'none', letterSpacing: '0.02em' }}>
