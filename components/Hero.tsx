@@ -14,13 +14,11 @@ export default function Hero() {
       textAlign: 'center',
     }}>
       <div className="hero-wrapper" style={{
-        minHeight: 'calc(82vh - 4rem)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
         width: '100%',
-        padding: 'clamp(0rem, 3vw, 4rem) 0 clamp(1rem, 2vw, 2rem)',
+        padding: 'clamp(3rem, 8vw, 7rem) 0 clamp(1rem, 2vw, 1.5rem)',
         boxSizing: 'border-box',
       }}>
 
@@ -145,7 +143,7 @@ export default function Hero() {
         .hero-cta-secondary:hover { border-color: #C9A84C !important; color: #F5F0E8 !important; }
         .hero-source-link:hover { color: #C9A84C !important; }
         @media (max-width: 768px) {
-          .hero-wrapper { justify-content: flex-start !important; padding-top: 10vh !important; padding-bottom: 0 !important; }
+          .hero-wrapper { padding-top: 2rem !important; padding-bottom: 0 !important; }
           .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; justify-content: center; }
           .hero-badge { margin-bottom: 1rem !important; }
           .hero-headline { margin-bottom: 1rem !important; }
