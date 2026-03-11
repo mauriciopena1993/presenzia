@@ -70,7 +70,7 @@ export default function Hero() {
           fontSize: 'clamp(1rem, 2vw, 1.2rem)',
           color: '#AAAAAA',
           maxWidth: '620px',
-          marginBottom: '2.5rem',
+          marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)',
           lineHeight: 1.75,
           fontWeight: 300,
         }}>
@@ -78,8 +78,28 @@ export default function Hero() {
           Find out if your firm shows up, or if your competitors do instead.
         </p>
 
+        {/* Single dominant stat */}
+        <div style={{ textAlign: 'center', width: '100%', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
+          <div style={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: 'clamp(3rem, 8vw, 4.5rem)',
+            color: '#C9A84C',
+            fontWeight: 600,
+            lineHeight: 1,
+            letterSpacing: '-0.02em',
+          }}>
+            79%<span style={{ fontSize: '0.4em', verticalAlign: 'super', marginLeft: '2px', opacity: 0.7, fontWeight: 400 }}>¹</span>
+          </div>
+          <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.04em', maxWidth: '380px', lineHeight: 1.6, margin: '0.75rem auto 0' }}>
+            of UK IFA firms not found on ChatGPT, Claude, Google AI, and Perplexity
+          </div>
+          <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ display: 'inline-block', fontSize: '0.65rem', color: '#555555', textDecoration: 'none', marginTop: '0.5rem', transition: 'color 0.2s', fontStyle: 'italic' }}>
+            ¹ 149-firm study, presenzia.ai (2026)
+          </Link>
+        </div>
+
         {/* CTA Buttons */}
-        <div className="hero-cta-row" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}>
+        <div className="hero-cta-row" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
           <Link href="/score" className="hero-cta-primary" style={{
             padding: '0.875rem 2rem',
             background: '#C9A84C',
@@ -106,26 +126,6 @@ export default function Hero() {
             transition: 'all 0.2s',
           }}>
             See a sample IFA audit
-          </Link>
-        </div>
-
-        {/* Single dominant stat */}
-        <div style={{ textAlign: 'center', width: '100%' }}>
-          <div style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: 'clamp(3rem, 8vw, 4.5rem)',
-            color: '#C9A84C',
-            fontWeight: 600,
-            lineHeight: 1,
-            letterSpacing: '-0.02em',
-          }}>
-            79%<span style={{ fontSize: '0.4em', verticalAlign: 'super', marginLeft: '2px', opacity: 0.7, fontWeight: 400 }}>¹</span>
-          </div>
-          <div style={{ fontSize: '0.75rem', color: '#999999', letterSpacing: '0.04em', maxWidth: '380px', lineHeight: 1.6, margin: '0.75rem auto 0' }}>
-            of UK IFA firms not found on ChatGPT, Claude, Google AI, and Perplexity
-          </div>
-          <Link href="/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible" className="hero-source-link" style={{ display: 'inline-block', fontSize: '0.65rem', color: '#555555', textDecoration: 'none', marginTop: '0.5rem', transition: 'color 0.2s', fontStyle: 'italic' }}>
-            ¹ 149-firm study, presenzia.ai (2026)
           </Link>
         </div>
       </div>
