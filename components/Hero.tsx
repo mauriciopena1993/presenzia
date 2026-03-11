@@ -94,7 +94,7 @@ export default function Hero() {
           lineHeight: 1.75,
           fontWeight: 300,
         }}>
-          Clients are asking AI for financial advice, not searching Google.
+          Clients are now asking AI for financial advisors, not just Google.
           Find out if they&apos;re finding you, or your competitors.
         </p>
 
