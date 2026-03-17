@@ -182,7 +182,6 @@ export async function POST(req: NextRequest) {
         config.businessName,
         score.overall,
         score.grade,
-        pdfBuffer,
         jobId,
         score.summary,
         score.topCompetitors[0]?.name,
@@ -250,7 +249,6 @@ async function sendReportEmail(
   businessName: string,
   score: number,
   grade: string,
-  pdfBuffer: Buffer,
   jobId: string,
   summary?: string,
   topComp?: string,
@@ -286,7 +284,7 @@ async function sendReportEmail(
       replyTo: 'hello@presenzia.ai',
       to: email,
       subject: `Your AI Visibility Audit: ${score}/100 (${scoreBand}), ${businessName}`,
-      text: `Your AI Visibility Audit for ${businessName} is ready.\n\nAI Visibility Score: ${score}/100 — Grade ${grade} (${scoreBand})${previousScore != null ? `\nChange: ${score > previousScore ? '+' : ''}${score - previousScore} points (from ${previousScore}/100)` : ''}\n\n${summary ?? ''}\n\n${topComp ? `Top competitor detected: ${topComp}\n\n` : ''}Your full audit is attached. It includes your platform-by-platform breakdown, competitor analysis, and a personalised action plan.\n\nLog in to your dashboard at https://presenzia.ai/dashboard to view your results online.\n\nQuestions? Reply to this email and we'll get back to you within a few hours.\n\npresenzia.ai | Ketzal LTD (Co. No. 14570156)\nAudit ID: ${jobId}`,
+      text: `Your AI Visibility Audit for ${businessName} is ready.\n\nAI Visibility Score: ${score}/100 — Grade ${grade} (${scoreBand})${previousScore != null ? `\nChange: ${score > previousScore ? '+' : ''}${score - previousScore} points (from ${previousScore}/100)` : ''}\n\n${summary ?? ''}\n\n${topComp ? `Top competitor detected: ${topComp}\n\n` : ''}Your full interactive report — including your platform-by-platform breakdown, competitor analysis, and personalised action plan — is waiting for you on your dashboard.\n\nView your report: https://presenzia.ai/dashboard\n\nYou can also download your PDF report directly from the dashboard at any time.\n\nQuestions? Reply to this email and we'll get back to you within a few hours.\n\npresenzia.ai | Ketzal LTD (Co. No. 14570156)\nAudit ID: ${jobId}`,
       html: `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -313,13 +311,14 @@ async function sendReportEmail(
     ${summaryHtml}
     ${topCompHtml}
 
-    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Your full audit is attached. It includes your platform-by-platform breakdown, competitor analysis, and a personalised action plan to improve your visibility.</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 20px;line-height:1.7;">Your full interactive report is ready — including your platform-by-platform breakdown, competitor analysis, and personalised action plan. Log in to your dashboard to explore it, and download your PDF report from there at any time.</p>
 
-    <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
-      <tr><td style="background:#0A0A0A;padding:12px 24px;">
-        <a href="https://presenzia.ai/dashboard" style="color:#C9A84C;text-decoration:none;font-size:13px;font-weight:700;">View your results online →</a>
+    <table cellpadding="0" cellspacing="0" style="margin:0 0 12px;width:100%;">
+      <tr><td style="background:#0A0A0A;padding:16px 24px;text-align:center;">
+        <a href="https://presenzia.ai/dashboard" style="color:#C9A84C;text-decoration:none;font-size:15px;font-weight:700;letter-spacing:0.02em;">View your full report →</a>
       </td></tr>
     </table>
+    <p style="font-size:12px;color:#999999;margin:0 0 24px;text-align:center;">Your PDF report is available to download from the dashboard</p>
   </td></tr>
   <tr><td style="padding:16px 32px;background:#F9F9F9;border-top:1px solid #E0E0E0;">
     <p style="font-size:12px;color:#999999;margin:0;">presenzia.ai · Ketzal LTD (Co. No. 14570156) · <a href="mailto:hello@presenzia.ai" style="color:#C9A84C;text-decoration:none;">hello@presenzia.ai</a></p>
@@ -329,12 +328,6 @@ async function sendReportEmail(
 </td></tr>
 </table>
 </body></html>`,
-      attachments: [
-        {
-          filename: `presenzia-audit-${businessName.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
-          content: pdfBuffer,
-        },
-      ],
     });
 
     console.log(`📧 Report emailed to ${email}`);
