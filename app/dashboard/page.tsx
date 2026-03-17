@@ -1918,7 +1918,7 @@ export default function DashboardPage() {
         )}
 
         {/* Tabs — audit tier only sees "Your Audit", Growth/Premium see all 3 */}
-        <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #1a1a1a', marginBottom: '2rem' }}>
+        <div className="dash-top-tabs" style={{ display: 'flex', gap: 0, borderBottom: '1px solid #1a1a1a', marginBottom: '2rem', overflowX: 'auto' }}>
           {(isAuditTier
             ? [{ key: 'report' as const, label: 'Your Audit' }]
             : [
@@ -2790,12 +2790,24 @@ export default function DashboardPage() {
             max-width: 120px;
           }
         }
+        @media (max-width: 600px) {
+          /* Top-level tabs: tighter padding, no overflow */
+          .dash-top-tabs button {
+            padding: 0.625rem 1rem !important;
+            font-size: 0.82rem !important;
+            white-space: nowrap;
+          }
+        }
         @media (max-width: 480px) {
           .dash-platform-grid {
             grid-template-columns: 1fr !important;
           }
           .dash-nav-name {
             display: none !important;
+          }
+          .dash-top-tabs button {
+            padding: 0.625rem 0.75rem !important;
+            font-size: 0.78rem !important;
           }
         }
       `}</style>

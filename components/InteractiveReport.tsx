@@ -391,7 +391,7 @@ function OverviewTab({ job, client, onTabChange, previousScore }: { job: Interac
   return (
     <div>
       {/* Score hero */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '2rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+      <div className="ir-score-hero" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '2rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
         <div style={{ flex: 1, minWidth: 200 }}>
           <div style={{
             fontFamily: "var(--font-playfair, 'Playfair Display', serif)",
@@ -452,7 +452,7 @@ function OverviewTab({ job, client, onTabChange, previousScore }: { job: Interac
       <BandVisual score={score} />
 
       {/* Stats row */}
-      <div style={{ display: 'flex', gap: 8, marginTop: '1rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+      <div className="ir-stats-row" style={{ display: 'flex', gap: 8, marginTop: '1rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
         <StatBox value={totalPrompts} label="Searches tested" />
         <StatBox value={totalMentioned} label="Times you appeared" color={totalMentioned > 0 ? '#C9A84C' : '#555'} />
         <StatBox value={platforms.length} label="Platforms audited" />
@@ -563,7 +563,7 @@ function OverviewTab({ job, client, onTabChange, previousScore }: { job: Interac
               See full breakdown →
             </button>
           </div>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <div className="ir-plat-snapshot" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {platforms.map(p => {
               const pColor = scoreColor(p.score);
               return (
@@ -1119,7 +1119,7 @@ export default function InteractiveReport({ job, client, onDownload, previousSco
 
       {/* Header bar: sub-tabs + download button */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1a1a1a', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-        <div style={{ display: 'flex', gap: 0 }}>
+        <div className="ir-sub-tabs" style={{ display: 'flex', gap: 0, overflowX: 'auto' }}>
           {tabs.map(tab => (
             <button
               key={tab.key}
@@ -1182,6 +1182,23 @@ export default function InteractiveReport({ job, client, onDownload, previousSco
         }
         @media (max-width: 480px) {
           .ir-plat-grid { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 600px) {
+          /* Score hero: keep side-by-side but tighten gap */
+          .ir-score-hero { gap: 1rem !important; }
+          /* Stats row: 2×2 grid so boxes aren't tiny */
+          .ir-stats-row { display: grid !important; grid-template-columns: 1fr 1fr !important; }
+          /* Sub-tabs: tighter padding, don't overflow */
+          .ir-sub-tabs button { padding: 0.5rem 0.65rem !important; font-size: 0.75rem !important; white-space: nowrap; }
+          /* Platform snapshot: 2×2 grid */
+          .ir-plat-snapshot { display: grid !important; grid-template-columns: 1fr 1fr !important; }
+          .ir-plat-snapshot > div { min-width: 0 !important; flex: none !important; }
+        }
+        @media (max-width: 400px) {
+          /* Score hero: stack vertically on very small screens */
+          .ir-score-hero { flex-direction: column !important; }
+          .ir-score-hero > div:last-child { text-align: left !important; }
+          .ir-score-hero > div:last-child > div:last-child { display: inline-block; }
         }
       `}</style>
     </div>
