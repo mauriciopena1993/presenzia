@@ -149,8 +149,8 @@ describe('lib/plans — Single Source of Truth', () => {
   });
 
   describe('COMPARISON_ROWS', () => {
-    it('has 10 comparison features', () => {
-      expect(COMPARISON_ROWS.length).toBe(10);
+    it('has 12 comparison features', () => {
+      expect(COMPARISON_ROWS.length).toBe(12);
     });
 
     it('every row has audit, growth, premium values', () => {

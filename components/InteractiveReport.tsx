@@ -53,6 +53,12 @@ interface ActionStep {
   substeps?: string[];
 }
 
+interface QuickLink {
+  label: string;
+  url: string;
+  icon?: string;
+}
+
 interface DetailedAction {
   priority: 'HIGH' | 'MEDIUM';
   phase: 1 | 2 | 3;
@@ -61,6 +67,20 @@ interface DetailedAction {
   why: string;
   context?: string;
   steps: (string | ActionStep)[];
+  estimatedImpact?: string;
+  estimatedEffort?: 'low' | 'medium' | 'high';
+  estimatedTime?: string;
+  quickLinks?: QuickLink[];
+  isQuickWin?: boolean;
+}
+
+interface ScoreProjection {
+  currentScore: number;
+  projectedMin: number;
+  projectedMax: number;
+  projectedGrade: string;
+  quickWinCount: number;
+  quickWinImpact: string;
 }
 
 interface ReportInsights {
@@ -69,6 +89,7 @@ interface ReportInsights {
   nextMonthHints: string[];
   totalSearches: number;
   totalFound: number;
+  scoreProjection?: ScoreProjection;
 }
 
 export interface InteractiveReportJob {
@@ -172,7 +193,13 @@ function StatBox({ value, label, color }: { value: string | number; label: strin
   );
 }
 
-function ExpandableCard({ title, badge, badgeColor, isHighPriority, children, defaultOpen = false, onCheck, isChecked }: {
+const EFFORT_CONFIG: Record<string, { label: string; color: string; icon: string }> = {
+  low: { label: 'Easy', color: '#4a9e6a', icon: '⚡' },
+  medium: { label: 'Moderate', color: '#C9A84C', icon: '🔧' },
+  high: { label: 'Involved', color: '#cc8833', icon: '🏗️' },
+};
+
+function ExpandableCard({ title, badge, badgeColor, isHighPriority, children, defaultOpen = false, onCheck, isChecked, estimatedImpact, estimatedEffort, estimatedTime, quickLinks, isQuickWin }: {
   title: string;
   badge: string;
   badgeColor: string;
@@ -181,8 +208,14 @@ function ExpandableCard({ title, badge, badgeColor, isHighPriority, children, de
   defaultOpen?: boolean;
   onCheck?: () => void;
   isChecked?: boolean;
+  estimatedImpact?: string;
+  estimatedEffort?: 'low' | 'medium' | 'high';
+  estimatedTime?: string;
+  quickLinks?: QuickLink[];
+  isQuickWin?: boolean;
 }) {
   const [open, setOpen] = useState(defaultOpen);
+  const effortConf = estimatedEffort ? EFFORT_CONFIG[estimatedEffort] : null;
   return (
     <div style={{
       background: isChecked ? 'rgba(74,158,106,0.04)' : isHighPriority ? '#0F0D08' : '#0D0D0D',
@@ -232,7 +265,7 @@ function ExpandableCard({ title, badge, badgeColor, isHighPriority, children, de
         onClick={() => setOpen(!open)}
         style={{
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-start',
           gap: '0.5rem',
           width: '100%',
           padding: onCheck ? '0.875rem 1rem 0.875rem 0.25rem' : '0.875rem 1rem',
@@ -243,16 +276,79 @@ function ExpandableCard({ title, badge, badgeColor, isHighPriority, children, de
           fontFamily: 'inherit',
         }}
       >
-        <span style={{ fontSize: '0.6rem', padding: '2px 6px', background: badgeColor + '22', color: badgeColor, fontWeight: 700, letterSpacing: '0.05em', flexShrink: 0 }}>
-          {badge}
-        </span>
-        <span style={{ fontSize: '0.85rem', color: '#F5F0E8', fontWeight: 600, flex: 1, lineHeight: 1.4 }}>{title}</span>
-        <span style={{ color: '#666', fontSize: '0.85rem', flexShrink: 0, transition: 'transform 0.2s', transform: open ? 'rotate(90deg)' : 'none' }}>›</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '0.6rem', padding: '2px 6px', background: badgeColor + '22', color: badgeColor, fontWeight: 700, letterSpacing: '0.05em', flexShrink: 0 }}>
+              {badge}
+            </span>
+            {isQuickWin && !isChecked && (
+              <span style={{ fontSize: '0.58rem', padding: '2px 6px', background: 'rgba(74,158,106,0.15)', color: '#4a9e6a', fontWeight: 700, letterSpacing: '0.05em' }}>
+                ⚡ QUICK WIN
+              </span>
+            )}
+            <span style={{ fontSize: '0.85rem', color: '#F5F0E8', fontWeight: 600, lineHeight: 1.4 }}>{title}</span>
+          </div>
+          {/* Impact / effort / time row */}
+          {(estimatedImpact || effortConf || estimatedTime) && !isChecked && (
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              {estimatedImpact && (
+                <span style={{ fontSize: '0.65rem', color: '#4a9e6a', fontWeight: 600 }}>
+                  ↑ {estimatedImpact}
+                </span>
+              )}
+              {effortConf && (
+                <span style={{ fontSize: '0.65rem', color: effortConf.color }}>
+                  {effortConf.icon} {effortConf.label}
+                </span>
+              )}
+              {estimatedTime && (
+                <span style={{ fontSize: '0.65rem', color: '#888' }}>
+                  ⏱ {estimatedTime}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+        <span style={{ color: '#666', fontSize: '0.85rem', flexShrink: 0, transition: 'transform 0.2s', transform: open ? 'rotate(90deg)' : 'none', marginTop: 2 }}>›</span>
       </button>
       </div>
       {open && (
         <div style={{ padding: '0 1rem 1rem', animation: 'fadeIn 0.15s ease' }}>
           {children}
+          {/* Quick Links */}
+          {quickLinks && quickLinks.length > 0 && (
+            <div style={{ marginTop: 12, padding: '0.75rem', background: '#0A0A0A', border: '1px solid #1a1a1a' }}>
+              <div style={{ fontSize: '0.68rem', color: '#888', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 8 }}>
+                Quick Links — Take Action Now
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {quickLinks.map((link, idx) => (
+                  <a
+                    key={idx}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 4,
+                      padding: '4px 10px',
+                      background: '#111',
+                      border: '1px solid #2a2a2a',
+                      color: '#C9A84C',
+                      fontSize: '0.72rem',
+                      textDecoration: 'none',
+                      fontFamily: 'inherit',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#C9A84C'; (e.currentTarget as HTMLElement).style.background = '#1a1508'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#2a2a2a'; (e.currentTarget as HTMLElement).style.background = '#111'; }}
+                  >
+                    {link.icon && <span>{link.icon}</span>}
+                    {link.label} →
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -382,6 +478,42 @@ function OverviewTab({ job, client, onTabChange, previousScore }: { job: Interac
         </div>
       )}
 
+      {/* Category Strength Breakdown */}
+      {insights && insights.categories.length > 0 && (
+        <div style={{ marginBottom: '1.25rem' }}>
+          <div style={{ fontSize: '0.7rem', color: '#666', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>Search Category Breakdown</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(180px, 100%), 1fr))', gap: 6 }}>
+            {insights.categories.map(cat => {
+              const pct = cat.totalSearches > 0 ? Math.round((cat.timesFound / cat.totalSearches) * 100) : 0;
+              const catColor = pct >= 60 ? '#4a9e6a' : pct >= 30 ? '#C9A84C' : pct > 0 ? '#cc8833' : '#cc4444';
+              return (
+                <div key={cat.category} style={{ padding: '0.6rem 0.75rem', background: '#0D0D0D', border: '1px solid #1a1a1a' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                    <span style={{ fontSize: '0.72rem', color: '#AAAAAA', fontWeight: 500 }}>{cat.label}</span>
+                    <span style={{ fontSize: '0.72rem', color: catColor, fontWeight: 700 }}>{pct}%</span>
+                  </div>
+                  <div style={{ height: 4, background: '#1a1a1a', borderRadius: 2, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${pct}%`, background: catColor, borderRadius: 2, transition: 'width 0.8s ease' }} />
+                  </div>
+                  <div style={{ fontSize: '0.6rem', color: '#666', marginTop: 3 }}>
+                    {cat.timesFound}/{cat.totalSearches} searches
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ fontSize: '0.68rem', color: '#555', marginTop: 6, lineHeight: 1.5 }}>
+            These categories show how well AI platforms find you across different types of searches.{' '}
+            <button
+              onClick={() => onTabChange('searches')}
+              style={{ background: 'none', border: 'none', color: '#C9A84C', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit', textDecoration: 'underline', padding: 0 }}
+            >
+              See detailed search results →
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Priority actions preview */}
       {insights && insights.actions.length > 0 && (
         <div style={{ marginBottom: '1rem' }}>
@@ -410,6 +542,8 @@ function OverviewTab({ job, client, onTabChange, previousScore }: { job: Interac
                 <span style={{ fontSize: '0.85rem', color: isTop ? '#F5F0E8' : '#AAAAAA', fontWeight: isTop ? 600 : 400, lineHeight: 1.4 }}>
                   {act.title}
                   {isTop && <span style={{ fontSize: '0.6rem', color: '#cc4444', fontWeight: 700, marginLeft: 6, letterSpacing: '0.03em' }}>DO THIS FIRST</span>}
+                  {act.isQuickWin && <span style={{ fontSize: '0.58rem', color: '#4a9e6a', fontWeight: 600, marginLeft: 6 }}>⚡ Quick Win</span>}
+                  {act.estimatedImpact && <span style={{ fontSize: '0.6rem', color: '#4a9e6a', marginLeft: 6 }}>↑ {act.estimatedImpact}</span>}
                 </span>
               </div>
             );
@@ -789,6 +923,11 @@ function ActionPlanTab({ job }: { job: InteractiveReportJob }) {
           defaultOpen={i === 0}
           onCheck={() => toggleAction(i)}
           isChecked={completedActions.has(i)}
+          estimatedImpact={action.estimatedImpact}
+          estimatedEffort={action.estimatedEffort}
+          estimatedTime={action.estimatedTime}
+          quickLinks={action.quickLinks}
+          isQuickWin={action.isQuickWin}
         >
           {action.context && (
             <div style={{ fontSize: '0.78rem', color: '#F5F0E8', fontWeight: 600, marginBottom: 6, lineHeight: 1.5 }}>{action.context}</div>
@@ -831,6 +970,11 @@ function ActionPlanTab({ job }: { job: InteractiveReportJob }) {
               badgeColor={completedActions.has(i + 2) ? '#4a9e6a' : '#C9A84C'}
               onCheck={() => toggleAction(i + 2)}
               isChecked={completedActions.has(i + 2)}
+              estimatedImpact={action.estimatedImpact}
+              estimatedEffort={action.estimatedEffort}
+              estimatedTime={action.estimatedTime}
+              quickLinks={action.quickLinks}
+              isQuickWin={action.isQuickWin}
             >
               {action.context && (
                 <div style={{ fontSize: '0.78rem', color: '#F5F0E8', fontWeight: 600, marginBottom: 6, lineHeight: 1.5 }}>{action.context}</div>
@@ -857,6 +1001,64 @@ function ActionPlanTab({ job }: { job: InteractiveReportJob }) {
             </ExpandableCard>
           ))}
         </>
+      )}
+
+      {/* Score Projection */}
+      {insights.scoreProjection && (
+        <div style={{
+          padding: '1rem 1.25rem',
+          background: 'linear-gradient(135deg, #0F0D08 0%, #0D0D0D 100%)',
+          border: '1px solid #33280d',
+          marginTop: 20,
+          marginBottom: 8,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#C9A84C', letterSpacing: '0.08em' }}>PROJECTED SCORE AFTER COMPLETING ACTIONS</span>
+          </div>
+
+          {/* Score projection bar */}
+          <div style={{ position: 'relative', height: 32, background: '#111', border: '1px solid #1a1a1a', marginBottom: 8, overflow: 'hidden' }}>
+            {/* Current score fill */}
+            <div style={{
+              position: 'absolute', left: 0, top: 0, bottom: 0,
+              width: `${insights.scoreProjection.currentScore}%`,
+              background: scoreColor(insights.scoreProjection.currentScore),
+              opacity: 0.8,
+              transition: 'width 1s ease',
+            }} />
+            {/* Projected range */}
+            <div style={{
+              position: 'absolute', left: `${insights.scoreProjection.currentScore}%`, top: 0, bottom: 0,
+              width: `${insights.scoreProjection.projectedMax - insights.scoreProjection.currentScore}%`,
+              background: `repeating-linear-gradient(90deg, ${scoreColor(insights.scoreProjection.projectedMax)}33 0px, ${scoreColor(insights.scoreProjection.projectedMax)}33 4px, transparent 4px, transparent 8px)`,
+              transition: 'width 1s ease',
+            }} />
+            {/* Labels */}
+            <div style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', fontSize: '0.72rem', fontWeight: 700, color: '#F5F0E8' }}>
+              Now: {insights.scoreProjection.currentScore}
+            </div>
+            {insights.scoreProjection.projectedMax > insights.scoreProjection.currentScore + 10 && (
+              <div style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', fontSize: '0.72rem', fontWeight: 600, color: '#4a9e6a' }}>
+                → {insights.scoreProjection.projectedMin}-{insights.scoreProjection.projectedMax}
+              </div>
+            )}
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+            <div style={{ fontSize: '0.75rem', color: '#AAAAAA', lineHeight: 1.5 }}>
+              Completing all actions could take your score from <strong style={{ color: '#F5F0E8' }}>{insights.scoreProjection.currentScore}</strong> to an estimated <strong style={{ color: '#4a9e6a' }}>{insights.scoreProjection.projectedMin}-{insights.scoreProjection.projectedMax}</strong> (Grade {insights.scoreProjection.projectedGrade})
+            </div>
+            {insights.scoreProjection.quickWinCount > 0 && insights.scoreProjection.quickWinImpact && (
+              <div style={{
+                fontSize: '0.68rem', padding: '4px 10px',
+                background: 'rgba(74,158,106,0.1)', border: '1px solid rgba(74,158,106,0.2)',
+                color: '#4a9e6a', fontWeight: 600, flexShrink: 0,
+              }}>
+                ⚡ {insights.scoreProjection.quickWinCount} quick win{insights.scoreProjection.quickWinCount > 1 ? 's' : ''} available ({insights.scoreProjection.quickWinImpact})
+              </div>
+            )}
+          </div>
+        </div>
       )}
 
       {/* Looking Ahead */}

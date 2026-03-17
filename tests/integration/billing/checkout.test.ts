@@ -168,7 +168,8 @@ describe('POST /api/checkout', () => {
     const res = await POST(req);
     expect(res.status).toBe(500);
     const data = await res.json();
-    expect(data.error).toContain('Stripe API down');
+    // Production code never exposes raw Stripe errors — returns a generic user-friendly message
+    expect(data.error).toContain('Something went wrong');
   });
 
   it('handles email being optional', async () => {

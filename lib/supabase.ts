@@ -26,7 +26,7 @@ export interface Client {
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
   email: string;
-  plan: 'starter' | 'growth' | 'premium';
+  plan: 'audit' | 'starter' | 'growth' | 'premium';
   status: 'active' | 'cancelled' | 'past_due' | 'trialing';
   business_name: string | null;
   business_type: string | null;

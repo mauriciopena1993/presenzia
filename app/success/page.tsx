@@ -130,7 +130,7 @@ function SuccessContent() {
         lineHeight: 1.7,
         marginBottom: '3rem',
       }}>
-        Your audit is already being processed and will be delivered to your inbox <strong style={{ color: '#F5F0E8' }}>within 15 minutes</strong>.
+        Your results will be ready in <strong style={{ color: '#F5F0E8' }}>10-15 minutes</strong> and available on your personal dashboard. We&apos;ll also send a copy to your email with a downloadable PDF report.
       </p>
 
       <div style={{
@@ -139,17 +139,17 @@ function SuccessContent() {
         border: '1px solid rgba(201,168,76,0.2)',
         maxWidth: '400px',
         width: '100%',
-        marginBottom: '3rem',
+        marginBottom: '1.5rem',
       }}>
         <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: '#C9A84C', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
           What happens next
         </div>
         <ul style={{ listStyle: 'none', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '0.6rem', padding: 0, margin: 0 }}>
           {[
-            'Confirmation email sent to your inbox',
             'AI platforms tested across 120+ wealth-specific prompts',
             'Platform-by-platform breakdown prepared',
-            'Full audit delivered to your email shortly',
+            'Results ready on your dashboard in 10-15 minutes',
+            'Full report with PDF also sent to your email',
           ].map((step, i) => (
             <li key={i} style={{ display: 'flex', gap: '0.75rem', fontSize: '0.875rem', color: '#AAAAAA', alignItems: 'flex-start' }}>
               <span style={{ color: '#C9A84C', flexShrink: 0, fontWeight: 600 }}>{i + 1}.</span>
@@ -159,17 +159,41 @@ function SuccessContent() {
         </ul>
       </div>
 
-      <Link href="/" style={{
-        padding: '0.875rem 2rem',
-        background: '#C9A84C',
-        color: '#0A0A0A',
-        fontWeight: 600,
-        fontSize: '0.9rem',
-        textDecoration: 'none',
-        letterSpacing: '0.02em',
+      <div style={{
+        padding: '0.875rem 1.5rem',
+        background: 'rgba(201,168,76,0.04)',
+        border: '1px solid rgba(201,168,76,0.1)',
+        maxWidth: '400px',
+        width: '100%',
+        marginBottom: '3rem',
+        fontSize: '0.8rem',
+        color: '#888',
+        lineHeight: 1.6,
+        textAlign: 'left',
       }}>
-        Back to home
-      </Link>
+        <strong style={{ color: '#AAAAAA' }}>Tip:</strong> Check your spam or promotions folder if you don&apos;t see our emails within a few minutes.
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'center' }}>
+        <Link href="/dashboard/login" style={{
+          padding: '0.875rem 2rem',
+          background: '#C9A84C',
+          color: '#0A0A0A',
+          fontWeight: 600,
+          fontSize: '0.9rem',
+          textDecoration: 'none',
+          letterSpacing: '0.02em',
+        }}>
+          Go to your dashboard
+        </Link>
+        <Link href="/" style={{
+          color: '#666',
+          textDecoration: 'none',
+          fontSize: '0.8rem',
+        }}>
+          Back to home
+        </Link>
+      </div>
     </div>
   );
 }

@@ -36,6 +36,12 @@ export interface ActionStep {
   substeps?: string[];      // Optional nested sub-steps for more granular guidance
 }
 
+export interface QuickLink {
+  label: string;
+  url: string;
+  icon?: string;            // Emoji or symbol for the link
+}
+
 export interface DetailedAction {
   priority: 'HIGH' | 'MEDIUM';
   phase: 1 | 2 | 3;        // 1=Immediate, 2=Short-term, 3=Ongoing
@@ -45,6 +51,11 @@ export interface DetailedAction {
   context?: string;         // Data-driven observation from the audit results
   steps: (string | ActionStep)[];  // 3-6 specific, actionable bullet points (string for backward compat)
   isRepeated?: boolean;
+  estimatedImpact: string;           // e.g. "+5-15 points"
+  estimatedEffort: 'low' | 'medium' | 'high';
+  estimatedTime: string;             // e.g. "1-2 hours"
+  quickLinks?: QuickLink[];          // Direct URLs to take action
+  isQuickWin?: boolean;              // Low effort + high impact
 }
 
 /** Previous audit data passed in for comparison */
@@ -69,6 +80,16 @@ export interface AuditProgress {
   resolvedActions: string[];
 }
 
+/** Projected score range if user completes all recommended actions */
+export interface ScoreProjection {
+  currentScore: number;
+  projectedMin: number;     // Conservative estimate
+  projectedMax: number;     // Optimistic estimate
+  projectedGrade: string;   // Grade at projected midpoint
+  quickWinCount: number;    // Number of quick wins available
+  quickWinImpact: string;   // e.g. "+13-35 points"
+}
+
 export interface ReportInsights {
   categories: CategoryBreakdown[];
   actions: DetailedAction[];
@@ -76,6 +97,7 @@ export interface ReportInsights {
   totalSearches: number;
   totalFound: number;
   progress?: AuditProgress;
+  scoreProjection?: ScoreProjection;
 }
 
 // ── Constants ────────────────────────────────────────────────
@@ -189,6 +211,80 @@ function buildCategories(results: PromptResult[]): CategoryBreakdown[] {
   return categories;
 }
 
+// ── Quick Link Helpers ───────────────────────────────────────
+
+function getPlatformQuickLinks(platform: string): QuickLink[] {
+  switch (platform) {
+    case 'Perplexity':
+      return [
+        { label: 'Bing Webmaster Tools', url: 'https://www.bing.com/webmasters', icon: '🔍' },
+        { label: 'Schema.org Validator', url: 'https://validator.schema.org/', icon: '✅' },
+      ];
+    case 'ChatGPT':
+      return [
+        { label: 'Yell.com Free Listing', url: 'https://www.yell.com/free-listing/', icon: '📒' },
+        { label: 'Trustpilot Business', url: 'https://business.trustpilot.com', icon: '⭐' },
+      ];
+    case 'Claude':
+      return [
+        { label: 'FreeIndex', url: 'https://www.freeindex.co.uk', icon: '📋' },
+        { label: 'Schema.org Validator', url: 'https://validator.schema.org/', icon: '✅' },
+      ];
+    case 'Google AI':
+      return [
+        { label: 'Google Business Profile', url: 'https://business.google.com', icon: '📍' },
+        { label: 'Google Search Console', url: 'https://search.google.com/search-console', icon: '🔍' },
+      ];
+    default:
+      return [];
+  }
+}
+
+function getLocalPubQuickLinks(location: string): QuickLink[] {
+  const loc = location.toLowerCase();
+  const links: QuickLink[] = [];
+
+  // City-specific publication links
+  const pubMap: Record<string, Array<{ label: string; url: string }>> = {
+    manchester: [
+      { label: 'Manchester Evening News', url: 'https://www.manchestereveningnews.co.uk' },
+      { label: 'Manchester Confidential', url: 'https://confidentials.com' },
+    ],
+    london: [
+      { label: 'TimeOut London', url: 'https://www.timeout.com/london' },
+      { label: 'Evening Standard', url: 'https://www.standard.co.uk' },
+    ],
+    birmingham: [
+      { label: 'Birmingham Mail', url: 'https://www.birminghammail.co.uk' },
+    ],
+    leeds: [
+      { label: 'Leeds Live', url: 'https://www.leeds-live.co.uk' },
+    ],
+    liverpool: [
+      { label: 'Liverpool Echo', url: 'https://www.liverpoolecho.co.uk' },
+    ],
+    bristol: [
+      { label: 'Bristol Post', url: 'https://www.bristolpost.co.uk' },
+    ],
+    edinburgh: [
+      { label: 'Edinburgh Evening News', url: 'https://www.edinburghnews.scotsman.com' },
+    ],
+    glasgow: [
+      { label: 'Glasgow Live', url: 'https://www.glasgowlive.co.uk' },
+    ],
+  };
+
+  const matchedCity = Object.keys(pubMap).find(city => loc.includes(city));
+  if (matchedCity) {
+    pubMap[matchedCity].forEach(p => links.push({ label: p.label, url: p.url, icon: '📰' }));
+  }
+
+  // Always add Google News search for the location
+  links.push({ label: `Google News: ${location}`, url: `https://news.google.com/search?q=${encodeURIComponent(location + ' business')}`, icon: '🔍' });
+
+  return links;
+}
+
 // ── Action Generation ────────────────────────────────────────
 
 function buildActions(
@@ -218,6 +314,14 @@ function buildActions(
       title: 'Complete Your Google Business Profile',
       context: gbpContext || undefined,
       why: 'Google Business Profile is the primary data source for Google AI and indirectly feeds all other platforms.',
+      estimatedImpact: '+8-20 points',
+      estimatedEffort: 'low',
+      estimatedTime: '1-2 hours',
+      isQuickWin: true,
+      quickLinks: [
+        { label: 'Google Business Profile', url: 'https://business.google.com', icon: '📍' },
+        { label: 'Google Search Console', url: 'https://search.google.com/search-console', icon: '🔍' },
+      ],
       steps: [
         {
           text: `Go to business.google.com and claim or verify your listing for "${config.businessName}".`,
@@ -340,6 +444,24 @@ function buildActions(
       },
     );
 
+    // Build quick links for directories based on business type
+    const dirQuickLinks: QuickLink[] = [
+      { label: 'Google Business', url: 'https://business.google.com', icon: '📍' },
+      { label: 'Yell.com', url: 'https://www.yell.com/free-listing/', icon: '📒' },
+      { label: 'FreeIndex', url: 'https://www.freeindex.co.uk', icon: '📋' },
+      { label: 'Trustpilot', url: 'https://business.trustpilot.com', icon: '⭐' },
+    ];
+    if (businessTypeMatches(bt, ['food', 'restaurant', 'cafe', 'bakery', 'bar', 'pub'])) {
+      dirQuickLinks.push({ label: 'TripAdvisor', url: 'https://www.tripadvisor.com/Owners', icon: '🍴' });
+    }
+    if (businessTypeMatches(bt, ['financial', 'ifa', 'wealth', 'investment', 'planner', 'advisor', 'adviser'])) {
+      dirQuickLinks.push({ label: 'VouchedFor', url: 'https://www.vouchedfor.co.uk', icon: '🏦' });
+      dirQuickLinks.push({ label: 'Unbiased', url: 'https://www.unbiased.co.uk', icon: '📊' });
+    }
+    if (businessTypeMatches(bt, ['trade', 'plumber', 'electrician', 'builder', 'roofing', 'roofer', 'handyman'])) {
+      dirQuickLinks.push({ label: 'Checkatrade', url: 'https://www.checkatrade.com/trades/apply', icon: '🔧' });
+    }
+
     actions.push({
       priority: overall < 50 ? 'HIGH' : 'MEDIUM',
       phase: overall < 50 ? 1 : 2,
@@ -347,6 +469,11 @@ function buildActions(
       title: 'Get Listed on Key Review & Directory Sites',
       context: dirContext,
       why: 'AI platforms cross-reference multiple sources. Each new listing strengthens your digital footprint and makes it easier for AI to verify and recommend you.',
+      estimatedImpact: '+5-15 points',
+      estimatedEffort: 'medium',
+      estimatedTime: '3-5 hours',
+      isQuickWin: overall < 50,
+      quickLinks: dirQuickLinks,
       steps: directorySteps,
     });
   }
@@ -363,6 +490,13 @@ function buildActions(
       title: `Close the Gap on ${topComp.name}`,
       context: compContext,
       why: `Understanding what makes ${topComp.name} visible to AI will help you replicate and surpass their strategy.`,
+      estimatedImpact: '+10-20 points',
+      estimatedEffort: 'medium',
+      estimatedTime: '2-4 hours research + ongoing',
+      quickLinks: [
+        { label: `Google "${topComp.name}"`, url: `https://www.google.com/search?q=${encodeURIComponent(topComp.name + ' ' + config.location)}`, icon: '🔍' },
+        { label: 'Trustpilot Search', url: `https://www.trustpilot.com/search?query=${encodeURIComponent(topComp.name)}`, icon: '⭐' },
+      ],
       steps: [
         {
           text: `Research ${topComp.name}'s online presence to understand why AI recommends them:`,
@@ -400,6 +534,14 @@ function buildActions(
       title: 'Build Targeted Review Volume',
       context: revContext,
       why: 'Specific, location-rich reviews carry significantly more weight with AI than generic star ratings.',
+      estimatedImpact: '+5-12 points',
+      estimatedEffort: 'low',
+      estimatedTime: '30 mins setup + ongoing',
+      isQuickWin: true,
+      quickLinks: [
+        { label: 'Google Review Link Generator', url: 'https://support.google.com/business/answer/7035772', icon: '⭐' },
+        { label: 'Trustpilot Business', url: 'https://business.trustpilot.com', icon: '🌟' },
+      ],
       steps: [
         {
           text: `Ask satisfied clients to write detailed reviews that mention your specific services and "${config.location}".`,
@@ -435,6 +577,17 @@ function buildActions(
     title: 'Add AI-Optimised Content to Your Website',
     context: contentContext,
     why: 'AI platforms cite websites that provide clear, factual, well-structured information.',
+    estimatedImpact: '+5-10 points',
+    estimatedEffort: 'high',
+    estimatedTime: '4-8 hours',
+    quickLinks: config.website ? [
+      { label: 'Your Website', url: config.website.startsWith('http') ? config.website : `https://${config.website}`, icon: '🌐' },
+      { label: 'Schema.org Markup Validator', url: 'https://validator.schema.org/', icon: '✅' },
+      { label: 'Google Rich Results Test', url: 'https://search.google.com/test/rich-results', icon: '🔍' },
+    ] : [
+      { label: 'Schema.org Markup Validator', url: 'https://validator.schema.org/', icon: '✅' },
+      { label: 'Google Rich Results Test', url: 'https://search.google.com/test/rich-results', icon: '🔍' },
+    ],
     steps: [
       `Create or update your About page: clearly state who you are, what you do, and your service area. Include "${config.businessName} is a ${bt} based in ${config.location}" as an opening line.`,
       {
@@ -466,6 +619,10 @@ function buildActions(
       title: `Optimise for ${weakest.platform}`,
       context: platContext,
       why: `Improving your ${weakest.platform} presence will increase your overall visibility and reach clients who prefer this platform.`,
+      estimatedImpact: `+3-8 points`,
+      estimatedEffort: 'medium',
+      estimatedTime: '2-3 hours',
+      quickLinks: getPlatformQuickLinks(weakest.platform),
       steps: platformSteps,
     });
 
@@ -481,6 +638,10 @@ function buildActions(
         title: `Improve ${second.platform} Visibility`,
         context: secondContext,
         why: `${second.platform} is another platform where your visibility is below average. Targeted improvements here will lift your overall score.`,
+        estimatedImpact: `+2-6 points`,
+        estimatedEffort: 'medium',
+        estimatedTime: '2-3 hours',
+        quickLinks: getPlatformQuickLinks(second.platform),
         steps: secondSteps,
       });
     }
@@ -497,6 +658,10 @@ function buildActions(
       title: 'Get Featured in Local Publications',
       context: pubContext,
       why: 'Local press coverage creates authoritative citations that AI platforms reference when making recommendations.',
+      estimatedImpact: '+3-10 points',
+      estimatedEffort: 'high',
+      estimatedTime: '2-4 hours pitching + wait time',
+      quickLinks: getLocalPubQuickLinks(config.location),
       steps: publicationSteps,
     });
   }
@@ -702,6 +867,9 @@ export function generateInsights(
   const totalSearches = results.length;
   const totalFound = results.filter((r) => r.mentioned).length;
 
+  // ── Score projection: estimate impact of completing all actions ──
+  const scoreProjection = computeScoreProjection(score.overall, actions);
+
   return {
     categories,
     actions,
@@ -709,6 +877,59 @@ export function generateInsights(
     totalSearches,
     totalFound,
     progress,
+    scoreProjection,
+  };
+}
+
+/** Parse impact string like "+5-15 points" into [min, max] */
+function parseImpactRange(impact: string): [number, number] {
+  const match = impact.match(/\+?(\d+)-(\d+)/);
+  if (match) return [parseInt(match[1], 10), parseInt(match[2], 10)];
+  const single = impact.match(/\+?(\d+)/);
+  if (single) return [parseInt(single[1], 10), parseInt(single[1], 10)];
+  return [0, 0];
+}
+
+function gradeFromScore(score: number): string {
+  if (score >= 80) return 'A';
+  if (score >= 60) return 'B';
+  if (score >= 40) return 'C';
+  if (score >= 20) return 'D';
+  return 'F';
+}
+
+function computeScoreProjection(currentScore: number, actions: DetailedAction[]): ScoreProjection {
+  let minTotal = 0;
+  let maxTotal = 0;
+  let qwCount = 0;
+  let qwMin = 0;
+  let qwMax = 0;
+
+  for (const action of actions) {
+    const [lo, hi] = parseImpactRange(action.estimatedImpact);
+    // Actions overlap in impact, so diminish returns after first few
+    minTotal += lo;
+    maxTotal += hi;
+    if (action.isQuickWin) {
+      qwCount++;
+      qwMin += lo;
+      qwMax += hi;
+    }
+  }
+
+  // Apply diminishing returns — total impact is capped at ~80% of sum (actions overlap)
+  const diminishFactor = 0.6;
+  const projMin = Math.min(100, Math.round(currentScore + minTotal * diminishFactor));
+  const projMax = Math.min(100, Math.round(currentScore + maxTotal * diminishFactor));
+  const midpoint = Math.round((projMin + projMax) / 2);
+
+  return {
+    currentScore,
+    projectedMin: projMin,
+    projectedMax: projMax,
+    projectedGrade: gradeFromScore(midpoint),
+    quickWinCount: qwCount,
+    quickWinImpact: qwMin > 0 ? `+${qwMin}-${qwMax} points` : '',
   };
 }
 

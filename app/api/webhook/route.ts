@@ -138,12 +138,15 @@ export async function POST(req: NextRequest) {
           : null;
 
         // Upsert client record
+        const stripeCustomerId = (session.customer as string) || null;
+        const stripeSubscriptionId = (session.subscription as string) || null;
+
         const clientRecord: Record<string, unknown> = {
           email,
           plan,
           status: 'active',
-          stripe_customer_id: session.customer as string,
-          stripe_subscription_id: session.subscription as string,
+          stripe_customer_id: stripeCustomerId,
+          stripe_subscription_id: stripeSubscriptionId,
           business_name: businessName || null,
           business_type: businessType || null,
           description: description || null,
@@ -155,28 +158,57 @@ export async function POST(req: NextRequest) {
 
         let client: { id: string } | null = null;
 
-        const { data: c1, error: e1 } = await supabase
-          .from('clients')
-          .upsert(clientRecord, { onConflict: 'stripe_customer_id' })
-          .select('id')
-          .single();
-
-        if (e1 || !c1) {
-          // Fallback: description column might not exist yet
-          console.warn('Client upsert failed, retrying without description:', e1?.message);
-          delete clientRecord.description;
-          const { data: c2, error: e2 } = await supabase
+        // Try upsert by stripe_customer_id first (works for subscription checkouts)
+        if (stripeCustomerId) {
+          const { data: c1, error: e1 } = await supabase
             .from('clients')
             .upsert(clientRecord, { onConflict: 'stripe_customer_id' })
             .select('id')
             .single();
-          if (e2 || !c2) {
-            console.error('Failed to upsert client:', e2);
-            break;
+
+          if (e1 || !c1) {
+            console.warn('Client upsert by stripe_customer_id failed, retrying without description:', e1?.message);
+            delete clientRecord.description;
+            const { data: c2, error: e2 } = await supabase
+              .from('clients')
+              .upsert(clientRecord, { onConflict: 'stripe_customer_id' })
+              .select('id')
+              .single();
+            if (e2 || !c2) {
+              console.error('Failed to upsert client by stripe_customer_id:', e2);
+            } else {
+              client = c2;
+            }
+          } else {
+            client = c1;
           }
-          client = c2;
-        } else {
-          client = c1;
+        }
+
+        // Fallback: upsert by email (handles one-off payments where customer wasn't created)
+        if (!client) {
+          console.log(`Falling back to email-based upsert for ${email}`);
+          const { data: c3, error: e3 } = await supabase
+            .from('clients')
+            .upsert(clientRecord, { onConflict: 'email' })
+            .select('id')
+            .single();
+
+          if (e3 || !c3) {
+            console.warn('Client upsert by email failed, retrying without description:', e3?.message);
+            delete clientRecord.description;
+            const { data: c4, error: e4 } = await supabase
+              .from('clients')
+              .upsert(clientRecord, { onConflict: 'email' })
+              .select('id')
+              .single();
+            if (e4 || !c4) {
+              console.error('Failed to upsert client:', e4);
+              break;
+            }
+            client = c4;
+          } else {
+            client = c3;
+          }
         }
 
         if (!client) break;

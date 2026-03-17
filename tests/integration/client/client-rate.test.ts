@@ -92,6 +92,10 @@ vi.mock('@/lib/email/templates', () => ({
     subject: 'Dissatisfied client',
     html: '<p>Alert</p>',
   }),
+  adminRatingAlert: vi.fn().mockReturnValue({
+    subject: 'Rating alert',
+    html: '<p>Rating alert</p>',
+  }),
 }));
 
 import { POST, GET } from '@/app/api/client/rate/route';

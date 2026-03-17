@@ -295,9 +295,17 @@ function StepWithLinks({ text }: { text: string }) {
   );
 }
 
+// Effort label map for PDF
+const EFFORT_LABELS: Record<string, { label: string; color: string }> = {
+  low: { label: 'Easy', color: GREEN },
+  medium: { label: 'Moderate', color: GOLD },
+  high: { label: 'Involved', color: ORANGE },
+};
+
 // ── Action Card with Steps + Substeps ────────────────────────
 function ActionCard({ action, index }: { action: DetailedAction; index: number }) {
   const isHigh = action.priority === 'HIGH';
+  const effortConf = action.estimatedEffort ? EFFORT_LABELS[action.estimatedEffort] : null;
   // Always allow wrapping — header section has its own wrap={false} to prevent orphan titles
   return (
     <View style={[s.actCard, isHigh ? s.actCardHigh : {}]}>
@@ -314,8 +322,35 @@ function ActionCard({ action, index }: { action: DetailedAction; index: number }
               <Text style={[s.actBadgeTxt, { color: '#E65100' }]}>STILL OUTSTANDING</Text>
             </View>
           )}
+          {action.isQuickWin && (
+            <View style={[s.actBadge, { backgroundColor: GREEN + '18', marginLeft: 4 }]}>
+              <Text style={[s.actBadgeTxt, { color: GREEN }]}>QUICK WIN</Text>
+            </View>
+          )}
           <Text style={s.actTitle}>{index + 1}. {action.title}</Text>
         </View>
+
+        {/* Impact / Effort / Time metadata row */}
+        {(action.estimatedImpact || effortConf || action.estimatedTime) && (
+          <View style={{ flexDirection: 'row', gap: 10, marginBottom: 5, alignItems: 'center' }}>
+            {action.estimatedImpact && (
+              <Text style={{ fontSize: 6.5, color: GREEN, fontWeight: 600 }}>
+                Impact: {action.estimatedImpact}
+              </Text>
+            )}
+            {effortConf && (
+              <Text style={{ fontSize: 6.5, color: effortConf.color, fontWeight: 600 }}>
+                Effort: {effortConf.label}
+              </Text>
+            )}
+            {action.estimatedTime && (
+              <Text style={{ fontSize: 6.5, color: TEXT_MUTED }}>
+                Time: {action.estimatedTime}
+              </Text>
+            )}
+          </View>
+        )}
+
         {action.context && (
           <Text style={{ fontSize: 7.5, color: TEXT_PRIMARY, marginBottom: 4, lineHeight: 1.5, fontWeight: 600 }}>{action.context}</Text>
         )}
@@ -339,6 +374,21 @@ function ActionCard({ action, index }: { action: DetailedAction; index: number }
           </View>
         );
       })}
+      {/* Quick links in PDF */}
+      {action.quickLinks && action.quickLinks.length > 0 && (
+        <View style={{ marginTop: 6, padding: 6, backgroundColor: SURFACE, borderWidth: 0.5, borderColor: BORDER }}>
+          <Text style={{ fontSize: 6, color: TEXT_MUTED, fontWeight: 600, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 3 }}>Quick Links</Text>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4 }}>
+            {action.quickLinks.map((link, i) => (
+              <Link key={i} src={link.url}>
+                <Text style={{ fontSize: 6.5, color: GOLD, textDecoration: 'underline' }}>
+                  {link.label}
+                </Text>
+              </Link>
+            ))}
+          </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -351,6 +401,7 @@ function getFallbackActions(score: AuditScore, config: AuditConfig): DetailedAct
       priority: 'HIGH', phase: 1, timeline: 'Start here',
       title: 'Complete Your Google Business Profile',
       why: 'Google Business Profile data directly feeds into Google AI and influences all platforms.',
+      estimatedImpact: '+8-20 points', estimatedEffort: 'low', estimatedTime: '1-2 hours', isQuickWin: true,
       steps: [
         `Verify or claim your listing at business.google.com`,
         `Add a detailed firm description mentioning "${cleanBT(config.businessType)} in ${config.location}"`,
@@ -365,6 +416,7 @@ function getFallbackActions(score: AuditScore, config: AuditConfig): DetailedAct
       priority: 'HIGH', phase: 2, timeline: 'Next steps',
       title: 'Build Targeted Review Volume',
       why: 'Specific, location-rich reviews carry significantly more weight with AI than generic ratings.',
+      estimatedImpact: '+5-12 points', estimatedEffort: 'low', estimatedTime: '30 mins setup + ongoing', isQuickWin: true,
       steps: [
         `Ask satisfied clients to mention "${cleanBT(config.businessType)} in ${config.location}" in reviews`,
         'Text or email a direct Google review link immediately after a positive interaction',
@@ -378,6 +430,7 @@ function getFallbackActions(score: AuditScore, config: AuditConfig): DetailedAct
     phase: 2, timeline: 'Next steps',
     title: 'Add AI-Optimised Content to Your Website',
     why: 'AI platforms cite websites that provide clear, factual, well-structured information.',
+    estimatedImpact: '+5-10 points', estimatedEffort: 'high', estimatedTime: '4-8 hours',
     steps: [
       'Add a dedicated About page stating what you do, where you are, and who you serve',
       `Create a FAQ answering queries like "best ${cleanBT(config.businessType)} in ${config.location}"`,
@@ -716,6 +769,33 @@ function AuditReport({ config, score, insights, reportDate, jobId, previousAudit
           <Text style={s.secSub}>
             5 key recommendations ordered by impact. Focus on the priorities first. Complete as many as you can before your next audit, and you will see measurable improvement.
           </Text>
+
+          {/* Score Projection */}
+          {insights?.scoreProjection && (
+            <View wrap={false} style={{ marginBottom: 10, padding: 8, backgroundColor: SURFACE, borderWidth: 0.5, borderColor: GOLD + '44' }}>
+              <Text style={{ fontSize: 7.5, fontWeight: 700, color: GOLD, letterSpacing: 0.5, marginBottom: 4 }}>PROJECTED SCORE AFTER COMPLETING ACTIONS</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <View style={{ height: 14, flex: 1, backgroundColor: WHITE, borderWidth: 0.5, borderColor: BORDER, position: 'relative', overflow: 'hidden' }}>
+                  <View style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${insights.scoreProjection.currentScore}%`, backgroundColor: scoreColor(insights.scoreProjection.currentScore) }} />
+                  <View style={{
+                    position: 'absolute',
+                    left: `${insights.scoreProjection.currentScore}%`,
+                    top: 0, bottom: 0,
+                    width: `${insights.scoreProjection.projectedMax - insights.scoreProjection.currentScore}%`,
+                    backgroundColor: GREEN + '33',
+                  }} />
+                </View>
+                <Text style={{ fontSize: 7, color: TEXT_SECONDARY, flexShrink: 0 }}>
+                  {insights.scoreProjection.currentScore} → {insights.scoreProjection.projectedMin}-{insights.scoreProjection.projectedMax} (Grade {insights.scoreProjection.projectedGrade})
+                </Text>
+              </View>
+              {insights.scoreProjection.quickWinCount > 0 && insights.scoreProjection.quickWinImpact && (
+                <Text style={{ fontSize: 6.5, color: GREEN, marginTop: 3 }}>
+                  {insights.scoreProjection.quickWinCount} quick win{insights.scoreProjection.quickWinCount > 1 ? 's' : ''} available ({insights.scoreProjection.quickWinImpact})
+                </Text>
+              )}
+            </View>
+          )}
 
           <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomColor: BORDER, borderBottomWidth: 1, paddingBottom: 4, marginBottom: 8 }}>
             <Text style={{ fontSize: 8, fontWeight: 700, color: RED, letterSpacing: 1 }}>THIS MONTH&apos;S PRIORITIES</Text>

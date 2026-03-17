@@ -72,10 +72,10 @@ vi.mock('@/lib/stripe', () => ({
     },
   },
   PLANS: {
-    audit: { priceId: 'price_test_audit' },
-    starter: { priceId: 'price_test_starter' },
-    growth: { priceId: 'price_test_growth' },
-    premium: { priceId: 'price_test_premium' },
+    audit: { priceId: 'price_test_audit', recurring: false },
+    starter: { priceId: 'price_test_starter', recurring: true },
+    growth: { priceId: 'price_test_growth', recurring: true },
+    premium: { priceId: 'price_test_premium', recurring: true },
   },
   planFromPriceId: vi.fn(),
 }));
@@ -188,6 +188,7 @@ describe('POST /api/client/change-plan', () => {
         expect.objectContaining({
           customer: 'cus_123',
           mode: 'payment',
+          allow_promotion_codes: true,
         })
       );
     });
@@ -213,15 +214,34 @@ describe('POST /api/client/change-plan', () => {
     });
   });
 
-  describe('downgrade (growth → audit)', () => {
-    it('creates subscription schedule for end-of-period downgrade', async () => {
+  describe('downgrade to non-recurring plan (growth → audit)', () => {
+    it('rejects downgrade to non-recurring plan', async () => {
       const req = createChangePlanRequest({ targetPlan: 'audit' });
+      const res = await POST(req);
+      const data = await res.json();
+
+      expect(res.status).toBe(400);
+      expect(data.error).toContain('Cannot switch to');
+    });
+  });
+
+  describe('downgrade (premium → growth)', () => {
+    it('creates subscription schedule for end-of-period downgrade', async () => {
+      // Set client to premium so growth is a downgrade
+      mockClient.plan = 'premium';
+      mockSubscriptionRetrieve.mockResolvedValue({
+        items: { data: [{ id: 'si_123', current_period_start: 1700000000, current_period_end: 1702592000, price: { id: 'price_test_premium' } }] },
+        schedule: null,
+        cancel_at_period_end: false,
+      });
+
+      const req = createChangePlanRequest({ targetPlan: 'growth' });
       const res = await POST(req);
       const data = await res.json();
 
       expect(data.success).toBe(true);
       expect(data.immediate).toBe(false);
-      expect(data.newPlan).toBe('audit');
+      expect(data.newPlan).toBe('growth');
       expect(data.effectiveDate).toBeTruthy();
 
       // Should have created a schedule
@@ -233,14 +253,14 @@ describe('POST /api/client/change-plan', () => {
       expect(mockScheduleUpdate).toHaveBeenCalledWith('sch_123', expect.objectContaining({
         end_behavior: 'release',
         phases: expect.arrayContaining([
+          expect.objectContaining({ items: [{ price: 'price_test_premium' }] }),
           expect.objectContaining({ items: [{ price: 'price_test_growth' }] }),
-          expect.objectContaining({ items: [{ price: 'price_test_audit' }] }),
         ]),
       }));
 
       // Should record pending change in DB
       expect(mockUpdate).toHaveBeenCalledWith(
-        expect.objectContaining({ pending_plan_change: 'audit' })
+        expect.objectContaining({ pending_plan_change: 'growth' })
       );
 
       // Should send email
@@ -290,19 +310,21 @@ describe('POST /api/client/change-plan', () => {
 
   describe('release existing schedule before change', () => {
     it('releases existing schedule before applying new change', async () => {
+      // Use premium -> growth (valid downgrade) to test schedule release
+      mockClient.plan = 'premium';
       mockSubscriptionRetrieve
         .mockResolvedValueOnce({
-          items: { data: [{ id: 'si_123', current_period_start: 1700000000, current_period_end: 1702592000, price: { id: 'price_test_growth' } }] },
+          items: { data: [{ id: 'si_123', current_period_start: 1700000000, current_period_end: 1702592000, price: { id: 'price_test_premium' } }] },
           schedule: 'sch_existing',
           cancel_at_period_end: false,
         })
         .mockResolvedValueOnce({
-          items: { data: [{ id: 'si_123', current_period_start: 1700000000, current_period_end: 1702592000, price: { id: 'price_test_growth' } }] },
+          items: { data: [{ id: 'si_123', current_period_start: 1700000000, current_period_end: 1702592000, price: { id: 'price_test_premium' } }] },
           schedule: null,
           cancel_at_period_end: false,
         });
 
-      const req = createChangePlanRequest({ targetPlan: 'audit' });
+      const req = createChangePlanRequest({ targetPlan: 'growth' });
       const res = await POST(req);
       expect(res.status).toBe(200);
 

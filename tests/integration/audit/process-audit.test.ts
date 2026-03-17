@@ -113,16 +113,64 @@ const mockUpload = vi.fn().mockResolvedValue({ error: null });
 
 // Default: return the full mockJob
 const mockSelectSingle = vi.fn().mockResolvedValue({ data: mockJob, error: null });
-const mockSelectEq = vi.fn().mockReturnValue({ single: mockSelectSingle });
-const mockSelect = vi.fn().mockReturnValue({ eq: mockSelectEq });
+
+// Build a chainable mock that supports arbitrary .eq().eq().neq().order().limit().single()
+function buildChainableMock(terminalSingle: ReturnType<typeof vi.fn>) {
+  const chain: Record<string, unknown> = {};
+  const chainFn = () => chain;
+  chain.eq = vi.fn().mockImplementation(chainFn);
+  chain.neq = vi.fn().mockImplementation(chainFn);
+  chain.order = vi.fn().mockImplementation(chainFn);
+  chain.limit = vi.fn().mockImplementation(chainFn);
+  chain.like = vi.fn().mockImplementation(chainFn);
+  chain.single = terminalSingle;
+  return chain;
+}
+
+// Tracks calls from the main job lookup: select('*, clients(*)').eq('id', jobId).single()
+const mockSelectEq = vi.fn();
+const mockSelect = vi.fn();
+
+// For previous audit lookup: returns null by default (no previous audit)
+const mockPrevAuditSingle = vi.fn().mockResolvedValue({ data: null, error: null });
+
+// For campaign_emails table: last report email lookup
+const mockCampaignEmailSingle = vi.fn().mockResolvedValue({ data: null, error: null });
+const mockCampaignInsert = vi.fn().mockReturnValue({
+  then: vi.fn().mockImplementation((cb: (v: { error: null }) => void) => { cb({ error: null }); return { catch: vi.fn() }; }),
+});
 
 vi.mock('@/lib/supabase', () => ({
   supabase: {
     from: vi.fn((table: string) => {
       if (table === 'audit_jobs') {
         return {
-          select: mockSelect,
+          select: vi.fn().mockImplementation((selectStr: string) => {
+            mockSelect(selectStr);
+            // Main job lookup: .select('*, clients(*)').eq('id', jobId).single()
+            if (selectStr === '*, clients(*)') {
+              const chain = buildChainableMock(mockSelectSingle);
+              // Wrap the eq to also record calls
+              const wrappedEq = vi.fn().mockImplementation((...args: unknown[]) => {
+                mockSelectEq(...args);
+                return chain;
+              });
+              return { eq: wrappedEq };
+            }
+            // Previous audit lookup or other selects: .eq().eq().neq().order().limit().single()
+            const prevChain = buildChainableMock(mockPrevAuditSingle);
+            return prevChain;
+          }),
           update: mockUpdate,
+        };
+      }
+      if (table === 'campaign_emails') {
+        return {
+          select: vi.fn().mockReturnValue(buildChainableMock(mockCampaignEmailSingle)),
+          insert: (...args: unknown[]) => {
+            mockCampaignInsert(...args);
+            return { then: vi.fn().mockImplementation((cb: (v: { error: null }) => void) => { cb({ error: null }); return { catch: vi.fn() }; }) };
+          },
         };
       }
       return {};
@@ -167,6 +215,8 @@ beforeEach(() => {
 
   // Reset supabase mocks to defaults
   mockSelectSingle.mockResolvedValue({ data: mockJob, error: null });
+  mockPrevAuditSingle.mockResolvedValue({ data: null, error: null });
+  mockCampaignEmailSingle.mockResolvedValue({ data: null, error: null });
   mockUpdateEq.mockResolvedValue({ error: null });
   mockUpdate.mockReturnValue({ eq: mockUpdateEq });
   mockUpload.mockResolvedValue({ error: null });
@@ -363,6 +413,7 @@ describe('POST /api/process-audit — Successful Audit', () => {
       expect.objectContaining({ businessName: 'Test Wealth' }),
       mockAuditResult.score,
       mockAuditResult.results,
+      undefined, // previousAudit (no previous audit in default mock)
     );
   });
 
@@ -376,6 +427,7 @@ describe('POST /api/process-audit — Successful Audit', () => {
       mockAuditResult.results,
       { categories: [], actions: [] },
       'job-1',
+      undefined, // previousAudit (no previous audit in default mock)
     );
   });
 

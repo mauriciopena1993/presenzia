@@ -4,6 +4,7 @@ import { NextRequest } from 'next/server';
 // ── Set required env vars before any imports ──
 process.env.OPENAI_API_KEY = 'test-openai-key';
 process.env.ANTHROPIC_API_KEY = 'test-anthropic-key';
+process.env.RESEND_API_KEY = 'test-resend-key';
 // Deliberately NOT setting PERPLEXITY_API_KEY and GOOGLE_AI_API_KEY
 // to test with only 2 platforms (ChatGPT + Claude)
 delete process.env.PERPLEXITY_API_KEY;
@@ -34,6 +35,28 @@ const mockFreeScoreNoCompetitor = {
   top_competitor_count: null,
 };
 
+// ── Mock Resend ──
+const mockEmailSend = vi.fn().mockResolvedValue({ data: { id: 'email-1' }, error: null });
+vi.mock('resend', () => ({
+  Resend: class MockResend {
+    emails = { send: (...args: unknown[]) => mockEmailSend(...args) };
+  },
+}));
+
+// ── Mock email templates ──
+vi.mock('@/lib/email/templates', () => ({
+  FROM_EMAIL: 'test@presenzia.ai',
+  REPLY_TO: 'reply@presenzia.ai',
+  adminFreeScoreAlert: vi.fn().mockReturnValue({
+    subject: 'Free score alert',
+    html: '<p>Alert</p>',
+  }),
+  freeScoreDelivery: vi.fn().mockReturnValue({
+    subject: 'Your score',
+    html: '<p>Score</p>',
+  }),
+}));
+
 // ── Mock Supabase ──
 const mockInsert = vi.fn().mockResolvedValue({ error: null });
 const mockUpdateEq = vi.fn().mockResolvedValue({ error: null });
@@ -43,9 +66,10 @@ const mockSelectEq = vi.fn().mockReturnValue({ single: mockSingle });
 const mockSelect = vi.fn().mockReturnValue({ eq: mockSelectEq });
 
 // For POST /api/score — also queries the 'clients' table
+const mockClientsSingle = vi.fn().mockResolvedValue({ data: null, error: null });
 const mockClientsLimitSingle = vi.fn().mockResolvedValue({ data: null, error: null });
 const mockClientsLimit = vi.fn().mockReturnValue({ single: mockClientsLimitSingle });
-const mockClientsEq = vi.fn().mockReturnValue({ limit: mockClientsLimit });
+const mockClientsEq = vi.fn().mockReturnValue({ limit: mockClientsLimit, single: mockClientsSingle });
 const mockClientsSelect = vi.fn().mockReturnValue({ eq: mockClientsEq });
 
 vi.mock('@/lib/supabase', () => ({

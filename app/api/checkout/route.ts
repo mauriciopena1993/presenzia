@@ -38,6 +38,8 @@ export async function POST(req: NextRequest) {
         },
       ],
       customer_email: email || undefined,
+      // Always create a Stripe customer — needed for webhook to link client record
+      ...(!isRecurring ? { customer_creation: 'always' } : {}),
       success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}&plan=${plan}`,
       cancel_url: `${appUrl}/score`,
       metadata: {

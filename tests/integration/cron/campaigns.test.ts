@@ -168,10 +168,12 @@ vi.mock('@/lib/supabase', () => ({
       if (table === 'clients') {
         return {
           select: vi.fn().mockImplementation((selectStr: string) => {
-            // Two usage patterns:
-            // 1. .select('id').eq('email', ...) → check if lead converted to client (free_scores campaign)
+            // Usage patterns:
+            // 1. .select('id').eq('email', ...) → check if lead converted to client
             // 2. .select('marketing_suppressed').eq('id', ...) → check marketing suppression
             // 3. .select('id, email, business_name, ...').eq('status', 'cancelled') → cancelled clients
+            // 4. .select('id, email, ...').eq('plan', 'audit') → audit upsell (Campaign 2b)
+            // 5. .select('id, email, ...').in('plan', [...]) → renewal/monitoring (Campaigns 6, 7)
 
             if (selectStr.includes('marketing_suppressed') && !selectStr.includes('email')) {
               // isMarketingSuppressed check: .select('marketing_suppressed').eq('id', clientId).single()
@@ -199,12 +201,33 @@ vi.mock('@/lib/supabase', () => ({
               };
             }
 
-            // Cancelled clients query: .select('id, email, ...').eq('status', 'cancelled').limit(200)
-            return {
-              eq: vi.fn().mockReturnValue({
-                limit: vi.fn().mockResolvedValue({ data: currentCancelledClients, error: null }),
+            // Build a chainable result for queries that use .eq(), .in(), .limit()
+            // This handles cancelled clients, audit upsell, renewal, and monitoring queries
+            const chainResult = {
+              eq: vi.fn().mockImplementation((_col: string, val: string) => {
+                // .eq('status', 'cancelled') → cancelled clients
+                if (val === 'cancelled') {
+                  return {
+                    limit: vi.fn().mockResolvedValue({ data: currentCancelledClients, error: null }),
+                  };
+                }
+                // .eq('plan', 'audit') → audit upsell (return empty for now)
+                if (val === 'audit' || val === 'active') {
+                  return {
+                    limit: vi.fn().mockResolvedValue({ data: [], error: null }),
+                  };
+                }
+                return {
+                  limit: vi.fn().mockResolvedValue({ data: [], error: null }),
+                };
+              }),
+              in: vi.fn().mockReturnValue({
+                eq: vi.fn().mockReturnValue({
+                  limit: vi.fn().mockResolvedValue({ data: [], error: null }),
+                }),
               }),
             };
+            return chainResult;
           }),
         };
       }
@@ -236,12 +259,35 @@ vi.mock('@/lib/email/templates', () => ({
   freeScoreNurture2: vi.fn().mockReturnValue({ subject: 'Nurture 2', html: '<p>Nurture 2</p>' }),
   freeScoreNurture3: vi.fn().mockReturnValue({ subject: 'Nurture 3', html: '<p>Nurture 3</p>' }),
   ratingRequest: vi.fn().mockReturnValue({ subject: 'Rate us', html: '<p>Rate</p>' }),
+  auditUpsell1: vi.fn().mockReturnValue({ subject: 'Upsell 1', html: '<p>Upsell 1</p>' }),
+  auditUpsell2: vi.fn().mockReturnValue({ subject: 'Upsell 2', html: '<p>Upsell 2</p>' }),
   happyReviewRequest: vi.fn().mockReturnValue({ subject: 'Review', html: '<p>Review</p>' }),
   happyReferralRequest: vi.fn().mockReturnValue({ subject: 'Refer', html: '<p>Refer</p>' }),
   happySocialFollow: vi.fn().mockReturnValue({ subject: 'Follow', html: '<p>Follow</p>' }),
   dissatisfiedOutreach: vi.fn().mockReturnValue({ subject: 'Sorry', html: '<p>Sorry</p>' }),
   winBack1: vi.fn().mockReturnValue({ subject: 'Come back', html: '<p>Come back</p>' }),
   winBack2: vi.fn().mockReturnValue({ subject: 'Miss you', html: '<p>Miss you</p>' }),
+  renewalReminder: vi.fn().mockReturnValue({ subject: 'Renewal', html: '<p>Renewal</p>' }),
+  reauditReportReminder: vi.fn().mockReturnValue({ subject: 'Report reminder', html: '<p>Report reminder</p>' }),
+}));
+
+// ── Mock Stripe ──────────────────────────────────────────────────────────────
+vi.mock('@/lib/stripe', () => ({
+  stripe: {
+    invoices: {
+      createPreview: vi.fn().mockResolvedValue({ next_payment_attempt: null, amount_due: 0 }),
+    },
+  },
+}));
+
+// ── Mock plans ────────────────────────────────────────────────────────────────
+vi.mock('@/lib/plans', () => ({
+  PLAN_LABELS: {
+    audit: 'Full AI Audit & Action Plan',
+    starter: 'Starter',
+    growth: 'Growth Retainer',
+    premium: 'Premium',
+  },
 }));
 
 // ── Import the route handler (AFTER all mocks) ──────────────────────────────
