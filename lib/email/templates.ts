@@ -205,11 +205,11 @@ export function happyReviewRequest(businessName: string, email: string) {
     <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">Thank you for the great rating!</h1>
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">We're thrilled you found the audit valuable for ${businessName}. Ratings like yours keep us going.</p>
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Would you mind sharing a quick review on Trustpilot? It helps other wealth managers discover presenzia.ai, and it takes less than 2 minutes.</p>
-    ${ctaButton('Leave a Trustpilot review →', 'https://uk.trustpilot.com/evaluate/presenzia.ai')}
+    ${ctaButton('Leave a Trustpilot review →', 'https://www.trustpilot.com/review/presenzia.ai')}
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Every review makes a real difference. Thank you!</p>
   `.replace('{{email}}', email), { preheader: 'Your review helps other advisers find us.' });
 
-  return { subject, html, text: `Thank you for rating us! Leave a Trustpilot review at https://uk.trustpilot.com/evaluate/presenzia.ai` };
+  return { subject, html, text: `Thank you for rating us! Leave a Trustpilot review at https://www.trustpilot.com/review/presenzia.ai` };
 }
 
 export function happyReferralRequest(businessName: string, email: string) {
@@ -230,17 +230,16 @@ export function happySocialFollow(businessName: string, email: string) {
   const html = emailWrapper(`
     <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">Follow us for AI visibility tips</h1>
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">We regularly share insights on how AI is reshaping client acquisition for wealth managers, along with practical tips you can act on immediately.</p>
-    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Follow us to stay ahead:</p>
+    <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Follow us on LinkedIn for the latest AI visibility insights and tips:</p>
     <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
       <tr>
-        <td style="padding:8px 16px 8px 0;"><a href="https://www.linkedin.com/company/presenzia-ai" style="color:#0A66C2;text-decoration:none;font-size:14px;font-weight:600;">LinkedIn →</a></td>
-        <td style="padding:8px 16px;"><a href="https://www.instagram.com/presenzia.ai" style="color:#E1306C;text-decoration:none;font-size:14px;font-weight:600;">Instagram →</a></td>
+        <td style="padding:8px 16px 8px 0;"><a href="https://www.linkedin.com/company/presenzia-ai" style="color:#0A66C2;text-decoration:none;font-size:14px;font-weight:600;">Follow on LinkedIn →</a></td>
       </tr>
     </table>
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Thank you for being part of the presenzia.ai community.</p>
   `.replace('{{email}}', email), { preheader: 'Practical AI visibility tips for your firm.' });
 
-  return { subject, html, text: `Follow presenzia.ai on LinkedIn and Instagram for AI visibility tips.` };
+  return { subject, html, text: `Follow presenzia.ai on LinkedIn for AI visibility tips: https://www.linkedin.com/company/presenzia-ai` };
 }
 
 // ════════════════════════════════════════════════════════════════════════
