@@ -393,6 +393,20 @@ function getPosition(index: number, totalLength: number): 'first' | 'prominent' 
   return 'mentioned';
 }
 
+// Words so common in financial services AI responses that matching on them alone
+// would create false positives for any firm with these words in their name.
+const GENERIC_SINGLE_WORDS = new Set([
+  'wealth', 'financial', 'finance', 'planning', 'plan', 'advisor', 'advisors',
+  'adviser', 'advisers', 'advisory', 'investment', 'investments', 'capital',
+  'management', 'asset', 'assets', 'group', 'partners', 'partner', 'associates',
+  'consulting', 'consultants', 'services', 'solutions', 'trust', 'private',
+  'independent', 'professional', 'professionals', 'personal', 'global', 'national',
+  'integrated', 'bespoke', 'strategic', 'holistic', 'comprehensive', 'specialist',
+  'true', 'self', 'real', 'core', 'peak', 'plus', 'best', 'first', 'life', 'north',
+  'south', 'east', 'west', 'new', 'old', 'smart', 'clear', 'right', 'active',
+  'solid', 'sure', 'safe', 'fair', 'open', 'bold', 'blue', 'gold', 'grey', 'green',
+]);
+
 function checkMention(response: string, firmName: string, website?: string): { mentioned: boolean; position: 'first' | 'prominent' | 'mentioned' | null } {
   const responseLower = response.toLowerCase();
   const cleaned = cleanFirmName(firmName).toLowerCase();
@@ -410,9 +424,12 @@ function checkMention(response: string, firmName: string, website?: string): { m
     return { mentioned: true, position: getPosition(index, response.length) };
   }
 
-  // 3. Word-boundary match for each significant word (≥ 4 chars) from the cleaned name
-  const cleanedWords = cleaned.split(/\s+/).filter(w => w.length >= 4);
-  for (const word of cleanedWords) {
+  // 3. Word-boundary match — only for distinctive words (not generic financial terms)
+  // "True Self Wealth" → words ["true","self","wealth"] → all generic, skip
+  // "Coutts" → ["coutts"] → distinctive, will match
+  const allWords = cleaned.split(/\s+/).filter(w => w.length >= 4);
+  const distinctiveWords = allWords.filter(w => !GENERIC_SINGLE_WORDS.has(w));
+  for (const word of distinctiveWords) {
     try {
       const regex = new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
       const match = regex.exec(response);
@@ -424,9 +441,9 @@ function checkMention(response: string, firmName: string, website?: string): { m
     }
   }
 
-  // 4. Partial match: 2+ significant words from name found in response
-  if (cleanedWords.length >= 2) {
-    const matchCount = cleanedWords.filter(w => responseLower.includes(w)).length;
+  // 4. Partial match: 2+ DISTINCTIVE words found in response (not generic words)
+  if (distinctiveWords.length >= 2) {
+    const matchCount = distinctiveWords.filter(w => responseLower.includes(w)).length;
     if (matchCount >= 2) {
       return { mentioned: true, position: 'mentioned' };
     }

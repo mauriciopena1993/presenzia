@@ -238,6 +238,30 @@ function ScorePageInner() {
     setError('');
   };
 
+  const handleStartFresh = () => {
+    // Clear everything — form + results + sessionStorage
+    try { sessionStorage.removeItem(STORAGE_KEY); } catch {}
+    setResult(null);
+    setStep('form');
+    setShowRescore(false);
+    setCompletedAt(0);
+    setLoadingStage(0);
+    setLoadingPercent(0);
+    resultReady.current = false;
+    minTimeReached.current = false;
+    setError('');
+    setFirmName('');
+    setCoverageType('');
+    setLocations('');
+    setSpecialties([]);
+    setTargetClient('');
+    setWebsite('');
+    setFirmDescription('');
+    setAdditionalContext('');
+    setEmail('');
+    setName('');
+  };
+
   // Persist state to sessionStorage on meaningful changes
   useEffect(() => {
     if (step === 'loading') return; // don't save transient loading state
@@ -834,6 +858,23 @@ function ScorePageInner() {
               We&apos;ll also email you a copy. No spam, ever.
             </p>
 
+            <button
+              onClick={handleStartFresh}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#555',
+                fontSize: '0.72rem',
+                cursor: 'pointer',
+                fontFamily: 'var(--font-inter, Inter, sans-serif)',
+                textDecoration: 'underline',
+                textUnderlineOffset: '3px',
+                marginTop: '2rem',
+                display: 'block',
+              }}
+            >
+              Test a different firm
+            </button>
             {showRescore && (
               <button
                 onClick={handleRescore}
@@ -846,10 +887,11 @@ function ScorePageInner() {
                   fontFamily: 'var(--font-inter, Inter, sans-serif)',
                   textDecoration: 'underline',
                   textUnderlineOffset: '3px',
-                  marginTop: '2rem',
+                  marginTop: '0.5rem',
+                  display: 'block',
                 }}
               >
-                Run a new score with different details
+                Re-run this score
               </button>
             )}
           </div>
@@ -1323,26 +1365,45 @@ function ScorePageInner() {
               </button>
             </div>
 
-            {/* "Run new score" — appears after 30 min cooldown */}
-            {showRescore && (
-              <div style={{ textAlign: 'center', marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid #1A1A1A' }}>
-                <button
-                  onClick={handleRescore}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#555',
-                    fontSize: '0.75rem',
-                    cursor: 'pointer',
-                    fontFamily: 'var(--font-inter, Inter, sans-serif)',
-                    textDecoration: 'underline',
-                    textUnderlineOffset: '3px',
-                  }}
-                >
-                  Run a new score with different details
-                </button>
-              </div>
-            )}
+            {/* Always-visible: test a different firm */}
+            <div style={{ textAlign: 'center', marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid #1A1A1A' }}>
+              <button
+                onClick={handleStartFresh}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#555',
+                  fontSize: '0.75rem',
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-inter, Inter, sans-serif)',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: '3px',
+                }}
+              >
+                Test a different firm
+              </button>
+              {/* "Run new score" — appears after 30 min cooldown */}
+              {showRescore && (
+                <>
+                  <span style={{ color: '#333', margin: '0 0.5rem', fontSize: '0.75rem' }}>·</span>
+                  <button
+                    onClick={handleRescore}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#555',
+                      fontSize: '0.75rem',
+                      cursor: 'pointer',
+                      fontFamily: 'var(--font-inter, Inter, sans-serif)',
+                      textDecoration: 'underline',
+                      textUnderlineOffset: '3px',
+                    }}
+                  >
+                    Re-run this score
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         )}
       </div>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Presenzia Email Journey Map</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0A0A0A; color: #F5F0E8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 2rem; }
+h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+.gold { color: #C9A84C; }
+.subtitle { color: #888; font-size: 0.9rem; margin-bottom: 3rem; }
+.phase { margin-bottom: 3rem; }
+.phase-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #C9A84C; }
+.phase-desc { font-size: 0.8rem; color: #888; margin-bottom: 1.5rem; }
+.email-card { background: #111; border: 1px solid #222; margin-bottom: 1rem; overflow: hidden; }
+.email-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; cursor: pointer; }
+.email-header:hover { background: #1a1a1a; }
+.email-meta { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.badge { font-size: 0.65rem; padding: 3px 8px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+.badge-customer { background: rgba(201,168,76,0.15); color: #C9A84C; border: 1px solid rgba(201,168,76,0.3); }
+.badge-admin { background: rgba(106,58,168,0.15); color: #9b6ba8; border: 1px solid rgba(106,58,168,0.3); }
+.badge-trigger { background: rgba(58,125,68,0.15); color: #5aad6a; border: 1px solid rgba(58,125,68,0.3); }
+.badge-campaign { background: rgba(26,111,168,0.15); color: #5a9dd6; border: 1px solid rgba(26,111,168,0.3); }
+.email-subject { font-weight: 600; font-size: 0.9rem; }
+.email-timing { font-size: 0.75rem; color: #666; }
+.email-body { display: none; border-top: 1px solid #222; }
+.email-body.open { display: block; }
+.email-preview { background: #f4f4f4; padding: 0; }
+.email-preview iframe { width: 100%; border: none; min-height: 400px; }
+.email-info { padding: 1rem 1.25rem; background: #0D0D0D; font-size: 0.8rem; color: #888; }
+.email-info strong { color: #CCC; }
+.toggle { color: #666; font-size: 0.8rem; transition: transform 0.2s; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.75rem; margin-bottom: 3rem; }
+.stat { background: #111; border: 1px solid #1a1a1a; padding: 1rem 1.25rem; text-align: center; }
+.stat-num { font-size: 2rem; font-weight: 700; color: #C9A84C; }
+.stat-label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+.connector { width: 2px; height: 20px; background: #333; margin: 0 auto; }
+.missing { border-color: rgba(204,68,68,0.3); background: rgba(204,68,68,0.04); }
+.missing .email-header { opacity: 0.7; }
+.badge-missing { background: rgba(204,68,68,0.15); color: #cc4444; border: 1px solid rgba(204,68,68,0.3); }
+</style>
+</head>
+<body>
+
+<h1>presenzia<span class="gold">.ai</span> Email Journey Map</h1>
+<p class="subtitle">Complete customer lifecycle email communications &middot; 22 emails across 8 lifecycle phases</p>
+
+<div class="stats">
+  <div class="stat"><div class="stat-num">22</div><div class="stat-label">Total emails</div></div>
+  <div class="stat"><div class="stat-num">13</div><div class="stat-label">To customer</div></div>
+  <div class="stat"><div class="stat-num">9</div><div class="stat-label">To admin</div></div>
+  <div class="stat"><div class="stat-num">5</div><div class="stat-label">Campaign sequences</div></div>
+  <div class="stat"><div class="stat-num">3</div><div class="stat-label">Missing (gaps)</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PHASE 0: AUTHENTICATION -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="phase">
+<div class="phase-title">Phase 0: Authentication</div>
+<div class="phase-desc">Login OTP codes for clients and admin</div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-customer">Customer</span>
+        <span class="badge badge-trigger">On login</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">Your presenzia.ai login code: 847291</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/auth/send-otp/route.ts &middot; <strong>To:</strong> Client email &middot; <strong>Trigger:</strong> Client clicks "Send login code"</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#111111;margin:0 0 8px;font-weight:700;">Your login code</h1><p style="font-size:14px;color:#555555;margin:0 0 20px;line-height:1.7;">Use this code to sign in to your presenzia.ai dashboard:</p><div style="text-align:center;margin:24px 0;"><span style="display:inline-block;font-size:36px;font-weight:700;letter-spacing:8px;color:#111111;background:#f9f7f2;padding:16px 32px;border:2px solid #C9A84C;">847291</span></div><p style="font-size:13px;color:#999999;margin:0 0 16px;line-height:1.6;">This code expires in 30 minutes. If you did not request this, you can safely ignore this email.</p></td></tr><tr><td style="padding:20px 32px;border-top:1px solid #eeeeee;"><p style="font-size:12px;color:#999999;margin:0;line-height:1.5;">presenzia.ai &middot; AI visibility for UK financial advisers</p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-admin">Admin</span>
+        <span class="badge badge-trigger">On admin login</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">Your presenzia.ai admin code: 384716</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/admin/send-otp/route.ts &middot; <strong>To:</strong> hello@presenzia.ai &middot; <strong>Trigger:</strong> Admin clicks "Send login code"</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#111111;margin:0 0 8px;font-weight:700;">Admin login code</h1><p style="font-size:14px;color:#555555;margin:0 0 20px;line-height:1.7;">Your admin login code:</p><div style="text-align:center;margin:24px 0;"><span style="display:inline-block;font-size:36px;font-weight:700;letter-spacing:8px;color:#111111;background:#f9f7f2;padding:16px 32px;border:2px solid #C9A84C;">384716</span></div><p style="font-size:13px;color:#999999;margin:0;line-height:1.6;">Expires in 30 minutes.</p></td></tr><tr><td style="padding:20px 32px;border-top:1px solid #eeeeee;"><p style="font-size:12px;color:#999999;margin:0;">presenzia.ai admin</p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PHASE 1: FREE SCORE LEAD CAPTURE -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="phase">
+<div class="phase-title">Phase 1: Free Score Lead Nurture</div>
+<div class="phase-desc">3-email sequence over 7 days after someone gets their free AI visibility score</div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-customer">Customer</span>
+        <span class="badge badge-campaign">Campaign: 24h after score</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">Your competitors are pulling ahead, {firm_name}</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/cron/campaigns/route.ts &middot; <strong>Campaign:</strong> free_score_nurture_1 &middot; <strong>Trigger:</strong> 24h after free score submission (with email)</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#111111;margin:0 0 16px;font-weight:700;">Your competitors are pulling ahead</h1><p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Hi Sample Firm,</p><p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Yesterday you checked your AI visibility score and scored <strong style="color:#111;">42/100 (Grade D)</strong>.</p><p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">While you reviewed your score, your top competitor <strong style="color:#111;">Sterling Financial Planning</strong> was mentioned <strong>18 times</strong> across AI platforms.</p><p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Every day without action is another day prospective clients are being directed to your competitors by ChatGPT, Claude, and Perplexity.</p><div style="text-align:center;margin:28px 0;"><a href="https://presenzia.ai/pricing" style="display:inline-block;padding:14px 28px;background:#C9A84C;color:#0A0A0A;text-decoration:none;font-weight:700;font-size:14px;">See what a full audit reveals &rarr;</a></div><p style="font-size:13px;color:#999999;margin:16px 0 0;line-height:1.6;text-align:center;">Your free score showed the problem. A full audit shows exactly how to fix it.</p></td></tr><tr><td style="padding:20px 32px;border-top:1px solid #eeeeee;"><p style="font-size:11px;color:#bbbbbb;margin:0;line-height:1.5;">You received this because you checked your AI visibility score on presenzia.ai. <a href="https://presenzia.ai/email-preferences?email=test@example.com" style="color:#999999;">Unsubscribe</a></p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+
+<div class="connector"></div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-customer">Customer</span>
+        <span class="badge badge-campaign">Campaign: 3 days after score</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">The 3 things hurting your AI visibility</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/cron/campaigns/route.ts &middot; <strong>Campaign:</strong> free_score_nurture_2 &middot; <strong>Trigger:</strong> 3 days after free score</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#111111;margin:0 0 16px;font-weight:700;">The 3 things hurting your AI visibility</h1><p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Hi Sample Firm,</p><p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">We have audited hundreds of UK financial adviser firms. The three most common reasons AI platforms overlook firms like yours:</p><div style="margin:20px 0;padding:16px 20px;background:#f9f7f2;border-left:3px solid #C9A84C;"><p style="font-size:14px;color:#333;margin:0 0 12px;line-height:1.6;"><strong>1. No structured data</strong> &mdash; AI models cannot parse your services without schema markup</p><p style="font-size:14px;color:#333;margin:0 0 12px;line-height:1.6;"><strong>2. Thin content</strong> &mdash; Your website does not answer the questions AI users ask</p><p style="font-size:14px;color:#333;margin:0;line-height:1.6;"><strong>3. Weak review profile</strong> &mdash; AI platforms weight third-party validation heavily</p></div><p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">A full AI visibility audit shows you exactly which of these applies to your firm, with a step-by-step plan to fix each one.</p><div style="text-align:center;margin:28px 0;"><a href="https://presenzia.ai/pricing" style="display:inline-block;padding:14px 28px;background:#C9A84C;color:#0A0A0A;text-decoration:none;font-weight:700;font-size:14px;">Get your full audit &rarr;</a></div></td></tr><tr><td style="padding:20px 32px;border-top:1px solid #eeeeee;"><p style="font-size:11px;color:#bbbbbb;margin:0;line-height:1.5;">You received this because you checked your AI visibility score. <a href="https://presenzia.ai/email-preferences?email=test@example.com" style="color:#999999;">Unsubscribe</a></p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+
+<div class="connector"></div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-customer">Customer</span>
+        <span class="badge badge-campaign">Campaign: 7 days after score</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">Last chance: your AI visibility report</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/cron/campaigns/route.ts &middot; <strong>Campaign:</strong> free_score_nurture_3 &middot; <strong>Trigger:</strong> 7 days after free score</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#111111;margin:0 0 16px;font-weight:700;">Your competitors are not waiting</h1><p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Hi Sample Firm,</p><p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">A week ago, your free score showed a <strong>Grade D</strong>. Since then, AI platforms have served thousands of searches for financial advisers in your area &mdash; and your competitors got the recommendations.</p><p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">The firms that act now will compound their AI advantage. Those that wait will fall further behind as AI becomes the default way clients find advisers.</p><div style="text-align:center;margin:28px 0;"><a href="https://presenzia.ai/pricing" style="display:inline-block;padding:14px 28px;background:#C9A84C;color:#0A0A0A;text-decoration:none;font-weight:700;font-size:14px;">Start your full audit today &rarr;</a></div><p style="font-size:13px;color:#999999;margin:16px 0 0;line-height:1.6;text-align:center;">This is our last email about your free score. We will not email again unless you sign up.</p></td></tr><tr><td style="padding:20px 32px;border-top:1px solid #eeeeee;"><p style="font-size:11px;color:#bbbbbb;margin:0;line-height:1.5;">You received this because you checked your AI visibility score. <a href="https://presenzia.ai/email-preferences?email=test@example.com" style="color:#999999;">Unsubscribe</a></p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PHASE 2: NEW CLIENT ONBOARDING -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="phase">
+<div class="phase-title">Phase 2: New Client Onboarding</div>
+<div class="phase-desc">Welcome email + admin notification after Stripe payment</div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-customer">Customer</span>
+        <span class="badge badge-trigger">On payment</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">Welcome to presenzia.ai: your AI visibility audit is running</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/webhook/route.ts &middot; <strong>Trigger:</strong> checkout.session.completed (new client)</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#111111;margin:0 0 8px;font-weight:700;">Welcome to presenzia.ai</h1><p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Hi Hartfield Wealth Management,</p><p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Thank you for choosing <strong style="color:#111;">Growth Plan</strong>. Your AI visibility audit is running right now across ChatGPT, Claude, Perplexity, and Google AI.</p><p style="font-size:14px;color:#555555;margin:0 0 8px;line-height:1.7;"><strong style="color:#111;">What happens next:</strong></p><ul style="margin:0 0 20px 0;padding:0 0 0 20px;"><li style="font-size:14px;color:#555555;line-height:1.8;">Your audit tests 120+ real search queries</li><li style="font-size:14px;color:#555555;line-height:1.8;">Results ready within 24 hours</li><li style="font-size:14px;color:#555555;line-height:1.8;">Full PDF report emailed to you</li><li style="font-size:14px;color:#555555;line-height:1.8;">Interactive dashboard with detailed analysis</li></ul><p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;"><strong style="color:#111;">Your Growth plan includes:</strong></p><ul style="margin:0 0 20px 0;padding:0 0 0 20px;"><li style="font-size:14px;color:#555555;line-height:1.8;">Weekly automated re-audits to track progress</li><li style="font-size:14px;color:#555555;line-height:1.8;">AI chat assistant for strategy questions</li><li style="font-size:14px;color:#555555;line-height:1.8;">Competitor monitoring across all platforms</li></ul><div style="text-align:center;margin:28px 0;"><a href="https://presenzia.ai/dashboard" style="display:inline-block;padding:14px 28px;background:#C9A84C;color:#0A0A0A;text-decoration:none;font-weight:700;font-size:14px;">Go to your dashboard &rarr;</a></div><p style="font-size:13px;color:#999999;margin:16px 0 0;line-height:1.6;">Questions? Reply to this email or contact hello@presenzia.ai</p></td></tr><tr><td style="padding:20px 32px;border-top:1px solid #eeeeee;"><p style="font-size:12px;color:#999999;margin:0;line-height:1.5;">presenzia.ai &middot; AI visibility for UK financial advisers</p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-admin">Admin</span>
+        <span class="badge badge-trigger">On payment</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">New client: Hartfield Wealth Management (Growth)</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/webhook/route.ts &middot; <strong>To:</strong> hello@presenzia.ai &middot; <strong>Trigger:</strong> checkout.session.completed</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span> admin</span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#111111;margin:0 0 16px;font-weight:700;">&#x1F195; New client signed up</h1><p style="font-size:14px;color:#555555;margin:0 0 12px;line-height:1.7;"><strong>Business:</strong> Hartfield Wealth Management</p><p style="font-size:14px;color:#555555;margin:0 0 12px;line-height:1.7;"><strong>Email:</strong> info@hartfieldwealth.co.uk</p><p style="font-size:14px;color:#555555;margin:0 0 12px;line-height:1.7;"><strong>Plan:</strong> Growth</p><p style="font-size:14px;color:#555555;margin:0 0 12px;line-height:1.7;"><strong>Type:</strong> Wealth Management</p><p style="font-size:14px;color:#555555;margin:0 0 12px;line-height:1.7;"><strong>Location:</strong> Guildford, Surrey</p><p style="font-size:14px;color:#555555;margin:0 0 12px;line-height:1.7;"><strong>Website:</strong> hartfieldwealth.co.uk</p><p style="font-size:13px;color:#999;margin:16px 0 0;">Audit job has been triggered automatically.</p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PHASE 3: AUDIT DELIVERY -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="phase">
+<div class="phase-title">Phase 3: Audit Delivery</div>
+<div class="phase-desc">Report email to customer + failure alerts to admin</div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-customer">Customer</span>
+        <span class="badge badge-trigger">On audit complete</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">Your AI Visibility Audit is ready — 34/100</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/process-audit/route.ts &middot; <strong>Trigger:</strong> Audit processing completes successfully &middot; <strong>Includes:</strong> PDF attachment</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#111111;margin:0 0 16px;font-weight:700;">Your AI Visibility Audit is ready</h1><p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Hi Hartfield Wealth Management,</p><div style="text-align:center;margin:24px 0;padding:20px;background:#f9f7f2;border:1px solid #e0ddd5;"><div style="font-size:48px;font-weight:700;color:#cc4444;">34</div><div style="font-size:13px;color:#888;margin-top:4px;">out of 100 &middot; Grade F</div></div><p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Your full audit has been completed. Found in 7 of 120 AI searches across 4 platforms.</p><p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Your PDF report is attached to this email. You can also view your interactive report on your dashboard:</p><div style="text-align:center;margin:28px 0;"><a href="https://presenzia.ai/dashboard" style="display:inline-block;padding:14px 28px;background:#C9A84C;color:#0A0A0A;text-decoration:none;font-weight:700;font-size:14px;">View your dashboard &rarr;</a></div><p style="font-size:14px;color:#555555;margin:0 0 8px;line-height:1.7;"><strong>Top competitors found:</strong></p><ul style="margin:0 0 16px;padding:0 0 0 20px;"><li style="font-size:14px;color:#555;line-height:1.8;">Sterling Financial Planning (22 mentions)</li><li style="font-size:14px;color:#555;line-height:1.8;">Meridian Wealth Advisors (18 mentions)</li><li style="font-size:14px;color:#555;line-height:1.8;">Oakwood Financial (14 mentions)</li></ul><p style="font-size:13px;color:#999;margin:16px 0 0;line-height:1.6;">Your personalised action plan is included in the report with step-by-step guidance to improve your score.</p></td></tr><tr><td style="padding:20px 32px;border-top:1px solid #eeeeee;"><p style="font-size:12px;color:#999999;margin:0;">presenzia.ai &middot; <a href="https://presenzia.ai/email-preferences?email=test@example.com" style="color:#999;">Email preferences</a></p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-admin">Admin</span>
+        <span class="badge badge-trigger">On audit failure</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">Audit failed: Hartfield Wealth Management</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/process-audit/route.ts &middot; <strong>To:</strong> hello@presenzia.ai &middot; <strong>Trigger:</strong> Audit processing throws error</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #cc4444;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span> admin</span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#cc4444;margin:0 0 16px;font-weight:700;">&#x1F6A8; Audit Failed</h1><p style="font-size:14px;color:#555;margin:0 0 12px;line-height:1.7;"><strong>Business:</strong> Hartfield Wealth Management</p><p style="font-size:14px;color:#555;margin:0 0 12px;line-height:1.7;"><strong>Job ID:</strong> abc123-def456</p><p style="font-size:14px;color:#cc4444;margin:0 0 16px;line-height:1.7;"><strong>Error:</strong> ChatGPT API rate limit exceeded</p><p style="font-size:14px;color:#555;margin:0 0 0;line-height:1.7;">Retry from the admin dashboard or wait for the automatic daily retry.</p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+
+<div class="email-card missing">
+  <div class="email-header">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-missing">MISSING</span>
+        <span class="badge badge-customer">Customer</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px;color:#cc4444;">No reaudit notification email (Growth/Premium get weekly/daily reaudits but are never told)</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PHASE 4: POST-AUDIT FEEDBACK -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="phase">
+<div class="phase-title">Phase 4: Post-Audit Feedback</div>
+<div class="phase-desc">Rating request + dissatisfied customer outreach</div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-customer">Customer</span>
+        <span class="badge badge-campaign">Campaign: 48h after audit</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">How was your audit, Hartfield Wealth Management?</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/cron/campaigns/route.ts &middot; <strong>Campaign:</strong> post_audit_rating_request &middot; <strong>Trigger:</strong> 48h after audit completion</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#111;margin:0 0 16px;font-weight:700;">How was your audit?</h1><p style="font-size:14px;color:#555;margin:0 0 16px;line-height:1.7;">Hi Hartfield Wealth Management,</p><p style="font-size:14px;color:#555;margin:0 0 16px;line-height:1.7;">Your AI visibility audit was delivered 2 days ago. We would love to hear how useful you found it.</p><p style="font-size:14px;color:#555;margin:0 0 20px;line-height:1.7;">It takes 30 seconds and helps us make the service better for everyone:</p><div style="text-align:center;margin:28px 0;"><a href="https://presenzia.ai/dashboard/rate" style="display:inline-block;padding:14px 28px;background:#C9A84C;color:#0A0A0A;text-decoration:none;font-weight:700;font-size:14px;">Rate your experience &rarr;</a></div><p style="font-size:13px;color:#999;margin:16px 0 0;text-align:center;line-height:1.6;">Your feedback is anonymous unless you choose to leave a comment.</p></td></tr><tr><td style="padding:20px 32px;border-top:1px solid #eee;"><p style="font-size:11px;color:#bbb;margin:0;line-height:1.5;"><a href="https://presenzia.ai/email-preferences?email=test@example.com" style="color:#999;">Unsubscribe</a></p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-admin">Admin</span>
+        <span class="badge badge-trigger">On 1-3 star rating</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">Dissatisfied client: Hartfield Wealth (2 stars) [Growth]</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/client/rate/route.ts &middot; <strong>To:</strong> hello@presenzia.ai &middot; <strong>Trigger:</strong> Customer submits 1-3 star rating</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #cc4444;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span> admin</span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#cc4444;margin:0 0 16px;font-weight:700;">&#x26A0;&#xFE0F; Dissatisfied Client</h1><p style="font-size:14px;color:#555;margin:0 0 12px;line-height:1.7;"><strong>Business:</strong> Hartfield Wealth Management</p><p style="font-size:14px;color:#555;margin:0 0 12px;line-height:1.7;"><strong>Rating:</strong> 2/5 stars</p><p style="font-size:14px;color:#555;margin:0 0 12px;line-height:1.7;"><strong>Plan:</strong> Growth</p><p style="font-size:14px;color:#555;margin:0 0 12px;line-height:1.7;"><strong>Comment:</strong> &ldquo;Expected more actionable advice&rdquo;</p><p style="font-size:14px;color:#999;margin:16px 0 0;line-height:1.7;">Marketing emails have been automatically suppressed for this client. Consider personal outreach.</p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PHASE 5: HAPPY CUSTOMER -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="phase">
+<div class="phase-title">Phase 5: Happy Customer Sequence</div>
+<div class="phase-desc">3-email sequence for customers who rate 4-5 stars</div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-customer">Customer</span>
+        <span class="badge badge-campaign">0.5-3 days after 4-5 star rating</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">Could you share a quick review?</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/cron/campaigns/route.ts &middot; <strong>Campaign:</strong> happy_customer_referral_1 (Trustpilot review) &middot; <strong>Trigger:</strong> 12h-3 days after 4-5 star rating</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#111;margin:0 0 16px;font-weight:700;">Thank you for your feedback!</h1><p style="font-size:14px;color:#555;margin:0 0 16px;line-height:1.7;">We are glad you found the audit valuable. Would you take 30 seconds to share your experience on Trustpilot? It helps other firms like yours discover how AI visibility works.</p><div style="text-align:center;margin:28px 0;"><a href="https://www.trustpilot.com/review/presenzia.ai" style="display:inline-block;padding:14px 28px;background:#C9A84C;color:#0A0A0A;text-decoration:none;font-weight:700;font-size:14px;">Leave a Trustpilot review &rarr;</a></div></td></tr><tr><td style="padding:20px 32px;border-top:1px solid #eee;"><p style="font-size:11px;color:#bbb;margin:0;"><a href="https://presenzia.ai/email-preferences?email=test@example.com" style="color:#999;">Unsubscribe</a></p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+
+<div class="connector"></div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-customer">Customer</span>
+        <span class="badge badge-campaign">3-7 days after rating</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">Know someone who could benefit?</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/cron/campaigns/route.ts &middot; <strong>Campaign:</strong> happy_customer_referral_2 (Referral request)</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#111;margin:0 0 16px;font-weight:700;">Know a firm that could benefit?</h1><p style="font-size:14px;color:#555;margin:0 0 16px;line-height:1.7;">If you know another IFA or wealth manager who should check their AI visibility, they can start with a free score:</p><div style="text-align:center;margin:28px 0;"><a href="https://presenzia.ai/score" style="display:inline-block;padding:14px 28px;background:#C9A84C;color:#0A0A0A;text-decoration:none;font-weight:700;font-size:14px;">Share the free score tool &rarr;</a></div><p style="font-size:13px;color:#999;margin:16px 0 0;text-align:center;">presenzia.ai/score</p></td></tr><tr><td style="padding:20px 32px;border-top:1px solid #eee;"><p style="font-size:11px;color:#bbb;margin:0;"><a href="https://presenzia.ai/email-preferences?email=test@example.com" style="color:#999;">Unsubscribe</a></p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PHASE 6: PLAN CHANGES -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="phase">
+<div class="phase-title">Phase 6: Plan Changes &amp; Cancellation</div>
+<div class="phase-desc">Upgrade, downgrade, and cancellation confirmations</div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-customer">Customer</span>
+        <span class="badge badge-trigger">On upgrade</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">Welcome to Premium: your upgraded dashboard is ready</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/webhook/route.ts &middot; <strong>Trigger:</strong> checkout.session.completed (existing client upgrading)</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#111;margin:0 0 16px;font-weight:700;">Welcome to Premium</h1><p style="font-size:14px;color:#555;margin:0 0 16px;line-height:1.7;">Your upgrade is confirmed. Your new Premium features are active immediately.</p><p style="font-size:14px;color:#555;margin:0 0 16px;line-height:1.7;"><strong>Your Premium plan includes:</strong></p><ul style="margin:0 0 20px;padding:0 0 0 20px;"><li style="font-size:14px;color:#555;line-height:1.8;">Daily automated re-audits</li><li style="font-size:14px;color:#555;line-height:1.8;">Monthly strategy call</li><li style="font-size:14px;color:#555;line-height:1.8;">Done-for-you content recommendations</li><li style="font-size:14px;color:#555;line-height:1.8;">Priority support</li></ul><div style="text-align:center;margin:28px 0;"><a href="https://presenzia.ai/dashboard" style="display:inline-block;padding:14px 28px;background:#C9A84C;color:#0A0A0A;text-decoration:none;font-weight:700;font-size:14px;">Go to your dashboard &rarr;</a></div></td></tr><tr><td style="padding:20px 32px;border-top:1px solid #eee;"><p style="font-size:12px;color:#999;margin:0;">presenzia.ai &middot; AI visibility for UK financial advisers</p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-customer">Customer</span>
+        <span class="badge badge-trigger">On cancellation</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">Your Growth plan cancellation is confirmed</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/client/cancel/route.ts &middot; <strong>Trigger:</strong> Customer confirms cancellation</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#111;margin:0 0 16px;font-weight:700;">Cancellation confirmed</h1><p style="font-size:14px;color:#555;margin:0 0 16px;line-height:1.7;">Hi Hartfield Wealth Management,</p><p style="font-size:14px;color:#555;margin:0 0 16px;line-height:1.7;">Your Growth plan cancellation has been confirmed. You will continue to have access until the end of your current billing period.</p><p style="font-size:14px;color:#555;margin:0 0 16px;line-height:1.7;">If you change your mind, you can reactivate anytime from your dashboard before your access ends.</p><div style="text-align:center;margin:28px 0;"><a href="https://presenzia.ai/dashboard" style="display:inline-block;padding:14px 28px;background:#C9A84C;color:#0A0A0A;text-decoration:none;font-weight:700;font-size:14px;">Go to your dashboard &rarr;</a></div><p style="font-size:13px;color:#999;margin:16px 0 0;line-height:1.6;">We would appreciate your feedback on how we could improve. Reply to this email anytime.</p></td></tr><tr><td style="padding:20px 32px;border-top:1px solid #eee;"><p style="font-size:12px;color:#999;margin:0;">presenzia.ai</p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-admin">Admin</span>
+        <span class="badge badge-trigger">On cancellation</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">Cancellation: Hartfield Wealth Management (Growth)</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/client/cancel/route.ts &middot; <strong>To:</strong> hello@presenzia.ai</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #cc4444;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span> admin</span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#cc4444;margin:0 0 16px;font-weight:700;">&#x26A0;&#xFE0F; Client Cancellation</h1><p style="font-size:14px;color:#555;margin:0 0 12px;line-height:1.7;"><strong>Business:</strong> Hartfield Wealth Management</p><p style="font-size:14px;color:#555;margin:0 0 12px;line-height:1.7;"><strong>Plan:</strong> Growth</p><p style="font-size:14px;color:#555;margin:0 0 12px;line-height:1.7;"><strong>Email:</strong> info@hartfieldwealth.co.uk</p><p style="font-size:14px;color:#999;margin:16px 0 0;line-height:1.7;">Consider sending a personal follow-up to understand why they cancelled.</p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+
+<div class="email-card missing">
+  <div class="email-header">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-missing">MISSING</span>
+        <span class="badge badge-customer">Customer</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px;color:#cc4444;">No failed payment notification email to customer (admin gets notified but customer doesn't know their card failed)</div>
+    </div>
+  </div>
+</div>
+
+<div class="email-card missing">
+  <div class="email-header">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-missing">MISSING</span>
+        <span class="badge badge-customer">Customer</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px;color:#cc4444;">No renewal reminder email (7 days before billing date)</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PHASE 7: WIN-BACK -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="phase">
+<div class="phase-title">Phase 7: Win-Back Campaign</div>
+<div class="phase-desc">2-email sequence for cancelled clients</div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-customer">Customer</span>
+        <span class="badge badge-campaign">7 days post-cancellation</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">We miss you, Hartfield Wealth Management</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/cron/campaigns/route.ts &middot; <strong>Campaign:</strong> win_back_1</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#111;margin:0 0 16px;font-weight:700;">We miss you</h1><p style="font-size:14px;color:#555;margin:0 0 16px;line-height:1.7;">Hi Hartfield Wealth Management,</p><p style="font-size:14px;color:#555;margin:0 0 16px;line-height:1.7;">It has been a week since you left. Your competitors are still showing up on ChatGPT, Claude, and Perplexity. Without ongoing monitoring, you will not know if your visibility is declining.</p><p style="font-size:14px;color:#555;margin:0 0 16px;line-height:1.7;">We would love to have you back. If there is anything we can do better, reply to this email and let us know.</p><div style="text-align:center;margin:28px 0;"><a href="https://presenzia.ai/pricing" style="display:inline-block;padding:14px 28px;background:#C9A84C;color:#0A0A0A;text-decoration:none;font-weight:700;font-size:14px;">Restart your subscription &rarr;</a></div></td></tr><tr><td style="padding:20px 32px;border-top:1px solid #eee;"><p style="font-size:11px;color:#bbb;margin:0;"><a href="https://presenzia.ai/email-preferences?email=test@example.com" style="color:#999;">Unsubscribe</a></p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+
+<div class="connector"></div>
+
+<div class="email-card">
+  <div class="email-header" onclick="toggle(this)">
+    <div>
+      <div class="email-meta">
+        <span class="badge badge-customer">Customer</span>
+        <span class="badge badge-campaign">30 days post-cancellation</span>
+      </div>
+      <div class="email-subject" style="margin-top:6px">A lot has changed in AI search</div>
+    </div>
+    <span class="toggle">▶</span>
+  </div>
+  <div class="email-body">
+    <div class="email-info"><strong>File:</strong> app/api/cron/campaigns/route.ts &middot; <strong>Campaign:</strong> win_back_2 &middot; <strong>Note:</strong> Last email sent to cancelled clients</div>
+    <div class="email-preview"><iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0;"><tr><td align="center"><table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border:1px solid #e0e0e0;max-width:560px;width:100%;"><tr><td style="padding:28px 32px;border-bottom:2px solid #C9A84C;"><span style="font-size:18px;font-weight:700;color:#0A0A0A;">presenzia<span style="color:#C9A84C;">.ai</span></span></td></tr><tr><td style="padding:32px;"><h1 style="font-size:22px;color:#111;margin:0 0 16px;font-weight:700;">A lot has changed in AI search</h1><p style="font-size:14px;color:#555;margin:0 0 16px;line-height:1.7;">Hi Hartfield Wealth Management,</p><p style="font-size:14px;color:#555;margin:0 0 16px;line-height:1.7;">AI search is evolving fast. In just the last month, ChatGPT and Perplexity have changed how they recommend businesses. The firms that stayed on top of these changes gained visibility. Those that did not fell behind.</p><p style="font-size:14px;color:#555;margin:0 0 16px;line-height:1.7;">Your free score is still available if you want to see where you stand today:</p><div style="text-align:center;margin:28px 0;"><a href="https://presenzia.ai/score" style="display:inline-block;padding:14px 28px;background:#C9A84C;color:#0A0A0A;text-decoration:none;font-weight:700;font-size:14px;">Check your current score &rarr;</a></div><p style="font-size:13px;color:#999;margin:16px 0 0;text-align:center;line-height:1.6;">This is our last email. We will not contact you again unless you re-subscribe.</p></td></tr><tr><td style="padding:20px 32px;border-top:1px solid #eee;"><p style="font-size:11px;color:#bbb;margin:0;"><a href="https://presenzia.ai/email-preferences?email=test@example.com" style="color:#999;">Unsubscribe</a></p></td></tr></table></td></tr></table></body></html>'></iframe></div>
+  </div>
+</div>
+</div>
+
+<script>
+function toggle(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.toggle');
+  body.classList.toggle('open');
+  arrow.textContent = body.classList.contains('open') ? '▼' : '▶';
+}
+</script>
+
+</body>
+</html>
