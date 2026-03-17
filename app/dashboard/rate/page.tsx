@@ -372,6 +372,11 @@ function RateContent() {
                 </p>
               </div>
             )}
+            <div style={{ marginTop: '2rem' }}>
+              <Link href="/dashboard" style={{ color: '#999', fontSize: '0.8rem', textDecoration: 'none' }}>
+                ← Back to dashboard
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -805,14 +810,14 @@ function RateContent() {
             {submitting ? 'Submitting...' : 'Submit rating'}
           </button>
 
-          <p style={{
-            textAlign: 'center',
-            color: '#888',
-            fontSize: '0.8rem',
-            marginTop: '2rem',
-          }}>
-            Issues? <a href="mailto:hello@presenzia.ai" style={{ color: '#999', textDecoration: 'none' }}>hello@presenzia.ai</a>
-          </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2rem' }}>
+            <Link href="/dashboard" style={{ color: '#666', fontSize: '0.8rem', textDecoration: 'none' }}>
+              ← Back to dashboard
+            </Link>
+            <p style={{ color: '#888', fontSize: '0.8rem', margin: 0 }}>
+              Issues? <a href="mailto:hello@presenzia.ai" style={{ color: '#999', textDecoration: 'none' }}>hello@presenzia.ai</a>
+            </p>
+          </div>
         </div>
       </div>
     </div>

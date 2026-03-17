@@ -803,11 +803,16 @@ function SearchesTab({ job }: { job: InteractiveReportJob }) {
         if (!best || !worst || best.category === worst.category) return null;
         const bestPct = best.totalSearches > 0 ? Math.round((best.timesFound / best.totalSearches) * 100) : 0;
         const worstPct = worst.totalSearches > 0 ? Math.round((worst.timesFound / worst.totalSearches) * 100) : 0;
+        // Don't show best/worst comparison if all categories scored 0
+        if (bestPct === 0) return null;
         return (
           <div style={{ padding: '1rem', background: '#0D0D0D', border: '1px solid #1a1a1a', marginTop: 12 }}>
             <div style={{ fontSize: '0.82rem', color: '#AAAAAA', lineHeight: 1.65 }}>
-              Strongest: <span style={{ color: '#F5F0E8', fontWeight: 600 }}>{best.label}</span> ({bestPct}%).
-              Weakest: <span style={{ color: '#F5F0E8', fontWeight: 600 }}>{worst.label}</span> ({worstPct}%).
+              Strongest: <span style={{ color: '#F5F0E8', fontWeight: 600 }}>{best.label}</span> ({bestPct}%).{' '}
+              {worstPct === 0
+                ? <>Biggest gap: <span style={{ color: '#F5F0E8', fontWeight: 600 }}>{worst.label}</span> — not found in any searches.</>
+                : <>Weakest: <span style={{ color: '#F5F0E8', fontWeight: 600 }}>{worst.label}</span> ({worstPct}%).</>
+              }
             </div>
           </div>
         );

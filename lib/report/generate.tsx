@@ -676,7 +676,10 @@ function AuditReport({ config, score, insights, reportDate, jobId, previousAudit
               <View style={s.goldBox}>
                 <Text style={{ fontSize: 8, fontWeight: 600, color: TEXT_PRIMARY, marginBottom: 4 }}>What this means for you</Text>
                 <Text style={s.bodySmall}>
-                  You were found on {platformsFound} of {score.platforms.length} platforms. {bestPlat.score > 0 ? `Your strongest platform is ${bestPlat.platform} (${bestPlat.promptsMentioned}/${bestPlat.promptsTested} searches). ` : ''}{worstPlat.platform !== bestPlat.platform ? `Your biggest gap is ${worstPlat.platform} (${worstPlat.promptsMentioned}/${worstPlat.promptsTested}). ` : ''}Platform-specific actions to address your gaps are in your Action Plan.
+                  {platformsFound === 0
+                    ? `You were not found on any of the ${score.platforms.length} platforms tested. This means prospective clients asking AI assistants for recommendations in your category are not finding you at all. Platform-specific steps to change this are in your Action Plan.`
+                    : `You were found on ${platformsFound} of ${score.platforms.length} platforms. ${bestPlat.score > 0 ? `Your strongest platform is ${bestPlat.platform} (${bestPlat.promptsMentioned}/${bestPlat.promptsTested} searches). ` : ''}${worstPlat.platform !== bestPlat.platform && worstPlat.score < bestPlat.score ? `Your biggest gap is ${worstPlat.platform} (${worstPlat.promptsMentioned}/${worstPlat.promptsTested}). ` : ''}Platform-specific actions to address your gaps are in your Action Plan.`
+                  }
                 </Text>
               </View>
             );
@@ -746,10 +749,25 @@ function AuditReport({ config, score, insights, reportDate, jobId, previousAudit
               return (
                 <View style={[s.grayBox, { marginTop: 4 }]}>
                   <Text style={s.bodySmall}>
-                    {best && worst && best.category !== worst.category
-                      ? `Your strongest category is ${best.label} (${bestPct}% found). Your weakest is ${worst.label} (${worstPct}%). Prioritised actions to address your weakest areas are in your Action Plan (page ${hasInsights ? 4 : 3}).`
-                      : `You appeared in ${insights!.totalFound} of ${insights!.totalSearches} total searches (${Math.round((insights!.totalFound / Math.max(insights!.totalSearches, 1)) * 100)}%). Specific steps to improve are detailed in your Action Plan (page ${hasInsights ? 4 : 3}).`
-                    }
+                    {(() => {
+                      const totalFound = insights!.totalFound;
+                      const totalSearches = insights!.totalSearches;
+                      const overallPct = Math.round((totalFound / Math.max(totalSearches, 1)) * 100);
+                      // All categories scored 0 — no meaningful best/worst comparison
+                      if (bestPct === 0) {
+                        return `You were not found in any of the ${totalSearches} searches across all categories. This is a significant visibility gap. Specific steps to build your presence are detailed in your Action Plan (page ${hasInsights ? 4 : 3}).`;
+                      }
+                      // Only one distinct category or best and worst are the same
+                      if (!best || !worst || best.category === worst.category) {
+                        return `You appeared in ${totalFound} of ${totalSearches} total searches (${overallPct}%). Specific steps to improve are detailed in your Action Plan (page ${hasInsights ? 4 : 3}).`;
+                      }
+                      // Meaningful comparison — best has actual finds
+                      const bestDesc = `Your strongest category is ${best.label} (${bestPct}% of searches).`;
+                      const worstDesc = worstPct === 0
+                        ? `Your biggest gap is ${worst.label} — you were not found in any of those searches.`
+                        : `Your weakest is ${worst.label} (${worstPct}%).`;
+                      return `${bestDesc} ${worstDesc} Prioritised actions to address your weakest areas are in your Action Plan (page ${hasInsights ? 4 : 3}).`;
+                    })()}
                   </Text>
                 </View>
               );
