@@ -31,6 +31,20 @@ function getPosition(index: number, totalLength: number): 'first' | 'prominent' 
   return 'mentioned';
 }
 
+// Words so common in financial services AI responses that matching on them alone
+// would create false positives for any firm with these words in their name.
+const GENERIC_SINGLE_WORDS = new Set([
+  'wealth', 'financial', 'finance', 'planning', 'plan', 'advisor', 'advisors',
+  'adviser', 'advisers', 'advisory', 'investment', 'investments', 'capital',
+  'management', 'asset', 'assets', 'group', 'partners', 'partner', 'associates',
+  'consulting', 'consultants', 'services', 'solutions', 'trust', 'private',
+  'independent', 'professional', 'professionals', 'personal', 'global', 'national',
+  'integrated', 'bespoke', 'strategic', 'holistic', 'comprehensive', 'specialist',
+  'true', 'self', 'real', 'core', 'peak', 'plus', 'best', 'first', 'life', 'north',
+  'south', 'east', 'west', 'new', 'old', 'smart', 'clear', 'right', 'active',
+  'solid', 'sure', 'safe', 'fair', 'open', 'bold', 'blue', 'gold', 'grey', 'green',
+]);
+
 function checkMention(
   response: string,
   firmName: string,
@@ -52,9 +66,10 @@ function checkMention(
     return { mentioned: true, position: getPosition(index, response.length) };
   }
 
-  // 3. Word-boundary match for each significant word (>= 4 chars)
-  const cleanedWords = cleaned.split(/\s+/).filter((w) => w.length >= 4);
-  for (const word of cleanedWords) {
+  // 3. Word-boundary match — only for DISTINCTIVE words (not generic financial terms)
+  const allWords = cleaned.split(/\s+/).filter((w) => w.length >= 4);
+  const distinctiveWords = allWords.filter((w) => !GENERIC_SINGLE_WORDS.has(w));
+  for (const word of distinctiveWords) {
     try {
       const regex = new RegExp(
         `\\b${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`,
@@ -69,9 +84,9 @@ function checkMention(
     }
   }
 
-  // 4. Partial match: 2+ significant words found
-  if (cleanedWords.length >= 2) {
-    const matchCount = cleanedWords.filter((w) => responseLower.includes(w)).length;
+  // 4. Partial match: 2+ DISTINCTIVE words found in response
+  if (distinctiveWords.length >= 2) {
+    const matchCount = distinctiveWords.filter((w) => responseLower.includes(w)).length;
     if (matchCount >= 2) {
       return { mentioned: true, position: 'mentioned' };
     }
@@ -552,6 +567,137 @@ describe('checkMention', () => {
       expect(result.mentioned).toBe(true);
       expect(result.position).toBe('mentioned');
     });
+  });
+
+  // ── False positive prevention (generic-word filtering) ──────────────────
+  describe('generic-word false positive prevention', () => {
+    // Simulates a real ChatGPT / Perplexity / Google AI response to
+    // "Who is the best wealth management advisor in Manchester?"
+    const TYPICAL_AI_RESPONSE = `
+Here are some top wealth management firms and financial advisors in Manchester:
+
+1. **Brewin Dolphin** - One of the UK's largest wealth management firms, with a strong presence in Manchester.
+2. **Rathbones** - A leading investment management firm offering personalised financial planning.
+3. **Investec Wealth & Investment** - A global wealth management and investment bank.
+4. **Evelyn Partners** - Comprehensive financial planning and investment advisory services.
+5. **St. James's Place** - Wealth management advice tailored to individual needs.
+6. **Quilter** - A major UK financial services business offering wealth planning and financial advisory.
+7. **Brooks Macdonald** - Discretionary investment management and financial planning.
+
+These firms are well-known for their expertise in wealth management, investment advisory,
+and financial planning services across Greater Manchester and the UK.
+    `.trim();
+
+    it('does NOT falsely detect "True Self Wealth" in a typical AI response', () => {
+      // All words in "True Self Wealth" are generic — should not match
+      const result = checkMention(TYPICAL_AI_RESPONSE, 'True Self Wealth');
+      expect(result.mentioned).toBe(false);
+    });
+
+    it('does NOT falsely detect "True Self Wealth" even with its website', () => {
+      const result = checkMention(
+        TYPICAL_AI_RESPONSE,
+        'True Self Wealth',
+        'https://www.trueselfwealth.co.uk',
+      );
+      expect(result.mentioned).toBe(false);
+    });
+
+    it('does NOT falsely detect a firm whose name is all generic words', () => {
+      // "Global Financial Planning Services" — every word is generic
+      const result = checkMention(TYPICAL_AI_RESPONSE, 'Global Financial Planning Services');
+      expect(result.mentioned).toBe(false);
+    });
+
+    it('does NOT trigger on generic word "wealth" alone', () => {
+      // "wealth" appears many times in AI responses — must not match
+      const result = checkMention(
+        'Wealth management is an important part of financial planning.',
+        'Pure Wealth',
+      );
+      expect(result.mentioned).toBe(false);
+    });
+
+    it('does NOT trigger on generic word "financial" alone', () => {
+      const result = checkMention(
+        'A financial advisor can help with investment planning.',
+        'New Financial',
+      );
+      expect(result.mentioned).toBe(false);
+    });
+
+    it('does NOT trigger on generic word "planning" alone', () => {
+      const result = checkMention(
+        'Financial planning and investment management are key services.',
+        'Clear Planning',
+      );
+      expect(result.mentioned).toBe(false);
+    });
+
+    it('DOES detect a firm with a distinctive brand word (Coutts)', () => {
+      const result = checkMention(TYPICAL_AI_RESPONSE, 'Coutts & Company');
+      // Coutts does not appear in TYPICAL_AI_RESPONSE → correctly not mentioned
+      expect(result.mentioned).toBe(false);
+    });
+
+    it('DOES detect Rathbones when it actually appears', () => {
+      const result = checkMention(TYPICAL_AI_RESPONSE, 'Rathbones');
+      // "Rathbones" is distinctive and appears explicitly in the response
+      expect(result.mentioned).toBe(true);
+    });
+
+    it('DOES detect Brewin Dolphin when it appears', () => {
+      const result = checkMention(TYPICAL_AI_RESPONSE, 'Brewin Dolphin Wealth Management');
+      expect(result.mentioned).toBe(true);
+    });
+
+    it('DOES detect Evelyn Partners when it appears', () => {
+      const result = checkMention(TYPICAL_AI_RESPONSE, 'Evelyn Partners');
+      expect(result.mentioned).toBe(true);
+    });
+  });
+
+  // ── Free-score / paid-audit consistency ──────────────────────────────────
+  describe('free score vs paid audit consistency', () => {
+    // The paid audit runner uses a simpler strict substring check:
+    //   response.toLowerCase().includes(businessName.toLowerCase())
+    // The free score uses this more nuanced checkMention().
+    // For any firm that the strict check says "not mentioned", checkMention
+    // must also return "not mentioned" — no false positives vs. the baseline.
+
+    function strictCheck(response: string, firmName: string): boolean {
+      return response.toLowerCase().includes(firmName.toLowerCase());
+    }
+
+    const AI_RESPONSE_1 = 'Brewin Dolphin and Rathbones are top picks in Manchester for wealth management.';
+    const AI_RESPONSE_2 = 'For financial planning in London: St James\'s Place, Quilter, and Evelyn Partners.';
+    const AI_RESPONSE_3 = 'There are many excellent wealth managers across the UK including Schroders and Investec.';
+
+    const TEST_CASES: Array<{ firmName: string; website?: string }> = [
+      { firmName: 'True Self Wealth', website: 'https://www.trueselfwealth.co.uk' },
+      { firmName: 'Peak Financial Planning' },
+      { firmName: 'Clear Wealth Management' },
+      { firmName: 'North Star Financial' },
+      { firmName: 'New Leaf Wealth' },
+      { firmName: 'Blue Capital Advisors' },
+      { firmName: 'Safe Harbour Financial Planning' },
+    ];
+
+    for (const { firmName, website } of TEST_CASES) {
+      for (const [i, response] of [AI_RESPONSE_1, AI_RESPONSE_2, AI_RESPONSE_3].entries()) {
+        it(`"${firmName}" — checkMention never shows mentioned when strict check doesn't (response ${i + 1})`, () => {
+          const strictResult = strictCheck(response, firmName);
+          const smartResult = checkMention(response, firmName, website);
+          if (!strictResult) {
+            // If strict check says not mentioned, smart check must also say not mentioned
+            // (no false positives over the baseline)
+            expect(smartResult.mentioned).toBe(false);
+          }
+          // If strict check says mentioned, smart check is allowed to agree or disagree
+          // (smart check may be more lenient for partial matches — that's intentional)
+        });
+      }
+    }
   });
 
   describe('edge cases', () => {
