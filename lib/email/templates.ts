@@ -125,10 +125,10 @@ export function freeScoreNurture2(businessName: string, score: number, email: st
 }
 
 export function freeScoreNurture3(businessName: string, email: string) {
-  const subject = `Last chance: ${businessName}'s AI audit offer`;
+  const subject = `Our last note on ${businessName}'s AI visibility`;
   const html = emailWrapper(`
-    <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">Your free score expires soon</h1>
-    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">This is our last email about your AI visibility check for ${businessName}.</p>
+    <h1 style="font-size:20px;color:#111111;margin:0 0 8px;font-weight:700;">One last thought</h1>
+    <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">This is the last email we'll send about your AI visibility check for ${businessName}.</p>
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">AI is changing how clients find financial advisers. The firms that act now will dominate these new referral channels. Those that wait will wonder where their leads went.</p>
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">The full audit takes 15 minutes to deliver and comes with a step-by-step plan you can action immediately.</p>
     ${ctaButton(`Get your audit now for ${PLANS.audit.priceDisplay} →`, `${APP_URL}/score?plan=audit`)}

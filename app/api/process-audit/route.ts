@@ -56,6 +56,30 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ status: 'pending_onboarding' });
   }
 
+  // Daily spend guardrail: cap at 30 audits per day to prevent runaway API costs
+  const todayStart = new Date();
+  todayStart.setUTCHours(0, 0, 0, 0);
+  const { count: todayCount } = await supabase
+    .from('audit_jobs')
+    .select('id', { count: 'exact', head: true })
+    .in('status', ['running', 'completed'])
+    .gte('started_at', todayStart.toISOString());
+
+  const DAILY_AUDIT_CAP = 30;
+  if ((todayCount ?? 0) >= DAILY_AUDIT_CAP) {
+    console.error(`🚨 Daily audit cap reached (${todayCount}/${DAILY_AUDIT_CAP}) — job ${jobId} blocked`);
+    if (process.env.RESEND_API_KEY) {
+      resend.emails.send({
+        from: 'presenzia.ai <reports@presenzia.ai>',
+        to: 'hello@presenzia.ai',
+        subject: `🚨 Daily audit cap reached — ${todayCount} audits today`,
+        html: `<p>The daily audit cap of ${DAILY_AUDIT_CAP} has been reached. Job ${jobId} was blocked. Please investigate unusual activity.</p>`,
+      }).catch(() => {});
+    }
+    await supabase.from('audit_jobs').update({ status: 'failed', error: 'Daily audit cap reached' }).eq('id', jobId);
+    return NextResponse.json({ error: 'Daily audit limit reached' }, { status: 429 });
+  }
+
   // Mark job as running
   await supabase
     .from('audit_jobs')
