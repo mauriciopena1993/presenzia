@@ -13,11 +13,14 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://presenzia.ai';
 
 export { FROM_EMAIL, REPLY_TO, APP_URL };
 
-function emailWrapper(content: string, options?: { accentColor?: string; preheader?: string }) {
+function emailWrapper(content: string, options?: { accentColor?: string; preheader?: string; email?: string }) {
   const accent = options?.accentColor || '#C9A84C';
   const preheader = options?.preheader
     ? `<span style="display:none;font-size:1px;color:#f4f4f4;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">${options.preheader}</span>`
     : '';
+  const emailPrefsSuffix = options?.email
+    ? `?email=${encodeURIComponent(options.email)}`
+    : '?email={{email}}';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -35,7 +38,7 @@ ${preheader}
   </td></tr>
   <tr><td style="padding:16px 32px;background:#F9F9F9;border-top:1px solid #E0E0E0;">
     <p style="font-size:12px;color:#999999;margin:0;">presenzia.ai &middot; Ketzal LTD (Co. No. 14570156) &middot; <a href="mailto:hello@presenzia.ai" style="color:${accent};text-decoration:none;">hello@presenzia.ai</a></p>
-    <p style="font-size:11px;color:#BBBBBB;margin:4px 0 0;">You received this because you used presenzia.ai. <a href="${APP_URL}/email-preferences?email={{email}}" style="color:#999999;text-decoration:underline;">Manage email preferences</a></p>
+    <p style="font-size:11px;color:#BBBBBB;margin:4px 0 0;">You received this because you used presenzia.ai. <a href="${APP_URL}/email-preferences${emailPrefsSuffix}" style="color:#999999;text-decoration:underline;">Manage email preferences</a></p>
   </td></tr>
 </table>
 </td></tr>
@@ -81,7 +84,7 @@ export function freeScoreDelivery(firmName: string, score: number, grade: string
     ${ctaButton(`Get your full AI audit for ${PLANS.audit.priceDisplay} →`, `${APP_URL}/score?plan=audit`)}
 
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Questions? Reply to this email — we read every one.</p>
-  `.replace('{{email}}', email), { preheader: `${firmName} scored ${score}/100 on AI visibility. See your full results.` });
+  `, { preheader: `${firmName} scored ${score}/100 on AI visibility. See your full results.`, email });
 
   const text = `Your AI visibility score for ${firmName}: ${score}/100 (Grade ${grade}). View results: ${resultsUrl}`;
 
@@ -102,7 +105,7 @@ export function freeScoreNurture1(businessName: string, score: number, email: st
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Our full audit tests <strong>120 wealth-specific prompts</strong> across 4 AI platforms, and gives you a step-by-step action plan to improve your ranking.</p>
     ${ctaButton(`Get your full AI audit for ${PLANS.audit.priceDisplay} →`, `${APP_URL}/score?plan=audit`)}
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Results delivered in 15 minutes via your online dashboard and PDF.</p>
-  `.replace('{{email}}', email), { preheader: `Your AI visibility score was ${score}/100. Here's what to do about it.` });
+  `, { preheader: `Your AI visibility score was ${score}/100. Here's what to do about it.`, email });
 
   return { subject, html, text: `${businessName} scored ${score}/100 on the free AI visibility check. Your competitors are appearing more often. Get the full audit at ${APP_URL}/score?plan=audit` };
 }
@@ -119,7 +122,7 @@ export function freeScoreNurture2(businessName: string, score: number, email: st
     </ol>
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Our full audit identifies exactly which of these apply to you, across 120 prompts on ChatGPT, Claude, Perplexity, and Google AI. You get a scored report with a personalised action plan.</p>
     ${ctaButton(`See what's holding you back for ${PLANS.audit.priceDisplay} →`, `${APP_URL}/score?plan=audit`)}
-  `.replace('{{email}}', email), { preheader: 'The 3 most common reasons AI assistants recommend your competitors instead.' });
+  `, { preheader: 'The 3 most common reasons AI assistants recommend your competitors instead.', email });
 
   return { subject, html, text: `3 reasons AI isn't recommending ${businessName}. Get the full audit at ${APP_URL}/score?plan=audit` };
 }
@@ -133,7 +136,7 @@ export function freeScoreNurture3(businessName: string, email: string) {
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">The full audit takes 15 minutes to deliver and comes with a step-by-step plan you can action immediately.</p>
     ${ctaButton(`Get your audit now for ${PLANS.audit.priceDisplay} →`, `${APP_URL}/score?plan=audit`)}
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Questions? Just reply to this email.</p>
-  `.replace('{{email}}', email), { preheader: 'Last reminder about your AI visibility assessment.' });
+  `, { preheader: 'Last reminder about your AI visibility assessment.', email });
 
   return { subject, html, text: `Last email: get the full AI audit for ${businessName} at ${APP_URL}/score?plan=audit` };
 }
@@ -150,7 +153,7 @@ export function ratingRequest(businessName: string, jobId: string, score: number
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Could you take 30 seconds to rate your experience? Your feedback helps us improve and helps other advisers decide if an audit is right for them.</p>
     ${ctaButton('Rate your audit →', `${APP_URL}/dashboard/rate?jobId=${jobId}`)}
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">It takes less than a minute. Thank you!</p>
-  `.replace('{{email}}', email), { preheader: 'Quick question about your AI visibility audit.' });
+  `, { preheader: 'Quick question about your AI visibility audit.', email });
 
   return { subject, html, text: `Rate your audit experience at ${APP_URL}/dashboard/rate?jobId=${jobId}` };
 }
@@ -174,7 +177,7 @@ export function auditUpsell1(businessName: string, score: number, email: string)
     </table>
     ${ctaButton('Explore Growth plan →', `${APP_URL}/pricing`)}
     <p style="font-size:12px;color:#999999;margin:24px 0 0;line-height:1.6;"><a href="${prefsUrl}" style="color:#C9A84C;text-decoration:none;">Email preferences</a></p>
-  `.replace('{{email}}', email), { preheader: 'Your competitors could overtake you this week.' });
+  `, { preheader: 'Your competitors could overtake you this week.', email });
 
   return { subject, html, text: `AI visibility shifts every week. Your score was ${score}/100 — see how Growth monitoring keeps you ahead: ${APP_URL}/pricing` };
 }
@@ -190,7 +193,7 @@ export function auditUpsell2(businessName: string, email: string) {
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Our Growth and Premium plans do the heavy lifting for you. We'd love to help you stay visible.</p>
     ${ctaButton('See monitoring plans →', `${APP_URL}/pricing`)}
     <p style="font-size:12px;color:#999999;margin:24px 0 0;line-height:1.6;"><a href="${prefsUrl}" style="color:#C9A84C;text-decoration:none;">Email preferences</a></p>
-  `.replace('{{email}}', email), { preheader: 'The firms winning in AI search track visibility weekly.' });
+  `, { preheader: 'The firms winning in AI search track visibility weekly.', email });
 
   return { subject, html, text: `One audit is good. Continuous monitoring is better. See plans: ${APP_URL}/pricing` };
 }
@@ -207,7 +210,7 @@ export function happyReviewRequest(businessName: string, email: string) {
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Would you mind sharing a quick review on Trustpilot? It helps other wealth managers discover presenzia.ai, and it takes less than 2 minutes.</p>
     ${ctaButton('Leave a Trustpilot review →', 'https://www.trustpilot.com/review/presenzia.ai')}
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Every review makes a real difference. Thank you!</p>
-  `.replace('{{email}}', email), { preheader: 'Your review helps other advisers find us.' });
+  `, { preheader: 'Your review helps other advisers find us.', email });
 
   return { subject, html, text: `Thank you for rating us! Leave a Trustpilot review at https://www.trustpilot.com/review/presenzia.ai` };
 }
@@ -220,7 +223,7 @@ export function happyReferralRequest(businessName: string, email: string) {
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Simply forward this email to a colleague, or share our free score checker. They'll get a quick AI visibility assessment at no cost, and if they find it useful, they can go deeper with the full audit.</p>
     ${ctaButton('Share the free AI score checker →', `${APP_URL}/score`)}
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Word of mouth from trusted professionals like you is the best way to grow. Thank you for spreading the word.</p>
-  `.replace('{{email}}', email), { preheader: 'Know another adviser who should check their AI visibility?' });
+  `, { preheader: 'Know another adviser who should check their AI visibility?', email });
 
   return { subject, html, text: `Know another adviser? Share the free AI score checker: ${APP_URL}/score` };
 }
@@ -237,7 +240,7 @@ export function happySocialFollow(businessName: string, email: string) {
       </tr>
     </table>
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Thank you for being part of the presenzia.ai community.</p>
-  `.replace('{{email}}', email), { preheader: 'Practical AI visibility tips for your firm.' });
+  `, { preheader: 'Practical AI visibility tips for your firm.', email });
 
   return { subject, html, text: `Follow presenzia.ai on LinkedIn for AI visibility tips: https://www.linkedin.com/company/presenzia-ai` };
 }
@@ -258,7 +261,7 @@ export function dissatisfiedOutreach(businessName: string, rating: number, email
     ${ctaButton('Manage email preferences →', prefsUrl)}
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Thank you again for your candid feedback. It genuinely helps us improve.</p>
     <p style="font-size:13px;color:#888888;margin:8px 0 0;line-height:1.6;">The presenzia.ai team</p>
-  `.replace('{{email}}', email), { preheader: 'Thank you for your feedback. We are working on it.' });
+  `, { preheader: 'Thank you for your feedback. We are working on it.', email });
 
   return { subject, html, text: `Thank you for your feedback on the audit for ${businessName}. We are reviewing it and have unsubscribed you from marketing emails. Manage your preferences: ${prefsUrl}` };
 }
@@ -275,7 +278,7 @@ export function winBack1(businessName: string, email: string) {
     <p style="font-size:14px;color:#555555;margin:0 0 16px;line-height:1.7;">Without regular monitoring, your competitors may be overtaking your position. A quick check could reveal opportunities you're missing.</p>
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">If you'd like to see where you stand, you can always run a free score check or resubscribe from your dashboard.</p>
     ${ctaButton('Check your score for free →', `${APP_URL}/score`)}
-  `.replace('{{email}}', email), { preheader: 'Your AI visibility has been changing while you were away.' });
+  `, { preheader: 'Your AI visibility has been changing while you were away.', email });
 
   return { subject, html, text: `It's been a week since you left. Check your AI visibility: ${APP_URL}/score` };
 }
@@ -289,7 +292,7 @@ export function winBack2(businessName: string, email: string) {
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">We'd love to have you back. Your dashboard and historical data are still available. Simply resubscribe and pick up where you left off.</p>
     ${ctaButton('View plans and resubscribe →', `${APP_URL}/pricing`)}
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Or run a free quick check first: <a href="${APP_URL}/score" style="color:#C9A84C;text-decoration:none;">presenzia.ai/score</a></p>
-  `.replace('{{email}}', email), { preheader: 'AI recommendations have shifted in the past month.' });
+  `, { preheader: 'AI recommendations have shifted in the past month.', email });
 
   return { subject, html, text: `A lot has changed in AI. Resubscribe: ${APP_URL}/pricing` };
 }
@@ -314,7 +317,7 @@ export function paymentFailedNotice(businessName: string, planName: string, amou
     <p style="font-size:14px;color:#555555;margin:0 0 24px;line-height:1.7;">Your dashboard and audit history remain accessible while we resolve this. If your payment isn't updated, your subscription may be paused.</p>
     ${ctaButton('Update payment details →', `${APP_URL}/dashboard`)}
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Need help? Reply to this email or contact us at <a href="mailto:hello@presenzia.ai" style="color:#C9A84C;text-decoration:none;">hello@presenzia.ai</a>.</p>
-  `.replace('{{email}}', email), { preheader: 'Your payment didn\'t go through. Please update your card details.' });
+  `, { preheader: 'Your payment didn\'t go through. Please update your card details.', email });
 
   return { subject, html, text: `Your ${amount} payment for ${planName} failed. Please update your payment details at ${APP_URL}/dashboard or contact hello@presenzia.ai for help.` };
 }
@@ -339,7 +342,7 @@ export function renewalReminder(businessName: string, planName: string, amount: 
     </div>
     ${ctaButton('View your dashboard →', `${APP_URL}/dashboard`)}
     <p style="font-size:13px;color:#888888;margin:0;line-height:1.6;">Want to change or cancel your plan? Visit your <a href="${APP_URL}/dashboard" style="color:#C9A84C;text-decoration:none;">dashboard settings</a> or reply to this email.</p>
-  `.replace('{{email}}', email), { preheader: `Your ${planName} subscription renews on ${renewalDate} for ${amount}.` });
+  `, { preheader: `Your ${planName} subscription renews on ${renewalDate} for ${amount}.`, email });
 
   return { subject, html, text: `Your ${planName} subscription renews on ${renewalDate} for ${amount}. No action needed to continue. Manage your plan at ${APP_URL}/dashboard.` };
 }
@@ -470,7 +473,7 @@ export function reauditReportReminder(businessName: string, score: number, grade
     ${ctaButton('View your report →', `${APP_URL}/dashboard`)}
 
     <p style="font-size:12px;color:#999999;margin:24px 0 0;line-height:1.6;">You're receiving this because you're on an active monitoring plan. <a href="${prefsUrl}" style="color:#C9A84C;text-decoration:none;">Email preferences</a></p>
-  `.replace('{{email}}', email), { preheader: `Your AI visibility score is ${score}/100. View your latest report.` });
+  `, { preheader: `Your AI visibility score is ${score}/100. View your latest report.`, email });
 
   const text = `Your new AI visibility report is ready.\n\nScore: ${score}/100 (Grade ${grade})${previousScore != null ? `\nChange: ${score > previousScore ? '+' : ''}${score - previousScore} points` : ''}\n\nView your report: ${APP_URL}/dashboard\n\npresenzia.ai`;
 

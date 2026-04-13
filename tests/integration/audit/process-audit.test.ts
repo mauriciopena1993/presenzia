@@ -120,10 +120,18 @@ function buildChainableMock(terminalSingle: ReturnType<typeof vi.fn>) {
   const chainFn = () => chain;
   chain.eq = vi.fn().mockImplementation(chainFn);
   chain.neq = vi.fn().mockImplementation(chainFn);
+  chain.in = vi.fn().mockImplementation(chainFn);
+  chain.gte = vi.fn().mockImplementation(chainFn);
+  chain.lte = vi.fn().mockImplementation(chainFn);
   chain.order = vi.fn().mockImplementation(chainFn);
   chain.limit = vi.fn().mockImplementation(chainFn);
   chain.like = vi.fn().mockImplementation(chainFn);
   chain.single = terminalSingle;
+  // Also support awaiting the chain directly (for count queries like .select(..., {count:'exact',head:true}).in().gte())
+  chain.then = (resolve: (v: { count: number; data: null; error: null }) => void) => {
+    resolve({ count: 0, data: null, error: null });
+    return chain;
+  };
   return chain;
 }
 
@@ -479,9 +487,10 @@ describe('POST /api/process-audit — Successful Audit', () => {
     expect(emailCall.to).toBe('test@test.com');
     expect(emailCall.subject).toContain('65/100');
     expect(emailCall.subject).toContain('Test Wealth');
-    expect(emailCall.attachments).toBeDefined();
-    expect(emailCall.attachments[0].filename).toContain('test-wealth');
-    expect(emailCall.attachments[0].filename).toMatch(/\.pdf$/);
+    // The report email directs clients to the dashboard (no PDF attachment)
+    // PDF download is available from the dashboard
+    expect(emailCall.html).toContain('dashboard');
+    expect(emailCall.html).toContain('Test Wealth');
   });
 
   it('does not send email if client has no email', async () => {
