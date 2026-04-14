@@ -7,13 +7,19 @@ const HIGH_PRIORITY_SLUGS = new Set([
   'what-makes-ai-recommend-one-financial-advisor-over-another',
   'ai-visibility-checklist-15-things-every-uk-financial-adviser-should-fix',
   'geo-vs-seo-why-google-rankings-are-no-longer-enough-for-financial-advisers',
+  'how-to-test-your-firm-on-chatgpt-and-what-to-do-about-the-answer',
+  'what-to-write-on-your-website-so-ai-recommends-you',
+  'which-ifa-directories-feed-into-ai-recommendations',
+  'how-to-get-your-ifa-firm-recommended-by-chatgpt',
+  'best-ifa-directories-uk-2026',
+  'ifa-marketing-strategy-2026-complete-guide',
 ]);
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://presenzia.ai';
 
   // Use today's date for posts updated with cross-links and expanded content
-  const contentUpdateDate = new Date('2026-03-11');
+  const contentUpdateDate = new Date('2026-04-14');
 
   const blogPostUrls: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,

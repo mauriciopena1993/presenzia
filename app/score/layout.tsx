@@ -1,23 +1,30 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Free AI Visibility Score | presenzia.ai: Check Your Firm in 60 Seconds',
+  title: 'Free AI Visibility Score for UK Financial Advisers | presenzia.ai',
   description:
-    'Get a free AI visibility score for your wealth management or IFA firm. See how ChatGPT, Claude, Perplexity, and Google AI rank you in under 60 seconds.',
+    'Is your IFA firm visible on ChatGPT, Claude, Perplexity, and Google AI? Get your free AI visibility score in 60 seconds. Used by UK wealth managers and IFAs.',
   alternates: { canonical: '/score' },
+  keywords: [
+    'free ai visibility score financial adviser',
+    'ifa ai visibility checker',
+    'chatgpt financial adviser visibility',
+    'ai search score uk ifa',
+    'check if chatgpt recommends my firm',
+  ],
   openGraph: {
-    title: 'Free AI Visibility Score | presenzia.ai',
+    title: 'Free AI Visibility Score for UK Financial Advisers | presenzia.ai',
     description:
-      'Check how AI search engines see your firm. Free instant score across ChatGPT, Claude, Perplexity, and Google AI.',
+      'Is your IFA firm visible on ChatGPT, Claude, Perplexity, and Google AI? Free instant score in 60 seconds.',
     url: 'https://presenzia.ai/score',
     type: 'website',
     images: ['/og-image.png'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Free AI Visibility Score | presenzia.ai',
+    title: 'Free AI Visibility Score for UK IFAs | presenzia.ai',
     description:
-      'Check how AI search engines see your firm. Free instant score across ChatGPT, Claude, Perplexity, and Google AI.',
+      'Is your IFA firm visible on ChatGPT, Claude, Perplexity, and Google AI? Free instant score in 60 seconds.',
     images: ['/og-image.png'],
   },
 };

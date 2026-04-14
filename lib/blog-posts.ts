@@ -1559,6 +1559,836 @@ Presenzia's free AI visibility score tests your firm across all four major platf
 The firms that will dominate AI-driven client acquisition are those that treat all four platforms as important, building a presence that is visible, authoritative, and consistent across the entire AI landscape that prospective clients are using.
     `.trim(),
   },
+  {
+    slug: 'how-to-get-your-ifa-firm-recommended-by-chatgpt',
+    title: "How to Get Your IFA Firm Recommended by ChatGPT: A Step-by-Step Guide for 2026",
+    description: "Six concrete steps to make ChatGPT, Perplexity, and Claude recommend your IFA firm. With 30/60/90-day timelines and exactly what to do first.",
+    date: '2026-04-10',
+    readTime: '8 min read',
+    category: 'Guide',
+    heroImage: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=1200&h=630&fit=crop&q=80',
+    heroImageAlt: 'Person using AI chatbot on laptop to search for financial services',
+    content: `
+Getting your IFA firm recommended by ChatGPT is not luck. It is a process — one with clear inputs, predictable outputs, and a timeline you can plan around. This guide lays out that process in the most direct terms possible.
+
+Based on our [research into 149 UK IFA firms](/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible) and the patterns we have observed across hundreds of AI visibility audits, here are the six steps that consistently move firms from invisible to recommended.
+
+## Step 1: Run the Audit (Know Where You Stand)
+
+You cannot fix what you cannot measure. Before investing time or money in AI visibility, establish a clear baseline. This means testing your firm systematically across all four major AI platforms: ChatGPT, Perplexity, Claude, and Google AI Overviews.
+
+Run at least five queries on each platform, mixing location-based queries ("independent financial adviser in [your town]"), specialism queries ("pension transfer specialist in [your county]"), and direct name queries ("[firm name] — is this a reputable IFA?"). Record every result.
+
+You are looking for three things: whether your firm appears at all, what the AI says about you when it does appear, and which competitors appear in your place when you do not.
+
+For a comprehensive baseline, Presenzia's free AI visibility score tests your firm across all four platforms in under 60 seconds and gives you a score from 0–100 with a platform-by-platform breakdown. Most firms score below 30. Knowing your starting score gives you a concrete way to measure every subsequent action.
+
+## Step 2: Complete All Directory Profiles
+
+AI systems cross-reference multiple sources when deciding whether to recommend a firm. The more consistent, complete sources they can find, the more confidence they have in making a recommendation.
+
+**The essential directories, in priority order:**
+
+**Google Business Profile** — The single most impactful directory for AI recommendations. Claims it, verify it, and complete every available field. See our detailed guide on [optimising your Google Business Profile for AI recommendations](/blog/google-business-profile-is-now-your-chatgpt-profile). This takes 45–90 minutes and should be your first action if you have not already done it.
+
+**VouchedFor** — The most widely referenced UK adviser review platform in AI training data. A complete VouchedFor profile (not just a claimed listing, but one with detailed qualifications, specialisms, fee structure, and biography) significantly increases your visibility in responses to UK-specific queries.
+
+**Unbiased** — The second major UK IFA directory. Complete your profile and ensure your service descriptions match exactly what you offer.
+
+**FTAdviser** — Industry publication directories carry substantial authority with AI systems. An FTAdviser listing confirms your credibility as a financial professional to AI models.
+
+**PFS and CISI directories** — Professional body listings create strong authority signals. If you hold Chartered Financial Planner status, ensure it appears clearly on your PFS profile.
+
+Critically, your firm name must be identical across every platform. Any variation — "Smith & Partners" vs "Smith and Partners" vs "Smith & Partners Financial Planning" — creates data inconsistency that reduces AI confidence. Read our full guide on [which IFA directories feed into AI recommendations](/blog/which-ifa-directories-feed-into-ai-recommendations) for a complete ranked list.
+
+**Timeline:** 2–3 days to complete or update all key directory profiles.
+
+## Step 3: Build Review Volume With Specific Content
+
+This is where most IFAs either stall or go wrong. Stalling: simply not asking clients for reviews, usually from a combination of reluctance and uncertainty about FCA rules. Going wrong: collecting vague, generic reviews that tell AI nothing useful.
+
+Generic reviews ("great service, very professional") have minimal AI value. Specific reviews that describe the actual service, the client situation, and the outcome are transformative. A review that says "helped us understand our options for defined benefit pension transfer and guided us through the whole process" teaches AI to match your firm to pension transfer queries.
+
+**How to request reviews that actually help:**
+
+Ask at a high-satisfaction moment — immediately after completing a significant piece of work, not months later. Be specific in your request: "It would really help us if you could share what brought you to us, what we worked on together, and how you felt about the outcome." This naturally produces detailed, AI-relevant reviews without prompting keyword stuffing.
+
+Ask clients to leave reviews on Google first, then VouchedFor. These two platforms are weighted most heavily by AI systems.
+
+The FCA is clear that client testimonials are permissible under Consumer Duty provided they are genuine, not selectively edited, and not incentivised. There is no regulatory barrier to building an honest review presence.
+
+**Target:** 10 specific Google reviews and 8 specific VouchedFor reviews within 90 days. Our full guide on [how reviews determine ChatGPT recommendations](/blog/google-reviews-are-your-ai-strategy-how-reviews-determine-chatgpt-recommendations) explains the science behind review quality and volume.
+
+**Timeline:** Ongoing, but with focused effort you can reach the 10/8 threshold within 60–90 days.
+
+## Step 4: Publish Authority Content on Your Specialist Areas
+
+AI platforms recommend firms they perceive as experts. Expertise is demonstrated through content: detailed, specific, accurate guides on topics your target clients care about.
+
+The key word is specific. "We specialise in pensions" is a claim. A 1,500-word guide on "How to evaluate whether a defined benefit pension transfer is right for you" is evidence. AI systems distinguish between the two.
+
+**Start with one pillar guide.** Choose the topic where your firm has the deepest expertise and the clearest client need. Write 1,500–2,500 words that genuinely cover the topic: the process, the risks, the regulatory context, specific scenarios, and what a good outcome looks like. Write for an intelligent non-expert. Use real figures and current regulatory thresholds.
+
+**Then add location and service specificity.** Create pages that combine your specialism with your location: "Inheritance Tax Planning for Property Owners in [Region]." These location-specialism combinations are exactly the queries AI receives from prospective clients.
+
+**Publish team credentials.** Named advisers with qualifications, specialisms, and professional histories create personal authority signals that AI systems evaluate. "Our experienced team" tells AI nothing. "Sarah Chen, Chartered Financial Planner (CFPTM), specialising in pension transfer advice for NHS consultants with 12 years' experience" gives AI something concrete to reference.
+
+For a full content framework, read our guide on [what to write on your website so AI recommends you](/blog/what-to-write-on-your-website-so-ai-recommends-you).
+
+**Timeline:** First pillar guide in weeks 2–3. Add location and team pages in weeks 3–4. Additional content monthly thereafter.
+
+## Step 5: Add Schema Markup
+
+FinancialService schema is structured data you add to your website's code to tell AI systems explicitly what your firm does, where it operates, and what credentials it holds. Without schema markup, AI has to infer this information from unstructured text. With it, the information is unambiguous.
+
+Key fields to include: firm name, URL, address, telephone, description, services offered, area served, and your FCA registration number. For a full technical walkthrough with code examples, see our [schema markup guide for financial advisers](/blog/schema-markup-for-financial-advisers-complete-guide).
+
+Schema markup requires a web developer to implement properly, but the cost is typically modest (1–3 hours of developer time) and the AI citation uplift is consistently significant. Research suggests schema markup can improve AI citation rates by over 30%.
+
+**Timeline:** 1–2 weeks to implement with developer support.
+
+## Step 6: Monitor and Iterate
+
+AI visibility is not a one-time fix. AI systems update their training data, adjust their ranking signals, and change their recommendation behaviour over time. The firms that maintain sustained visibility are the ones that treat AI optimisation as an ongoing process, not a project with a finish line.
+
+**Monthly monitoring checklist:**
+- Run 5 test queries on each of the four platforms
+- Note any changes in whether your firm appears
+- Check if competitors have improved their visibility
+- Review whether recent content has been cited
+- Identify one new action to take based on results
+
+**Quarterly reviews:**
+- Update directory profiles (qualifications, services, team changes)
+- Publish at least one new substantive piece of content
+- Request reviews from recent clients
+- Re-run your Presenzia AI visibility score to track progress
+
+## What to Expect: 30/60/90-Day Timeline
+
+**By day 30:** Google Business Profile complete, all major directory profiles updated or created, first review requests sent, name consistency confirmed across all platforms.
+
+**By day 60:** 5–8 new specific reviews collected, first pillar guide published, schema markup implemented, first re-test showing measurable improvement on at least two platforms.
+
+**By day 90:** 10+ specific Google reviews, 8+ VouchedFor reviews, two pieces of substantive content published, regular monitoring cadence established. Most firms at this stage see their AI visibility score move from below 30 to 40–65, with consistent appearance on at least two platforms for their key queries.
+
+The window for competitive advantage is still open. Fewer than 5% of UK IFA firms have optimised for AI visibility in any meaningful way. The firms that start now will establish positions that become progressively harder to displace as AI search becomes the dominant discovery channel.
+
+Start today by getting your free AI visibility score at [presenzia.ai/score](/score). It takes 60 seconds and gives you a clear picture of exactly where you stand before you begin.
+    `.trim(),
+  },
+  {
+    slug: 'best-ifa-directories-uk-2026',
+    title: "The Complete List of UK IFA Directories in 2026 (Ranked by AI Influence)",
+    description: "Every IFA directory in the UK ranked by how much they influence ChatGPT, Perplexity, and Claude recommendations. With costs, optimisation tips, and what to do first.",
+    date: '2026-04-07',
+    readTime: '9 min read',
+    category: 'Guide',
+    heroImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=630&fit=crop&q=80',
+    heroImageAlt: 'Directory index cards organised alphabetically in a filing system',
+    content: `
+Not all IFA directories are created equal. Some carry substantial weight with AI systems like ChatGPT and Perplexity. Others are almost completely invisible to AI training data. Knowing the difference can save you significant time and direct your effort where it will actually move the needle on your AI visibility score.
+
+This guide ranks every significant UK IFA directory by its influence on AI recommendations, explains why some matter more than others, and tells you exactly what to do on each one to maximise its effect.
+
+## How Directory Influence on AI Works
+
+Before the rankings, it helps to understand why some directories matter and others do not. AI models like ChatGPT are trained on vast quantities of web data. When they encounter a financial adviser firm mentioned consistently across multiple authoritative sources, they develop confidence in recommending that firm. When they find a firm on only one obscure directory, that confidence is absent.
+
+Three factors determine a directory's AI influence:
+
+**Authority in AI training data.** Some directories have been indexed extensively in AI training datasets. VouchedFor, for example, appears repeatedly as a cited source in financial services content across the web. This means AI models have absorbed a substantial amount of VouchedFor data.
+
+**Structured data quality.** Directories that present information in structured, machine-readable formats (consistent fields for firm name, location, services, qualifications, reviews) are more useful to AI systems than directories with free-form text. Our [AI visibility checklist](/blog/ai-visibility-checklist-15-things-every-uk-financial-adviser-should-fix) covers structured data in detail.
+
+**Real-time search access.** For AI tools that use live web search (Perplexity, ChatGPT with web search enabled), a directory's current Google search ranking and domain authority matter. Well-ranked directories appear in real-time searches and their content is directly surfaced in AI responses.
+
+## Tier 1: Maximum AI Influence
+
+### Google Business Profile (Free)
+
+**AI influence: Critical**
+
+Not technically an IFA directory, but by far the most important listing for AI visibility. Since ChatGPT integrated real-time web search, Google Business Profile data has become a primary input for local adviser recommendations. It is, in effect, your ChatGPT profile.
+
+A complete, verified profile with accurate services, qualifications, and client reviews will do more for your AI visibility than any other single action. See our comprehensive guide on [optimising your Google Business Profile for AI recommendations](/blog/google-business-profile-is-now-your-chatgpt-profile).
+
+**What to optimise:** Business name (exact FCA-registered name), primary category (Financial Planner), services list (every specialism), 750-character description (packed with specific details), photos, Q&A section, and review responses.
+
+---
+
+### VouchedFor (Free basic listing, paid premium features)
+
+**AI influence: Very High**
+
+VouchedFor is the dominant UK-specific adviser review platform in AI training data. When AI models are asked for UK financial adviser recommendations, VouchedFor profiles appear with high frequency in the cited sources.
+
+A complete VouchedFor profile with 10 or more specific, detailed reviews can significantly move your AI visibility score. The reviews are the critical element — a bare listing without reviews has limited impact.
+
+**What to optimise:** Full biography (not just a few lines), complete qualifications list (every CII/CFP/CISI credential), all relevant specialisms ticked, minimum portfolio size, fee structure, and whether you offer initial free consultations. Then focus relentlessly on collecting reviews.
+
+---
+
+### Unbiased (Free to list, paid for leads)
+
+**AI influence: High**
+
+Unbiased is the second major UK IFA consumer-facing directory. It is frequently cited in AI training data and maintains strong domain authority for financial adviser search queries. Its structured adviser profiles — with qualification data, specialisms, and location — are well-suited to AI parsing.
+
+**What to optimise:** Service specialisms (be specific: "defined benefit pension advice" rather than just "pensions"), minimum wealth threshold, fee model, and a detailed biographical description that includes credentials and your firm's distinctive approach.
+
+---
+
+## Tier 2: Significant AI Influence
+
+### FTAdviser (Free to list, various promotional tiers)
+
+**AI influence: Medium-High**
+
+FTAdviser is the UK's leading financial services trade publication and maintains an adviser directory that carries substantial authority with AI models. Being listed here signals professional credibility because FTAdviser is a recognised industry brand.
+
+The FTAdviser directory is less reviewed than VouchedFor or Unbiased, but its domain authority means AI systems treat it as a credible source for confirming firm details and professional status.
+
+**What to optimise:** Complete firm description, all services listed, links to your website and social profiles, and any published commentary or articles (FTAdviser publishes contributor content, which carries even higher authority than a directory listing alone).
+
+---
+
+### Professional Adviser (Free to list)
+
+**AI influence: Medium-High**
+
+Professional Adviser is another key industry publication with an adviser directory. Similar to FTAdviser, its authority comes from being an established, credible industry brand rather than from consumer reviews. AI models use listings here to validate firm credibility.
+
+**What to optimise:** Firm description, qualifications, and any articles or commentary published through the Professional Adviser platform.
+
+---
+
+### LinkedIn Company Page (Free)
+
+**AI influence: Medium-High**
+
+LinkedIn is one of the largest professional data sources that AI models reference. Your company page functions as an authoritative directory listing. Individual adviser profiles — with named qualifications, career history, and regular activity — contribute significantly to the overall authority signals AI systems evaluate.
+
+**What to optimise:** Company description (include specialisms, location, and FCA registration), services listed, regular posts from named advisers, and personal profiles for each adviser with complete qualification and experience histories.
+
+---
+
+### PFS Directory (Chartered Financial Planners) (Free to members)
+
+**AI influence: Medium**
+
+The Personal Finance Society directory lists Chartered and other qualified financial planners. Being listed here confirms your professional standing with AI systems evaluating the credentials of recommended firms. For Chartered Financial Planners, this listing is particularly important as "Chartered" status is a meaningful signal AI systems recognise.
+
+**What to optimise:** Ensure your most current qualifications and specialisms are listed. The Chartered FP designation should be prominent.
+
+---
+
+### CISI Member Directory (Free to members)
+
+**AI influence: Medium**
+
+The Chartered Institute for Securities & Investment member directory contributes to the authority signals that confirm your professional credentials. CISI membership is particularly relevant for firms with investment management or wealth management specialisms.
+
+---
+
+## Tier 3: Cumulative Contribution
+
+The following directories have lower individual AI influence but contribute cumulatively to your overall digital footprint. A consistent presence across all of them adds up.
+
+### Citywire (Free to list)
+
+Strong domain authority among UK financial publications. Adviser listings and any Citywire coverage (fund manager ratings, adviser features) carry meaningful authority signals.
+
+### Money Marketing (Free to list)
+
+Industry publication with strong domain authority. Directory presence plus any published commentary contributes to your professional standing in AI training data.
+
+### SOLLA (Society of Later Life Advisers) (Members only)
+
+For advisers specialising in later life planning, equity release, and long-term care advice, SOLLA membership and directory presence is a specific authority signal for relevant queries. AI models recognise specialist accreditations.
+
+### Resolution (Members only)
+
+For advisers specialising in divorce and financial planning on relationship breakdown. Relevant specialist directory with meaningful authority for these specific queries.
+
+### Trustpilot (Free basic)
+
+Trustpilot carries moderate weight for financial services AI recommendations, lower than Google or VouchedFor for UK-specific IFA queries but still a valid review source. If you have existing Trustpilot reviews, ensure your profile is complete and up to date.
+
+### Yelp UK (Free)
+
+Low direct AI influence for UK financial services, but contributes to citation volume. Not worth significant effort unless you already have a presence.
+
+### Local Chamber of Commerce Directories (Variable cost)
+
+Individual chamber directories have low AI influence on their own, but the cumulative effect of being listed in your local chamber, trade association, and regional business directory creates geographic authority signals that help AI recommend you for local queries.
+
+---
+
+## The FCA Register and Companies House: Non-Optional
+
+**FCA Register (Mandatory)**
+
+Every directly authorised IFA must be on the FCA register — but how you present there matters. AI systems use the FCA register to validate that a firm is legitimate and regulated. Make sure your registered name exactly matches what appears on your website and directories. Your FCA registration number should appear visibly on your website footer.
+
+**Companies House**
+
+Your Companies House registration confirms your business identity. AI models cross-reference firm names against Companies House data when evaluating legitimacy. Ensure your registered name is consistent with your trading name and FCA registration.
+
+---
+
+## The Consistency Principle: More Important Than Any Single Directory
+
+The most important insight from this analysis is that consistency across all directories matters more than any individual listing. AI systems are pattern-matching engines. When they find the same firm name, address, services, and description across eight independent sources, they develop high confidence in recommending that firm.
+
+A firm with perfect VouchedFor and Google profiles but gaps and inconsistencies elsewhere will consistently underperform compared to a firm with complete, consistent profiles across all tiers.
+
+Audit your presence across every directory above. Create a simple spreadsheet: firm name, address, phone, services, qualifications. Check that these match exactly on every platform. Correct any inconsistencies. This audit alone — with no other changes — can meaningfully improve your AI visibility score within four to six weeks.
+
+For a comprehensive framework covering directory optimisation alongside all other AI visibility factors, read our guide on [which IFA directories feed into AI recommendations](/blog/which-ifa-directories-feed-into-ai-recommendations) and check your firm's current AI visibility score for free at [presenzia.ai/score](/score).
+    `.trim(),
+  },
+  {
+    slug: 'schema-markup-for-financial-advisers-complete-guide',
+    title: "Schema Markup for Financial Advisers: The Complete Technical Guide (With Code Examples)",
+    description: "FinancialService schema markup can improve AI citation rates by over 30%. Here's the complete guide with JSON-LD code examples any IFA can implement.",
+    date: '2026-04-03',
+    readTime: '8 min read',
+    category: 'Technical',
+    heroImage: 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=1200&h=630&fit=crop&q=80',
+    heroImageAlt: 'Code on a computer screen showing structured data markup',
+    content: `
+When an AI system reads your website, it does not experience it the way a human does. It does not notice your design, your photography, or the carefully chosen tone of your copy. It processes text and data. And it processes structured data — data presented in a standardised, machine-readable format — far more reliably than it processes unstructured prose.
+
+Schema markup is the way you give AI systems (and search engines) structured, unambiguous information about your firm. For financial advisers, the relevant type is FinancialService schema. Implementing it properly can improve your AI citation rates by over 30%, according to research on structured data and AI recommendation behaviour.
+
+This guide explains what schema markup is, which fields matter most for IFAs, and provides complete, ready-to-use code examples. It is written for practice managers and firm owners, not web developers — though you will need a developer to implement the code.
+
+## What Is Schema Markup and Why Does It Matter for AI?
+
+Schema markup is a vocabulary of tags (technically called structured data) that you embed in your website's code to describe what your business is and what it does. It is a way of saying to AI systems and search engines: "Here is what you need to know about us, in a format you can parse without interpretation."
+
+Without schema markup, AI systems have to infer information from your website's prose. They might find your firm name in the page title, your location in your contact page, and your services scattered across multiple pages in varying forms. They may get it right. But they may also misinterpret, miss information entirely, or develop lower confidence in their understanding of your firm.
+
+With FinancialService schema, all of that information is presented in a single, consistent, authoritative block. The AI does not have to guess.
+
+This matters particularly in the context of our [research on AI visibility for UK IFAs](/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible). One of the consistent differences between visible firms and invisible firms was the presence of structured data on their websites. Schema markup is one of the [15 key actions on our AI visibility checklist](/blog/ai-visibility-checklist-15-things-every-uk-financial-adviser-should-fix).
+
+## The FinancialService Schema Type
+
+The Schema.org FinancialService type is specifically designed for businesses that provide financial services. It inherits from LocalBusiness and Organization, which means you can combine all three to create a comprehensive description of your firm.
+
+Here is what a complete, well-structured FinancialService schema looks like for a typical IFA firm:
+
+\`\`\`json
+{
+  "@context": "https://schema.org",
+  "@type": ["FinancialService", "LocalBusiness"],
+  "name": "Smith & Partners Financial Planning Ltd",
+  "url": "https://www.smithpartners.co.uk",
+  "logo": "https://www.smithpartners.co.uk/images/logo.png",
+  "image": "https://www.smithpartners.co.uk/images/office.jpg",
+  "description": "Smith & Partners is a Chartered independent financial planning firm in Guildford, Surrey. We specialise in retirement income planning, defined benefit pension transfers, and inheritance tax strategies for professionals and business owners with investable assets above £250,000.",
+  "telephone": "01483 000000",
+  "email": "info@smithpartners.co.uk",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "12 High Street",
+    "addressLocality": "Guildford",
+    "addressRegion": "Surrey",
+    "postalCode": "GU1 3AA",
+    "addressCountry": "GB"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 51.2362,
+    "longitude": -0.5704
+  },
+  "areaServed": [
+    {
+      "@type": "City",
+      "name": "Guildford"
+    },
+    {
+      "@type": "AdministrativeArea",
+      "name": "Surrey"
+    },
+    {
+      "@type": "AdministrativeArea",
+      "name": "South East England"
+    }
+  ],
+  "serviceType": [
+    "Independent Financial Advice",
+    "Retirement Income Planning",
+    "Defined Benefit Pension Transfer Advice",
+    "Inheritance Tax Planning",
+    "Investment Management",
+    "Financial Planning"
+  ],
+  "hasCredential": [
+    {
+      "@type": "EducationalOccupationalCredential",
+      "credentialCategory": "Chartered Financial Planner",
+      "recognizedBy": {
+        "@type": "Organization",
+        "name": "Chartered Insurance Institute"
+      }
+    }
+  ],
+  "memberOf": [
+    {
+      "@type": "Organization",
+      "name": "Personal Finance Society"
+    },
+    {
+      "@type": "Organization",
+      "name": "Chartered Institute for Securities & Investment"
+    }
+  ],
+  "identifier": {
+    "@type": "PropertyValue",
+    "name": "FCA Registration Number",
+    "value": "123456"
+  },
+  "foundingDate": "2005",
+  "numberOfEmployees": {
+    "@type": "QuantitativeValue",
+    "value": 8
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "09:00",
+      "closes": "17:30"
+    }
+  ],
+  "priceRange": "££",
+  "sameAs": [
+    "https://www.linkedin.com/company/smith-partners-fp",
+    "https://www.vouchedfor.co.uk/financial-adviser/smith-partners",
+    "https://www.fca.org.uk/register/123456"
+  ]
+}
+\`\`\`
+
+## The Most Important Fields for AI Visibility
+
+Not every field carries equal weight. Based on our analysis of AI recommendation patterns, these are the fields that have the greatest impact on how AI systems understand and recommend your firm:
+
+### name
+Must exactly match your FCA-registered name. This is how AI systems cross-reference your schema against the FCA register, Companies House, and other authoritative sources. Any variation reduces confidence.
+
+### description
+The most important text field. This should be 150–250 words that specifically describe your firm: what kind of advice you provide (independent vs restricted), who you serve, where you operate, what you specialise in, and any distinctive credentials. Write this as if explaining your firm to an intelligent stranger.
+
+### serviceType
+List every service and specialism separately. "Independent Financial Advice" is too broad. "Defined Benefit Pension Transfer Advice" is specific and matches queries. Include: your primary service category, each specialist service, and any niche specialisms. This is how AI systems match your firm to specific client queries.
+
+### areaServed
+Be specific about geography. Include your primary city, your county or region, and any other areas you serve. For national firms, include multiple regions. For local specialists, being specific about your geographic footprint helps AI match you to location-based queries.
+
+### identifier (FCA Registration Number)
+Including your FCA registration number in structured data creates a verifiable link between your schema and the FCA register — the most authoritative source of information about UK financial advisers. This is a strong legitimacy signal.
+
+### sameAs
+Link your schema to your profiles on other authoritative platforms: LinkedIn, VouchedFor, Unbiased, FTAdviser. These links help AI systems connect your schema data with the same firm on other platforms, reinforcing consistency across sources.
+
+## How to Implement Schema Markup
+
+Schema markup is added to your website using JSON-LD (JavaScript Object Notation for Linked Data) format, embedded in a \`<script>\` tag in your page's \`<head>\` section. Here is the implementation pattern:
+
+\`\`\`html
+<head>
+  <!-- Other head elements -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": ["FinancialService", "LocalBusiness"],
+    "name": "Your Firm Name",
+    ... (rest of your schema)
+  }
+  </script>
+</head>
+\`\`\`
+
+This schema should go on your homepage at minimum. Ideally, it should also appear on your main services pages, with the \`serviceType\` field adjusted to reflect the specific service each page covers.
+
+If your website is built on WordPress, plugins like RankMath and Yoast SEO have built-in schema support. For custom-built websites, you will need your developer to implement it directly in the page templates.
+
+## Testing Your Schema Markup
+
+Before considering the work done, verify your implementation using Google's Rich Results Test (search.google.com/test/rich-results). Paste your website URL and review the extracted structured data. Errors will be flagged in red, warnings in orange.
+
+Common errors to watch for:
+- **Missing required fields** (name, url, and address are typically required)
+- **Invalid date formats** (use ISO 8601: "2005-01-15" not "January 2005")
+- **Incorrect @type values** (check schema.org for valid type names)
+- **Broken image URLs** (test that all linked images load correctly)
+
+Google Search Console also provides a structured data report showing which pages have schema markup and any errors detected.
+
+## Schema Markup for Individual Adviser Pages
+
+If your website has individual pages for each adviser, add Person schema markup to each one:
+
+\`\`\`json
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Sarah Chen",
+  "jobTitle": "Chartered Financial Planner",
+  "worksFor": {
+    "@type": "FinancialService",
+    "name": "Smith & Partners Financial Planning Ltd"
+  },
+  "hasCredential": [
+    {
+      "@type": "EducationalOccupationalCredential",
+      "credentialCategory": "Chartered Financial Planner (CFP™)",
+      "recognizedBy": {
+        "@type": "Organization",
+        "name": "Chartered Insurance Institute"
+      }
+    },
+    {
+      "@type": "EducationalOccupationalCredential",
+      "credentialCategory": "Diploma in Regulated Financial Planning",
+      "recognizedBy": {
+        "@type": "Organization",
+        "name": "Chartered Insurance Institute"
+      }
+    }
+  ],
+  "knowsAbout": [
+    "Defined Benefit Pension Transfer Advice",
+    "Retirement Income Planning",
+    "Inheritance Tax Planning"
+  ],
+  "description": "Sarah specialises in retirement income planning and defined benefit pension transfer advice for NHS consultants and senior medical professionals. Chartered Financial Planner with 12 years' experience."
+}
+\`\`\`
+
+Person schema for named advisers creates individual entity recognition — AI systems can then associate specific expertise with specific individuals at your firm, which strengthens recommendations for specialism-based queries.
+
+## How AI Reads Schema Differently From Google
+
+Google Search primarily uses schema markup to determine eligibility for rich results (star ratings in search results, knowledge panels, etc.). The impact is visible and measurable in Google Search Console.
+
+AI systems use schema differently. They use it as a primary data source for understanding what your firm does, which they then combine with information from your website content, directory listings, and review profiles to build a comprehensive picture. Schema markup essentially gives AI systems a verified, authoritative summary that reduces the need for inference.
+
+This means schema markup investment has a compound effect: it not only helps AI systems understand your firm, but it also increases their confidence in the information they have gathered from other sources, because the schema confirms and corroborates it.
+
+Schema markup is one step in a broader AI visibility strategy. For the complete picture, check where your firm currently stands with a free AI visibility score at [presenzia.ai/score](/score) — it will show you exactly how AI platforms are currently interpreting your firm, and where structured data is likely to make the biggest difference.
+    `.trim(),
+  },
+  {
+    slug: 'ai-search-visibility-london-financial-advisers',
+    title: "AI Search Visibility for London Financial Advisers: Why the Capital's IFAs Are Being Overlooked",
+    description: "London has the UK's highest IFA density yet 48% of London firms are invisible on ChatGPT. Why the capital's paradox hurts independent advisers and how to overcome it.",
+    date: '2026-03-31',
+    readTime: '8 min read',
+    category: 'Research',
+    heroImage: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1200&h=630&fit=crop&q=80',
+    heroImageAlt: 'London skyline with financial district and Canary Wharf towers at dusk',
+    content: `
+London should be the easiest place in the UK to get your IFA firm recommended by AI. The capital has the highest concentration of high-net-worth individuals, the most engaged financial services market, and the widest selection of independent advisory firms. Yet our [research into 149 UK IFA firms](/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible) found that 48% of London-based IFAs were completely invisible to ChatGPT.
+
+That is the London paradox: higher potential, higher competition, but also higher failure rate for independent firms who do not approach AI visibility strategically.
+
+Understanding why London is harder than it looks — and what London-specific firms can do about it — is the subject of this analysis.
+
+## Why London Is Paradoxically Difficult
+
+### The National Brand Problem
+
+When AI systems receive a query like "recommend a financial adviser in London," they face a different decision than they do for the same query in, say, Leeds or Exeter. In regional cities, national brands and local independents compete on more level ground. In London, the national brands have vastly more online presence, press coverage, and data points than regional equivalents.
+
+Chase de Vere, St. James's Place, Schroders Personal Wealth, Cazenove Capital, Brewin Dolphin, Charles Stanley — these firms maintain a substantial proportion of their national content and press activity around London offices. When AI systems construct a mental model of the London IFA market, these brands occupy disproportionate space.
+
+A well-established independent adviser in Manchester with a complete digital presence and strong VouchedFor reviews can frequently outrank Chase de Vere for Manchester-specific queries, simply because the national brand's London-centric content is less relevant to those queries. In London, the national brands' content is directly relevant.
+
+### The Competition Density Problem
+
+London has approximately 25% of the UK's directly authorised IFA firms operating from a single geographic area. For AI systems evaluating which firms to recommend for London queries, this creates an enormous selection problem. When there are 1,200+ potential candidates, only firms with overwhelming evidence of credibility — extensive reviews, substantial content authority, multiple authoritative directory listings — consistently make the cut.
+
+The bar for London recommendations is higher than almost anywhere else in the UK.
+
+### The Location Specificity Advantage
+
+Here is the counterintuitive part: this extreme competition creates a specific opportunity for London-based independents who optimise for borough and neighbourhood specificity rather than competing at the "London" level.
+
+An AI asked "recommend a financial adviser in Islington" faces far less competition than one asked "recommend a financial adviser in London." The same is true for Chelsea, Kew, Canary Wharf, Wimbledon, Richmond, or any specific London area. Firms that clearly position themselves as specialists in a specific part of London — and build their online presence around that geographic specificity — can carve out visible positions in AI recommendations where the national brands are less competitive.
+
+## The London AI Search Landscape
+
+### What London Prospects Are Actually Asking AI
+
+London's affluent and HNW population uses AI differently from regional markets. Based on observed AI query patterns, common London-specific queries include:
+
+- "Independent financial adviser for expats in London"
+- "Wealth manager for business owners in London"
+- "IFA specialising in stock options and equity compensation in London"
+- "Financial adviser for US-UK dual citizens in London"
+- "Pension advice for NHS doctors in central London"
+- "Financial planner for senior executives in Canary Wharf"
+- "Inheritance tax specialist in [specific London area]"
+
+Notice the specificity. London's sophisticated financial services market means that AI queries tend to combine specialism with location. Broad London queries are dominated by national brands. Specialism + location queries are winnable by independents.
+
+### The Boroughs Where AI Recommendations Are Most Contested
+
+Based on our research, the London boroughs where AI visibility competition is most intense are: City of London, Westminster, Kensington & Chelsea, Richmond upon Thames, and Canary Wharf / Tower Hamlets. These areas have the highest concentration of HNW individuals and the highest density of advisory firms fighting for the same AI recommendations.
+
+The boroughs with more opportunity for independents — where the national brand dominance is less complete — include: Hampstead and Highgate (Camden), parts of Islington, South West London (Wimbledon, Putney, Clapham), and North West London (St John's Wood, Hendon).
+
+## What London IFAs Should Do Differently
+
+### 1. Compete at Borough Level, Not City Level
+
+The single most important strategic decision for a London IFA is to optimise for a specific borough or area rather than "London" generically. This means:
+
+- Your Google Business Profile description should reference your specific area explicitly: "serving clients in Islington, Highbury, and Finsbury Park"
+- Your website should have content that references local areas and the specific financial concerns of clients in those areas
+- Your VouchedFor and Unbiased profiles should include specific location detail
+- Local landmarks, transport links, and area knowledge signal genuine local presence
+
+### 2. Build Specialism + Location Combinations
+
+The queries London AI handles best are those that combine a clear specialism with a location. Build content around your specific expertise tied to your geographic area. If you specialise in pension transfer advice and you're based in the City, create content specifically addressing "defined benefit pension transfer advice for City professionals."
+
+For a full framework on the content types that work best for AI visibility, read our guide on [what to write on your website so AI recommends you](/blog/what-to-write-on-your-website-so-ai-recommends-you).
+
+### 3. Target the Underserved London Client Segments
+
+AI recommendations respond to demonstrated expertise in specific client segments. London-specific segments that are systematically underserved by IFA content include:
+
+**Dual US-UK citizens** — complex tax situations requiring specialist advice, frequently asking AI for recommendations, poorly served by most advisory firms' content.
+
+**Tech professionals and startup employees** — equity compensation, options, and share schemes are complex planning areas that many London-based tech workers navigate poorly. AI searches for advisers in this space are common and underserved.
+
+**Senior NHS clinicians in London** — the NHS London cluster is enormous, these professionals earn well and have complex pension situations, yet relatively few advisers specifically target content at them.
+
+**Returning expatriates** — London sees significant flows of returning expats from banking, international development, and consulting careers. Their pension and tax situations are complex, their AI searches for specialist advice are frequent, and the competition for this segment is moderate.
+
+### 4. Build Review Volume Faster Than Competitors
+
+London's review landscape is competitive but not as exhaustive as you might expect. The majority of IFA firms in London have fewer than 10 Google reviews. This is a surprisingly low bar to clear.
+
+Firms that reach 15–20 specific, detailed Google reviews and 10+ VouchedFor reviews are in the top tier of London IFA review presence. Combined with borough-level geographic specificity and specialism content, this positions you well above average in AI recommendations.
+
+Our guide on [how reviews determine ChatGPT recommendations](/blog/google-reviews-are-your-ai-strategy-how-reviews-determine-chatgpt-recommendations) explains the review strategy in detail, including exactly how to phrase review requests to generate the AI-relevant content that makes the biggest difference.
+
+### 5. Leverage London-Specific Third-Party Mentions
+
+Being mentioned by London-specific authoritative sources — local business press, borough economic development content, professional association events in London — creates geographic authority signals that AI systems use for local recommendations. Consider:
+
+- Press releases to London business titles when achieving notable milestones
+- Commentary contributions to London-focused financial publications
+- Participation in local professional body events and ensuring these are publicly listed
+- Chamber of Commerce membership for your relevant London borough
+
+## The London Opportunity Is Real
+
+Despite the competition, London represents the highest-value opportunity in the UK IFA market. The concentration of high-net-worth individuals, professionals, and business owners in London means that a single AI-driven new client relationship can be worth five to ten times more in lifetime fees than the equivalent regional relationship.
+
+The firms that will win London's AI recommendation space are those that stop competing at the generic "London IFA" level and instead build genuinely specific, authoritative presences at the borough and specialism level. The national brands cannot easily replicate this hyperlocal authenticity.
+
+To understand exactly how your firm currently appears in London-specific AI queries, check your free AI visibility score at [presenzia.ai/score](/score). The platform-by-platform breakdown will show you which aspects of your London presence are working and where the specific gaps are. For a full audit with a detailed action plan tailored to your specific location and specialisms, explore our [full audit service](/pricing).
+    `.trim(),
+  },
+  {
+    slug: 'ifa-marketing-strategy-2026-complete-guide',
+    title: "IFA Marketing Strategy 2026: The Complete Guide for Independent Financial Advisers",
+    description: "Every IFA marketing channel ranked by ROI for 2026 — from AI visibility to Google Ads, VouchedFor, LinkedIn, and referrals. The definitive guide to growing your firm.",
+    date: '2026-04-14',
+    readTime: '11 min read',
+    category: 'Strategy',
+    heroImage: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&h=630&fit=crop&q=80',
+    heroImageAlt: 'Marketing strategy whiteboard with growth charts and planning documents',
+    content: `
+The IFA marketing landscape in 2026 looks substantially different from even three years ago. The channels that drove growth in 2021 are maturing or declining. New channels — AI visibility chief among them — are generating client enquiries that most firms have not yet positioned themselves to capture.
+
+This guide covers every meaningful IFA marketing channel, ranks them by realistic ROI for an independent firm in 2026, and tells you how to build a coherent strategy across all of them. It is the starting point for everything else on this blog.
+
+## The Landscape in 2026: What Has Changed
+
+Two fundamental shifts define the current environment:
+
+**AI search is now a primary discovery channel for a significant and growing segment.** High-net-worth individuals and financially sophisticated professionals increasingly use ChatGPT, Perplexity, Claude, and Google AI Overviews as their first research tool when looking for professional services. Our [research into 149 UK IFA firms](/blog/we-tested-149-uk-ifa-firms-on-chatgpt-79-percent-were-invisible) found 79% were completely invisible on ChatGPT. The firms that are visible are capturing enquiries that their invisible competitors will never see.
+
+**Traditional search is still important but no longer sufficient.** Google still drives significant traffic and enquiries, but its share of first-touch discovery is declining — particularly among under-55 affluent professionals who represent the highest-lifetime-value new clients for IFA firms.
+
+The winning IFA marketing strategy in 2026 integrates both: building AI visibility as the emerging primary channel while maintaining strong traditional digital marketing.
+
+## Channel 1: AI Visibility (Generative Engine Optimisation)
+
+**ROI potential:** Very High
+**Time to results:** 3–6 months
+**Effort required:** Medium
+**Competition level:** Currently Low (most firms have not started)
+
+AI visibility is the highest-opportunity channel in 2026 precisely because most firms have not yet invested in it. The first-mover advantage is real: AI systems develop preferences for firms they encounter consistently across multiple authoritative sources, and those preferences are resistant to rapid displacement.
+
+The core disciplines of AI visibility — which constitute a new field called GEO (Generative Engine Optimisation) — are distinct from traditional SEO. We explain the difference in depth in our article on [GEO vs SEO for financial advisers](/blog/geo-vs-seo-why-google-rankings-are-no-longer-enough-for-financial-advisers).
+
+**Key actions:**
+- Complete your Google Business Profile fully (the single highest-ROI action)
+- Build review volume on Google and VouchedFor with specific, detailed reviews
+- Publish authority content on your specialist areas
+- Complete all major IFA directory profiles with consistent information
+- Add FinancialService schema markup to your website
+- Test your visibility regularly across all four major AI platforms
+
+For a complete step-by-step guide, read [how to get your IFA firm recommended by ChatGPT](/blog/how-to-get-your-ifa-firm-recommended-by-chatgpt) or check your current AI visibility score for free at [presenzia.ai/score](/score).
+
+## Channel 2: Traditional SEO and Google Search
+
+**ROI potential:** High (established), Medium (for new entrants)
+**Time to results:** 6–18 months for new investment
+**Effort required:** Medium to High
+**Competition level:** High for broad terms, Medium for specialist and local terms
+
+SEO remains the backbone of most IFA firms' digital marketing. Done well, it generates a consistent flow of inbound enquiries at relatively low ongoing cost. The challenge is that for broad terms like "financial adviser [city]", competition is fierce and dominated by directories (VouchedFor, Unbiased) and large national brands.
+
+The opportunity lies in specialist and location-specific terms where competition is lower: "defined benefit pension transfer specialist [county]", "IFA for NHS doctors [region]", "inheritance tax planning for farmers [area]". These long-tail terms attract a smaller volume of traffic but dramatically higher conversion rates because the searcher has a specific, urgent need.
+
+**Key actions:**
+- Focus content on specialist + location keyword combinations
+- Create comprehensive, genuinely useful guides on your specialist topics (1,500+ words)
+- Build relationships with local publications for natural backlinks
+- Optimise page titles and meta descriptions for both keywords and click-through rate
+- Ensure technical SEO fundamentals: mobile speed, Core Web Vitals, clean URL structure
+
+The important insight: SEO and AI visibility are increasingly complementary, not separate. Content that performs well for traditional SEO (long, authoritative, specific) also tends to perform well for AI visibility. The disciplines overlap in practice even if the underlying signals differ.
+
+## Channel 3: Google Ads (Pay-Per-Click)
+
+**ROI potential:** Medium (for the right terms and budgets)
+**Time to results:** Immediate (but expensive to optimise)
+**Effort required:** Medium
+**Competition level:** Very High for broad terms, High for specialist terms
+
+Google Ads can generate immediate enquiries but requires careful management to be cost-effective for IFAs. The challenge is cost per click: "financial adviser [city]" keywords can cost £5–20 per click, and converting a financial services enquiry from search to client typically requires months of consideration and engagement.
+
+For the right firm with the right targeting and budget, Google Ads can work. But it is rarely the most efficient use of marketing spend for an independent firm compared with the alternatives in this list.
+
+**Where Google Ads works best for IFAs:**
+- Highly specific specialist terms with clear buying intent ("defined benefit pension transfer advice [location]")
+- Remarketing to website visitors who have already engaged with your content
+- Campaigns targeting specific life events (retirement planning, business sale, inheritance)
+
+**Where it typically underperforms:**
+- Broad "financial adviser" terms in competitive cities
+- Low-budget campaigns in competitive markets
+
+## Channel 4: VouchedFor and Unbiased (Lead Generation)
+
+**ROI potential:** Medium to High (location and specialism dependent)
+**Time to results:** 1–3 months after profile optimisation
+**Effort required:** Low (once profile is complete)
+**Competition level:** Medium
+
+VouchedFor and Unbiased are not just directories for AI visibility purposes — they are also active lead generation platforms that connect prospective clients directly with advisers.
+
+The ROI varies dramatically by location, specialism, and profile quality. A highly-rated Chartered Financial Planner in a major city with 30+ detailed reviews can generate significant fee income from these platforms. A basic listing with few reviews in a competitive area generates little.
+
+Investment in these platforms serves double duty: it improves your AI visibility (both are heavily referenced in AI training data) and generates direct enquiries. This makes them among the most efficient marketing investments for IFA firms.
+
+**Key actions:**
+- Ensure your profile is as complete and specific as possible
+- Build review volume consistently — reviews are the primary driver of lead generation on both platforms
+- Keep your profile current as services and specialisms evolve
+
+## Channel 5: Content Marketing
+
+**ROI potential:** High (with patience)
+**Time to results:** 6–12 months
+**Effort required:** High
+**Competition level:** Low for genuinely expert content
+
+Content marketing — publishing detailed, authoritative guides, analysis pieces, and case studies — is the foundation of long-term AI visibility and traditional SEO. It is also the channel most firms execute poorly: they either publish thin, generic content that adds nothing, or they start with enthusiasm and abandon the effort before it gains traction.
+
+The key insight is that quality beats quantity dramatically. One genuinely excellent guide on your specialist topic — 1,500+ words, specific, accurate, expert — is worth more than twenty thin blog posts. AI systems can distinguish depth and authority from superficiality.
+
+**What works:**
+- Comprehensive pillar guides on your specialist topics (pension transfers, IHT planning, retirement income strategies, etc.)
+- Case study formats that demonstrate outcomes without identifying clients
+- Detailed, specific answers to questions your prospective clients actually ask
+- Regular commentary on regulatory changes that affect your clients specifically
+
+**What does not work:**
+- Generic "tips for saving" content
+- Thin market commentary
+- Content that does not draw on genuine expertise
+
+Read our detailed guide on [what to write on your website so AI recommends you](/blog/what-to-write-on-your-website-so-ai-recommends-you) for a complete content framework with specific examples.
+
+## Channel 6: LinkedIn
+
+**ROI potential:** Medium to High (for specific firm profiles)
+**Time to results:** 6–12 months
+**Effort required:** Medium (for consistent activity)
+**Competition level:** Low for genuinely expert content
+
+LinkedIn is the most effective social media platform for IFA firms for two distinct reasons: direct engagement with professional and business-owner target clients, and authority building that AI systems pick up on through their indexing of LinkedIn content.
+
+Named advisers publishing regular, expert-level commentary on relevant financial topics (pension rule changes, Budget implications, tax planning strategies) build personal and firm authority that influences both direct enquiries and AI visibility.
+
+The critical distinction: LinkedIn activity by named individuals with verifiable qualifications carries more weight than company page posts. If your advisers can commit to one substantive LinkedIn post per week, the compound effect over 12 months is substantial.
+
+## Channel 7: Referral Networks
+
+**ROI potential:** Very High (highest quality clients, lowest acquisition cost)
+**Time to results:** Ongoing
+**Effort required:** Low (with good client relationships)
+**Competition level:** Not applicable
+
+Referrals from existing clients and from professional contacts (accountants, solicitors, mortgage brokers) remain the highest-quality, lowest-cost client acquisition channel for most established IFA firms. Referred clients have higher trust levels, lower price sensitivity, and higher lifetime value than clients acquired through any other channel.
+
+The challenge — as we explore in our article on [the great wealth transfer and next-generation client acquisition](/blog/the-great-wealth-transfer-why-next-generation-clients-will-find-advisers-through-ai) — is that referral networks are structurally weaker for next-generation clients. Younger HNW individuals are less embedded in professional networks and more likely to use AI as their initial research tool. Referrals remain important, but they increasingly need to be supplemented by digital channels for sustainable growth.
+
+## Channel 8: PR and Media Relations
+
+**ROI potential:** Medium (with high upside for the right placements)
+**Time to results:** 3–12 months
+**Effort required:** Low to Medium
+**Competition level:** Low (very few IFA firms invest here)
+
+Getting featured in national and local media — as a commentator on financial issues, as a subject matter expert, or through research publication — creates some of the highest-authority signals available for AI visibility. A mention in FTAdviser, the Financial Times, or a major regional newspaper is cited with much higher confidence than a directory listing.
+
+For most IFA firms, the realistic goal is consistent presence in trade publications (FTAdviser, Professional Adviser, Money Marketing) as a commentator, and local business press as a regional financial expert. This is achievable with modest effort and creates durable authority signals.
+
+## Building Your 2026 Marketing Strategy
+
+Given the channel landscape above, a rational IFA marketing strategy for 2026 prioritises:
+
+**Immediate priorities (do in the first 30 days):**
+1. AI visibility foundation: Google Business Profile, name consistency, initial review requests
+2. Audit your current digital presence across all channels
+
+**Short-term build (months 2–3):**
+3. Complete all major IFA directory profiles (VouchedFor, Unbiased, FTAdviser, PFS)
+4. Add schema markup to your website
+5. Publish your first authority content piece on your primary specialism
+6. Reach 10+ specific reviews on Google and VouchedFor
+
+**Medium-term investment (months 4–6):**
+7. Develop a consistent content publishing rhythm (one substantive piece per month minimum)
+8. Build LinkedIn activity for named advisers
+9. Begin PR outreach to trade publications
+
+**Long-term compounding (ongoing):**
+10. Monitor and iterate on AI visibility quarterly
+11. Build and maintain professional referral network relationships
+12. Evaluate whether paid channels (Google Ads, VouchedFor leads) make sense for your specific market
+
+The firms that integrate AI visibility into a coherent multi-channel strategy — rather than treating it as a separate technical exercise — will see the most durable results. AI visibility compounds with every other channel: content marketing improves AI visibility, reviews improve AI visibility, directory listings improve AI visibility, PR mentions improve AI visibility.
+
+Start by understanding your current position. Get your free AI visibility score at [presenzia.ai/score](/score) to see exactly where your firm stands across ChatGPT, Perplexity, Claude, and Google AI — and use that as the baseline for your 2026 marketing strategy.
+    `.trim(),
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {

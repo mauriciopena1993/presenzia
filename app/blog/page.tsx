@@ -6,20 +6,27 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Blog | presenzia.ai: AI Search Visibility for UK Wealth Managers & IFAs',
-  description: 'Insights on AI search visibility for financial advisers. How ChatGPT, Claude and Perplexity recommend wealth managers, and how UK IFAs can improve their AI presence.',
+  title: 'IFA AI Visibility Blog | presenzia.ai — ChatGPT & AI Search for UK Financial Advisers',
+  description: 'Expert guides on IFA AI visibility, GEO, and getting recommended by ChatGPT, Claude and Perplexity. Research, checklists, and strategy for UK wealth managers.',
   alternates: { canonical: '/blog' },
+  keywords: [
+    'ifa ai visibility',
+    'financial adviser chatgpt',
+    'ai search financial advisers uk',
+    'ifa marketing strategy 2026',
+    'generative engine optimisation financial services',
+  ],
   openGraph: {
-    title: 'Blog | presenzia.ai: AI Search Visibility for UK Wealth Managers & IFAs',
-    description: 'Insights on AI search visibility for financial advisers. How ChatGPT, Claude and Perplexity recommend wealth managers, and how UK IFAs can improve their AI presence.',
+    title: 'IFA AI Visibility Blog | presenzia.ai',
+    description: 'Expert guides on IFA AI visibility, GEO, and getting recommended by ChatGPT, Claude and Perplexity. Research, checklists, and strategy for UK wealth managers.',
     url: 'https://presenzia.ai/blog',
     type: 'website',
     images: ['/og-image.png'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Blog | presenzia.ai: AI Visibility Insights',
-    description: 'Insights on AI search visibility for financial advisers. How AI recommends wealth managers and how to improve your presence.',
+    title: 'IFA AI Visibility Blog | presenzia.ai',
+    description: 'Expert guides on IFA AI visibility and getting recommended by ChatGPT, Claude and Perplexity. Research and strategy for UK financial advisers.',
     images: ['/og-image.png'],
   },
 };
