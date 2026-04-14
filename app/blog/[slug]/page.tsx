@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { BLOG_POSTS, getBlogPost } from '@/lib/blog-posts';
 import Navbar from '@/components/Navbar';
+import BlogScrollTracker from '@/components/BlogScrollTracker';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -254,6 +255,7 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <div style={{ minHeight: '100vh', background: 'rgba(10,10,10,0.97)', fontFamily: 'var(--font-inter, Inter, sans-serif)', position: 'relative', zIndex: 1 }}>
+      <BlogScrollTracker slug={slug} title={post.title} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingSchema) }}

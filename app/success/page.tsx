@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import { PLAN_LABELS } from '@/lib/plans';
+import { track } from '@/lib/analytics';
 
 type VerifyState = 'loading' | 'verified' | 'invalid';
 
@@ -24,10 +25,15 @@ function SuccessContent() {
     fetch(`/api/verify-session?session_id=${sessionId}`)
       .then(res => res.json())
       .then(data => {
-        setState(data.valid ? 'verified' : 'invalid');
+        if (data.valid) {
+          setState('verified');
+          track.purchase(plan);
+        } else {
+          setState('invalid');
+        }
       })
       .catch(() => setState('invalid'));
-  }, [sessionId]);
+  }, [sessionId, plan]);
 
   if (state === 'loading') {
     return (

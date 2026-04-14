@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { PLANS } from '@/lib/plans';
+import { track } from '@/lib/analytics';
 
 const SPECIALTIES = [
   'Wealth Management',
@@ -212,6 +213,11 @@ function ScorePageInner() {
     }
   };
 
+  // Track page load (once on mount)
+  useEffect(() => {
+    track.freeScoreStart();
+  }, []);
+
   // Show "run new score" link after 30 minutes
   useEffect(() => {
     if (!completedAt || step !== 'results') return;
@@ -345,6 +351,7 @@ function ScorePageInner() {
     minTimeReached.current = false;
     setLoadingStage(0);
     setLoadingPercent(0);
+    track.freeScoreSubmit(specialties[0] || 'unknown');
     setStep('loading');
 
     try {
@@ -409,6 +416,7 @@ function ScorePageInner() {
       // Non-blocking — still show results
     }
 
+    track.freeScoreEmailSubmit();
     setStep('results');
   };
 

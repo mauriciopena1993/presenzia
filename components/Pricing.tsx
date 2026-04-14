@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
-import { PRICING_PLANS, COMPARISON_ROWS } from '@/lib/plans';
+import { PRICING_PLANS, COMPARISON_ROWS, PLANS } from '@/lib/plans';
+import { track } from '@/lib/analytics';
 
 type CellValue = boolean | string;
 
@@ -132,7 +133,15 @@ export default function Pricing() {
   const [showComparison, setShowComparison] = useState(false);
   const [mobileTab, setMobileTab] = useState(1); // Default to Growth (index 1)
 
+  useEffect(() => {
+    track.viewPricing();
+  }, []);
+
   const handleClick = (planKey: string) => {
+    const plan = PLANS[planKey];
+    if (plan) {
+      track.checkoutStart(planKey, plan.price);
+    }
     // All plans use the /score page as the single enrolment form
     window.location.href = `/score?plan=${planKey}`;
   };

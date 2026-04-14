@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { track } from '@/lib/analytics';
 
 export default function Hero() {
   return (
@@ -106,7 +109,7 @@ export default function Hero() {
         </div>
 
         {/* 5. Primary CTA */}
-        <Link href="/score" className="hero-cta-primary" style={{
+        <Link href="/score" className="hero-cta-primary" onClick={() => track.ctaClick('hero', '/score')} style={{
           padding: '0.875rem 2rem',
           background: '#C9A84C',
           color: '#0A0A0A',
@@ -134,7 +137,7 @@ export default function Hero() {
         </div>
 
         {/* 6. Secondary CTA */}
-        <Link href="#sample-report" className="hero-cta-secondary" style={{
+        <Link href="#sample-report" className="hero-cta-secondary" onClick={() => track.ctaClick('hero', '#sample')} style={{
           padding: '0.875rem 2rem',
           background: 'transparent',
           color: '#CCCCCC',

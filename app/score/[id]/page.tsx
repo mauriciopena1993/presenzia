@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { supabase } from '@/lib/supabase';
+import ScorePageTracker from '@/components/ScorePageTracker';
 
 interface ScoreData {
   id: string;
@@ -107,6 +108,7 @@ export default async function SharedScorePage({
 
   return (
     <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'var(--font-inter, Inter, sans-serif)', color: '#F5F0E8' }}>
+      <ScorePageTracker scoreId={data.id} score={data.score} />
       <div style={{ borderBottom: '1px solid #1A1A1A', padding: '1.25rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: '1.3rem', color: '#F5F0E8', textDecoration: 'none' }}>
           presenzia<span style={{ color: '#C9A84C' }}>.ai</span>
